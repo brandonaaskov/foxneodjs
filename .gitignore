@@ -1,0 +1,2 @@
+#ignore these files/directories from git
+/web/build/

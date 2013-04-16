@@ -1,0 +1,23 @@
+{
+    "strict": true,
+    "curly": true,
+    "evil": true,
+    "browser": true,
+    "trailing": true,
+    "sub": true,
+    "nonew": true,
+    "noempty": true,
+    "noarg": true,
+    "newcap": true,
+    "latedef": true,
+    "immed": true,
+    "forin": true,
+    "eqeqeq": true,
+    "eqnull": true,
+    "curly": true,
+    "bitwise": true,
+    "undef": true,
+    "unused": true,
+    "maxdepth": 3,
+    "debug": true
+}
