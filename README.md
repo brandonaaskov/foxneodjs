@@ -1,3 +1,3 @@
-# NibblerJS
+# FoxNEO JS
 
 ### Overview

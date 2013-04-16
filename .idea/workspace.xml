@@ -7,6 +7,7 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/index.html" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/js/main.js" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/package.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
     </list>
     <ignored path="nibbler.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,6 +30,7 @@
     <file path="/base64.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366094832248" ignored="false" />
     <file path="/error.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366077558996" ignored="false" />
     <file path="/underscore.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366092676509" ignored="false" />
+    <file path="/README.md" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366097196881" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +153,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/web/js/lib/modernizr/mq.js" />
         <option value="$PROJECT_DIR$/web/js/lib/modernizr/mStyle.js" />
         <option value="$PROJECT_DIR$/web/js/lib/modernizr/prefixed.js" />
         <option value="$PROJECT_DIR$/web/js/lib/modernizr/prefixes.js" />
@@ -167,6 +168,7 @@
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/web/js/main.js" />
         <option value="$PROJECT_DIR$/web/js/foxneo.js" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -391,13 +393,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/web/js/error.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="24" selection-start="452" selection-end="452" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/debug.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="46" column="9" selection-start="1388" selection-end="1388" vertical-scroll-proportion="0.0">
@@ -491,6 +486,13 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="11" selection-start="11" selection-end="11" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
