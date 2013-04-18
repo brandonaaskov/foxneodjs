@@ -19,5 +19,6 @@
     "undef": true,
     "unused": true,
     "maxdepth": 3,
-    "debug": true
+    "debug": true,
+    "laxcomma": true
 }
