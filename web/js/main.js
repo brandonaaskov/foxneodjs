@@ -2,7 +2,7 @@
 
 require.config({
     paths: {
-        config: '../../config.js'
+//        config: 'config.js'
     }
 });
 

@@ -2,56 +2,51 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/config.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/Modernizr.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/ModernizrProto.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/addTest.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/attrs.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/classes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/contains.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/createElement.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/cssomPrefixes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/docElement.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/domPrefixes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/fnBind.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/generate.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/getBody.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/hasEvent.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/hasOwnProp.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/html5printshiv.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/html5shiv.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/injectElementWithStyles.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/inputElem.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/inputattrs.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/inputs.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/inputtypes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/is.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/isEventSupported.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/lib/modernizr/tests.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/load.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/mStyle.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/modElem.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/mq.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/nibbler.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/omPrefixes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/prefixed.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/prefixes.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/setClasses.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/setCss.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/setCssAll.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/slice.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/smile.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testAllProps.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testDOMProps.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testMediaQuery.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testProp.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testProps.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testPropsAll.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testRunner.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/testStyles.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/toStringFn.js" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/js/config.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/js/polyfills.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/config.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/.jshintrc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/.npmignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/.travis.yml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/Gruntfile.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/.gitattributes" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/.jshintrc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/.npmignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/.travis.yml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/AUTHORS" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/CHANGELOG" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/Gruntfile.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/LICENSE-MIT" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/lib/contrib.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/node_modules/zlib-browserify/.npmignore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/node_modules/zlib-browserify/index.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/node_modules/zlib-browserify/package.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/node_modules/zlib-browserify/readme.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/node_modules/zlib-browserify/test/zlib.test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/node_modules/zlib-browserify/zlib.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/package.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/node_modules/grunt-lib-contrib/test/lib_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/package.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/tasks/replace.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/cache.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/content.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/cwd/foo.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/cwd/foo/bar.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/dynamic_key.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/dynamic_value.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/flatten/foo.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/flatten/foo/bar.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/force.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/include.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/prefix.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/simple.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/fixtures/sort.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/grunt-replace/test/replace_test.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/lib/jquery/jquery.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/lib/modernizr/modernizr.custom.js" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/underscore.js" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/require.js" afterPath="$PROJECT_DIR$/web/js/lib/requirejs/require.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.jshintrc" afterPath="$PROJECT_DIR$/.jshintrc" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/debug.js" afterPath="$PROJECT_DIR$/web/js/debug.js" />
@@ -73,10 +68,10 @@
     <file path="/scriptloader.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365793861405" ignored="false" />
     <file path="/dummy.xml" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796506945" ignored="false" />
     <file path="/package.json" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366135269782" ignored="false" />
-    <file path="/Gruntfile.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366135399642" ignored="false" />
+    <file path="/Gruntfile.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366326035129" ignored="false" />
     <file path="/build.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365807453734" ignored="false" />
     <file path="/.gitignore" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365814884577" ignored="false" />
-    <file path="/debug.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366247966894" ignored="false" />
+    <file path="/debug.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366329825353" ignored="false" />
     <file path="/url.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366056164850" ignored="false" />
     <file path="$PROJECT_DIR$/../tests/fox/tickets/temp/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366062295976" ignored="false" />
     <file path="/base64.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366094832248" ignored="false" />
@@ -84,15 +79,16 @@
     <file path="/underscore.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366092676509" ignored="false" />
     <file path="/README.md" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366097196881" ignored="false" />
     <file path="$PROJECT_DIR$/../../nibbler/web/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366134466102" ignored="false" />
-    <file path="/config.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366134795701" ignored="false" />
+    <file path="/config.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366331321485" ignored="false" />
     <file path="$PROJECT_DIR$/../../nibbler/web/js/nibbler.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366221503098" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/player/end-card-universal/end-card-universal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366236875313" ignored="false" />
     <file path="/end-card-universal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366233053429" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/player/end-card-universal/test.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366230374216" ignored="false" />
     <file path="/test.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366230119883" ignored="false" />
     <file path="/watch.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366233489993" ignored="false" />
-    <file path="/foxneo.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366239995583" ignored="false" />
+    <file path="/foxneo.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366330992580" ignored="false" />
     <file path="/.jshintrc" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366237147767" ignored="false" />
+    <file path="/polyfills.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366331510698" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +111,7 @@
       <file leaf-file-name="Gruntfile.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gruntfile.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="58" selection-start="2983" selection-end="2983" vertical-scroll-proportion="0.0">
+            <state line="67" column="71" selection-start="3126" selection-end="3126" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -133,8 +129,10 @@
       <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="8" selection-start="59" selection-end="84" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -142,7 +140,18 @@
       <file leaf-file-name="foxneo.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/js/foxneo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="89" selection-start="132" selection-end="145" vertical-scroll-proportion="0.02918288">
+            <state line="14" column="37" selection-start="614" selection-end="614" vertical-scroll-proportion="0.20428015">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="polyfills.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/js/polyfills.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="8" selection-start="8" selection-end="8" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -151,16 +160,7 @@
       <file leaf-file-name="debug.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/debug.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="25" selection-start="175" selection-end="175" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="url.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/js/url.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="31" selection-start="185" selection-end="185" vertical-scroll-proportion="0.0">
+            <state line="2" column="56" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -169,10 +169,12 @@
         </entry>
       </file>
       <file leaf-file-name="config.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config.js">
+        <entry file="file://$PROJECT_DIR$/web/js/config.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="10" selection-start="30" selection-end="30" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="23" column="19" selection-start="652" selection-end="652" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -195,8 +197,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/web/js/lib/modernizr/setClasses.js" />
-        <option value="$PROJECT_DIR$/web/js/lib/modernizr/setCss.js" />
         <option value="$PROJECT_DIR$/web/js/underscore.js" />
         <option value="$PROJECT_DIR$/web/js/base64.js" />
         <option value="$PROJECT_DIR$/web/js/error.js" />
@@ -206,11 +206,13 @@
         <option value="$PROJECT_DIR$/web/js/watch.js" />
         <option value="$PROJECT_DIR$/web/js/nibbler.js" />
         <option value="$PROJECT_DIR$/.jshintrc" />
+        <option value="$PROJECT_DIR$/config.js" />
         <option value="$PROJECT_DIR$/web/js/main.js" />
-        <option value="$PROJECT_DIR$/web/js/foxneo.js" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/web/js/debug.js" />
-        <option value="$PROJECT_DIR$/config.js" />
+        <option value="$PROJECT_DIR$/web/js/foxneo.js" />
+        <option value="$PROJECT_DIR$/web/js/config.js" />
+        <option value="$PROJECT_DIR$/web/js/polyfills.js" />
       </list>
     </option>
   </component>
@@ -310,10 +312,10 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/web/js" />
       <recent name="$PROJECT_DIR$/web/js/lib/requirejs" />
       <recent name="$PROJECT_DIR$/web/js/lib/modernizr" />
       <recent name="$PROJECT_DIR$/web/js/lib" />
-      <recent name="$PROJECT_DIR$/web/js" />
       <recent name="$PROJECT_DIR$/web/js/app" />
     </key>
   </component>
@@ -440,7 +442,9 @@
     <entry file="file://$PROJECT_DIR$/web/js/debug.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="84" column="28" selection-start="2897" selection-end="2897" vertical-scroll-proportion="0.0">
-          <folding />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -468,7 +472,9 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/js/error.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="28" selection-start="0" selection-end="656" vertical-scroll-proportion="0.104477614" />
+        <state line="7" column="28" selection-start="0" selection-end="656" vertical-scroll-proportion="0.104477614">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.jshintrc">
@@ -478,37 +484,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="33" selection-start="413" selection-end="413" vertical-scroll-proportion="-7.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="43" selection-start="49" selection-end="49" vertical-scroll-proportion="-1.875">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="58" selection-start="2983" selection-end="2983" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="10" selection-start="30" selection-end="30" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/debug.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="25" selection-start="175" selection-end="175" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -522,17 +500,60 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="29" selection-start="413" selection-end="413" vertical-scroll-proportion="0.17928287">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="71" selection-start="3126" selection-end="3126" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/debug.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="56" selection-start="85" selection-end="85" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="19" selection-start="652" selection-end="652" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/polyfills.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="8" selection-start="8" selection-end="8" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="8" selection-start="59" selection-end="84" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/js/foxneo.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="89" selection-start="132" selection-end="145" vertical-scroll-proportion="0.02918288">
-          <folding />
+        <state line="14" column="37" selection-start="614" selection-end="614" vertical-scroll-proportion="0.20428015">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

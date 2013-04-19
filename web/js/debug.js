@@ -1,23 +1,19 @@
 /*global define, console */
 
-define(['jquery', 'url', 'error', 'config', 'debug'], function ($, urlHelper, error, config, debug) {
+define(['jquery', 'url', 'error', 'config'], function ($, urlHelper, error, config) {
     'use strict';
 
-    debug.log('Config', config);
-
-    var debugSetting = false, // default, though init overwrites this
-        debugMessagePrefix = config.packageName;
-
-    console.log('config', config);
+    var debugSetting = config.debug || false;
 
     var init = function () {
-        debugSetting = urlHelper.paramExists('debug', 'true');
+        debugSetting = urlHelper.paramExists('debug', 'true'); //allows for overrides from URL
     };
 
     var log = function (message, data, logType) {
-        if (debugSetting)
+        if (config.debug)
         {
             var logItems = getLogItems(message, data);
+            logItems.message += ' | ';
 
             switch (logType)
             {
@@ -38,8 +34,8 @@ define(['jquery', 'url', 'error', 'config', 'debug'], function ($, urlHelper, er
     };
 
     var getLogItems = function (logMessage, data) {
-        var message = debugMessagePrefix,
-            payload = [],
+        var message = config.debugMessagePrefix,
+            payload = data || {},
             customError = error.getEmptyErrorObject();
 
         if (typeof logMessage === 'string')
@@ -52,21 +48,21 @@ define(['jquery', 'url', 'error', 'config', 'debug'], function ($, urlHelper, er
             customError.category = 'Type Mismatch';
             customError.message = "The log message you supplied wasn't a string";
 
-            debug.log(customError.category, customError, 'warn');
+            log(customError.category, customError, 'warn');
         }
 
-        if (typeof data === 'object' || typeof data === 'string') // Using typeof is fine since we're treating arrays and objects the same here.
-        {
-            payload = data;
-        }
-        else
-        {
-            customError = error.getEmptyErrorObject();
-            customError.category = 'Type Mismatch';
-            customError.message = "The payload you sent with your log() call wasn't an object or a string.";
-
-            debug.log(customError.category, customError, 'warn');
-        }
+//        if (typeof data === 'object' || typeof data === 'string') // Using typeof is fine since we're treating arrays and objects the same here.
+//        {
+//            payload = data;
+//        }
+//        else
+//        {
+//            customError = error.getEmptyErrorObject();
+//            customError.category = 'Type Mismatch';
+//            customError.message = "The payload you sent with your log() call wasn't an object or a string.";
+//
+//            log(customError.category, customError, 'warn');
+//        }
 
         return {
             message: message,

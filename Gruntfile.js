@@ -65,8 +65,7 @@
                         paths: {
                             jquery: 'lib/jquery/jquery.min',
                             underscore: 'lib/underscore/underscore',
-                            Modernizr: 'lib/modernizr/modernizr.custom',
-                            config: '../../config'
+                            Modernizr: 'lib/modernizr/modernizr.custom'
                         }
                     }
                 }
@@ -110,6 +109,5 @@
         grunt.registerTask('default', ['replace', 'jshint', 'requirejs', 'concat', 'uglify']);
         grunt.registerTask('dev', ['replace', 'jshint', 'requirejs', 'concat']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'concat', 'uglify']);
-//        grunt.registerTask('watch-jshint', ['jshint', 'watch']);
     };
 })();
