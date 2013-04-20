@@ -37,10 +37,6 @@ define(['jquery', 'underscore', 'Modernizr', 'polyfills', 'debug'], function (jQ
 //        }, 2500);
     };
 
-    //----------------------------------------------------------------- helpers
-
-    //----------------------------------------------------------------- /helpers
-
     init();
 
     // Public API

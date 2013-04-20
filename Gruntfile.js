@@ -21,9 +21,10 @@
             uglify: {
                 options: {
                     banner: "/*! <%= pkg.name %> <%= grunt.template.today('yyyy-mm-dd') %> */\n",
-                    beautify: true
+                    compress: true
+//                    mangle: true
                 },
-                nibbler: {
+                minification: {
                     files: {
                         'web/build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['web/build/<%= pkg.name %>-<%= pkg.version %>.js']
                     }
@@ -63,6 +64,7 @@
                         optimize: "none",
 
                         paths: {
+                            requirejs: 'lib/requirejs/require',
                             jquery: 'lib/jquery/jquery.min',
                             underscore: 'lib/underscore/underscore',
                             Modernizr: 'lib/modernizr/modernizr.custom'
@@ -71,19 +73,19 @@
                 }
             },
 
-            concat: {
-                options: {
-                    separator: ';',
-                    stripBanners: true,
-                    process: false,
-                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                        '<%= grunt.template.today("yyyy-mm-dd") %> */'
-                },
-                basic: {
-                    src: ['web/js/lib/requirejs/require.js', 'web/build/<%= pkg.name %>.js'],
-                    dest: 'web/build/<%= pkg.name %>-<%= pkg.version %>.js'
-                }
-            },
+//            concat: {
+//                options: {
+//                    separator: ';',
+//                    stripBanners: true,
+//                    process: false,
+//                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+//                        '<%= grunt.template.today("yyyy-mm-dd") %> */'
+//                },
+//                basic: {
+//                    src: ['web/js/lib/requirejs/require.js', 'web/build/<%= pkg.name %>.js'],
+//                    dest: 'web/build/<%= pkg.name %>-<%= pkg.version %>.js'
+//                }
+//            },
 
             jshint: {
                 options: {
@@ -101,13 +103,13 @@
 
         grunt.loadNpmTasks('grunt-contrib-uglify');
         grunt.loadNpmTasks('grunt-contrib-requirejs');
-        grunt.loadNpmTasks('grunt-contrib-concat');
+//        grunt.loadNpmTasks('grunt-contrib-concat');
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-replace');
 
-        grunt.registerTask('default', ['replace', 'jshint', 'requirejs', 'concat', 'uglify']);
-        grunt.registerTask('dev', ['replace', 'jshint', 'requirejs', 'concat']);
-        grunt.registerTask('prod', ['jshint', 'requirejs', 'concat', 'uglify']);
+        grunt.registerTask('default', ['replace', 'jshint', 'requirejs', 'uglify']);
+        grunt.registerTask('dev', ['replace', 'jshint', 'requirejs']);
+        grunt.registerTask('prod', ['jshint', 'requirejs', 'uglify']);
     };
 })();
