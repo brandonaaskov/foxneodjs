@@ -7,6 +7,14 @@
         grunt.initConfig({
             pkg: grunt.file.readJSON('package.json'),
 
+            jshint: {
+                options: {
+                    jshintrc: '.jshintrc'
+                },
+                files: ['Gruntfile.js', 'web/js/*.js']
+//                beforeconcat: ['web/js/app/**/*.js']
+            },
+
             replace: {
                 dist: {
                     options: {
@@ -39,7 +47,7 @@
                 compile: {
                     options: {
                         baseUrl: "web/js",
-                        name: 'main',
+                        name: 'foxneo',
                         out: "web/build/<%= pkg.name %>-<%= pkg.version %>.js",
 
                         //Introduced in 2.1.2 and considered experimental.
@@ -67,13 +75,27 @@
                         //- "none": no minification will be done.
                         optimize: "none",
 
+                        //Wrap any build layer in a start and end text specified by wrap.
+                        //Use this to encapsulate the module code so that define/require are
+                        //not globals. The end text can expose some globals from your file,
+                        //making it easy to create stand-alone libraries that do not mandate
+                        //the end user use requirejs.
+//                        wrap: {
+//                            start: '(function () {',
+//                            end: '}());'
+//                        },
+
+                        //Another way to use wrap, but uses default wrapping of:
+                        //(function() { + content + }());
+                        wrap: true,
+
                         //Allows namespacing requirejs, require and define calls to a new name.
                         //This allows stronger assurances of getting a module space that will
                         //not interfere with others using a define/require AMD-based module
                         //system. The example below will rename define() calls to FoxNEO.define().
                         //See http://requirejs.org/docs/faq-advanced.html#rename for a more
                         //complete example.
-//                        namespace: 'FoxNEO',
+                        namespace: 'FoxNEO',
 
                         // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
@@ -81,7 +103,13 @@
                             , jquery: 'lib/jquery/jquery.min'
                             , underscore: 'lib/underscore/underscore'
 //                            , Modernizr: 'lib/modernizr/modernizr.custom'
-                        }
+                        },
+
+                        //Defines the loading time for modules. Depending on the complexity of the
+                        //dependencies and the size of the involved libraries, increasing the wait
+                        //interval may be required. Default is 7 seconds. Setting the value to 0
+                        //disables the waiting interval.
+                        waitSeconds: 7
                     }
                 }
             },
@@ -99,14 +127,6 @@
 //                    dest: 'web/build/<%= pkg.name %>-<%= pkg.version %>.js'
 //                }
 //            },
-
-            jshint: {
-                options: {
-                    jshintrc: '.jshintrc'
-                },
-                files: ['Gruntfile.js', 'web/js/*.js']
-//                beforeconcat: ['web/js/app/**/*.js']
-            },
 
             watch: {
                 files: ['<%= jshint.files %>'],

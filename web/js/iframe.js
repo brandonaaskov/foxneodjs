@@ -5,13 +5,14 @@ define(['jquery', 'debug'], function ($, debug) {
 
     return function () {
         (function init () {
-            debug.log('init');
+            //debug.log('iframe init');
         })();
 
-        var getPlayerConfig = function (containingElementID) {
-            if (_.isString(containingElementID))
+        var getPlayerConfig = function (containingElementSelectorString) {
+            if (_.isString(containingElementSelectorString))
             {
-                var $player = $('#' + containingElementID);
+                var $player = $(containingElementSelectorString);
+                debug.log('$player', $player);
             }
         };
 
