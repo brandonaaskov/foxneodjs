@@ -1,6 +1,6 @@
 /*global define, FDM_Player_vars, $pdk */
 
-define(['jquery', 'underscore', 'polyfills', 'debug'], function ($, _, polyfills, debug) {
+define(['jquery', 'underscore', 'polyfills', 'iframe', 'debug'], function ($, _, polyfills, iframe, debug) {
     'use strict';
 
     var version = '0.1.0';
@@ -8,7 +8,7 @@ define(['jquery', 'underscore', 'polyfills', 'debug'], function ($, _, polyfills
     //-------------------------------------------------------------------------------- initialization
     (function init () {
 //        polyfills.fixBrokenFeatures(); //setups up shims and polyfills
-        debug.log('Polyfills added', polyfills.getShimsAdded());
+//        debug.log('Polyfills added', polyfills.getShimsAdded());
 
         // deal with lib dependencies and make sure they're working properly
 //        debug.checkForVersionChange('jQuery', jQueryApp, $);
@@ -80,6 +80,7 @@ define(['jquery', 'underscore', 'polyfills', 'debug'], function ($, _, polyfills
     // Public API
     return {
         version: version,
-        setPlayerMessage: setPlayerMessage
+        setPlayerMessage: setPlayerMessage,
+        iframe: iframe
     };
 });

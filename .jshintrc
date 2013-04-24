@@ -17,7 +17,7 @@
     "curly": true,
     "bitwise": true,
     "undef": true,
-    "unused": true,
+    "unused": false,
     "maxdepth": 5,
     "debug": true,
     "laxcomma": true

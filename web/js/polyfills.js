@@ -1,15 +1,10 @@
-/*global define */
+/*global define, _ */
 
-define(['config', 'underscore'], function (config, _) {
+define(['config'], function (config) {
 
     'use strict';
 
     var whatsBeenFixed = [];
-
-    var init = function () {
-        fixBrokenFeatures();
-        shim(config.shims);
-    };
 
     /**
      * The fixBrokenFeatures function is used in lieu of using something like underscore or Modernizr. The test page
@@ -39,11 +34,11 @@ define(['config', 'underscore'], function (config, _) {
         var nativeIsArray = Array.isArray;
 
         //shim underscorejs (only the features we need)
-        window._ = window._ || {
-            isArray: nativeIsArray || function(obj) {
-                return window.toString.call(obj) === '[object Array]';
-            }
-        };
+//        window._ = window._ || {
+//            isArray: nativeIsArray || function(obj) {
+//                return window.toString.call(obj) === '[object Array]';
+//            }
+//        };
     };
 
     /**
@@ -105,10 +100,13 @@ define(['config', 'underscore'], function (config, _) {
         }
     };
 
+    (function init () {
+        fixBrokenFeatures();
+        shim(['watch']);
+    })();
+
     // Public API
     return {
-        init: init,
-        initialize: init, // alias
         getShimsAdded: function () { return whatsBeenFixed; }
     };
 });

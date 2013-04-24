@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/js/iframe.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.jshintrc" afterPath="$PROJECT_DIR$/.jshintrc" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/debug.js" afterPath="$PROJECT_DIR$/web/js/debug.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/foxneo.js" afterPath="$PROJECT_DIR$/web/js/foxneo.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/web/js/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/polyfills.js" afterPath="$PROJECT_DIR$/web/js/polyfills.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/lib/underscore/underscore.js" afterPath="$PROJECT_DIR$/web/js/lib/underscore/underscore.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="nibbler.iws" />
@@ -18,7 +16,7 @@
     <file path="/loadscript.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365792078607" ignored="false" />
     <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366761132275" ignored="false" />
     <file path="$PROJECT_DIR$/../../cisco/js/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365785922324" ignored="false" />
-    <file path="/main.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366765919557" ignored="false" />
+    <file path="/main.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366767893031" ignored="false" />
     <file path="/nibbler.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366221497453" ignored="false" />
     <file path="/scriptloader.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365793861405" ignored="false" />
     <file path="/dummy.xml" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796506945" ignored="false" />
@@ -40,9 +38,9 @@
     <file path="$PROJECT_DIR$/../../tests/fox/player/end-card-universal/test.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366230374216" ignored="false" />
     <file path="/test.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366230119883" ignored="false" />
     <file path="/watch.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366233489993" ignored="false" />
-    <file path="/foxneo.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366766282589" ignored="false" />
-    <file path="/.jshintrc" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366237147767" ignored="false" />
-    <file path="/polyfills.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366766335542" ignored="false" />
+    <file path="/foxneo.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366768937411" ignored="false" />
+    <file path="/.jshintrc" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366767217737" ignored="false" />
+    <file path="/polyfills.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366768324813" ignored="false" />
     <file path="/.bowercc" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366392248982" ignored="false" />
     <file path="/fox_qa_player.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366651297237" ignored="false" />
     <file path="$PROJECT_DIR$/../fng_player_platform/branches/tRS1/web/fox/fox_qa_player.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366661459100" ignored="false" />
@@ -53,6 +51,7 @@
     <file path="$PROJECT_DIR$/../../tests/fox/btn/btn_player.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366761474241" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/btn/btn_player_master_terrible.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366762614795" ignored="false" />
     <file path="/btn_player_master_terrible.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366761524182" ignored="false" />
+    <file path="/iframe.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366769073045" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +74,7 @@
       <file leaf-file-name="Gruntfile.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gruntfile.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="52" selection-start="2468" selection-end="2468" vertical-scroll-proportion="0.0">
+            <state line="81" column="57" selection-start="4014" selection-end="4014" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -84,17 +83,32 @@
       <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="16" selection-start="16" selection-end="16" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="2" column="27" selection-start="48" selection-end="48" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="foxneo.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="foxneo.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/foxneo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="16" selection-start="16" selection-end="16" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="83" column="22" selection-start="3090" selection-end="3090" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="iframe.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/js/iframe.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="59" selection-start="376" selection-end="376" vertical-scroll-proportion="0.18968871">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -110,13 +124,20 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name=".jshintrc" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.jshintrc">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="20" selection-start="376" selection-end="376" vertical-scroll-proportion="-11.875">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="polyfills.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/polyfills.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="40" selection-start="268" selection-end="268" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
+            <state line="0" column="18" selection-start="18" selection-end="18" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -148,8 +169,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/web/index.html" />
         <option value="$PROJECT_DIR$/web/js/watch.js" />
         <option value="$PROJECT_DIR$/web/js/nibbler.js" />
         <option value="$PROJECT_DIR$/config.js" />
@@ -159,11 +178,13 @@
         <option value="$PROJECT_DIR$/../fng_player_platform/branches/tRS1/web/fx/fx_player_qa.js" />
         <option value="$PROJECT_DIR$/../fng_player_platform/branches/tRS1/web/fox/fox_qa_player.js" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
-        <option value="$PROJECT_DIR$/.jshintrc" />
         <option value="$PROJECT_DIR$/web/js/debug.js" />
+        <option value="$PROJECT_DIR$/.jshintrc" />
         <option value="$PROJECT_DIR$/web/js/main.js" />
-        <option value="$PROJECT_DIR$/web/js/foxneo.js" />
+        <option value="$PROJECT_DIR$/web/js/lib/underscore/underscore.js" />
         <option value="$PROJECT_DIR$/web/js/polyfills.js" />
+        <option value="$PROJECT_DIR$/web/js/foxneo.js" />
+        <option value="$PROJECT_DIR$/web/js/iframe.js" />
       </list>
     </option>
   </component>
@@ -246,6 +267,54 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nibbler" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fox-rebuild" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="underscore" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nibbler" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fox-rebuild" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -391,16 +460,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/web/js/base64.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="27" selection-start="245" selection-end="245" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="11" selection-start="11" selection-end="11" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/error.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="7" column="28" selection-start="0" selection-end="656" vertical-scroll-proportion="0.104477614" />
@@ -438,16 +497,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.jshintrc">
+    <entry file="file://$PROJECT_DIR$/../../tests/fox/player/end-card-universal/end-card-universal.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="17" selection-start="393" selection-end="393" vertical-scroll-proportion="0.2988048">
+        <state line="152" column="4" selection-start="4886" selection-end="5305" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../tests/fox/player/end-card-universal/end-card-universal.js">
+    <entry file="file://$PROJECT_DIR$/.jshintrc">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="152" column="4" selection-start="4886" selection-end="5305" vertical-scroll-proportion="0.0">
+        <state line="19" column="20" selection-start="376" selection-end="376" vertical-scroll-proportion="-11.875">
           <folding />
         </state>
       </provider>
@@ -461,33 +520,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+    <entry file="file://$PROJECT_DIR$/web/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="52" selection-start="2468" selection-end="2468" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/polyfills.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="40" selection-start="268" selection-end="268" vertical-scroll-proportion="0.0">
+        <state line="2" column="27" selection-start="48" selection-end="48" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/main.js">
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="16" selection-start="16" selection-end="16" vertical-scroll-proportion="0.0">
+        <state line="81" column="57" selection-start="4014" selection-end="4014" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/lib/underscore/underscore.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/polyfills.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="18" selection-start="18" selection-end="18" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/js/foxneo.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="16" selection-start="16" selection-end="16" vertical-scroll-proportion="0.0">
-          <folding />
+        <state line="83" column="22" selection-start="3090" selection-end="3090" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/iframe.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="59" selection-start="376" selection-end="376" vertical-scroll-proportion="0.18968871">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
