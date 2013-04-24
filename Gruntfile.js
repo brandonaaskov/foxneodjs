@@ -47,7 +47,7 @@
                 compile: {
                     options: {
                         baseUrl: "web/js",
-                        name: 'foxneo',
+                        name: 'main',
                         out: "web/build/<%= pkg.name %>-<%= pkg.version %>.js",
 
                         //Introduced in 2.1.2 and considered experimental.

@@ -2,7 +2,7 @@
     "name": "foxneo",
     "version": "0.1.0",
     "description": "A javascript library to leverage Fox's digital video players.",
-    "main": "js/foxneo.js",
+    "main": "js/main.js",
     "devDependencies": {
         "grunt": "~0.4.1",
         "grunt-contrib-uglify": "~0.1.2",
