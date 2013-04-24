@@ -1,12 +1,13 @@
-/*global define, _ */
+/*global define */
 
-define(['config'], function (config) {
+define(['config', 'underscore'], function (config, _) {
 
     'use strict';
 
     var whatsBeenFixed = [];
 
     var init = function () {
+        fixBrokenFeatures();
         shim(config.shims);
     };
 
@@ -32,6 +33,17 @@ define(['config'], function (config) {
                 }
             }
         }
+    };
+
+    var fixBrokenFeatures = function () {
+        var nativeIsArray = Array.isArray;
+
+        //shim underscorejs (only the features we need)
+        window._ = window._ || {
+            isArray: nativeIsArray || function(obj) {
+                return window.toString.call(obj) === '[object Array]';
+            }
+        };
     };
 
     /**
@@ -97,7 +109,6 @@ define(['config'], function (config) {
     return {
         init: init,
         initialize: init, // alias
-        fixBrokenFeatures: init, // alias,
         getShimsAdded: function () { return whatsBeenFixed; }
     };
 });

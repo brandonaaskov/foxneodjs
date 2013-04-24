@@ -1,4 +1,4 @@
-/*global define, console */
+/*global define, _, console */
 
 define(['jquery', 'url', 'error', 'config'], function ($, urlHelper, error, config) {
     'use strict';
@@ -12,7 +12,21 @@ define(['jquery', 'url', 'error', 'config'], function ($, urlHelper, error, conf
     var log = function (message, data, logType) {
         if (config.debug)
         {
-            var logItems = getLogItems(message, data);
+            var logItems;
+
+            // we got an options object
+            if (!_.isUndefined(message) && _.isObject(message))
+            {
+                var options = arguments[0];
+                logItems = getLogItems(options.category, options.message);
+                logType = options.type;
+            }
+            else
+            {
+                logItems = getLogItems(message, data);
+            }
+
+
             logItems.message += ' | ';
 
             switch (logType)

@@ -20,7 +20,11 @@
 
             uglify: {
                 options: {
-                    banner: "/*! <%= pkg.name %> <%= grunt.template.today('yyyy-mm-dd') %> */\n",
+                    banner: "/*!\n" +
+                        "* Project: <%= pkg.name %> <%= pkg.version %>\n" +
+                        "* Last Modified: <%= grunt.template.today('yyyy-mm-dd') %>\n" +
+                        "* Author(s): <%= pkg.author %>\n" +
+                        "*/\n\n",
                     compress: true
 //                    mangle: true
                 },
@@ -36,7 +40,7 @@
                     options: {
                         baseUrl: "web/js",
                         name: 'main',
-                        out: "web/build/<%= pkg.name %>.js",
+                        out: "web/build/<%= pkg.name %>-<%= pkg.version %>.js",
 
                         //Introduced in 2.1.2 and considered experimental.
                         //If the minifier specified in the "optimize" option supports generating
@@ -63,11 +67,20 @@
                         //- "none": no minification will be done.
                         optimize: "none",
 
+                        //Allows namespacing requirejs, require and define calls to a new name.
+                        //This allows stronger assurances of getting a module space that will
+                        //not interfere with others using a define/require AMD-based module
+                        //system. The example below will rename define() calls to FoxNEO.define().
+                        //See http://requirejs.org/docs/faq-advanced.html#rename for a more
+                        //complete example.
+//                        namespace: 'FoxNEO',
+
+                        // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
-                            requirejs: 'lib/requirejs/require',
-                            jquery: 'lib/jquery/jquery.min',
-                            underscore: 'lib/underscore/underscore',
-                            Modernizr: 'lib/modernizr/modernizr.custom'
+                            almond: 'lib/almond/almond'
+                            , jquery: 'lib/jquery/jquery.min'
+                            , underscore: 'lib/underscore/underscore'
+//                            , Modernizr: 'lib/modernizr/modernizr.custom'
                         }
                     }
                 }

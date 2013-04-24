@@ -1,48 +1,85 @@
-/*global define, $, _, Modernizr */
+/*global define, FDM_Player_vars, $pdk */
 
-define(['jquery', 'underscore', 'Modernizr', 'polyfills', 'debug'], function (jQueryApp, UnderscoreApp, ModernizrApp, polyfills, debug) {
+define(['jquery', 'underscore', 'polyfills', 'debug'], function ($, _, polyfills, debug) {
     'use strict';
 
     var version = '0.1.0';
 
-    var init = function () {
-        polyfills.fixBrokenFeatures(); //setups up shims and polyfills
+    //-------------------------------------------------------------------------------- initialization
+    (function init () {
+//        polyfills.fixBrokenFeatures(); //setups up shims and polyfills
         debug.log('Polyfills added', polyfills.getShimsAdded());
 
         // deal with lib dependencies and make sure they're working properly
-        debug.checkForVersionChange('jQuery', jQueryApp, $);
-        debug.log('jQuery-' + jQueryApp().jquery);
-        debug.log('underscore-' + (UnderscoreApp || _).VERSION);
+//        debug.checkForVersionChange('jQuery', jQueryApp, $);
+        debug.log('jQuery-' + $().jquery);
+    })();
+    //-------------------------------------------------------------------------------- initialization
 
-        if (ModernizrApp && window.Modernizr)
-        {
-            debug.checkForVersionChange('Modernizr', ModernizrApp, Modernizr);
-
-        }
-
-        debug.log('Modernizr-' + (ModernizrApp || Modernizr)._version);
-
-//        just test to make sure watch is working properly
-//        var myTest = {
-//            name: "Brandon"
-//        };
-//
-//        myTest.watch('name', function () {
-//            //args: propertyName, oldValue, newValue
-//            debug.log('Watch fired', arguments);
-//        });
-//
-//        setTimeout(function () {
-//            myTest.name = 'Lauren';
-//        }, 2500);
+    //-------------------------------------------------------------------------------- public methods
+    var setPlayerMessage = function (options) {
+        displayModal(options);
     };
+    //-------------------------------------------------------------------------------- /public methods
 
-    init();
+
+
+    //-------------------------------------------------------------------------------- private methods
+    var displayModal = function (options) {
+        if (_.isObject(options))
+        {
+            var modalOptions = {
+                message: '',
+                clearAfter: 0, //time in seconds: 0 means it will stay on screen indefinitely
+                resetPlayer: false
+            };
+
+            for (var prop in options)
+            {
+                if (modalOptions.hasOwnProperty(prop))
+                {
+                    modalOptions[prop] = options[prop];
+                }
+            }
+
+            try
+            {
+                if (FDM_Player_vars.isFlash && _.isObject($pdk))
+                {
+                    if (modalOptions.resetPlayer)
+                    {
+                        $pdk.controller.resetPlayer();
+                    }
+
+                    $pdk.controller.setPlayerMessage(modalOptions.message, modalOptions.clearAfter);
+                }
+                else if (FDM_Player_vars.isIOS)
+                {
+                    //handle this in HTML5 with a card
+                    debug.log('TODO: handle the HTML5 card');
+                }
+            }
+            catch (exception)
+            {
+                // TODO: handle this, or get to a point where i don't have to use a try/catch
+            }
+        }
+        else
+        {
+            // TODO: log this somewhere
+            var errorObject = debug.getEmptyErrorObject();
+            errorObject.category = 'Argument Mismatch';
+            errorObject.message = 'The argument(s) you passed to the setPlayerMessage() method were incorrect. An ' +
+                'options object was expected.';
+            errorObject.type = 'warn';
+            debug.log(errorObject);
+        }
+    };
+    //-------------------------------------------------------------------------------- /private methods
 
     // Public API
     return {
-//        init: init,
-//        initialize: init, //alias
-        version: version
+        version: version,
+        setPlayerMessage: setPlayerMessage
     };
 });
