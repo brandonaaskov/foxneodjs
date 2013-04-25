@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/FoxNEO.temp.js" afterPath="$PROJECT_DIR$/web/FoxNEO.temp.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/web/js/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="nibbler.iws" />
@@ -14,7 +13,7 @@
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366134481670" ignored="false" />
     <file path="/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796972669" ignored="false" />
     <file path="/loadscript.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365792078607" ignored="false" />
-    <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366839168507" ignored="false" />
+    <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366910908819" ignored="false" />
     <file path="$PROJECT_DIR$/../../cisco/js/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365785922324" ignored="false" />
     <file path="/main.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366853666530" ignored="false" />
     <file path="/nibbler.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366221497453" ignored="false" />
@@ -54,10 +53,12 @@
     <file path="/iframe.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366853817454" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/btn/iframe-conversion.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366836468765" ignored="false" />
     <file path="/iframe-conversion.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366836439355" ignored="false" />
-    <file path="/FoxNEO.temp.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366853716083" ignored="false" />
-    <file path="$PROJECT_DIR$/../../tests/fox/btn/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366853926329" ignored="false" />
-    <file path="/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366852152885" ignored="false" />
+    <file path="/FoxNEO.temp.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366917560562" ignored="false" />
+    <file path="$PROJECT_DIR$/../../tests/fox/btn/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366917627599" ignored="false" />
+    <file path="/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366917627228" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/btn/player-only.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366832888223" ignored="false" />
+    <file path="$PROJECT_DIR$/../../tests/concepts/js/hoisting.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366916368967" ignored="false" />
+    <file path="/hoisting.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366916260267" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,12 +81,10 @@
       <file leaf-file-name="FoxNEO.temp.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/web/FoxNEO.temp.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="82" column="40" selection-start="3139" selection-end="3139" vertical-scroll-proportion="0.2364532">
+            <state line="174" column="65" selection-start="6213" selection-end="6213" vertical-scroll-proportion="0.546875">
               <folding>
                 <element signature="e#447#3022#0" expanded="false" />
                 <element signature="e#3533#3579#0" expanded="false" />
-                <element signature="e#3740#7170#0" expanded="false" />
-                <element signature="e#10456#11853#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -103,7 +102,7 @@
       <file leaf-file-name=".jshintrc" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.jshintrc">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="11" selection-start="262" selection-end="268" vertical-scroll-proportion="-8.75">
+            <state line="14" column="11" selection-start="262" selection-end="268" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -112,7 +111,7 @@
       <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="41" selection-start="802" selection-end="802" vertical-scroll-proportion="0.0">
+            <state line="19" column="41" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -168,15 +167,15 @@
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/.jshintrc" />
         <option value="$PROJECT_DIR$/web/js/main.js" />
-        <option value="$PROJECT_DIR$/web/FoxNEO.temp.js" />
         <option value="$PROJECT_DIR$/web/js/iframe.js" />
+        <option value="$PROJECT_DIR$/web/FoxNEO.temp.js" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="857" />
+    <option name="x" value="788" />
     <option name="y" value="22" />
-    <option name="width" value="968" />
+    <option name="width" value="1127" />
     <option name="height" value="1174" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -325,13 +324,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="857" y="22" width="968" height="1174" extended-state="0" />
+    <frame x="788" y="22" width="1127" height="1174" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14061557" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26455027" sideWeight="0.67108166" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22644928" sideWeight="0.96685606" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -409,11 +408,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/web/js/error.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="28" selection-start="0" selection-end="656" vertical-scroll-proportion="0.104477614" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../fng_player_platform/branches/tRS1/web/fox/fox_qa_player.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="701" column="55" selection-start="28539" selection-end="28539" vertical-scroll-proportion="0.30127576" />
@@ -470,21 +464,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/.jshintrc">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="11" selection-start="262" selection-end="268" vertical-scroll-proportion="-8.75">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/url.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="26" selection-start="880" selection-end="880" vertical-scroll-proportion="0.0">
+        <state line="14" column="11" selection-start="262" selection-end="268" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/web/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="41" selection-start="802" selection-end="802" vertical-scroll-proportion="0.0">
+        <state line="19" column="41" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -496,14 +483,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/url.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="26" selection-start="880" selection-end="880" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/lib/modernizr/modernizr.custom.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="6862" selection-start="7365" selection-end="7365" vertical-scroll-proportion="0.014778325">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/FoxNEO.temp.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="40" selection-start="3139" selection-end="3139" vertical-scroll-proportion="0.2364532">
+        <state line="174" column="65" selection-start="6213" selection-end="6213" vertical-scroll-proportion="0.546875">
           <folding>
             <element signature="e#447#3022#0" expanded="false" />
             <element signature="e#3533#3579#0" expanded="false" />
-            <element signature="e#3740#7170#0" expanded="false" />
-            <element signature="e#10456#11853#0" expanded="false" />
           </folding>
         </state>
       </provider>
