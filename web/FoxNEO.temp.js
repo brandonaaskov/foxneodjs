@@ -80,7 +80,7 @@
         (function init () {
             if (window.console)
             {
-                console.log('FoxNEO');
+//                console.log('FoxNEO');
             }
 
             fixBrokenFeatures();
@@ -90,12 +90,21 @@
 
 
         //-------------------------------------------------------------------------------- public methods
+
+        //--------------------------------------- core features
         var setPlayerMessage = function (options) {
             displayModal(options);
         };
+        //--------------------------------------- /core features
 
+
+
+
+        //--------------------------------------- iframe
         var iframe = function () {
-            (function init () {
+            var playerIds = []; // stores the ids of the elements we find
+
+            (function iframeInit () {
 //                console.log('iframe init');
             })();
 
@@ -115,15 +124,38 @@
                 var allAttributes = element.attributes;
                 var playerAttributes = {};
 
+                var addPlayerAttribute = function (key, value) {
+                    playerAttributes[key] = value.toString();
+                };
+
                 for (var i = 0, n = allAttributes.length; i < n; i++)
                 {
-                    var attr = allAttributes[i];
-                    var attributePrefix = 'data-';
+                    var attr = allAttributes[i],
+                        attributePrefix = 'data-',
+                        attrName = attr.nodeName;
 
-                    if (attr.nodeName.indexOf('data-') !== -1)
+                    if (attrName === 'id')
                     {
-                        var key = attr.nodeName.substr(attributePrefix.length);
-                        playerAttributes[key] = attr.nodeValue.toString();
+                        playerIds.push(attr.nodeValue);
+                        addPlayerAttribute(attrName, attr.nodeValue);
+                    }
+
+                    if (attrName.indexOf('data-') !== -1)
+                    {
+                        var key = attrName.substr(attributePrefix.length);
+                        var value;
+
+                        switch (key)
+                        {
+                            case 'width':
+                                key = attr.nodeValue || 640;
+                                break;
+                            case 'height':
+                                key = attr.nodeValue || 360;
+                                break;
+                        }
+
+                        addPlayerAttribute(key, attr.nodeValue);
                     }
                 }
 
@@ -132,26 +164,123 @@
 
 
             var injectIframe = function (attributes) {
+                var elements = document.querySelectorAll('#' + attributes.id);
+
+                if (elements.length === 1)
+                {
+                    var domElement = elements[0];
+                    domElement.innerHTML = '<iframe ' +
+                        'src="http://baaskov.local/tests/fox/btn/iframe-player.html?param=test" ' +
+                        'scrolling="no" ' +
+                        'frameborder="0" ' +
+                        'width="' + attributes.width  +
+                        'height="'+ attributes.height +'"></iframe>';
+                }
+                else if (elements.length > 1)
+                {
+                    throw new Error('The HTML ID you used for the player must be unique, ' +
+                        'but there is more than one in this page.');
+                }
                 console.log('attributes', attributes);
             };
 
-            var swapPlayer = function (selector) {
+            var swapPlayers = function (selector) {
                 var players = getPlayers(selector);
 
                 for (var i = 0, n = players.length; i < n; i++)
                 {
                     var player = players[i];
                     var attributes = getPlayerAttributes(player);
+                    injectIframe(attributes);
                 }
-
-                injectIframe(attributes);
             };
 
             // Public API
             return {
-                swapPlayer: swapPlayer
+                swapPlayers: swapPlayers
             };
         };
+        //--------------------------------------- /iframe
+
+
+
+        //--------------------------------------- url
+        var url = function (url) {
+            var urlString = url || window.location.href;
+
+            var getQueryParams = function () {
+                var queryParams = {};
+
+                if (urlString.indexOf('?') !== -1)
+                {
+                    var urlSplit = urlString.split('?');
+                    queryParams = urlSplit[1].split('&');
+                }
+
+                return queryParams;
+            };
+
+            var loop = function (queryParams, key, functionForMatch) {
+                for (var i = 0, n = queryParams.length; i < n; i++)
+                {
+                    var keyValuePair = queryParams[i].split('=');
+
+                    if (keyValuePair[0] === key)
+                    {
+                        var value = keyValuePair[1];
+                        functionForMatch.call(key, value);
+                    }
+                }
+            };
+
+            var paramExists = function (key, value, callback) {
+                var queryParams = getQueryParams();
+                console.log('paramExists? ' + key, queryParams);
+
+                loop(queryParams, key, function (foundKey, foundValue) {
+                    console.log('paramExists:loop:foundKey', foundKey);
+                    console.log('paramExists:loop:foundValue', foundValue);
+                    console.log('paramExists:loop:value', value);
+                    if (value) //value is optional, but we check for an exact match here too if it exists
+                    {
+                        return (foundValue === value) ? true : false;
+                    }
+                    console.log('paramExists:loop:returning true');
+                    callback.call(true);
+                });
+
+                console.log('paramExists:loop:returning false', callback);
+                callback().call(false);
+            };
+
+            var getParamValue = function (key) {
+                console.log('getParamValue:key', key);
+                paramExists(key, function (keyWasFound) {
+                    console.log('getParamValue:keyWasFound', keyWasFound);
+                    if (keyWasFound)
+                    {
+                        console.log('getParamValue:paramExists', key);
+                        var queryParams = getQueryParams();
+                        loop(queryParams, key, function (foundKey, foundValue) {
+                            console.log('getParamValue:foundValue', foundValue);
+                            return foundValue;
+                        });
+                    }
+                    else
+                    {
+                        console.log('well shit');
+                    }
+                });
+            };
+
+            // Public API
+            return  {
+                paramExists : paramExists,
+                getParamValue: getParamValue
+            };
+        };
+        //--------------------------------------- /url
+
         //-------------------------------------------------------------------------------- /public methods
 
 
@@ -204,8 +333,13 @@
 
         //-------------------------------------------------------------------------------- Public API
         return {
-            setPlayerMessage: setPlayerMessage,
-            iframe: iframe
+            player: {
+                setPlayerMessage: setPlayerMessage,
+                iframe: iframe
+            },
+            utils: {
+                url: url
+            }
         };
         //-------------------------------------------------------------------------------- /Public API
     };

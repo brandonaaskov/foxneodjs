@@ -60,7 +60,7 @@ require(['almond', 'jquery', 'underscore', 'polyfills', 'iframe', 'debug'], func
                     else if (FDM_Player_vars.isIOS)
                     {
                         //handle this in HTML5 with a card
-                        debug.log('TODO: handle the HTML5 card');
+                        debug.log('TODO: handle the HTML5 card asap');
                     }
                 }
                 catch (exception)
