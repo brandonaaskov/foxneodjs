@@ -7,6 +7,7 @@ The FoxNEO javascript library is a globally referenced object that contains all 
 * requirejs
 * libraries
 * polyfills
+* modularized
 
 ###### Overview
 Creating a library consisting of modules was a clear choice. By modularizing code (whether it be javascript or otherwise), we can create dependencies that are only included when/where needed, make the code portable, as well as make it testable. [Addy Osmani has much to say on the matter](http://addyosmani.com/writing-modular-js/), and he also explains it in a very good way.
@@ -18,9 +19,16 @@ Along with many others out there, I prefer AMD because it feels more mature, the
 ###### RequireJS
 * why requirejs
 
+###### Neat Features
+* watch
+*
+
 
 ### Build Process
 * requirejs optimization
-* grunt
-* watch
+* grunt (and grunt tasks and grunt-cli) 
+* gruntfile
+* package.json
+* npm-install
+* .jshintrc
 * 

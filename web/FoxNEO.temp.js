@@ -11,7 +11,12 @@
         //-------------------------------------------------------------------------------- initialization
         var fixBrokenFeatures = function () {
 
-            //---------------------------------------------- underscore shims
+            //---------------------------------------------- polyfills
+            // base64 (btoa and atob aren't supported pre IE10)
+            (function(){var t="undefined"!=typeof window?window:exports,r="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",n=function(){try{document.createElement("$")}catch(t){return t}}();t.btoa||(t.btoa=function(t){for(var o,e,a=0,c=r,f="";t.charAt(0|a)||(c="=",a%1);f+=c.charAt(63&o>>8-8*(a%1))){if(e=t.charCodeAt(a+=.75),e>255)throw n;o=o<<8|e}return f}),t.atob||(t.atob=function(t){if(t=t.replace(/=+$/,""),1==t.length%4)throw n;for(var o,e,a=0,c=0,f="";e=t.charAt(c++);~e&&(o=a%4?64*o+e:e,a++%4)?f+=String.fromCharCode(255&o>>(6&-2*a)):0)e=r.indexOf(e);return f})})();
+            //---------------------------------------------- /polyfills
+
+            //---------------------------------------------- underscore polyfills
             _ = window._ || {};
 
             var breaker = {};
@@ -74,7 +79,7 @@
             _.has = function(obj, key) {
                 return hasOwnProperty.call(obj, key);
             };
-            //---------------------------------------------- /underscore shims
+            //---------------------------------------------- /underscore polyfills
         };
 
         (function init () {
@@ -144,13 +149,29 @@
                         var key = attrName.substr(attributePrefix.length);
                         var value = '';
 
-                        switch (key)
+                        /**
+                         * Some of these cases are just for defaults, but some are for fixing casing. These keys
+                         * eventually get passed to the player object on the page, and some browser (and jQuery)
+                         * lowercase all attribute names, which means we have to switch them back to the proper case
+                         * otherwise they won't work in the player properly.
+                         */
+                        switch (key.toLowerCase())
                         {
                             case 'width':
                                 value = attr.nodeValue || 640;
                                 break;
                             case 'height':
                                 value = attr.nodeValue || 360;
+                                break;
+                            case 'releaseurl':
+                                key = 'releaseURL';
+                                value = attr.nodeValue;
+                                break;
+                            case 'sitesection':
+                                key = 'siteSection';
+                                break;
+                            default:
+                                value = attr.nodeValue;
                                 break;
                         }
 
@@ -170,9 +191,10 @@
                 if (elements.length === 1)
                 {
                     var domElement = elements[0];
+                    //TODO: change this url reference
                     domElement.innerHTML = '<iframe ' +
                         'src="http://baaskov.local/tests/fox/btn/iframe-player.html?' +
-                        objectToArray(attributes).join('&') + '"' +
+                        'playerParams=' + btoa(JSON.stringify(attributes)) + '"' +
                         'scrolling="no" ' +
                         'frameborder="0" ' +
                         'width="' + attributes.width + '"' +
@@ -357,6 +379,18 @@
 
             return obj;
         };
+
+        var getRandomColor = function () {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+
+            for (var i = 0; i < 6; i++)
+            {
+                color += letters[Math.round(Math.random() * 15)];
+            }
+
+            return color;
+        }
         //-------------------------------------------------------------------------------- /private methods
 
         //-------------------------------------------------------------------------------- Public API
@@ -368,7 +402,10 @@
             utils: {
                 url: url,
                 objectToArray: objectToArray,
-                arrayToObject: arrayToObject
+                arrayToObject: arrayToObject,
+                getRandomColor: getRandomColor,
+                btoa: window.btoa,
+                atob: window.atob
             }
         };
         //-------------------------------------------------------------------------------- /Public API
