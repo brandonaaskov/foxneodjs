@@ -13,7 +13,7 @@
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366134481670" ignored="false" />
     <file path="/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796972669" ignored="false" />
     <file path="/loadscript.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365792078607" ignored="false" />
-    <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366926944559" ignored="false" />
+    <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366944316611" ignored="false" />
     <file path="$PROJECT_DIR$/../../cisco/js/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365785922324" ignored="false" />
     <file path="/main.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366853666530" ignored="false" />
     <file path="/nibbler.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366221497453" ignored="false" />
@@ -53,8 +53,8 @@
     <file path="/iframe.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366853817454" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/btn/iframe-conversion.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366936801525" ignored="false" />
     <file path="/iframe-conversion.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366934633988" ignored="false" />
-    <file path="/FoxNEO.temp.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366938957171" ignored="false" />
-    <file path="$PROJECT_DIR$/../../tests/fox/btn/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366937282717" ignored="false" />
+    <file path="/FoxNEO.temp.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366966625790" ignored="false" />
+    <file path="$PROJECT_DIR$/../../tests/fox/btn/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366966599874" ignored="false" />
     <file path="/iframe-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366937280328" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/btn/player-only.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366832888223" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/concepts/js/hoisting.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366916368967" ignored="false" />
@@ -81,24 +81,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="FoxNEO.temp.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/web/FoxNEO.temp.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="284" column="35" selection-start="10486" selection-end="10486" vertical-scroll-proportion="0.52208203">
-              <folding>
-                <element signature="e#447#3833#0" expanded="false" />
-                <element signature="e#5247#6140#0" expanded="false" />
-                <element signature="e#8229#9549#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Gruntfile.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gruntfile.js">
           <provider selected="true" editor-type-id="text-editor">
             <state line="13" column="49" selection-start="333" selection-end="333" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FoxNEO.temp.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/FoxNEO.temp.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="45" selection-start="448" selection-end="448" vertical-scroll-proportion="0.19075145">
+              <folding>
+                <element signature="e#4542#8302#0" expanded="false" />
+                <element signature="e#8453#10666#0" expanded="false" />
+                <element signature="e#10920#13206#0" expanded="false" />
+                <element signature="e#13256#13722#0" expanded="false" />
+                <element signature="e#14212#15609#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -115,7 +117,7 @@
       <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="41" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0">
+            <state line="19" column="13" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -133,7 +135,7 @@
       <file leaf-file-name="url.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/url.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="26" selection-start="880" selection-end="880" vertical-scroll-proportion="0.0">
+            <state line="36" column="6" selection-start="880" selection-end="880" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -177,10 +179,50 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1181" />
+    <option name="x" value="515" />
     <option name="y" value="22" />
-    <option name="width" value="1379" />
-    <option name="height" value="1414" />
+    <option name="width" value="1165" />
+    <option name="height" value="1024" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>CSS</id>
+          </State>
+          <State>
+            <id>Code style issuesJavaScript</id>
+          </State>
+          <State>
+            <id>Control flow issuesJavaScript</id>
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>JavaScript function metricsJavaScript</id>
+          </State>
+          <State>
+            <id>JavaScript validity issuesJavaScript</id>
+          </State>
+          <State>
+            <id>Potentially confusing code constructsJavaScript</id>
+          </State>
+          <State>
+            <id>XPath</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>CoffeeScript</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
@@ -208,7 +250,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -261,18 +302,19 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="recentsLimit" value="5" />
+    <property name="options.lastSelected" value="editor.preferences.appearance" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../fng_player_platform/branches/tRS1/web" />
     <property name="FullScreen" value="false" />
     <property name="DefaultHtmlFileTemplate" value="Html5" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -328,13 +370,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1181" y="22" width="1379" height="1414" extended-state="0" />
+    <frame x="515" y="22" width="1165" height="1024" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14061557" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18436578" sideWeight="0.9837963" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21891418" sideWeight="0.9837963" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -459,23 +501,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="49" selection-start="333" selection-end="333" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.jshintrc">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="11" selection-start="262" selection-end="268" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="41" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -489,7 +517,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/js/url.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="26" selection-start="880" selection-end="880" vertical-scroll-proportion="0.0">
+        <state line="36" column="6" selection-start="880" selection-end="880" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -499,13 +527,29 @@
         <state line="3" column="6862" selection-start="7365" selection-end="7365" vertical-scroll-proportion="0.014778325" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="13" selection-start="822" selection-end="822" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="49" selection-start="333" selection-end="333" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/FoxNEO.temp.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="284" column="35" selection-start="10486" selection-end="10486" vertical-scroll-proportion="0.52208203">
+        <state line="11" column="45" selection-start="448" selection-end="448" vertical-scroll-proportion="0.19075145">
           <folding>
-            <element signature="e#447#3833#0" expanded="false" />
-            <element signature="e#5247#6140#0" expanded="false" />
-            <element signature="e#8229#9549#0" expanded="false" />
+            <element signature="e#4542#8302#0" expanded="false" />
+            <element signature="e#8453#10666#0" expanded="false" />
+            <element signature="e#10920#13206#0" expanded="false" />
+            <element signature="e#13256#13722#0" expanded="false" />
+            <element signature="e#14212#15609#0" expanded="false" />
           </folding>
         </state>
       </provider>
