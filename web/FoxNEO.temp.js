@@ -307,7 +307,6 @@
                 try
                 {
                     console.log('try');
-                    debugger;
                     if (FDM_Player_vars.isFlash && _.isObject($pdk))
                     {
                         if (modalOptions.resetPlayer)
