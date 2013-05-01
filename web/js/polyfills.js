@@ -1,28 +1,23 @@
 /*global define, _ */
 
-define(['config'], function (config) {
+define(['underscore', 'config', 'debug'], function (underscore, config, debug) {
 
     'use strict';
 
-    var whatsBeenFixed = [];
-
-    /**
-     * The fixBrokenFeatures function is used in lieu of using something like underscore or Modernizr. The test page
-     * specifically has no libraries included so that we can shim anything that we need.
-     */
-    var shim = function (shimsToAdd) {
-        if (_.isArray(shimsToAdd))
+    var fixBrokenFeatures = function ()
+    {
+        if (_.isArray(arguments[0])) //we expect an array of string options here
         {
-            for (var i = 0, n = shimsToAdd.length; i < n; i++)
+            var polyfillList = arguments[0];
+            for (var i = 0, n = polyfillList.length; i < n; i++)
             {
-                if (typeof shimsToAdd[i] === 'string')
+                if (typeof polyfillList[i] === 'string')
                 {
-                    var shimToAdd = shimsToAdd[i].toLowerCase();
-                    switch (shimToAdd)
+                    switch (polyfillList[i].toLowerCase())
                     {
                         case 'watch':
                             watch();
-                            whatsBeenFixed.push(shimToAdd);
+                            debug.log('watch polyfill added');
                             break;
                     }
                 }
@@ -30,21 +25,11 @@ define(['config'], function (config) {
         }
     };
 
-    var fixBrokenFeatures = function () {
-        var nativeIsArray = Array.isArray;
-
-        //shim underscorejs (only the features we need)
-//        window._ = window._ || {
-//            isArray: nativeIsArray || function(obj) {
-//                return window.toString.call(obj) === '[object Array]';
-//            }
-//        };
-    };
-
+    //---------------------------------------------- custom polyfills
     /**
      * This allows us to monitor property changes on objects and run callbacks when that happens.
      */
-    var watch = function () {
+    function watch () {
         /*
          * object.watch polyfill
          *
@@ -55,6 +40,7 @@ define(['config'], function (config) {
          * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
          */
 
+        // object.watch
         if (!Object.prototype.watch) {
             Object.defineProperty(Object.prototype, "watch", {
                 enumerable: false
@@ -85,7 +71,7 @@ define(['config'], function (config) {
             });
         }
 
-// object.unwatch
+        // object.unwatch
         if (!Object.prototype.unwatch) {
             Object.defineProperty(Object.prototype, "unwatch", {
                 enumerable: false
@@ -98,15 +84,10 @@ define(['config'], function (config) {
                 }
             });
         }
-    };
+    }
+    //---------------------------------------------- /custom polyfills
 
     (function init () {
-        fixBrokenFeatures();
-        shim(['watch']);
+        fixBrokenFeatures(['watch']);
     })();
-
-    // Public API
-    return {
-        getShimsAdded: function () { return whatsBeenFixed; }
-    };
 });

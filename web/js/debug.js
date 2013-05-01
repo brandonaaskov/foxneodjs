@@ -1,6 +1,6 @@
 /*global define, _, console */
 
-define(['jquery', 'url', 'error', 'config'], function ($, urlHelper, error, config) {
+define(['url', 'error', 'config'], function (urlHelper, error, config) {
     'use strict';
 
     var debugSetting = config.debug || false;

@@ -4,8 +4,8 @@ define([], function () {
     'use strict';
 
     // DON'T MODIFY THESE. PLZ. kthxbai.
-    var packageName = 'FoxNEO',
-        version = '0.1.0';
+    var packageName = '@@packageName',
+        version = '@@version';
 
     // Public API
     return {

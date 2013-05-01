@@ -1,9 +1,11 @@
 (function(){
     'use strict';
 
-/*global module */
+/*global module, console */
 
     module.exports = function (grunt) {
+        var timestamp = new Date().getTime();
+
         grunt.initConfig({
             pkg: grunt.file.readJSON('package.json'),
 
@@ -15,31 +17,47 @@
 //                beforeconcat: ['web/js/app/**/*.js']
             },
 
-            replace: {
-                dist: {
-                    options: {
-                        variables: {
-                            projectName: '<%= pkg.name %>'
-                        },
-                        prefix: '@@'
-                    }
-                }
-            },
+//            replace: {
+//                "Replacing Items in config.js": { //can be any name, might as well make it descriptive
+//                    options: {
+//                        prefix: '@@', //this is actually the default
+//                        variables: {
+//                            'projectName': '<%= pkg.name %>',
+//                            'version': '<%= pkg.version %>',
+//                            'buildDate': '<%= grunt.template.date('+timestamp+', "yyyy-mm-dd hh:mm:ss") %>', //1996-11-10
+//                            'timestamp': timestamp
+//                        },
+//                        files: [
+//                            {
+//                                src: ['web/js/config.js'],
+//                                dest: 'web/build/test/'
+//                            }
+//                        ]
+//                    }
+//                }
+//            },
 
-            uglify: {
-                options: {
-                    banner: "/*!\n" +
-                        "* Project: <%= pkg.name %> <%= pkg.version %>\n" +
-                        "* Last Modified: <%= grunt.template.today('yyyy-mm-dd') %>\n" +
-                        "* Author(s): <%= pkg.author %>\n" +
-                        "*/\n\n",
-                    compress: true
-//                    mangle: true
-                },
-                minification: {
-                    files: {
-                        'web/build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['web/build/<%= pkg.name %>-<%= pkg.version %>.js']
-                    }
+            replace: {
+                "Replacing Items in config.js": { //can be any name, might as well make it descriptive
+                    src: ['web/js/config.js'],             // source files array (supports minimatch)
+                    dest: 'web/build/tmp/',             // destination directory or file
+                    replacements: [
+                    {
+                        from: '@@packageName',                   // string replacement
+                        to: '<%= pkg.name %>'
+                    },
+                    {
+                        from: '@@version',                   // string replacement
+                        to: '<%= pkg.version %>'
+                    },
+                    {
+                        from: '@@buildDate',      // regex replacement ('Fooo' to 'Mooo')
+                        to: '<%= grunt.template.date('+timestamp+', "yyyy-mm-dd hh:mm:ss") %>'
+                    },
+                    {
+                        from: '@@timestamp',
+                        to: timestamp
+                    }]
                 }
             },
 
@@ -114,6 +132,41 @@
                 }
             },
 
+//            "regex-replace": {
+//                afterRequire: { //specify a target with any name
+//                    src: ['web/build/<%= pkg.name %>-<%= pkg.version %>.js'],
+//                    actions: [
+//                        {
+//                            search: '@@version',
+//                            replace: '<%= pkg.version %>',
+//                            flags: 'g'
+//                        },
+//                        {
+//                            search: '@@timestamp',
+//                            replace: '<%= grunt.template.date(new Date().getTime(), "yyyy-mm-dd hh:mm:ss") %>',
+//                            flags: 'g'
+//                        }
+//                    ]
+//                }
+//            },
+
+            uglify: {
+                options: {
+                    banner: "/*!\n" +
+                        "* Project: <%= pkg.name %> <%= pkg.version %>\n" +
+                        "* Last Modified: <%= grunt.template.today('yyyy-mm-dd') %>\n" +
+                        "* Author(s): <%= pkg.author %>\n" +
+                        "*/\n\n",
+                    compress: true
+//                    mangle: true
+                },
+                minification: {
+                    files: {
+                        'web/build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['web/build/<%= pkg.name %>-<%= pkg.version %>.js']
+                    }
+                }
+            },
+
 //            concat: {
 //                options: {
 //                    separator: ';',
@@ -139,10 +192,12 @@
 //        grunt.loadNpmTasks('grunt-contrib-concat');
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-watch');
-        grunt.loadNpmTasks('grunt-replace');
+//        grunt.loadNpmTasks('grunt-replace');
+        grunt.loadNpmTasks('grunt-text-replace');
+//        grunt.loadNpmTasks('grunt-regex-replace');
 
-        grunt.registerTask('default', ['replace', 'jshint', 'requirejs', 'uglify']);
-        grunt.registerTask('dev', ['replace', 'jshint', 'requirejs']);
-        grunt.registerTask('prod', ['jshint', 'requirejs', 'uglify']);
+        grunt.registerTask('default', ['jshint', 'replace', 'requirejs', 'uglify']);
+        grunt.registerTask('dev', ['jshint', 'replace', 'requirejs']);
+        grunt.registerTask('prod', ['jshint', 'replace', 'requirejs', 'uglify']);
     };
 })();

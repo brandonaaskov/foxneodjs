@@ -12,6 +12,8 @@
 
         //--------------------------------------- player
         var player = function () {
+            var initialized = false;
+
             var setPlayerMessage = function (options) {
                 displayModal(options);
             };
@@ -306,7 +308,6 @@
 
                 try
                 {
-                    console.log('try');
                     if (FDM_Player_vars.isFlash && _.isObject($pdk))
                     {
                         if (modalOptions.resetPlayer)
@@ -440,6 +441,89 @@
                 return hasOwnProperty.call(obj, key);
             };
             //---------------------------------------------- /underscore polyfills
+
+
+
+            //---------------------------------------------- custom polyfills
+            if (_.isArray(arguments[0]))
+            {
+                var polyfillList = arguments[0];
+                for (var i = 0, n = polyfillList.length; i < n; i++)
+                {
+                    if (typeof polyfillList[i] === 'string')
+                    {
+                        switch (polyfillList[i].toLowerCase())
+                        {
+                            case 'watch':
+                                watch();
+                                console.log('watch polyfill added');
+                                break;
+                        }
+                    }
+                }
+            }
+
+            /**
+             * This allows us to monitor property changes on objects and run callbacks when that happens.
+             */
+            function watch () {
+                /*
+                 * object.watch polyfill
+                 *
+                 * 2012-04-03
+                 *
+                 * By Eli Grey, http://eligrey.com
+                 * Public Domain.
+                 * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+                 */
+
+                // object.watch
+                if (!Object.prototype.watch) {
+                    Object.defineProperty(Object.prototype, "watch", {
+                        enumerable: false
+                        , configurable: true
+                        , writable: false
+                        , value: function (prop, handler) {
+                            var
+                                oldval = this[prop]
+                                , newval = oldval
+                                , getter = function () {
+                                    return newval;
+                                }
+                                , setter = function (val) {
+                                    oldval = newval;
+                                    return newval = handler.call(this, prop, oldval, val);
+                                }
+                                ;
+
+                            if (delete this[prop]) { // can't watch constants
+                                Object.defineProperty(this, prop, {
+                                    get: getter
+                                    , set: setter
+                                    , enumerable: true
+                                    , configurable: true
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // object.unwatch
+                if (!Object.prototype.unwatch) {
+                    Object.defineProperty(Object.prototype, "unwatch", {
+                        enumerable: false
+                        , configurable: true
+                        , writable: false
+                        , value: function (prop) {
+                            var val = this[prop];
+                            delete this[prop]; // remove accessors
+                            this[prop] = val;
+                        }
+                    });
+                }
+            };
+            //---------------------------------------------- /custom polyfills
+
         };
         //-------------------------------------------------------------------------------- /private methods
 
@@ -449,12 +533,11 @@
 
         //-------------------------------------------------------------------------------- initialization
         (function init () {
-            if (window.console)
-            {
-//                console.log('FoxNEO');
-            }
+            fixBrokenFeatures(['watch']);
 
-            fixBrokenFeatures();
+            player.watch('initialized', function (propertyName, oldValue, newValue) {
+                console.log('ISDFSDFSDFSDFSDF', arguments);
+            });
         })();
         //-------------------------------------------------------------------------------- /initialization
 
