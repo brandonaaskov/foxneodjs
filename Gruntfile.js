@@ -4,10 +4,11 @@
 /*global module, console */
 
     module.exports = function (grunt) {
+        var packageJSON = grunt.file.readJSON('package.json');
         var timestamp = new Date().getTime();
 
         grunt.initConfig({
-            pkg: grunt.file.readJSON('package.json'),
+            pkg: packageJSON,
 
             jshint: {
                 options: {
@@ -76,7 +77,7 @@
                             almond: 'lib/almond/almond'
                             , jquery: 'lib/jquery/jquery.min'
                             , underscore: 'lib/underscore/underscore'
-//                            , Modernizr: 'lib/modernizr/modernizr.custom'
+                            , modernizr: 'lib/modernizr/modernizr.custom'
                         },
 
                         //Defines the loading time for modules. Depending on the complexity of the
@@ -95,15 +96,20 @@
                     replacements: [
                         {
                             from: '@@packageName',
-                            to: '<%= pkg.name %>'
+                            to: packageJSON.name
                         },
                         {
                             from: '@@version',
-                            to: '<%= pkg.version %>'
+                            to: packageJSON.version
                         },
                         {
                             from: '@@buildDate',
-                            to: '<%= grunt.template.date('+timestamp+', "yyyy-mm-dd hh:mm:ss") %>'
+                            to: function () {
+                                var buildDate = grunt.template.date(timestamp, "yyyy-mm-dd hh:mm:ss");
+                                console.log('Replacing @@buildDate with ' + buildDate);
+
+                                return buildDate;
+                            }
                         },
                         {
                             from: '@@timestamp',
@@ -141,7 +147,7 @@
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-text-replace');
 
-        grunt.registerTask('default', ['jshint', 'replace', 'requirejs', 'uglify']);
+        grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify']);
         grunt.registerTask('dev', ['jshint', 'requirejs', 'replace']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'replace', 'uglify']);
     };

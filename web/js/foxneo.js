@@ -1,6 +1,6 @@
 /*global define, FDM_Player_vars, $pdk, _ */
 
-define(['polyfills', 'player/iframe', 'config', 'debug'], function (polyfills, iframe, config, debug) {
+define(['polyfills', 'player', 'config', 'debug'], function (polyfills, player, config, debug) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
@@ -84,6 +84,6 @@ define(['polyfills', 'player/iframe', 'config', 'debug'], function (polyfills, i
     return {
         version: config.version,
         setPlayerMessage: setPlayerMessage,
-        iframe: iframe
+        player: player
     };
 });
