@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define([], function () {
+define(['debug'], function (debug) {
     'use strict';
 
     var arrayToObject = function (arr) {
@@ -75,12 +75,21 @@ define([], function () {
         return color;
     };
 
+    var dispatchEvent = function (eventName, data) {
+        var event = document.createEvent('Event');
+        event.initEvent(eventName, true, true);
+        event.customData = data || {};
+        window.dispatchEvent(event);
+    };
+
     // Public API
     return {
         arrayToObject: arrayToObject,
         objectToArray: objectToArray,
         pipeStringToObject: pipeStringToObject,
         objectToPipeString: objectToPipeString,
-        getRandomColor: getRandomColor
+        getRandomColor: getRandomColor,
+        dispatchEvent: dispatchEvent,
+        dispatch: dispatchEvent //alias
     };
 });

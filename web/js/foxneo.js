@@ -1,6 +1,6 @@
 /*global define, FDM_Player_vars, $pdk, _ */
 
-define(['polyfills', 'player', 'config', 'debug'], function (polyfills, player, config, debug) {
+define(['player', 'url', 'utils', 'polyfills', 'config', 'debug'], function (player, url, utils, polyfills, config, debug) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
@@ -76,7 +76,7 @@ define(['polyfills', 'player', 'config', 'debug'], function (polyfills, player, 
 
     //-------------------------------------------------------------------------------- initialization
     (function init () {
-        debug.log(config.packageName + ' initialized. Built (@@buildDate)');
+        debug.log('Ready: Built (@@buildDate)');
     })();
     //-------------------------------------------------------------------------------- /initialization
 
@@ -84,6 +84,8 @@ define(['polyfills', 'player', 'config', 'debug'], function (polyfills, player, 
     return {
         version: config.version,
         setPlayerMessage: setPlayerMessage,
-        player: player
+        player: player,
+        url: url,
+        utils: utils
     };
 });

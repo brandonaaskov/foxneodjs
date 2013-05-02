@@ -17,7 +17,7 @@ define(['underscore', 'config', 'debug'], function (underscore, config, debug) {
                     {
                         case 'watch':
                             watch();
-                            debug.log('watch polyfill added');
+//                            debug.log('watch polyfill added');
                             break;
                     }
                 }

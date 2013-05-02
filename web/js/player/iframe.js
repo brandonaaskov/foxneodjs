@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['debug'], function (debug) {
+define(['utils', 'debug'], function (utils, debug) {
     'use strict';
 
     var playerIds = []; // stores the ids of the elements we find
@@ -44,7 +44,7 @@ define(['debug'], function (debug) {
     var injectIframe = function (element, attributes, iframeURL) {
         if (element && _.isObject(element))
         {
-            var attributesString = utils().objectToPipeString(attributes);
+            var attributesString = utils.objectToPipeString(attributes);
 //                        console.log('attributesString', attributesString);
             element.innerHTML = '<iframe ' +
                 'src="'+ iframeURL + '?' +
@@ -74,7 +74,7 @@ define(['debug'], function (debug) {
     };
 
     (function () {
-        debug.log('iframe init');
+//        debug.log('iframe init');
     })();
 
     // Public API

@@ -1,12 +1,12 @@
 /*global define, _, console */
 
-define(['url', 'error', 'config'], function (urlHelper, error, config) {
+define(['url', 'error', 'config'], function (url, error, config) {
     'use strict';
 
     var debugSetting = config.debug || false;
 
     var init = function () {
-        debugSetting = urlHelper.paramExists('debug', 'true'); //allows for overrides from URL
+        debugSetting = url.paramExists('debug', 'true'); //allows for overrides from URL
     };
 
     var log = function (message, data, logType) {
