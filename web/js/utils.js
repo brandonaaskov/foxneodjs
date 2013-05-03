@@ -26,10 +26,7 @@ define(['debug'], function (debug) {
 
         for (var prop in obj)
         {
-            if (obj.hasOwnProperty(prop))
-            {
-                outputArray.push(prop + '=' + obj[prop]);
-            }
+            outputArray.push(prop + '=' + obj[prop]);
         }
 
         return outputArray;
@@ -54,10 +51,7 @@ define(['debug'], function (debug) {
 
         for (var prop in obj)
         {
-            if (obj.hasOwnProperty(prop))
-            {
-                properties.push(prop + '=' + obj[prop]);
-            }
+            properties.push(prop + '=' + obj[prop]);
         }
 
         return properties.join(delimiter || '|');

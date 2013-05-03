@@ -1,6 +1,6 @@
 /*global require */
 
-require(['almond', 'foxneo', 'utils'], function (almond, foxneo, utils) {
+require(['almond', 'foxneo', 'jquery', 'utils'], function (almond, foxneo, jquery, utils) {
     'use strict';
 
     window.FoxNEO = window.$f = foxneo;

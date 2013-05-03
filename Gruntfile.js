@@ -75,7 +75,7 @@
                         // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
                             almond: 'lib/almond/almond'
-                            , jquery: 'lib/jquery/jquery.min'
+                            , jquery: 'lib/jquery/jquery-2.0.0.min'
                             , underscore: 'lib/underscore/underscore'
                             , modernizr: 'lib/modernizr/modernizr.custom'
                         },

@@ -5,10 +5,6 @@ define(['url', 'error', 'config'], function (url, error, config) {
 
     var debugSetting = config.debug || false;
 
-    var init = function () {
-        debugSetting = url.paramExists('debug', 'true'); //allows for overrides from URL
-    };
-
     var log = function (message, data, logType) {
         if (config.debug)
         {
@@ -65,19 +61,6 @@ define(['url', 'error', 'config'], function (url, error, config) {
             log(customError.category, customError, 'warn');
         }
 
-//        if (typeof data === 'object' || typeof data === 'string') // Using typeof is fine since we're treating arrays and objects the same here.
-//        {
-//            payload = data;
-//        }
-//        else
-//        {
-//            customError = error.getEmptyErrorObject();
-//            customError.category = 'Type Mismatch';
-//            customError.message = "The payload you sent with your log() call wasn't an object or a string.";
-//
-//            log(customError.category, customError, 'warn');
-//        }
-
         return {
             message: message,
             data: payload
@@ -129,7 +112,9 @@ define(['url', 'error', 'config'], function (url, error, config) {
         return version;
     };
 
-    init();
+    (function init () {
+        debugSetting = url.paramExists('debug', 'true'); //allows for overrides from URL
+    })();
 
     // Public API
     return {
