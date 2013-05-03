@@ -131,12 +131,16 @@ define(['player', 'url', 'utils', 'polyfills', 'config', 'debug'], function (pla
                     break;
 
                 case 'color':
-                    //TODO: check for hash and add it manually if missing
                     var color = options.color;
                     var correctLength = color.length === 6 || color.length === 7;
+
+                    /**
+                     * We want to make sure that the color supplied is the right length (6 characters without a hash
+                     * and 7 with). Then, if no hash exists, we add it ourselves.
+                     */
                     if (_.isString(color) && correctLength)
                     {
-                        if (color.indexOf('#') === -1)
+                        if (correctLength === 6 && color.indexOf('#') === -1)
                         {
                             color = '#' + color;
                         }
@@ -181,11 +185,8 @@ define(['player', 'url', 'utils', 'polyfills', 'config', 'debug'], function (pla
         };
 
         var options = overrideDefaultOptions(defaults, optionOverrides);
-
-        /**
-         * We create the div tag with our set styles and return it;
-         */
-        var element = '<div class="overlay" style="'+ getStyles(options) +'">\n    <h4>'+ options.text +'</h4>\n    <div class="buttons"></div>\n</div>';
+//        var element = '<div class="overlay" style="'+ getStyles(options) +'">\n    <h4>'+ options.text +'</h4>\n    <div class="buttons"></div>\n</div>';
+        var element = '<div class="overlay">\n    <h4>My Label Text</h4>\n    <div class="buttons">\n        \n    </div>\n</div>';
 
         return element;
     };
