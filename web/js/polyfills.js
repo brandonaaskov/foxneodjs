@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['underscore', 'config', 'debug'], function (underscore, config, debug) {
+define(['underscore', 'debug'], function (underscore, debug) {
 
     'use strict';
 

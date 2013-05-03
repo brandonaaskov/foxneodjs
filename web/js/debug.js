@@ -1,12 +1,12 @@
 /*global define, _, console */
 
-define(['url', 'error', 'config'], function (url, error, config) {
+define(['url', 'error'], function (url, error) {
     'use strict';
 
-    var debugSetting = config.debug || false;
+    var debugSetting = '@@debugMode' || false;
 
     var log = function (message, data, logType) {
-        if (config.debug)
+        if (debugSetting)
         {
             var logItems;
 
@@ -44,7 +44,7 @@ define(['url', 'error', 'config'], function (url, error, config) {
     };
 
     var getLogItems = function (logMessage, data) {
-        var message = config.debugMessagePrefix,
+        var message = '@@debugMessagePrefix',
             payload = data || {},
             customError = error.getEmptyErrorObject();
 

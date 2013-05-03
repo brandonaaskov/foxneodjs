@@ -17,7 +17,6 @@
     "bitwise": true,
     "undef": true,
     "unused": false,
-    "maxdepth": 5,
     "debug": true,
     "laxcomma": true
 }

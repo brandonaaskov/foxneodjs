@@ -106,7 +106,6 @@
                             from: '@@buildDate',
                             to: function () {
                                 var buildDate = grunt.template.date(timestamp, "yyyy-mm-dd hh:mm:ss");
-                                console.log('Replacing @@buildDate with ' + buildDate);
 
                                 return buildDate;
                             }
@@ -114,7 +113,22 @@
                         {
                             from: '@@timestamp',
                             to: timestamp
-                        }]
+                        },
+                        {
+                            from: '@@debugMode',
+                            to: packageJSON.debugMode
+                        },
+                        {
+                            from: '@@debugMessagePrefix',
+                            to: '<%= pkg.name %>-<%= pkg.version %>: '
+                        },
+                        {
+                            from: '@@authors',
+                            to: function () {
+                                return packageJSON.authors.join(',');
+                            }
+                        }
+                    ]
                 }
             },
 
@@ -123,7 +137,7 @@
                     banner: "/*!\n" +
                         "* Project: <%= pkg.name %> <%= pkg.version %>\n" +
                         "* Last Modified: <%= grunt.template.today('yyyy-mm-dd') %>\n" +
-                        "* Author(s): <%= pkg.author %>\n" +
+                        "* Author(s): <%= pkg.authors %>\n" +
                         "*/\n\n",
                     compress: true
 //                    mangle: true
