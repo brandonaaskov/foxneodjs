@@ -1,4 +1,4 @@
-/*global define, _, console */
+/*global define, _ */
 
 define(['debug'], function (debug) {
     'use strict';
@@ -68,35 +68,43 @@ define(['debug'], function (debug) {
         return output;
     };
 
-    var getRandomColor = function () {
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-
-        for (var i = 0; i < 6; i++)
-        {
-            color += letters[Math.round(Math.random() * 15)];
-        }
-
-        return color;
-    };
+//    var getRandomColor = function () {
+//        var letters = '0123456789ABCDEF'.split('');
+//        var color = '#';
+//
+//        for (var i = 0; i < 6; i++)
+//        {
+//            color += letters[Math.round(Math.random() * 15)];
+//        }
+//
+//        return color;
+//    };
 
     var getColorFromString = function (color) {
         if (!_.isUndefined(color))
         {
+            if (!_.isString(color))
+            {
+                throw new Error('The value supplied to getColorFromString() should be a string, not whatever you passed in.');
+            }
+
             var correctLength = (color.length === 6 || color.length === 7);
 
             /**
              * We want to make sure that the color supplied is the right length (6 characters without a hash
              * and 7 with). Then, if no hash exists, we add it ourselves.
              */
-            if ((_.isString(color) || _.isNumber(color)) && correctLength)
+//            console.log('color or number?', (_.isString(color) || _.isNumber(color)));
+//            console.log('correctLength?', correctLength);
+
+            if (correctLength)
             {
-                if (correctLength === 6 && color.indexOf('#') === -1)
+                if (color.length === 6 && color.indexOf('#') === -1)
                 {
                     color = '#' + color;
                 }
 
-                return color;
+                return color.toLowerCase();
             }
 //            else
 //            {
@@ -122,6 +130,7 @@ define(['debug'], function (debug) {
         }
 //        else if (index < (text.length-1))
 //        {
+              //hmmmm - should I strip the px out of the string if it's mid string, add the px and return that but warn anyway?
 //            debug.log({
 //                type: 'utils',
 //                message: "Whatever you supplied to addPixelSuffix() already had px in it, but it wasn't at the end of " +
@@ -160,7 +169,6 @@ define(['debug'], function (debug) {
     var dispatchEvent = function (eventName, data) {
         var event = document.createEvent('Event');
         var name = '@@packageName:' + eventName;
-        console.log('dispatching ' + name);
         event.initEvent(name, true, true);
         event.customData = data || {};
         window.dispatchEvent(event);
@@ -173,7 +181,7 @@ define(['debug'], function (debug) {
         pipeStringToObject: pipeStringToObject,
         objectToPipeString: objectToPipeString,
         lowerCasePropertyNames: lowerCasePropertyNames,
-        getRandomColor: getRandomColor,
+//        getRandomColor: getRandomColor,
         getColorFromString: getColorFromString,
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,

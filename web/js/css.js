@@ -152,22 +152,6 @@ define(['utils', 'debug'], function (utils, debug) {
             }
         }
 
-        //        var testSizeNoPx = '12';
-//        var testSizeNoPxNum = 16;
-//        var testSizeWithPx = '30px';
-//
-//        console.group('Adding');
-//        console.log('testSizeNoPx: ' + testSizeNoPx, utils.addPixelSuffix(testSizeNoPx));
-//        console.log('testSizeNoPxNum: ' + testSizeNoPxNum, utils.addPixelSuffix(testSizeNoPxNum));
-//        console.log('testSizeWithPx: ' + testSizeWithPx, utils.addPixelSuffix(testSizeWithPx));
-//        console.groupEnd();
-//
-//        console.group('Removing');
-//        console.log('testSizeNoPx: ' + testSizeNoPx, utils.removePixelSuffix(testSizeNoPx));
-//        console.log('testSizeNoPxNum: ' + testSizeNoPxNum, utils.removePixelSuffix(testSizeNoPxNum));
-//        console.log('testSizeWithPx: ' + testSizeWithPx, utils.removePixelSuffix(testSizeWithPx));
-//        console.groupEnd();
-
         return styles;
     };
 

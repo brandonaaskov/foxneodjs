@@ -35,15 +35,10 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
                         text: modalOptions.message
                     });
 
-                    console.log("Got here, which means there's a player to care about");
-
                     if (_.isElement(tpPlayer) && _.isElement(modal))
                     {
-                        console.log("We've got some elements to play with");
                         tpPlayer.insertBefore(modal, tpPlayer.firstChild);
-                        console.log("Inserted?");
                         verticallyCenter('.js-modal-container');
-                        console.log("Centered?");
                         removeModals(modalOptions.clearAfter*1000);
                     }
                 }

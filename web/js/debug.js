@@ -6,7 +6,7 @@ define(['url', 'error'], function (url, error) {
     var debugMode = '@@debugMode' || false;
 
     var log = function (message, data, logType) {
-        if (debugMode)
+        if (debugMode || logType === '!')
         {
             var logItems;
 

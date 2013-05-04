@@ -11,13 +11,14 @@ define(['player', 'url', 'utils', 'css', 'polyfills', 'debug'], function (player
         debug.log('Ready', {
             buildDate: '@@buildDate',
             authors: '@@authors'
-        });
+        }, '!');
     })();
     //-------------------------------------------------------------------------------- /initialization
 
     // Public API
     return {
         version: '@@version',
+        packageName: '@@packageName',
         player: player,
         url: url,
         utils: utils,
