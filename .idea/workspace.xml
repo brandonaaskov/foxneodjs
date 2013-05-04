@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/qunit/tests.js" afterPath="$PROJECT_DIR$/tests/qunit/tests.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/url.js" afterPath="$PROJECT_DIR$/web/js/url.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/utils.js" afterPath="$PROJECT_DIR$/web/js/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path=".idea/workspace.xml" />
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367690786934" ignored="false" />
@@ -71,7 +68,7 @@
     <file path="/modal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367625966874" ignored="false" />
     <file path="/HTML Fragment (modal.js:4904).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367615305483" ignored="false" />
     <file path="/foxneod.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367692546807" ignored="false" />
-    <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367698096844" ignored="false" />
+    <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367705340983" ignored="false" />
     <file path="/a.dummy" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367695562212" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -95,7 +92,24 @@
       <file leaf-file-name="tests.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tests/qunit/tests.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="70" column="64" selection-start="3392" selection-end="3392" vertical-scroll-proportion="-0.571754">
+            <state line="157" column="30" selection-start="6792" selection-end="6792" vertical-scroll-proportion="0.5296128">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+                <element signature="e#232#1229#0" expanded="false" />
+                <element signature="e#1279#2336#0" expanded="false" />
+                <element signature="e#2391#3520#0" expanded="false" />
+                <element signature="e#3570#4522#0" expanded="false" />
+                <element signature="e#4572#6290#0" expanded="false" />
+                <element signature="e#7722#7987#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="css.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/js/css.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="152" column="9" selection-start="5919" selection-end="5919" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -117,7 +131,7 @@
       <file leaf-file-name="utils.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/utils.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="9" selection-start="999" selection-end="999" vertical-scroll-proportion="0.0">
+            <state line="60" column="32" selection-start="1478" selection-end="1478" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -537,15 +551,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/css.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="152" column="9" selection-start="5919" selection-end="5919" vertical-scroll-proportion="0.43621868">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/foxneod.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="37" selection-start="761" selection-end="761" vertical-scroll-proportion="0.34168565">
@@ -571,6 +576,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/css.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="152" column="9" selection-start="5919" selection-end="5919" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/utils.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="32" selection-start="1478" selection-end="1478" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/url.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="53" column="17" selection-start="1987" selection-end="1987" vertical-scroll-proportion="0.0">
@@ -580,20 +603,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/utils.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="9" selection-start="999" selection-end="999" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/qunit/tests.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="70" column="64" selection-start="3392" selection-end="3392" vertical-scroll-proportion="-0.571754">
+        <state line="157" column="30" selection-start="6792" selection-end="6792" vertical-scroll-proportion="0.5296128">
           <folding>
             <element signature="n#!!doc" expanded="true" />
+            <element signature="e#232#1229#0" expanded="false" />
+            <element signature="e#1279#2336#0" expanded="false" />
+            <element signature="e#2391#3520#0" expanded="false" />
+            <element signature="e#3570#4522#0" expanded="false" />
+            <element signature="e#4572#6290#0" expanded="false" />
+            <element signature="e#7722#7987#0" expanded="false" />
           </folding>
         </state>
       </provider>
