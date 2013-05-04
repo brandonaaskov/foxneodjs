@@ -50,7 +50,10 @@ define(['utils'], function (utils) {
             }
             else
             {
-                queryParamsObject = utils.arrayToObject(queryParams);
+                if (utils) //TODO: where is this coming from‽
+                {
+                    queryParamsObject = utils.arrayToObject(queryParams);
+                }
             }
         }
 

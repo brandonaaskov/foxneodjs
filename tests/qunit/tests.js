@@ -1,66 +1,147 @@
 /*global define, _, console */
 
 define(['utils'], function (utils) {
+
+    this.module = QUnit.module;
+    this.test = QUnit.test;
+    this.asyncTest = QUnit.asyncTest;
+    this.start = QUnit.start;
+    this.stop = QUnit.stop;
+    this.ok = QUnit.ok;
+    this.strictEqual = QUnit.strictEqual;
+    this.throws = QUnit.throws;
+
+
     var packageName = '@@packageName';
 
     var tests = {
         utils: function () {
-            QUnit.module('utils');
+            module('utils');
 
-            QUnit.test('addPixelSuffix', 3, function () {
-//                expect(3);
-                QUnit.strictEqual(utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
-                QUnit.strictEqual(utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
-                QUnit.strictEqual(utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
+            test('addPixelSuffix', 3, function () {
+                strictEqual(utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
+                strictEqual(utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
+                strictEqual(utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
-            QUnit.test('removePixelSuffix', 3, function () {
-//                expect(3);
-                QUnit.strictEqual(utils.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
-                QUnit.strictEqual(utils.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
-                QUnit.strictEqual(utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
+            test('removePixelSuffix', 3, function () {
+                strictEqual(utils.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
+                strictEqual(utils.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
+                strictEqual(utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
-            QUnit.asyncTest('dispatchEvent (no data)', 1, function () {
+            asyncTest('dispatchEvent (no data)', 1, function () {
                 var eventName = packageName + ':test';
 
                 window.addEventListener(eventName, function () {
-                    QUnit.ok(true, "Event dispatching over the window object (no data payload).");
+                    ok(true, "Event dispatching over the window object (no data payload).");
                     window.removeEventListener(eventName);
-                    QUnit.start();
+                    start();
                 });
                 utils.dispatchEvent('test');
             });
 
-            QUnit.asyncTest('dispatchEvent (with data)', 1, function () {
+            asyncTest('dispatchEvent (with data)', 1, function () {
                 var eventName = packageName + ':test';
 
                 window.addEventListener(packageName + ':' + eventName, function (event) {
-                    QUnit.strictEqual(event.data.test, true, 'Event dispatching over the window object (with data payload).');
+                    strictEqual(event.data.test, true, 'Event dispatching over the window object (with data payload).');
                     window.removeEventListener(eventName);
-                    QUnit.start();
+                    start();
                 });
                 utils.dispatchEvent('test', { test: true });
             });
 
-            QUnit.test('getColorFromString', 7, function () {
-                QUnit.strictEqual(utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string.');
-                QUnit.strictEqual(utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase.');
-                QUnit.strictEqual(utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid.');
-                QUnit.strictEqual(utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase.');
+            test('getColorFromString', 7, function () {
+                strictEqual(utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string.');
+                strictEqual(utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase.');
+                strictEqual(utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid.');
+                strictEqual(utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase.');
 
-                var errorMessage = 'The value supplied to getColorFromString() should be a string, not whatever you passed in.';
-                QUnit.throws(function () {
+                throws(function () {
                     utils.getColorFromString(102345);
-                }, 'Throws error on trying to pass in a number.', errorMessage);
+                }, 'Throws error on trying to pass in a number.');
 
-                QUnit.throws(function () {
+                throws(function () {
                     utils.getColorFromString({})
-                }, 'Throws error on trying to pass in an object.', errorMessage);
+                }, 'Throws error on trying to pass in an object.');
 
-                QUnit.throws(function () {
+                throws(function () {
                     utils.getColorFromString([])
-                }, 'Throws error on trying to pass in an array.', errorMessage);
+                }, 'Throws error on trying to pass in an array.');
+            });
+
+            test('arrayToObject', 3, function () {
+                deepEqual(utils.arrayToObject([]), {}, 'Empty array to empty object.');
+
+                deepEqual(utils.arrayToObject([
+                    'key=value',
+                    'something=else',
+                    'name=brandon'
+                ]), {
+                    key: 'value',
+                    something: 'else',
+                    name: 'brandon'
+                }, 'Array with key-value pairs to standard object.');
+
+                deepEqual(utils.arrayToObject([
+                    'something',
+                    'blah',
+                    'foo'
+                ]), {
+                    0: 'something',
+                    1: 'blah',
+                    2: 'foo'
+                }, 'Array without key-value pairs to on object with indexes as keys.');
+            });
+
+            test('objectToArray', 4, function () {
+                var testObject = {},
+                    testArray = [];
+
+                deepEqual(utils.objectToArray(testObject), testArray, 'Empty object to empty array.');
+
+                testObj = {
+                    key: 'value',
+                    something: 'else',
+                    name: 'brandon'
+                };
+
+                testArray = [
+                    'key=value',
+                    'something=else',
+                    'name=brandon'
+                ];
+
+                deepEqual(utils.objectToArray(testObj), testArray, 'Object to array with key-value pairs as strings.');
+
+                testObj = {
+                    0: 'something',
+                    1: 'blah',
+                    2: 'foo'
+                };
+
+                testArray = [
+                    '0=something',
+                    '1=blah',
+                    '2=foo'
+                ];
+
+                deepEqual(utils.objectToArray(testObj), testArray, 'Array without key-value pairs to on object with indexes as keys.');
+
+                testObj = {
+                    key: 'value',
+                    something: 'else',
+                    person: {
+                        name: 'brandon',
+                        job: 'developer',
+                        language: 'javascript'
+                    }
+                };
+
+                throws(function () {
+                    utils.objectToArray(testObj);
+                }, 'Throws error on nested object.');
             });
         }
     };

@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/tests/qunit/main.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/tests/qunit/tests.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/css.js" afterPath="$PROJECT_DIR$/web/js/css.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/debug.js" afterPath="$PROJECT_DIR$/web/js/debug.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/foxneod.js" afterPath="$PROJECT_DIR$/web/js/foxneod.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/web/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/modal.js" afterPath="$PROJECT_DIR$/web/js/modal.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/qunit/tests.js" afterPath="$PROJECT_DIR$/tests/qunit/tests.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/url.js" afterPath="$PROJECT_DIR$/web/js/url.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/utils.js" afterPath="$PROJECT_DIR$/web/js/utils.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -29,7 +24,7 @@
     <file path="/build.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366661348171" ignored="false" />
     <file path="/.gitignore" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365814884577" ignored="false" />
     <file path="/debug.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367627318669" ignored="false" />
-    <file path="/url.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367622389342" ignored="false" />
+    <file path="/url.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367696338704" ignored="false" />
     <file path="$PROJECT_DIR$/../tests/fox/tickets/temp/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366062295976" ignored="false" />
     <file path="/base64.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366094832248" ignored="false" />
     <file path="/error.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366077558996" ignored="false" />
@@ -65,7 +60,7 @@
     <file path="$PROJECT_DIR$/../../tests/fox/btn/btn_player_qa.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367627433691" ignored="false" />
     <file path="/btn_player_qa.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367626832762" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/btn/reference_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366929313929" ignored="false" />
-    <file path="/utils.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367695122460" ignored="false" />
+    <file path="/utils.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367698180989" ignored="false" />
     <file path="/replace.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367438391870" ignored="false" />
     <file path="/player.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367616077349" ignored="false" />
     <file path="/HTML Fragment (foxneo.js:6535).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367543067472" ignored="false" />
@@ -76,7 +71,8 @@
     <file path="/modal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367625966874" ignored="false" />
     <file path="/HTML Fragment (modal.js:4904).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367615305483" ignored="false" />
     <file path="/foxneod.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367692546807" ignored="false" />
-    <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367695381017" ignored="false" />
+    <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367698096844" ignored="false" />
+    <file path="/a.dummy" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367695562212" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,7 +95,18 @@
       <file leaf-file-name="tests.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tests/qunit/tests.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="54" column="20" selection-start="3095" selection-end="3095" vertical-scroll-proportion="0.71753985">
+            <state line="70" column="64" selection-start="3392" selection-end="3392" vertical-scroll-proportion="-0.571754">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="url.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/js/url.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="53" column="17" selection-start="1987" selection-end="1987" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -110,18 +117,7 @@
       <file leaf-file-name="utils.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/js/utils.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="33" selection-start="2015" selection-end="2105" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="foxneod.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/js/foxneod.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="37" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0">
+            <state line="40" column="9" selection-start="999" selection-end="999" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -151,7 +147,6 @@
         <option value="$PROJECT_DIR$/.jshintrc" />
         <option value="$PROJECT_DIR$/web/js/config.js" />
         <option value="$PROJECT_DIR$/web/js/polyfills.js" />
-        <option value="$PROJECT_DIR$/web/js/url.js" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/web/js/modal.js" />
@@ -161,6 +156,7 @@
         <option value="$PROJECT_DIR$/tests/qunit/index.html" />
         <option value="$PROJECT_DIR$/web/js/foxneod.js" />
         <option value="$PROJECT_DIR$/tests/qunit/main.js" />
+        <option value="$PROJECT_DIR$/web/js/url.js" />
         <option value="$PROJECT_DIR$/web/js/utils.js" />
         <option value="$PROJECT_DIR$/tests/qunit/tests.js" />
       </list>
@@ -397,6 +393,7 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289183" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14061557" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.124321066" sideWeight="0.9981618" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -407,7 +404,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289183" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -490,11 +486,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/url.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="68" selection-start="1663" selection-end="1663" vertical-scroll-proportion="0.60928434" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/player/iframe.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="77" column="32" selection-start="2334" selection-end="2334" vertical-scroll-proportion="1.0896226">
@@ -537,34 +528,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/qunit/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="41" selection-start="293" selection-end="293" vertical-scroll-proportion="-5.625">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4" column="45" selection-start="115" selection-end="115" vertical-scroll-proportion="0.06833713">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/qunit/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="35" selection-start="291" selection-end="291" vertical-scroll-proportion="0.13667426">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/foxneod.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="37" selection-start="761" selection-end="761" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
@@ -580,9 +546,43 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/foxneod.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="37" selection-start="761" selection-end="761" vertical-scroll-proportion="0.34168565">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/qunit/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="41" selection-start="293" selection-end="293" vertical-scroll-proportion="0.15807962">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/qunit/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="35" selection-start="291" selection-end="291" vertical-scroll-proportion="0.13667426">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/url.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="17" selection-start="1987" selection-end="1987" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/web/js/utils.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="33" selection-start="2015" selection-end="2105" vertical-scroll-proportion="0.0">
+        <state line="40" column="9" selection-start="999" selection-end="999" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
@@ -591,7 +591,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/qunit/tests.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="20" selection-start="3095" selection-end="3095" vertical-scroll-proportion="0.71753985">
+        <state line="70" column="64" selection-start="3392" selection-end="3392" vertical-scroll-proportion="-0.571754">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>

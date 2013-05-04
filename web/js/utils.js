@@ -15,6 +15,10 @@ define(['debug'], function (debug) {
 
                 obj[itemPieces[0]] = itemPieces[1];
             }
+            else
+            {
+                obj[i] = item;
+            }
         }
 
         return obj;
@@ -26,7 +30,14 @@ define(['debug'], function (debug) {
 
         for (var prop in obj)
         {
-            outputArray.push(prop + '=' + obj[prop]);
+            if (!(_.isObject(obj[prop]) || _.isArray(obj[prop])))
+            {
+                outputArray.push(prop + '=' + obj[prop]);
+            }
+            else
+            {
+                throw new Error('objectToArray only supports shallow objects (no nested objects or arrays).');
+            }
         }
 
         return outputArray;
@@ -88,15 +99,11 @@ define(['debug'], function (debug) {
                 throw new Error('The value supplied to getColorFromString() should be a string, not whatever you passed in.');
             }
 
-            var correctLength = (color.length === 6 || color.length === 7);
-
             /**
              * We want to make sure that the color supplied is the right length (6 characters without a hash
              * and 7 with). Then, if no hash exists, we add it ourselves.
              */
-//            console.log('color or number?', (_.isString(color) || _.isNumber(color)));
-//            console.log('correctLength?', correctLength);
-
+            var correctLength = (color.length === 6 || color.length === 7);
             if (correctLength)
             {
                 if (color.length === 6 && color.indexOf('#') === -1)
