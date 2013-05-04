@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define, _, console */
 
 define(['debug'], function (debug) {
     'use strict';
@@ -159,7 +159,9 @@ define(['debug'], function (debug) {
 
     var dispatchEvent = function (eventName, data) {
         var event = document.createEvent('Event');
-        event.initEvent(eventName, true, true);
+        var name = '@@packageName:' + eventName;
+        console.log('dispatching ' + name);
+        event.initEvent(name, true, true);
         event.customData = data || {};
         window.dispatchEvent(event);
     };

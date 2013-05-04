@@ -1,6 +1,6 @@
 {
     "name": "foxneod",
-    "debugMode": false,
+    "debugMode": true,
     "version": "0.1.0",
     "description": "A javascript library to leverage Fox's digital video players.",
     "main": "js/main.js",

@@ -3,10 +3,10 @@
 define(['url', 'error'], function (url, error) {
     'use strict';
 
-    var debugSetting = '@@debugMode' || false;
+    var debugMode = '@@debugMode' || false;
 
     var log = function (message, data, logType) {
-        if (debugSetting)
+        if (debugMode)
         {
             var logItems;
 
@@ -113,7 +113,7 @@ define(['url', 'error'], function (url, error) {
     };
 
     (function init () {
-        debugSetting = url.paramExists('debug', 'true'); //allows for overrides from URL
+        debugMode = url.paramExists('debug', 'true'); //allows for overrides from URL
     })();
 
     // Public API

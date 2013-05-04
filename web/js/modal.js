@@ -1,4 +1,4 @@
-/*global define, _, FDM_Player_vars, $pdk */
+/*global define, console, _, FDM_Player_vars, $pdk */
 
 define(['css', 'utils', 'debug'], function (css, utils, debug) {
     'use strict';
@@ -35,10 +35,15 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
                         text: modalOptions.message
                     });
 
+                    console.log("Got here, which means there's a player to care about");
+
                     if (_.isElement(tpPlayer) && _.isElement(modal))
                     {
+                        console.log("We've got some elements to play with");
                         tpPlayer.insertBefore(modal, tpPlayer.firstChild);
+                        console.log("Inserted?");
                         verticallyCenter('.js-modal-container');
+                        console.log("Centered?");
                         removeModals(modalOptions.clearAfter*1000);
                     }
                 }
@@ -52,7 +57,7 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
         }
     };
 
-    var removeModals = function (clearAfter) {
+    var removeModals = function (clearAfter) { //here, clearAfter is in milliseconds
         var modalOverlays = document.querySelectorAll('.js-modal-overlay');
 
         var iterateAndRemove = function () {
@@ -67,10 +72,6 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
         if (clearAfter > 0)
         {
             setTimeout(iterateAndRemove, clearAfter);
-        }
-        else
-        {
-            iterateAndRemove();
         }
     };
     //-------------------------------------------------------------------------------- /public methods
