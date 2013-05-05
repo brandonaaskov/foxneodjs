@@ -51,24 +51,7 @@ define(['debug', 'utils'], function (debug, utils) {
             }
             else
             {
-                if (utils) //TODO: where is this coming from‽
-                {
-                    queryParamsObject = utils.arrayToObject(queryParams);
-                }
-                else
-                {
-                    console.log('utils still isnt working... dammit');
-                }
-
-                if (debug)
-                {
-                    console.log('debug came through');
-                }
-                else
-                {
-                    console.log('debug failed too');
-                }
-
+                queryParamsObject = utils.arrayToObject(queryParams);
             }
         }
 

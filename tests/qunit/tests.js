@@ -1,6 +1,6 @@
 /*global define, _, console */
 
-define(['utils'], function (utils) {
+define(['utils', 'uri', 'base64'], function (utils, uri, base64) {
 
     var packageName = '@@packageName';
 
@@ -224,24 +224,72 @@ define(['utils'], function (utils) {
             })();
         },
 
-        css: function () {
-            module('css');
+        url: function () {
+            module('url');
 
-            (function getStylesTests () {
-                test('getStyles', 1, function () {
-                    ok(true);
+            (function getQueryParamsTests () {
+                test('getQueryParams', 1, function () {
+                    var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
+                    var expected = {
+                        key: 'value',
+                        something: 'what',
+                        testing: 'good'
+                    };
+
+                    deepEqual(uri.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
+
+                    testURL = "http://domain.com/page.html?key=value|something=what|testing=good";
+                    deepEqual(uri.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
                 });
             })();
 
-            (function updateStylesTests () {
+            (function getParamValueTest () {
+            })();
+        },
 
+        base64: function () {
+            module('base64');
+
+            (function jsonToBase64Tests () {
+                test('jsonToBase64', 1, function () {
+                    var testObject = {
+                        name: 'Point Break',
+                        rating: 'R',
+                        director: 'Kathryn Bigelow',
+                        summary: 'Awesome.',
+                        camelCase: false,
+                        lowerCase: true
+                    };
+
+                    var expected = 'eyJuYW1lIjoiUG9pbnQgQnJlYWsiLCJyYXRpbmciOiJSIiwiZGlyZWN0b3IiOiJLYXRocnluIEJpZ2Vsb3ciLCJzdW1tYXJ5IjoiQXdlc29tZS4iLCJjYW1lbENhc2UiOmZhbHNlLCJsb3dlckNhc2UiOnRydWV9';
+
+                    strictEqual(base64.jsonToBase64(testObject), expected, 'Basic, shallow object converted to JSON and then base64 properly.');
+                });
+            })();
+
+            (function base64ToJSON () {
+                test('base64ToJSON', 1, function () {
+                    var expected = {
+                        name: 'Point Break',
+                        rating: 'R',
+                        director: 'Kathryn Bigelow',
+                        summary: 'Awesome.',
+                        camelCase: false,
+                        lowerCase: true
+                    };
+
+                    var base64String = 'eyJuYW1lIjoiUG9pbnQgQnJlYWsiLCJyYXRpbmciOiJSIiwiZGlyZWN0b3IiOiJLYXRocnluIEJpZ2Vsb3ciLCJzdW1tYXJ5IjoiQXdlc29tZS4iLCJjYW1lbENhc2UiOmZhbHNlLCJsb3dlckNhc2UiOnRydWV9';
+
+                    deepEqual(base64.base64ToJSON(base64String), expected, 'Base 64 string decoded to a shallow, basic object properly.');
+                });
             })();
         }
     };
 
     var run = function () {
         tests.utils();
-        tests.css();
+        tests.url();
+        tests.base64();
     };
 
     // Public API
