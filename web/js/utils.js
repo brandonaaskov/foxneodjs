@@ -51,7 +51,8 @@ define(['debug'], function (debug) {
         for (var i = 0, n = kvPairs.length; i < n; i++)
         {
             var pair = kvPairs[i].split('=');
-            obj[pair[0]] = pair[1]; //sets the key value pair on our return object
+            var value = pair[1] || null; //i just prefer null to undefined
+            obj[pair[0]] = value; //sets the key value pair on our return object
         }
 
         return obj;

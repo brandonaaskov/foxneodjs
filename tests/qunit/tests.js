@@ -145,7 +145,7 @@ define(['utils'], function (utils) {
             })();
 
             (function pipeStringToObjectTests () {
-                test('pipeStringToObject', 1, function () {
+                test('pipeStringToObject', 2, function () {
                     var testObject = {
                         name: 'Point Break',
                         rating: 'R',
@@ -156,11 +156,24 @@ define(['utils'], function (utils) {
                     var testPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.';
 
                     deepEqual(utils.pipeStringToObject(testPipeString), testObject, 'Standard, shallow object converted to pipe string.');
+
+                    var brokenPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.|what|nothing|huh';
+                    var objectFromBrokenPipeString = {
+                        name: 'Point Break',
+                        rating: 'R',
+                        director: 'Kathryn Bigelow',
+                        summary: 'Awesome.',
+                        what: null,
+                        nothing: null,
+                        huh: null
+                    };
+
+                    deepEqual(utils.pipeStringToObject(brokenPipeString), objectFromBrokenPipeString, 'Pipe string with some values that aren\'t key-value pairs.');
                 });
             })();
 
             (function objectToPipeStringTests () {
-                test('objectToPipeString', 1, function () {
+                test('objectToPipeString', 2, function () {
                     var testObject = {
                         name: 'Point Break',
                         rating: 'R',
@@ -171,11 +184,43 @@ define(['utils'], function (utils) {
                     var testPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.';
 
                     strictEqual(utils.objectToPipeString(testObject), testPipeString, 'Key-value pair, pipe separated string converted to standard, shallow object');
+
+                    var nestedTestObject = testObject;
+                    nestedTestObject['nested'] = {
+                        test: 'value'
+                    };
+                    throws(utils.objectToPipeString(nestedTestObject), 'Nested object throws an error.');
                 });
             })();
 
             (function lowerCasePropertyNamesTests () {
+                test('lowerCasePropertyNames', 2, function () {
+                    var testObject = {
+                        Name: 'Point Break',
+                        Rating: 'R',
+                        director: 'Kathryn Bigelow',
+                        summary: 'Awesome.',
+                        camelCase: false,
+                        lowerCase: true
+                    };
 
+                    var expected = {
+                        name: 'Point Break',
+                        rating: 'R',
+                        director: 'Kathryn Bigelow',
+                        summary: 'Awesome.',
+                        camelcase: false,
+                        lowercase: true
+                    };
+
+                    var nestedObject = _.clone(testObject);
+                    nestedObject['nested'] = {
+                        test: 'value'
+                    };
+
+                    deepEqual(utils.lowerCasePropertyNames(testObject), expected, 'Basic, shallow object converted property names to all lowercase.');
+                    throws(utils.lowerCasePropertyNames(nestedObject), 'Nested object throws error.');
+                });
             })();
         },
 
