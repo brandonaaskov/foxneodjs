@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['player', 'url', 'utils', 'css', 'polyfills', 'debug'], function (player, url, utils, css, polyfills, debug) {
+define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, debug) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
@@ -20,7 +20,6 @@ define(['player', 'url', 'utils', 'css', 'polyfills', 'debug'], function (player
         version: '@@version',
         packageName: '@@packageName',
         player: player,
-        url: url,
         utils: utils,
         debug: debug
     };

@@ -1,6 +1,6 @@
 /*global define, _, console */
 
-define(['url', 'error'], function (uri, error) {
+define(['utils', 'error'], function (utils, error) {
     'use strict';
 
     var debugMode = '@@debugMode' || false;
@@ -113,7 +113,7 @@ define(['url', 'error'], function (uri, error) {
     };
 
     (function init () {
-        debugMode = uri.paramExists('debug', 'true'); //allows for overrides from URL
+        debugMode = utils.paramExists('debug', 'true'); //allows for overrides from URL
     })();
 
     // Public API

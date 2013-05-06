@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['debug'], function (debug) {
+define([], function () {
     'use strict';
 
     var arrayToObject = function (arr) {
@@ -182,6 +182,133 @@ define(['debug'], function (debug) {
         window.dispatchEvent(event);
     };
 
+
+
+
+    //---------------------------------------------- url stuff
+    var urlString = window.location.href;
+
+    var getQueryParams = function (url) {
+        var queryParamsObject = {}; //this is what we're storing and returning
+        url = url || urlString;
+
+        if (url.indexOf('?') !== -1)
+        {
+            var urlSplit = url.split('?');
+            var queryParams = urlSplit[1].split('&');
+
+            /**
+             * final data will look like so:
+             * {
+                     *     playerParams: {
+                     *         id: "player",
+                     *         width: 640,
+                     *         ...
+                     *     }
+                     * }
+             */
+
+            if (urlSplit[1].indexOf('|') !== -1)
+            {
+                for (var i = 0, n = queryParams.length; i < n; i++)
+                {
+                    var queryParam = queryParams[i];
+                    var firstEqIndex = queryParam.indexOf('=');
+                    if (firstEqIndex !== -1)
+                    {
+                        var keyValuePairsString = queryParam;
+                        var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
+                        queryParamsObject[collectionKey] = {};
+                        var keyValuePairsArray = keyValuePairsString.split('|');
+
+                        for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
+                        {
+                            var keyValuePair = keyValuePairsArray[j].split('=');
+                            var key = keyValuePair[0];
+                            var value = keyValuePair[1];
+
+                            if (urlSplit[1].indexOf('&') !== -1)
+                            {
+                                keyValuePairsString = queryParam.substr(firstEqIndex+1);
+                                //if we have an ampersand, it's not just a basic pipe string, so we need to make a
+                                // more complex object
+                                queryParamsObject[collectionKey][key] = value;
+                            }
+                            else
+                            {
+                                //just a pipe string, no other key-value pairs so we can make a basic object
+                                queryParamsObject[key] = value;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                queryParamsObject = arrayToObject(queryParams);
+            }
+        }
+
+        return queryParamsObject;
+    };
+
+    var getParamValue = function (key, url) {
+        var queryParams = getQueryParams();
+
+        if (_.isObject(queryParams)) //it should always be an object, but just in case
+        {
+            for (var prop in queryParams)
+            {
+                if (prop === key)
+                {
+                    return queryParams[prop];
+                }
+            }
+        }
+
+        return;
+    };
+
+    var paramExists = function (key, value, url) {
+        var queryParams = getQueryParams(url);
+
+        for (var prop in queryParams)
+        {
+            if (queryParams.hasOwnProperty(prop))
+            {
+                if (prop === key)
+                {
+                    if (value)
+                    {
+                        if (queryParams[prop] === value)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    /**
+     * This is mostly for testing purposes so we can spoof URLs easily, but it's public since I'm big on the "eat your
+     * own dog food" thing.
+     * @param url
+     */
+    var setURL = function (url) {
+        this.url = url;
+    };
+    //---------------------------------------------- /url stuff
+
+
     // Public API
     return {
         arrayToObject: arrayToObject,
@@ -194,6 +321,11 @@ define(['debug'], function (debug) {
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
         dispatchEvent: dispatchEvent,
-        dispatch: dispatchEvent //alias
+        dispatch: dispatchEvent, //alias,
+
+        getParamValue: getParamValue,
+        getQueryParams: getQueryParams,
+        paramExists: paramExists,
+        setURL: setURL
     };
 });
