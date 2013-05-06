@@ -5,8 +5,6 @@ define(['utils'], function (utils) {
 
     var urlString = window.location.href;
 
-    console.log('asdfasdfasdf', utils);
-
     var getQueryParams = function (url) {
         var queryParamsObject = {}; //this is what we're storing and returning
         url = url || urlString;
