@@ -1,13 +1,15 @@
 /*global define, _, console */
 
-define(['debug', 'utils'], function (debug, utils) {
+define(['utils'], function (utils) {
     'use strict';
 
     var urlString = window.location.href;
 
+    console.log('asdfasdfasdf', utils);
+
     var getQueryParams = function (url) {
         var queryParamsObject = {}; //this is what we're storing and returning
-        var url = url || urlString;
+        url = url || urlString;
 
         if (url.indexOf('?') !== -1)
         {
@@ -33,9 +35,9 @@ define(['debug', 'utils'], function (debug, utils) {
                     var firstEqIndex = queryParam.indexOf('=');
                     if (firstEqIndex !== -1)
                     {
+                        var keyValuePairsString = queryParam;
                         var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
                         queryParamsObject[collectionKey] = {};
-                        var keyValuePairsString = queryParam.substr(firstEqIndex+1);
                         var keyValuePairsArray = keyValuePairsString.split('|');
 
                         for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
@@ -44,31 +46,25 @@ define(['debug', 'utils'], function (debug, utils) {
                             var key = keyValuePair[0];
                             var value = keyValuePair[1];
 
-                            queryParamsObject[collectionKey][key] = value;
+                            if (urlSplit[1].indexOf('&') !== -1)
+                            {
+                                keyValuePairsString = queryParam.substr(firstEqIndex+1);
+                                //if we have an ampersand, it's not just a basic pipe string, so we need to make a
+                                // more complex object
+                                queryParamsObject[collectionKey][key] = value;
+                            }
+                            else
+                            {
+                                //just a pipe string, no other key-value pairs so we can make a basic object
+                                queryParamsObject[key] = value;
+                            }
                         }
                     }
                 }
             }
             else
             {
-                if (utils) //TODO: where is this coming from‽
-                {
-                    queryParamsObject = utils.arrayToObject(queryParams);
-                }
-                else
-                {
-                    console.log('utils still isnt working... dammit');
-                }
-
-                if (debug)
-                {
-                    console.log('debug came through');
-                }
-                else
-                {
-                    console.log('debug failed too');
-                }
-
+                queryParamsObject = utils.arrayToObject(queryParams);
             }
         }
 

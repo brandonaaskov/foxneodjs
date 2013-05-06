@@ -1,6 +1,6 @@
 /*global define, _, console */
 
-define(['utils', 'uri', 'base64'], function (utils, uri, base64) {
+define(['utils', 'url', 'base64'], function (utils, url, base64) {
 
     var packageName = '@@packageName';
 
@@ -31,6 +31,7 @@ define(['utils', 'uri', 'base64'], function (utils, uri, base64) {
                         window.removeEventListener(eventName);
                         start();
                     });
+                    console.log('about to dispatch');
                     utils.dispatchEvent('test');
                 });
 
@@ -224,11 +225,11 @@ define(['utils', 'uri', 'base64'], function (utils, uri, base64) {
             })();
         },
 
-        url: function () {
+        urlTests: function () {
             module('url');
 
             (function getQueryParamsTests () {
-                test('getQueryParams', 1, function () {
+                test('getQueryParams', 2, function () {
                     var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
                     var expected = {
                         key: 'value',
@@ -236,14 +237,23 @@ define(['utils', 'uri', 'base64'], function (utils, uri, base64) {
                         testing: 'good'
                     };
 
-                    deepEqual(uri.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
+                    deepEqual(url.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
 
                     testURL = "http://domain.com/page.html?key=value|something=what|testing=good";
-                    deepEqual(uri.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
+                    deepEqual(url.getQueryParams(testURL), expected, 'Typical query params separated with pipes (instead of &) converted to an object.');
                 });
             })();
 
             (function getParamValueTest () {
+            })();
+
+            (function paramExists () {
+                test('paramExists', 4, function () {
+                    strictEqual(url.paramExists('myKey'), true, 'Tests for a key that does exist in the query params');
+                    strictEqual(url.paramExists('otherKey', 'testValue'), true, 'Tests for a key-value pair match');
+                    notEqual(url.paramExists('otherKey', 'invalidValue'), false, 'Tests for a key-value pair match that does not exist');
+                    notEqual(url.paramExists('noKey'), false, 'Tests for a key that does not exist');
+                });
             })();
         },
 
@@ -288,7 +298,7 @@ define(['utils', 'uri', 'base64'], function (utils, uri, base64) {
 
     var run = function () {
         tests.utils();
-        tests.url();
+        tests.urlTests();
         tests.base64();
     };
 
