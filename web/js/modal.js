@@ -1,4 +1,4 @@
-/*global define, _, FDM_Player_vars, $pdk */
+/*global define, _, FDM_Player_vars, $pdk, console */
 
 define(['css', 'utils', 'debug'], function (css, utils, debug) {
     'use strict';
@@ -7,6 +7,7 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
     var displayModal = function (options) {
         var modalOptions = {
             message: '',
+            resetPlayer: false,
             clearAfter: 0 //time in seconds: 0 means it will stay on screen indefinitely
         };
 
@@ -40,6 +41,11 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
                         tpPlayer.insertBefore(modal, tpPlayer.firstChild);
                         verticallyCenter('.js-modal-container');
                         removeModals(modalOptions.clearAfter*1000);
+                    }
+
+                    if (modalOptions.resetPlayer)
+                    {
+                        $pdk.controller.loadReleaseURL('http://domain.com/dummyURL/', true);
                     }
                 }
             }

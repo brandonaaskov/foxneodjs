@@ -8,11 +8,13 @@ $listing = "<ul>";
 foreach($contents as $key => $value) 
 {
 	$validFile = true;
-	$invalidFiles = array('.', '..', 'index.php');
+	$invalidFiles = array('.', '..', '.DS_Store', 'index.php', 'index.html');
 
 	for ($i = 0; $i < sizeof($invalidFiles); $i++)
 	{
-		if ($value === $invalidFiles[$i])
+	    $privateFile = (substr($value, 0, 1) === '_') ? false : true;
+
+		if ($value === $invalidFiles[$i] || !$privateFile)
 		{
 			$validFile = false;
 		}
