@@ -1,4 +1,4 @@
-/*global define, _, console */
+/*global define, _ */
 
 define(['utils', 'debug'], function (utils, debug) {
     'use strict';
@@ -40,7 +40,7 @@ define(['utils', 'debug'], function (utils, debug) {
                 };
 
                 playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-                playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.height;
+                playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
             }
         }
 
@@ -53,8 +53,6 @@ define(['utils', 'debug'], function (utils, debug) {
         {
             var attributesString = utils.objectToPipeString(attributes);
             attributes = utils.lowerCasePropertyNames(attributes);
-
-            console.log('!!!!attributes', attributes);
 
             element.innerHTML = '<iframe ' +
                 'src="'+ iframeURL + '?' + attributesString + '"' +
