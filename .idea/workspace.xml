@@ -4,25 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/../../tests/fox/btn/iframe-conversion.html" description="&lt;title&gt;iframe conversion test&lt;/title&gt;" line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap-responsive.css" afterPath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap-responsive.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap-responsive.min.css" afterPath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap-responsive.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap.css" afterPath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap.min.css" afterPath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/img/glyphicons-halflings-white.png" afterPath="$PROJECT_DIR$/web/examples/bootstrap/img/glyphicons-halflings-white.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/img/glyphicons-halflings.png" afterPath="$PROJECT_DIR$/web/examples/bootstrap/img/glyphicons-halflings.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/js/bootstrap.js" afterPath="$PROJECT_DIR$/web/examples/bootstrap/js/bootstrap.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/bootstrap/js/bootstrap.min.js" afterPath="$PROJECT_DIR$/web/examples/bootstrap/js/bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/iframe/_player-custom.html" afterPath="$PROJECT_DIR$/web/examples/iframe/_player-custom.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/iframe/_player.html" afterPath="$PROJECT_DIR$/web/examples/iframe/_player.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/iframe/index.php" afterPath="$PROJECT_DIR$/web/examples/iframe/index.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/iframe/multiple-players.html" afterPath="$PROJECT_DIR$/web/examples/iframe/multiple-players.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/iframe/single-player-custom.html" afterPath="$PROJECT_DIR$/web/examples/iframe/single-player-custom.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/examples/iframe/single-player.html" afterPath="$PROJECT_DIR$/web/examples/iframe/single-player.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/modal.js" afterPath="$PROJECT_DIR$/web/js/modal.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="" />
     <ignored path=".idea/workspace.xml" />
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367690786934" ignored="false" />
     <file path="/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796972669" ignored="false" />

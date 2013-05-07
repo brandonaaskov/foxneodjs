@@ -1,2 +1,3 @@
 #ignore these files/directories from git
-/web/build/
+.DS_Store
+node_modules/
