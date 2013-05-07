@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define, _, console */
 
 define([], function () {
     'use strict';
@@ -269,6 +269,7 @@ define([], function () {
         return;
     };
 
+    //second and third params optional
     var paramExists = function (key, value, url) {
         var queryParams = getQueryParams(url);
 

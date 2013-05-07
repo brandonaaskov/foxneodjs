@@ -1,4 +1,4 @@
-/*global define, console, _, FDM_Player_vars, $pdk */
+/*global define, _, FDM_Player_vars, $pdk, console */
 
 define(['css', 'utils', 'debug'], function (css, utils, debug) {
     'use strict';
@@ -39,6 +39,8 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
                     {
                         tpPlayer.insertBefore(modal, tpPlayer.firstChild);
                         verticallyCenter('.js-modal-container');
+
+                        console.log('clearing modal after...', modalOptions.clearAfter*1000);
                         removeModals(modalOptions.clearAfter*1000);
                     }
                 }

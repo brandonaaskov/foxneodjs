@@ -45,10 +45,9 @@ define(['utils', 'debug'], function (utils, debug) {
         if (element && _.isObject(element))
         {
             var attributesString = utils.objectToPipeString(attributes);
-//                        console.log('attributesString', attributesString);
+
             element.innerHTML = '<iframe ' +
-                'src="'+ iframeURL + '?' +
-                'playerParams=' + attributesString + '"' +
+                'src="'+ iframeURL + '?' + attributesString + '"' +
                 'scrolling="no" ' +
                 'frameborder="0" ' +
                 'width="' + attributes.width + '"' +
