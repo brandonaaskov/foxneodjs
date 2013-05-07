@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define, _, console */
 
 define(['utils', 'debug'], function (utils, debug) {
     'use strict';
@@ -27,13 +27,20 @@ define(['utils', 'debug'], function (utils, debug) {
 
             if (attrName.indexOf('data-player') !== -1)
             {
-                var attributes = attr.nodeValue.split('|');
+                playerAttributes = utils.pipeStringToObject(attr.nodeValue);
 
-                for (var j = 0, m = attributes.length; j < m; j++)
-                {
-                    var keyValuePair = attributes[j].split('=');
-                    playerAttributes[keyValuePair[0]] = keyValuePair[1];
-                }
+                /*
+                 * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+                 * not always the same as the height and width of the player.
+                 */
+                var lowercased = utils.lowerCasePropertyNames(playerAttributes);
+                var defaults = {
+                    width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
+                    height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+                };
+
+                playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
+                playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.height;
             }
         }
 
@@ -45,13 +52,16 @@ define(['utils', 'debug'], function (utils, debug) {
         if (element && _.isObject(element))
         {
             var attributesString = utils.objectToPipeString(attributes);
+            attributes = utils.lowerCasePropertyNames(attributes);
+
+            console.log('!!!!attributes', attributes);
 
             element.innerHTML = '<iframe ' +
                 'src="'+ iframeURL + '?' + attributesString + '"' +
                 'scrolling="no" ' +
                 'frameborder="0" ' +
-                'width="' + attributes.width + '"' +
-                'height="'+ attributes.height + '"></iframe>';
+                'width="' + attributes.iframewidth + '"' +
+                'height="'+ attributes.iframeheight + '"></iframe>';
         }
         else
         {

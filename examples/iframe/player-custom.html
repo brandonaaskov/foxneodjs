@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NEOD Player</title>
+    <script type="text/javascript" src="http://player.foxfdm.com/btn/btn_player_qa.js"></script>
+
+    <script type="text/javascript">
+        window.addEventListener('foxneod:ready', function () {
+            (function initialize (window, undefined) {
+                var playerAttributes = FoxNEOD.utils.getQueryParams(window.location.href);
+
+                //set styles on the container
+                var styles = 'width:'+ playerAttributes.width +'px; ' + 'height:'+ playerAttributes.height +'px;';
+                document.getElementById('container').setAttribute('style', styles);
+                document.getElementById('player').setAttribute('style', 'width: 100%; height: 100%;');
+
+                var player = window.player = new FDM_Player('player', playerAttributes.width, playerAttributes.height);
+
+                for (var prop in playerAttributes)
+                {
+                    player[prop] = playerAttributes[prop];
+                }
+            })(window, undefined);
+        });
+    </script>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        img.ad {
+            display: block;
+            margin: 10px 0px;
+        }
+
+        #container {
+            width: 640px;
+            height: 480px;
+        }
+
+        #player {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Custom Player</h1>
+    <img class="ad" src="http://www.iab.net/media/image/728x90.gif" />  
+    <div id="container">
+        <div id="player">
+            <!-- the player will end up here. -->
+        </div>
+    </div>
+</body>
+</html>

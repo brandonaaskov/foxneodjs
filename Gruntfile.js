@@ -14,7 +14,7 @@
                 options: {
                     jshintrc: '.jshintrc'
                 },
-                files: ['Gruntfile.js', 'web/js/*.js']
+                files: ['Gruntfile.js', 'web/js/*.js', 'web/js/player/**/*.js']
             },
 
             requirejs: {
@@ -136,7 +136,7 @@
                 options: {
                     banner: "/*!\n" +
                         "* Project: <%= pkg.name %> <%= pkg.version %>\n" +
-                        "* Last Modified: <%= grunt.template.today('yyyy-mm-dd') %>\n" +
+                        "* Last Modified: <%= grunt.template.today('dddd, mmmm dS, yyyy, h:MM:ss TT') %>\n" +
                         "* Author(s): <%= pkg.authors %>\n" +
                         "*/\n\n",
                     compress: true

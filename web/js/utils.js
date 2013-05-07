@@ -43,6 +43,27 @@ define([], function () {
         return outputArray;
     };
 
+    /**
+     * Loops through the provided object and when value matches, the key is returned.
+     * @param obj
+     * @param value
+     * @returns {String}
+     */
+    var getKeyFromValue = function (obj, value) {
+        for (var prop in obj)
+        {
+            if (_.has(obj, prop))
+            {
+                if (obj[prop] === value)
+                {
+                    return prop;
+                }
+            }
+        }
+
+        return '';
+    };
+
     var pipeStringToObject = function (pipeString) {
         var obj = {};
 
@@ -314,6 +335,7 @@ define([], function () {
     return {
         arrayToObject: arrayToObject,
         objectToArray: objectToArray,
+        getKeyFromValue: getKeyFromValue,
         pipeStringToObject: pipeStringToObject,
         objectToPipeString: objectToPipeString,
         lowerCasePropertyNames: lowerCasePropertyNames,

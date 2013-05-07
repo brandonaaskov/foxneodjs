@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NEOD Player</title>
+    <script type="text/javascript" src="http://player.foxfdm.com/btn/btn_player_qa.js"></script>
+
+    <script type="text/javascript">
+        window.addEventListener('foxneod:ready', function () {
+            (function initialize (window, undefined) {
+                var playerAttributes = FoxNEOD.utils.getQueryParams(window.location.href);
+
+                //set styles on the container
+                document.getElementById('container').setAttribute('style', 'width:'+ playerAttributes.width +'px; ' +
+                        'height:'+ playerAttributes.height +'px;');
+
+                var player = window.player = new FDM_Player('player', playerAttributes.width, playerAttributes.height);
+
+                for (var prop in playerAttributes)
+                {
+                    player[prop] = playerAttributes[prop];
+                }
+            })(window, undefined);
+        });
+    </script>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container, #player {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="player">
+        <!-- the player will end up here. -->
+    </div>
+</div>
+</body>
+</html>
