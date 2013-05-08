@@ -1189,7 +1189,7 @@ define('css',['utils', 'debug'], function (utils, debug) {
         updateStyles: updateStyles
     };
 });
-/*global define, _, FDM_Player_vars, $pdk, console */
+/*global define, _, FDM_Player_vars, $pdk */
 
 define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
     
@@ -1218,19 +1218,19 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
             {
                 var tpPlayers = document.querySelectorAll('.tpPlayer');
 
-                //TODO: remove this someday for something better
-                var clearVideoTag = function () {
-                    try {
-                        var videoTag = document.querySelector('video');
-                        if (videoTag)
-                        {
-                            $pdk.controller.mute(true);
-                            videoTag.parentNode.removeChild(videoTag);
-                        }
-                    }
-                    catch (e)
+                var currentVideo = {};
+                var clearModals = function (event) {
+//                    window.alert('clearModals()');
+                    if (event.data.baseClip)
                     {
-                        //sometimes it's already empty and throws an error
+//                        console.log('baseClip was real');
+                        if (!_.isEqual(currentVideo, event.data.baseClip))
+                        {
+//                            window.alert('got this far');
+                            removeModals(1);
+                            $pdk.controller.removeEventListener('OnMediaLoadStart', clearModals);
+                            currentVideo = event.data.baseClip;
+                        }
                     }
                 };
 
@@ -1252,8 +1252,9 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
 
                     if (modalOptions.resetPlayer)
                     {
-                        var playerDiv = tpPlayer.querySelector('.player');
-                        setInterval(clearVideoTag, 500); //TODO: remove this someday for something better
+                        var playerDiv = tpPlayer.querySelector('.player'); //TODO: fix this hardcoded string?
+                        $pdk.controller.pause(true);
+                        $pdk.controller.addEventListener('OnMediaLoadStart', clearModals);
                     }
                 }
             }
@@ -2845,7 +2846,7 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, debug) {
     
 
-    var buildTimestamp = '2013-05-07 05:05:10';
+    var buildTimestamp = '2013-05-07 07:05:32';
 
     var userAgentFlags = {
         android: false,
@@ -2857,7 +2858,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     //-------------------------------------------------------------------------------- initialization
     (function init () {
         debug.log('Ready', {
-            buildDate: '2013-05-07 05:05:10',
+            buildDate: '2013-05-07 07:05:32',
             authors: 'https://twitter.com/brandonaaskov'
         }, '!');
 

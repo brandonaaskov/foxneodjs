@@ -44,7 +44,7 @@ define([], function () {
     };
 
     /**
-     * Loops through the provided object and when value matches, the key is returned.
+     * Loops through the provided object (shallow) and when value matches, the key is returned.
      * @param obj
      * @param value
      * @returns {String}
@@ -54,7 +54,8 @@ define([], function () {
         {
             if (_.has(obj, prop))
             {
-                if (obj[prop] === value)
+                //we want this to be flexible, so we don't do strict equal (see /tests/qunit/tests.js)
+                if (obj[prop] == value)
                 {
                     return prop;
                 }
@@ -274,7 +275,7 @@ define([], function () {
     };
 
     var getParamValue = function (key, url) {
-        var queryParams = getQueryParams();
+        var queryParams = getQueryParams(url);
 
         if (_.isObject(queryParams)) //it should always be an object, but just in case
         {
@@ -326,7 +327,13 @@ define([], function () {
      * @param url
      */
     var setURL = function (url) {
-        this.url = url;
+        urlString = url;
+
+        return urlString;
+    };
+
+    var getURL = function () {
+        return urlString;
     };
     //---------------------------------------------- /url stuff
 
@@ -349,6 +356,7 @@ define([], function () {
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
-        setURL: setURL
+        setURL: setURL,
+        getURL: getURL
     };
 });

@@ -100,7 +100,7 @@ define(['utils', 'base64'], function (utils, base64) {
 
                     deepEqual(utils.objectToArray(testObject), testArray, 'Empty object to empty array.');
 
-                    testObj = {
+                    testObject = {
                         key: 'value',
                         something: 'else',
                         name: 'brandon'
@@ -112,9 +112,9 @@ define(['utils', 'base64'], function (utils, base64) {
                         'name=brandon'
                     ];
 
-                    deepEqual(utils.objectToArray(testObj), testArray, 'Object to array with key-value pairs as strings.');
+                    deepEqual(utils.objectToArray(testObject), testArray, 'Object to array with key-value pairs as strings.');
 
-                    testObj = {
+                    testObject = {
                         0: 'something',
                         1: 'blah',
                         2: 'foo'
@@ -126,9 +126,9 @@ define(['utils', 'base64'], function (utils, base64) {
                         '2=foo'
                     ];
 
-                    deepEqual(utils.objectToArray(testObj), testArray, 'Array without key-value pairs to on object with indexes as keys.');
+                    deepEqual(utils.objectToArray(testObject), testArray, 'Array without key-value pairs to on object with indexes as keys.');
 
-                    testObj = {
+                    testObject = {
                         key: 'value',
                         something: 'else',
                         person: {
@@ -139,9 +139,32 @@ define(['utils', 'base64'], function (utils, base64) {
                     };
 
                     throws(function () {
-                        utils.objectToArray(testObj);
+                        utils.objectToArray(testObject);
                     }, 'Throws error on nested object.');
                 });
+            })();
+
+            (function getKeyFromValueTests () {
+                test('getKeyFromValue', 6, function () {
+                    var testObject = {
+                        name: 'The Hurt Locker',
+                        rating: 'R',
+                        director: 'Kathryn Bigelow',
+                        summary: 'Badass.',
+                        score: 93.7491
+                    };
+
+                    strictEqual(utils.getKeyFromValue(testObject, 'R'), 'rating', 'Retrieved the key based on the value from a basic object');
+                    strictEqual(utils.getKeyFromValue(testObject, 93.7491), 'score', 'Retrieved the key based on the floating point value from a basic object');
+                    equal(utils.getKeyFromValue(testObject, '93.7491'), 'score', 'Retrieved the key based on the string value of a floating point number from a basic object');
+                    strictEqual(utils.getKeyFromValue(testObject, 'nonexistent'), '', 'Got an empty string when looking for a value that did not exist in the provided object');
+                    strictEqual(utils.getKeyFromValue(testObject, 0), '', 'Got an empty string when looking for the value 0 which does not exist in the provided object');
+
+                    testObject.nested = {
+                        extra: 'stuff'
+                    };
+                    strictEqual(utils.getKeyFromValue(testObject, 'stuff'), '', 'Got an empty string when looking for a value that was too deep in the provided object');
+                })
             })();
 
             (function pipeStringToObjectTests () {
@@ -239,7 +262,13 @@ define(['utils', 'base64'], function (utils, base64) {
                 });
             })();
 
-            (function getParamValueTest () {
+            (function getParamValueTests () {
+                test('getParamValue', 1, function () {
+                    var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
+
+                    utils.setURL(testURL);
+                    strictEqual(utils.getParamValue('something'), 'what', 'Grabbed the param value from a query string on a url');
+                });
             })();
 
             (function paramExists () {
@@ -257,6 +286,23 @@ define(['utils', 'base64'], function (utils, base64) {
 
                     utils.setURL(testURL);
                     strictEqual(utils.paramExists('noKey', null, testURL), false, 'Tests for a key that does not exist');
+                });
+            })();
+
+            (function setURLTests () {
+                test('setURL', 3, function () {
+                    var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
+                    var expected = {
+                        key: 'value',
+                        something: 'what',
+                        testing: 'good'
+                    };
+
+                    strictEqual(utils.setURL('test'), utils.getURL(), 'setURL works on a non-URI string');
+                    strictEqual(utils.setURL(testURL), testURL, 'setURL works on a typical URI string');
+
+                    utils.setURL(testURL);
+                    deepEqual(utils.getQueryParams(), expected, 'setURL works for other methods that do not explicitly pass the URL');
                 });
             })();
         },
