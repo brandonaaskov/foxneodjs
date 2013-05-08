@@ -4,7 +4,12 @@
     <bookmark url="file://$PROJECT_DIR$/../../tests/fox/btn/iframe-conversion.html" description="&lt;title&gt;iframe conversion test&lt;/title&gt;" line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="" />
+    <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/build/foxneod-0.1.4.js" afterPath="$PROJECT_DIR$/web/build/foxneod-0.1.4.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/build/foxneod-0.1.4.min.js" afterPath="$PROJECT_DIR$/web/build/foxneod-0.1.4.min.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/js/modal.js" afterPath="$PROJECT_DIR$/web/js/modal.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path=".idea/workspace.xml" />
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367690786934" ignored="false" />
     <file path="/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796972669" ignored="false" />
@@ -63,7 +68,7 @@
     <file path="/HTML Fragment (foxneo.js:7654).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367608349153" ignored="false" />
     <file path="/css.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367619715045" ignored="false" />
     <file path="/HTML Fragment (foxneo.js:5111).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367612658964" ignored="false" />
-    <file path="/modal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367966543405" ignored="false" />
+    <file path="/modal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367973013077" ignored="false" />
     <file path="/HTML Fragment (modal.js:4904).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367615305483" ignored="false" />
     <file path="/foxneod.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367875175904" ignored="false" />
     <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367870782251" ignored="false" />
@@ -74,6 +79,10 @@
     <file path="/index.php" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367965392050" ignored="false" />
     <file path="/single-player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367963306944" ignored="false" />
     <file path="/_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367966669541" ignored="false" />
+    <file path="$PROJECT_DIR$/../../tests/fox/fx/licensed-music/reference_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367968415288" ignored="false" />
+    <file path="/reference_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367968414364" ignored="false" />
+    <file path="$PROJECT_DIR$/../../tests/fox/fx/licensed-music/fx_player_qa.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367968293337" ignored="false" />
+    <file path="/fx_player_qa.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367968276994" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,11 +111,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_player.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_player.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/examples/modal/_player.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="67" selection-start="634" selection-end="634" vertical-scroll-proportion="0.22833724">
+            <state line="10" column="55" selection-start="447" selection-end="447" vertical-scroll-proportion="-6.25">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="modal.js" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/web/js/modal.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="32" column="71" selection-start="1173" selection-end="1173" vertical-scroll-proportion="0.31213874">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -150,16 +170,16 @@
         <option value="$PROJECT_DIR$/examples/iframe/_player.html" />
         <option value="$PROJECT_DIR$/examples/iframe/index.php" />
         <option value="$PROJECT_DIR$/web/examples/modal/index.php" />
-        <option value="$PROJECT_DIR$/web/js/modal.js" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/web/examples/modal/_player.html" />
         <option value="$PROJECT_DIR$/web/examples/modal/single-player.html" />
+        <option value="$PROJECT_DIR$/web/js/modal.js" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="60" />
-    <option name="y" value="216" />
+    <option name="x" value="304" />
+    <option name="y" value="232" />
     <option name="width" value="1680" />
     <option name="height" value="1024" />
   </component>
@@ -406,7 +426,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="60" y="216" width="1680" height="1024" extended-state="0" />
+    <frame x="304" y="232" width="1680" height="1024" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -569,15 +589,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/js/modal.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="21" selection-start="1721" selection-end="1721" vertical-scroll-proportion="0.7803468">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/tests/qunit/tests.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="253" column="0" selection-start="11239" selection-end="11239" vertical-scroll-proportion="0.0">
@@ -601,8 +612,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/web/examples/modal/_player.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="67" selection-start="634" selection-end="634" vertical-scroll-proportion="0.22833724">
+        <state line="10" column="55" selection-start="447" selection-end="447" vertical-scroll-proportion="-6.25">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/js/modal.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="71" selection-start="1173" selection-end="1173" vertical-scroll-proportion="0.31213874">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

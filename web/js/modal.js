@@ -27,6 +27,22 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
             {
                 var tpPlayers = document.querySelectorAll('.tpPlayer');
 
+                //TODO: remove this someday for something better
+                var clearVideoTag = function () {
+                    try {
+                        var videoTag = document.querySelector('video');
+                        if (videoTag)
+                        {
+                            $pdk.controller.mute(true);
+                            videoTag.parentNode.removeChild(videoTag);
+                        }
+                    }
+                    catch (e)
+                    {
+                        //sometimes it's already empty and throws an error
+                    }
+                };
+
                 for (var i = 0, n = tpPlayers.length; i < n; i++)
                 {
                     var tpPlayer = tpPlayers[i];
@@ -45,7 +61,8 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
 
                     if (modalOptions.resetPlayer)
                     {
-                        $pdk.controller.loadReleaseURL('http://domain.com/dummyURL/', true);
+                        var playerDiv = tpPlayer.querySelector('.player');
+                        setInterval(clearVideoTag, 500); //TODO: remove this someday for something better
                     }
                 }
             }

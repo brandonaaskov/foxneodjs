@@ -1218,6 +1218,22 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
             {
                 var tpPlayers = document.querySelectorAll('.tpPlayer');
 
+                //TODO: remove this someday for something better
+                var clearVideoTag = function () {
+                    try {
+                        var videoTag = document.querySelector('video');
+                        if (videoTag)
+                        {
+                            $pdk.controller.mute(true);
+                            videoTag.parentNode.removeChild(videoTag);
+                        }
+                    }
+                    catch (e)
+                    {
+                        //sometimes it's already empty and throws an error
+                    }
+                };
+
                 for (var i = 0, n = tpPlayers.length; i < n; i++)
                 {
                     var tpPlayer = tpPlayers[i];
@@ -1236,7 +1252,8 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
 
                     if (modalOptions.resetPlayer)
                     {
-                        $pdk.controller.loadReleaseURL('http://domain.com/dummyURL/', true);
+                        var playerDiv = tpPlayer.querySelector('.player');
+                        setInterval(clearVideoTag, 500); //TODO: remove this someday for something better
                     }
                 }
             }
@@ -2828,7 +2845,7 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, debug) {
     
 
-    var buildTimestamp = '2013-05-07 03:05:54';
+    var buildTimestamp = '2013-05-07 05:05:10';
 
     var userAgentFlags = {
         android: false,
@@ -2840,7 +2857,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     //-------------------------------------------------------------------------------- initialization
     (function init () {
         debug.log('Ready', {
-            buildDate: '2013-05-07 03:05:54',
+            buildDate: '2013-05-07 05:05:10',
             authors: 'https://twitter.com/brandonaaskov'
         }, '!');
 
