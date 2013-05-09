@@ -54,8 +54,9 @@ define([], function () {
         {
             if (_.has(obj, prop))
             {
-                //we want this to be flexible, so we don't do strict equal (see /tests/qunit/tests.js)
-                if (obj[prop] == value)
+                //we want this to be flexible, so we check the string versions (want to keep strict equal)
+                // (see /tests/qunit/tests.js)
+                if (String(obj[prop]) === String(value))
                 {
                     return prop;
                 }

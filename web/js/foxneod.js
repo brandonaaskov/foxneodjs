@@ -1,4 +1,4 @@
-/*global define, _, FDM_Player_vars */
+/*global define, _, FDM_Player_vars, alert */
 
 define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, debug) {
     'use strict';
@@ -34,6 +34,7 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
     return {
         version: '@@version',
         packageName: '@@packageName',
+        buildDate: '@@buildDate',
         player: player,
         utils: utils,
         debug: debug

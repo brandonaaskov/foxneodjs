@@ -1,7 +1,13 @@
-/*global define, _, FDM_Player_vars, $pdk */
+/*global define, _, FDM_Player_vars, $pdk, console */
 
 define(['css', 'utils', 'debug'], function (css, utils, debug) {
     'use strict';
+
+    //-------------------------------------------------------------------------------- private properties
+    var modalClearingListenerAdded = false;
+    //-------------------------------------------------------------------------------- /private properties
+
+
 
     //-------------------------------------------------------------------------------- public methods
     var displayModal = function (options) {
@@ -27,44 +33,10 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
             {
                 var tpPlayers = document.querySelectorAll('.tpPlayer');
 
-                var currentVideo = {};
-                var clearModals = function (event) {
-//                    window.alert('clearModals()');
-                    if (event.data.baseClip)
-                    {
-//                        console.log('baseClip was real');
-                        if (!_.isEqual(currentVideo, event.data.baseClip))
-                        {
-//                            window.alert('got this far');
-                            removeModals(1);
-                            $pdk.controller.removeEventListener('OnMediaLoadStart', clearModals);
-                            currentVideo = event.data.baseClip;
-                        }
-                    }
-                };
-
                 for (var i = 0, n = tpPlayers.length; i < n; i++)
                 {
                     var tpPlayer = tpPlayers[i];
-                    var modal = getModalOverlay({
-                        width: tpPlayer.offsetWidth,
-                        height: tpPlayer.offsetHeight,
-                        text: modalOptions.message
-                    });
-
-                    if (_.isElement(tpPlayer) && _.isElement(modal))
-                    {
-                        tpPlayer.insertBefore(modal, tpPlayer.firstChild);
-                        verticallyCenter('.js-modal-container');
-                        removeModals(modalOptions.clearAfter*1000);
-                    }
-
-                    if (modalOptions.resetPlayer)
-                    {
-                        var playerDiv = tpPlayer.querySelector('.player'); //TODO: fix this hardcoded string?
-                        $pdk.controller.pause(true);
-                        $pdk.controller.addEventListener('OnMediaLoadStart', clearModals);
-                    }
+                    injectModal(tpPlayer, modalOptions);
                 }
             }
         }
@@ -73,6 +45,42 @@ define(['css', 'utils', 'debug'], function (css, utils, debug) {
 //            throw new Error(exception);
             debug.log('The try/catch for the modal stuff failed');
             // TODO: handle this, or get to a point where i don't have to use a try/catch
+        }
+    };
+
+    var injectModal = function (player, options) {
+        var modal = getModalOverlay({
+            width: player.offsetWidth,
+            height: player.offsetHeight,
+            text: options.message
+        });
+
+        if (_.isElement(player) && _.isElement(modal))
+        {
+            player.insertBefore(modal, player.firstChild);
+            verticallyCenter('.js-modal-container');
+            removeModals(options.clearAfter*1000);
+        }
+
+        if (options.resetPlayer)
+        {
+            var playerDiv = player.querySelector('.player'); //TODO: fix this hardcoded string?
+            $pdk.controller.pause(true);
+
+            //TODO: this is probably bad and will need to be externalized to a config
+            $pdk.controller.setReleaseURL('http://link.theplatform.com/s/fxnetworks/p9xHQIEhwoBi', true);
+            registerEventListener();
+        }
+    };
+
+    var registerEventListener = function () {
+        if (!modalClearingListenerAdded)
+        {
+            $pdk.controller.addEventListener('OnMediaLoadStart', function () {
+                removeModals(1);
+            });
+
+            modalClearingListenerAdded = true;
         }
     };
 

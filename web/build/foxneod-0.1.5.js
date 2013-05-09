@@ -453,7 +453,7 @@ define('utils',[], function () {
     };
 
     /**
-     * Loops through the provided object and when value matches, the key is returned.
+     * Loops through the provided object (shallow) and when value matches, the key is returned.
      * @param obj
      * @param value
      * @returns {String}
@@ -463,7 +463,9 @@ define('utils',[], function () {
         {
             if (_.has(obj, prop))
             {
-                if (obj[prop] === value)
+                //we want this to be flexible, so we check the string versions (want to keep strict equal)
+                // (see /tests/qunit/tests.js)
+                if (String(obj[prop]) === String(value))
                 {
                     return prop;
                 }
@@ -683,7 +685,7 @@ define('utils',[], function () {
     };
 
     var getParamValue = function (key, url) {
-        var queryParams = getQueryParams();
+        var queryParams = getQueryParams(url);
 
         if (_.isObject(queryParams)) //it should always be an object, but just in case
         {
@@ -735,7 +737,13 @@ define('utils',[], function () {
      * @param url
      */
     var setURL = function (url) {
-        this.url = url;
+        urlString = url;
+
+        return urlString;
+    };
+
+    var getURL = function () {
+        return urlString;
     };
     //---------------------------------------------- /url stuff
 
@@ -758,7 +766,8 @@ define('utils',[], function () {
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
-        setURL: setURL
+        setURL: setURL,
+        getURL: getURL
     };
 });
 /*global define */
@@ -840,7 +849,7 @@ define('debug',['utils', 'error'], function (utils, error) {
     };
 
     var getLogItems = function (logMessage, data) {
-        var message = 'foxneod-0.1.4: ',
+        var message = 'foxneod-0.1.5: ',
             payload = data || {},
             customError = error.getEmptyErrorObject();
 
@@ -1189,10 +1198,16 @@ define('css',['utils', 'debug'], function (utils, debug) {
         updateStyles: updateStyles
     };
 });
-/*global define, _, FDM_Player_vars, $pdk */
+/*global define, _, FDM_Player_vars, $pdk, console */
 
 define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
     
+
+    //-------------------------------------------------------------------------------- private properties
+    var modalClearingListenerAdded = false;
+    //-------------------------------------------------------------------------------- /private properties
+
+
 
     //-------------------------------------------------------------------------------- public methods
     var displayModal = function (options) {
@@ -1218,44 +1233,10 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
             {
                 var tpPlayers = document.querySelectorAll('.tpPlayer');
 
-                var currentVideo = {};
-                var clearModals = function (event) {
-//                    window.alert('clearModals()');
-                    if (event.data.baseClip)
-                    {
-//                        console.log('baseClip was real');
-                        if (!_.isEqual(currentVideo, event.data.baseClip))
-                        {
-//                            window.alert('got this far');
-                            removeModals(1);
-                            $pdk.controller.removeEventListener('OnMediaLoadStart', clearModals);
-                            currentVideo = event.data.baseClip;
-                        }
-                    }
-                };
-
                 for (var i = 0, n = tpPlayers.length; i < n; i++)
                 {
                     var tpPlayer = tpPlayers[i];
-                    var modal = getModalOverlay({
-                        width: tpPlayer.offsetWidth,
-                        height: tpPlayer.offsetHeight,
-                        text: modalOptions.message
-                    });
-
-                    if (_.isElement(tpPlayer) && _.isElement(modal))
-                    {
-                        tpPlayer.insertBefore(modal, tpPlayer.firstChild);
-                        verticallyCenter('.js-modal-container');
-                        removeModals(modalOptions.clearAfter*1000);
-                    }
-
-                    if (modalOptions.resetPlayer)
-                    {
-                        var playerDiv = tpPlayer.querySelector('.player'); //TODO: fix this hardcoded string?
-                        $pdk.controller.pause(true);
-                        $pdk.controller.addEventListener('OnMediaLoadStart', clearModals);
-                    }
+                    injectModal(tpPlayer, modalOptions);
                 }
             }
         }
@@ -1264,6 +1245,42 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
 //            throw new Error(exception);
             debug.log('The try/catch for the modal stuff failed');
             // TODO: handle this, or get to a point where i don't have to use a try/catch
+        }
+    };
+
+    var injectModal = function (player, options) {
+        var modal = getModalOverlay({
+            width: player.offsetWidth,
+            height: player.offsetHeight,
+            text: options.message
+        });
+
+        if (_.isElement(player) && _.isElement(modal))
+        {
+            player.insertBefore(modal, player.firstChild);
+            verticallyCenter('.js-modal-container');
+            removeModals(options.clearAfter*1000);
+        }
+
+        if (options.resetPlayer)
+        {
+            var playerDiv = player.querySelector('.player'); //TODO: fix this hardcoded string?
+            $pdk.controller.pause(true);
+
+            //TODO: this is probably bad and will need to be externalized to a config
+            $pdk.controller.setReleaseURL('http://link.theplatform.com/s/fxnetworks/p9xHQIEhwoBi', true);
+            registerEventListener();
+        }
+    };
+
+    var registerEventListener = function () {
+        if (!modalClearingListenerAdded)
+        {
+            $pdk.controller.addEventListener('OnMediaLoadStart', function () {
+                removeModals(1);
+            });
+
+            modalClearingListenerAdded = true;
         }
     };
 
@@ -2841,12 +2858,12 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
         fixBrokenFeatures(['watch']);
     })();
 });
-/*global define, _, FDM_Player_vars */
+/*global define, _, FDM_Player_vars, alert */
 
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, debug) {
     
 
-    var buildTimestamp = '2013-05-07 07:05:32';
+    var buildTimestamp = '2013-05-08 10:05:16';
 
     var userAgentFlags = {
         android: false,
@@ -2858,7 +2875,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     //-------------------------------------------------------------------------------- initialization
     (function init () {
         debug.log('Ready', {
-            buildDate: '2013-05-07 07:05:32',
+            buildDate: '2013-05-08 10:05:16',
             authors: 'https://twitter.com/brandonaaskov'
         }, '!');
 
@@ -2875,8 +2892,9 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
 
     // Public API
     return {
-        version: '0.1.4',
+        version: '0.1.5',
         packageName: 'foxneod',
+        buildDate: '2013-05-08 10:05:16',
         player: player,
         utils: utils,
         debug: debug
