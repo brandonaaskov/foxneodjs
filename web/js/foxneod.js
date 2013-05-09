@@ -1,9 +1,10 @@
 /*global define, _, FDM_Player_vars, alert */
 
-define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, debug) {
+define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
+    var debug = new Debug();
 
     var userAgentFlags = {
         android: false,
@@ -14,10 +15,15 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
 
     //-------------------------------------------------------------------------------- initialization
     (function init () {
-        debug.log('Ready', {
+
+        debug.log('ready', {
             buildDate: '@@buildDate',
             authors: '@@authors'
-        }, '!');
+        });
+//        debug.log('Ready', {
+//            buildDate: '@@buildDate',
+//            authors: '@@authors'
+//        }, '!');
 
         if (FDM_Player_vars.isFlash)
         {
