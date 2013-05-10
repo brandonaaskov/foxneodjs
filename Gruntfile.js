@@ -14,15 +14,15 @@
                 options: {
                     jshintrc: '.jshintrc'
                 },
-                files: ['Gruntfile.js', 'web/js/*.js', 'web/js/player/**/*.js']
+                files: ['Gruntfile.js', 'js/*.js', 'js/player/**/*.js']
             },
 
             requirejs: {
                 compile: {
                     options: {
-                        baseUrl: "web/js",
+                        baseUrl: "js",
                         name: 'main',
-                        out: "web/build/<%= pkg.name %>-<%= pkg.version %>.js",
+                        out: "build/<%= pkg.name %>-<%= pkg.version %>.js",
 
                         //Introduced in 2.1.2 and considered experimental.
                         //If the minifier specified in the "optimize" option supports generating
@@ -78,6 +78,7 @@
                             , jquery: 'lib/jquery/jquery-2.0.0.min'
                             , underscore: 'lib/underscore/underscore'
                             , modernizr: 'lib/modernizr/modernizr.custom'
+                            , utils: 'utils'
                         },
 
                         //Defines the loading time for modules. Depending on the complexity of the
@@ -91,8 +92,8 @@
 
             replace: {
                 "Replacing Items RequireJS Output": { //can be any name, might as well make it descriptive
-                    src: 'web/build/<%= pkg.name %>-<%= pkg.version %>.js',
-                    dest: 'web/build/<%= pkg.name %>-<%= pkg.version %>.js',
+                    src: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
+                    dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
                     replacements: [
                         {
                             from: '@@packageName',
@@ -144,7 +145,7 @@
                 },
                 minification: {
                     files: {
-                        'web/build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['web/build/<%= pkg.name %>-<%= pkg.version %>.js']
+                        'build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['build/<%= pkg.name %>-<%= pkg.version %>.js']
                     }
                 }
             },

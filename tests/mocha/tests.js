@@ -1,15 +1,14 @@
 /*global require */
 
 require.config({
-    baseUrl: '../../web/js/',
+    baseUrl: '../../js/',
     paths: {
         almond: 'lib/almond/almond'
-        , jquery: '../../web/js/lib/jquery/jquery-2.0.0.min'
+        , jquery: 'lib/jquery/jquery-2.0.0.min'
         , underscore: 'lib/underscore/underscore'
-        , modernizr: '../../web/js/lib/modernizr/modernizr.custom'
-        , mocha: '../../node_modules/mocha/mocha'
-        , chai: '../../node_modules/chai/chai'
-        , utils: 'utils'
+        , modernizr: 'lib/modernizr/modernizr.custom'
+        , mocha: '../node_modules/mocha/mocha'
+        , chai: '../node_modules/chai/chai'
     }
 });
 
