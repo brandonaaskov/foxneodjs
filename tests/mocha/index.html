@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Mocha</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+
+        <script type="text/javascript" src="../../web/js/lib/labjs/LAB.min.js"></script>
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <!--<script type="text/javascript" src="../../web/build/foxneod-0.1.5.js"></script>-->
+        <!--<script src="../../node_modules/mocha/mocha.js"></script>-->
+        <!--<script src="../../node_modules/chai/chai.js"></script>-->
+        <!--<script>mocha.setup('tdd')</script>-->
+        <!--<script src="tests.js"></script>-->
+        <!--<script>-->
+        <!--mocha.run();-->
+        <!--</script>-->
+
+        <script>
+        $LAB
+        .script("../../web/build/foxneod-0.1.5.js")
+        .script("../../node_modules/mocha/mocha.js")
+        .script("../../node_modules/chai/chai.js")
+        .wait()
+        .script(function () {
+            mocha.setup('tdd')
+        })
+        .wait()
+        .script("tests.js").wait()
+        .script(function(){
+            mocha.run();
+        });
+        </script>
+    </body>
+</html>

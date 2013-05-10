@@ -103,7 +103,7 @@ define(['require', 'utils'], function (require, utils) {
                 if (mode === category.toLowerCase() || mode === 'all')
                 {
                     console[logLevel](prefix + category + ': ' + options.message, options.data || '');
-                    console.log('lastUsedOptions set');
+//                    console.log('lastUsedOptions set');
                     lastUsedOptions = _.clone(options);
                 }
             }

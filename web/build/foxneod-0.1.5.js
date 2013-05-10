@@ -512,7 +512,7 @@ define('debug',['require', 'utils'], function (require, utils) {
                 if (mode === category.toLowerCase() || mode === 'all')
                 {
                     console[logLevel](prefix + category + ': ' + options.message, options.data || '');
-                    console.log('lastUsedOptions set');
+//                    console.log('lastUsedOptions set');
                     lastUsedOptions = _.clone(options);
                 }
             }
@@ -2851,7 +2851,7 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
     
 
-    var buildTimestamp = '2013-05-09 05:05:34';
+    var buildTimestamp = '2013-05-09 06:05:42';
     var debug = new Debug('core');
 
     var userAgentFlags = {
@@ -2865,11 +2865,11 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-09 05:05:34',
+            buildDate: '2013-05-09 06:05:42',
             authors: 'https://twitter.com/brandonaaskov'
         });
 //        debug.log('Ready', {
-//            buildDate: '2013-05-09 05:05:34',
+//            buildDate: '2013-05-09 06:05:42',
 //            authors: 'https://twitter.com/brandonaaskov'
 //        }, '!');
 
@@ -2888,7 +2888,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     return {
         version: '0.1.5',
         packageName: 'foxneod',
-        buildDate: '2013-05-09 05:05:34',
+        buildDate: '2013-05-09 06:05:42',
         player: player,
         utils: utils,
         debug: Debug
