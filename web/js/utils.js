@@ -1,7 +1,9 @@
 /*global define, _ */
 
-define([], function () {
+define(['debug'], function (Debug) {
     'use strict';
+
+    var debug = new Debug('utils');
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -73,8 +75,8 @@ define([], function () {
 
         for (var i = 0, n = kvPairs.length; i < n; i++)
         {
-            var pair = kvPairs[i].split('=');
-            var value = pair[1] || null; //i just prefer null to undefined
+            var pair = kvPairs[i].split(/=(.+)?/, 2); //makes sure we only split on the first = found
+            var value = pair[1] || null; //i prefer null in this case
             obj[pair[0]] = value; //sets the key value pair on our return object
         }
 
@@ -137,15 +139,11 @@ define([], function () {
 
                 return color.toLowerCase();
             }
-//            else
-//            {
-//                debug.log({
-//                    type: 'utils',
-//                    message: 'Whatever you supplied to getColorFromString() was either not a string, not a number and/or ' +
-//                        'not the right length (should be 6 characters with no hash and 7 with).',
-//                    warn: true
-//                });
-//            }
+            else
+            {
+                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
+                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
+            }
         }
 
         return null;
@@ -201,7 +199,7 @@ define([], function () {
         var event = document.createEvent('Event');
         var name = '@@packageName:' + eventName;
         event.initEvent(name, true, true);
-        event.customData = data || {};
+        event.data = data || {};
         window.dispatchEvent(event);
     };
 

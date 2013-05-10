@@ -407,10 +407,151 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
+/*global define, _, console */
+
+/**
+ * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
+ * any point.
+ *
+ * When you want to provide a debugging level for a module, ask for the debug module as a dependency as you normally
+ * would. As a convention, name the argument passed to your module Debug instead of debug. Having a capital letter
+ * indicates that you can create new instances using the new keyword and it also allows for better syntax later (you'll
+ * see what I mean).
+ *
+ * Example:
+ * define(['debug'], function (Debug) {
+ *  var debug = new Debug('modulename');
+ *
+ * The name that we pass when we instantiate a Debug instance is really important. Aesthetically, it just adds some
+ * more context to a console message, but you can also filter debug statements on the page using that same module name.
+ * For instance, if you wanted to see debug messages for an advertising module, you would use the query param
+ * ?debug=advertising, assuming the string passed to debug was 'advertising' (Note: we actually lowercase everything
+ * internally, so it doesn't matter what the case is of the string you supply). That will only show debug messages for
+ * that module while you're testing. The default in dev is 'all', which allows you to see every debug message. In prod,
+ * there is no default, so debugging can only be enabled by explicitly asking for it via a query param.
+ *
+ * If you want to see debug messages for many modules at once, just comma separate the items in the query param's value.
+ * Example: ?debug=utils,player,base64
+ *
+ */
+define('debug',['require', 'utils'], function (require, utils) {
+    
+
+    return function (moduleName) {
+        var prefix = 'foxneod-0.1.5: ';
+        var lastUsedOptions = {};
+        var category = moduleName.toLowerCase();
+
+        //-------------------------------------- validation
+        if (_.isUndefined(category))
+        {
+            throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
+                "That's required. Sorry kiddo!");
+        }
+        else if (_.isString(category))
+        {
+            // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
+            // at lazy developers ;)
+            if (category.length < 3)
+            {
+                throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
+            }
+        }
+        else
+        {
+            throw new Error("When instantiating the Debug class, it expects a string for the category name as the " +
+                "only argument.");
+        }
+        //-------------------------------------- /validation
+
+
+
+
+        var log = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('log', options);
+
+            return options;
+        };
+
+        var warn = function (message, data) {
+            //we add the !!!WARNING!!! since most consoles don't have a native way to display console.warn() differently
+            var options = {
+                message: '!!!WARNING!!!: ' + message,
+                data: data
+            };
+
+            _log('warn', options);
+
+            return options;
+        };
+
+        var error = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('error', options);
+
+            return options;
+        };
+
+        var _log = function (logLevel, options) {
+            var debugModes = getDebugModes();
+
+            for (var i = 0, n = debugModes.length; i < n; i++)
+            {
+                var mode = debugModes[i].toLowerCase();
+
+                if (mode === category.toLowerCase() || mode === 'all')
+                {
+                    console[logLevel](prefix + category + ': ' + options.message, options.data || '');
+                    console.log('lastUsedOptions set');
+                    lastUsedOptions = _.clone(options);
+                }
+            }
+        };
+
+        var getDebugModes = function () {
+            var queryParam = require('utils').getParamValue('debug'); //fixes the circular dependency the RequireJS way
+            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['all'];
+
+            return debugModes;
+        };
+
+        // Surfaced for testing purposes
+        var test = {
+            getDebugModes: getDebugModes,
+            getLastUsedOptions: function () {
+                window.console.log('getLastUsedOptions', lastUsedOptions);
+                return lastUsedOptions;
+            },
+            getCategory: function () {
+                return category;
+            }
+        };
+
+        // Public API
+        return {
+            log: log,
+            warn: warn,
+            error: error,
+            _test: test
+        };
+    };
+});
 /*global define, _ */
 
-define('utils',[], function () {
+define('utils',['debug'], function (Debug) {
     
+
+    var debug = new Debug('utils');
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -482,8 +623,8 @@ define('utils',[], function () {
 
         for (var i = 0, n = kvPairs.length; i < n; i++)
         {
-            var pair = kvPairs[i].split('=');
-            var value = pair[1] || null; //i just prefer null to undefined
+            var pair = kvPairs[i].split(/=(.+)?/, 2); //makes sure we only split on the first = found
+            var value = pair[1] || null; //i prefer null in this case
             obj[pair[0]] = value; //sets the key value pair on our return object
         }
 
@@ -546,15 +687,11 @@ define('utils',[], function () {
 
                 return color.toLowerCase();
             }
-//            else
-//            {
-//                debug.log({
-//                    type: 'utils',
-//                    message: 'Whatever you supplied to getColorFromString() was either not a string, not a number and/or ' +
-//                        'not the right length (should be 6 characters with no hash and 7 with).',
-//                    warn: true
-//                });
-//            }
+            else
+            {
+                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
+                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
+            }
         }
 
         return null;
@@ -610,7 +747,7 @@ define('utils',[], function () {
         var event = document.createEvent('Event');
         var name = 'foxneod:' + eventName;
         event.initEvent(name, true, true);
-        event.customData = data || {};
+        event.data = data || {};
         window.dispatchEvent(event);
     };
 
@@ -770,85 +907,55 @@ define('utils',[], function () {
         getURL: getURL
     };
 });
-/*global define, _, console */
-
-define('debug',['utils'], function (utils) {
-    
-
-    var debugMode = 'all'.toLowerCase();
-    var prefix = 'foxneod-0.1.5: ';
-
-    return function (category) {
-        category = category || 'CATEGORY NOT SPECIFIED'; //setting a default
-
-        var log = function (message, data) {
-            var debugQueryParam = utils.getQueryParams(window.location.href);
-
-            if (utils.paramExists('debug'))
-            {
-                debugMode = utils.getParamValue('debug');
-            }
-
-            if (debugMode === category.toLowerCase() || debugMode === 'all')
-            {
-                console.log(prefix + category + ': ' + message, data || '');
-            }
-        };
-
-        // Public API
-        return {
-            log: log
-        };
-    };
-});
 /*global define, _ */
 
-define('player/iframe',['utils', 'debug'], function (utils, debug) {
+define('player/iframe',['utils'], function (utils) {
     
 
     var playerIds = []; // stores the ids of the elements we find
 
-    var getPlayers = function (selector) {
-        var players = [];
-
-        if (selector)
-        {
-            players = document.querySelectorAll(selector);
-        }
-
-        return players;
-    };
-
-    var getPlayerAttributes = function (element) {
-        var allAttributes = element.attributes;
+    var getPlayerAttributes = _.memoize(function (element) {
         var playerAttributes = {};
 
-        for (var i = 0, n = allAttributes.length; i < n; i++)
+        if (element)
         {
-            var attr = allAttributes[i],
-                attrName = attr.nodeName;
-
-            if (attrName.indexOf('data-player') !== -1)
+            if (!_.isElement(element))
             {
-                playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
+                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on jQuery where we don't have to");
+            }
 
-                /*
-                 * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
-                 * not always the same as the height and width of the player.
-                 */
-                var lowercased = utils.lowerCasePropertyNames(playerAttributes);
-                var defaults = {
-                    width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-                    height: (_.has(lowercased, 'height')) ? lowercased.height : 360
-                };
+            var allAttributes = element.attributes;
 
-                playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-                playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+
+            for (var i = 0, n = allAttributes.length; i < n; i++)
+            {
+                var attr = allAttributes[i],
+                    attrName = attr.nodeName;
+
+                if (attrName.indexOf('data-player') !== -1)
+                {
+                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+
+                    /*
+                     * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+                     * not always the same as the height and width of the player.
+                     */
+                    var lowercased = utils.lowerCasePropertyNames(playerAttributes);
+                    var defaults = {
+                        width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
+                        height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+                    };
+
+                    playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
+                    playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+                }
             }
         }
 
         return playerAttributes;
-    };
+    });
 
 
     var injectIframe = function (element, attributes, iframeURL) {
@@ -872,7 +979,7 @@ define('player/iframe',['utils', 'debug'], function (utils, debug) {
     };
 
     var injectIframePlayers = function (selector, iframeURL) {
-        var players = getPlayers(selector);
+        var players = document.querySelectorAll(selector);
 
         for (var i = 0, n = players.length; i < n; i++)
         {
@@ -883,12 +990,10 @@ define('player/iframe',['utils', 'debug'], function (utils, debug) {
         }
     };
 
-    (function () {
-//        debug.log('iframe init');
-    })();
-
-    // Public API
+    // This API is only Public to player.js, so we should surface everything so we can unit test it
     return {
+        getPlayerAttributes: getPlayerAttributes,
+        injectIframe: injectIframe,
         injectIframePlayers: injectIframePlayers
     };
 });
@@ -1359,8 +1464,10 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
 
 /*global define, _ */
 
-define('player',['player/iframe', 'modal', 'debug'], function (iframe, modal, debug) {
+define('player',['player/iframe', 'modal', 'debug'], function (iframe, modal, Debug) {
     
+
+    var debug = new Debug('player');
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -1382,9 +1489,16 @@ define('player',['player/iframe', 'modal', 'debug'], function (iframe, modal, de
      * entry point
      */
     return {
+        // Public API
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayers: iframe.injectIframePlayers
+        injectIframePlayers: iframe.injectIframePlayers,
+
+        //Testing-only API (still public, but please DO NOT USE unless unit testing)
+        _test: {
+            getPlayerAttributes: iframe.getPlayerAttributes,
+            injectIframe: iframe.injectIframe
+        }
     };
 });
 //     Underscore.js 1.4.4
@@ -2737,8 +2851,8 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
     
 
-    var buildTimestamp = '2013-05-09 02:05:54';
-    var debug = new Debug();
+    var buildTimestamp = '2013-05-09 05:05:34';
+    var debug = new Debug('core');
 
     var userAgentFlags = {
         android: false,
@@ -2751,11 +2865,11 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-09 02:05:54',
+            buildDate: '2013-05-09 05:05:34',
             authors: 'https://twitter.com/brandonaaskov'
         });
 //        debug.log('Ready', {
-//            buildDate: '2013-05-09 02:05:54',
+//            buildDate: '2013-05-09 05:05:34',
 //            authors: 'https://twitter.com/brandonaaskov'
 //        }, '!');
 
@@ -2774,10 +2888,10 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     return {
         version: '0.1.5',
         packageName: 'foxneod',
-        buildDate: '2013-05-09 02:05:54',
+        buildDate: '2013-05-09 05:05:34',
         player: player,
         utils: utils,
-        debug: debug
+        debug: Debug
     };
 });
 /*global require */

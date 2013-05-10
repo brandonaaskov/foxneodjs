@@ -1,7 +1,9 @@
 /*global define, _ */
 
-define(['player/iframe', 'modal', 'debug'], function (iframe, modal, debug) {
+define(['player/iframe', 'modal', 'debug'], function (iframe, modal, Debug) {
     'use strict';
+
+    var debug = new Debug('player');
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -23,8 +25,15 @@ define(['player/iframe', 'modal', 'debug'], function (iframe, modal, debug) {
      * entry point
      */
     return {
+        // Public API
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayers: iframe.injectIframePlayers
+        injectIframePlayers: iframe.injectIframePlayers,
+
+        //Testing-only API (still public, but please DO NOT USE unless unit testing)
+        _test: {
+            getPlayerAttributes: iframe.getPlayerAttributes,
+            injectIframe: iframe.injectIframe
+        }
     };
 });

@@ -1,51 +1,52 @@
 /*global define, _ */
 
-define(['utils', 'debug'], function (utils, debug) {
+define(['utils'], function (utils) {
     'use strict';
 
     var playerIds = []; // stores the ids of the elements we find
 
-    var getPlayers = function (selector) {
-        var players = [];
-
-        if (selector)
-        {
-            players = document.querySelectorAll(selector);
-        }
-
-        return players;
-    };
-
-    var getPlayerAttributes = function (element) {
-        var allAttributes = element.attributes;
+    var getPlayerAttributes = _.memoize(function (element) {
         var playerAttributes = {};
 
-        for (var i = 0, n = allAttributes.length; i < n; i++)
+        if (element)
         {
-            var attr = allAttributes[i],
-                attrName = attr.nodeName;
-
-            if (attrName.indexOf('data-player') !== -1)
+            if (!_.isElement(element))
             {
-                playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
+                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on jQuery where we don't have to");
+            }
 
-                /*
-                 * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
-                 * not always the same as the height and width of the player.
-                 */
-                var lowercased = utils.lowerCasePropertyNames(playerAttributes);
-                var defaults = {
-                    width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-                    height: (_.has(lowercased, 'height')) ? lowercased.height : 360
-                };
+            var allAttributes = element.attributes;
 
-                playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-                playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+
+            for (var i = 0, n = allAttributes.length; i < n; i++)
+            {
+                var attr = allAttributes[i],
+                    attrName = attr.nodeName;
+
+                if (attrName.indexOf('data-player') !== -1)
+                {
+                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+
+                    /*
+                     * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+                     * not always the same as the height and width of the player.
+                     */
+                    var lowercased = utils.lowerCasePropertyNames(playerAttributes);
+                    var defaults = {
+                        width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
+                        height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+                    };
+
+                    playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
+                    playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+                }
             }
         }
 
         return playerAttributes;
-    };
+    });
 
 
     var injectIframe = function (element, attributes, iframeURL) {
@@ -69,7 +70,7 @@ define(['utils', 'debug'], function (utils, debug) {
     };
 
     var injectIframePlayers = function (selector, iframeURL) {
-        var players = getPlayers(selector);
+        var players = document.querySelectorAll(selector);
 
         for (var i = 0, n = players.length; i < n; i++)
         {
@@ -80,12 +81,10 @@ define(['utils', 'debug'], function (utils, debug) {
         }
     };
 
-    (function () {
-//        debug.log('iframe init');
-    })();
-
-    // Public API
+    // This API is only Public to player.js, so we should surface everything so we can unit test it
     return {
+        getPlayerAttributes: getPlayerAttributes,
+        injectIframe: injectIframe,
         injectIframePlayers: injectIframePlayers
     };
 });

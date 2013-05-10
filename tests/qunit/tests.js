@@ -1,6 +1,6 @@
-/*global define, _, console */
+/*global define, $, _, console */
 
-define(['utils', 'base64'], function (utils, base64) {
+define(['utils', 'base64', 'player', 'debug'], function (utils, base64, player, Debug) {
 
     var packageName = '@@packageName';
 
@@ -9,49 +9,52 @@ define(['utils', 'base64'], function (utils, base64) {
             module('utils');
 
             (function addPixelSuffixTests () {
-                test('addPixelSuffix', 3, function () {
+                test('addPixelSuffix', function () {
                     strictEqual(utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
                     strictEqual(utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
                     strictEqual(utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
                 });
 
-                test('removePixelSuffix', 3, function () {
+                test('removePixelSuffix', function () {
                     strictEqual(utils.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
                     strictEqual(utils.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
                     strictEqual(utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
                 });
             })();
 
-            (function dispatchEventTests () {
-                asyncTest('dispatchEvent (no data)', 1, function () {
-                    var eventName = packageName + ':test';
+            test('dispatchEvent', 3, function () {
+                stop(2);
+                var eventName = packageName + ':test';
 
-                    window.addEventListener(eventName, function () {
-                        ok(true, "Event dispatching over the window object (no data payload).");
-                        window.removeEventListener(eventName);
-                        start();
-                    });
-                    utils.dispatchEvent('test');
+                window.addEventListener(eventName, function () {
+                    window.removeEventListener(eventName);
+                    ok(true, "Event dispatching over the window object (no data payload).");
+
+                    console.log('ran one assert and removed the event listener for ' + eventName);
+                    start();
                 });
+                utils.dispatchEvent('test');
 
-                asyncTest('dispatchEvent (with data)', 1, function () {
-                    var eventName = packageName + ':test';
+                eventName = packageName + ':dataTest';
 
-                    window.addEventListener(packageName + ':' + eventName, function (event) {
-                        strictEqual(event.data.test, true, 'Event dispatching over the window object (with data payload).');
-                        window.removeEventListener(eventName);
-                        start();
-                    });
-                    utils.dispatchEvent('test', { test: true });
+                window.addEventListener(eventName, function (event) {
+                    window.removeEventListener(eventName);
+                    strictEqual(event.data.movie, 'Django', 'Event dispatching over the window object (with data payload)');
+                    strictEqual(_.isObject(event.data), true, 'Data payload object is in fact, an Object');
+
+                    console.log('ran two asserts and removed the event listener for ' + eventName);
+                    start();
                 });
-            })();
+                utils.dispatchEvent('dataTest', { movie: 'Django' });
+            });
 
             (function getColorFromStringTests () {
-                test('getColorFromString', 7, function () {
-                    strictEqual(utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string.');
-                    strictEqual(utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase.');
-                    strictEqual(utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid.');
-                    strictEqual(utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase.');
+                test('getColorFromString', function () {
+                    strictEqual(_.isString(utils.getColorFromString('FFFFFF')), true, 'Returns a string');
+                    strictEqual(utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string');
+                    strictEqual(utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase');
+                    strictEqual(utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid');
+                    strictEqual(utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase');
 
                     throws(function () {
                         utils.getColorFromString(102345);
@@ -68,7 +71,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function arrayToObjectTests () {
-                test('arrayToObject', 3, function () {
+                test('arrayToObject', function () {
                     deepEqual(utils.arrayToObject([]), {}, 'Empty array to empty object.');
 
                     deepEqual(utils.arrayToObject([
@@ -94,7 +97,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function objectToArrayTests () {
-                test('objectToArray', 4, function () {
+                test('objectToArray', function () {
                     var testObject = {},
                         testArray = [];
 
@@ -145,7 +148,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function getKeyFromValueTests () {
-                test('getKeyFromValue', 6, function () {
+                test('getKeyFromValue', function () {
                     var testObject = {
                         name: 'The Hurt Locker',
                         rating: 'R',
@@ -168,7 +171,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function pipeStringToObjectTests () {
-                test('pipeStringToObject', 2, function () {
+                test('pipeStringToObject', function () {
                     var testObject = {
                         name: 'Point Break',
                         rating: 'R',
@@ -196,7 +199,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function objectToPipeStringTests () {
-                test('objectToPipeString', 2, function () {
+                test('objectToPipeString', function () {
                     var testObject = {
                         name: 'Point Break',
                         rating: 'R',
@@ -217,7 +220,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function lowerCasePropertyNamesTests () {
-                test('lowerCasePropertyNames', 2, function () {
+                test('lowerCasePropertyNames', function () {
                     var testObject = {
                         Name: 'Point Break',
                         Rating: 'R',
@@ -247,7 +250,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function getQueryParamsTests () {
-                test('getQueryParams', 2, function () {
+                test('getQueryParams', function () {
                     var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
                     var expected = {
                         key: 'value',
@@ -263,7 +266,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function getParamValueTests () {
-                test('getParamValue', 1, function () {
+                test('getParamValue', function () {
                     var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
 
                     utils.setURL(testURL);
@@ -272,7 +275,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function paramExists () {
-                test('paramExists', 4, function () {
+                test('paramExists', function () {
                     var testURL = "http://domain.com/page.html?myKey=value&otherKey=testValue&yetAnother=good";
 
                     utils.setURL(testURL);
@@ -290,7 +293,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function setURLTests () {
-                test('setURL', 3, function () {
+                test('setURL', function () {
                     var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
                     var expected = {
                         key: 'value',
@@ -311,7 +314,7 @@ define(['utils', 'base64'], function (utils, base64) {
             module('base64');
 
             (function jsonToBase64Tests () {
-                test('jsonToBase64', 1, function () {
+                test('jsonToBase64', function () {
                     var testObject = {
                         name: 'Point Break',
                         rating: 'R',
@@ -328,7 +331,7 @@ define(['utils', 'base64'], function (utils, base64) {
             })();
 
             (function base64ToJSON () {
-                test('base64ToJSON', 1, function () {
+                test('base64ToJSON', function () {
                     var expected = {
                         name: 'Point Break',
                         rating: 'R',
@@ -343,12 +346,107 @@ define(['utils', 'base64'], function (utils, base64) {
                     deepEqual(base64.base64ToJSON(base64String), expected, 'Base 64 string decoded to a shallow, basic object properly.');
                 });
             })();
+        },
+
+        player: {
+            iframe: function () {
+                module('player:iframe', {
+                    setup: function () {
+                        $('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
+                    },
+                    teardown: function () {
+                        $('#player').empty();
+                        $('#players').empty();
+                    }
+                });
+
+                (function getPlayerAttributesTests () {
+
+                    test('getPlayerAttributes', function () {
+                        $('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
+
+                        var element = document.querySelector('#playerID');
+                        var expected = {
+                            autoplay: 'true',
+                            width: '640',
+                            height: '360',
+                            iframeHeight: '360',
+                            iframeWidth: '640',
+                            fb: 'true',
+                            releaseURL: 'http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true',
+                            siteSection: 'myFWSiteSection'
+                        };
+
+                        strictEqual(_.isObject(player._test.getPlayerAttributes(element)), true, 'getPlayerAttributes returned an object');
+                        deepEqual(player._test.getPlayerAttributes(element), expected, "The object returned as expected");
+
+                        throws(function () {
+                            player._test.getPlayerAttributes($('#playerID'));
+                        }, 'getPlayerAttributes throws error on trying to use jQuery object');
+
+                        // add multiple players
+                        $('#players')
+                            .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/c8_9hFRvZiQB?mbr=true|siteSection=myFWSiteSection"></div>')
+                            .append('<div class="player" data-player="autoplay=true|width=400|height=200|fb=true|releaseURL=http://link.theplatform.com/s/btn/tKi4ID3iI0Tm?mbr=true|siteSection=myFWSiteSection"></div>')
+                            .append('<div class="player" data-player="autoplay=true|width=720|height=480|fb=true|releaseURL=http://link.theplatform.com/s/btn/jivltGVCLTXU?mbr=true|siteSection=myFWSiteSection"></div>')
+                            .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/8rjdPiR1XR_3?mbr=true|siteSection=myFWSiteSection"></div>')
+                            .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/4EfeflYQCTPm?mbr=true|siteSection=myFWSiteSection"></div>');
+
+                        throws(function () {
+                            player._test.getPlayerAttributes(document.querySelectorAll('.player'));
+                        }, "Throws an error when we pass an array of elements");
+                    });
+                })();
+            }
+        },
+
+        Debug: function () {
+            module('Debug');
+
+            (function () {
+                test('log', 4, function () {
+                    throws(function () {
+                        new Debug();
+                    }, 'Not passing in a category string fires an error');
+
+                    throws(function () {
+                        new Debug('');
+                    }, 'Passing in an empty category string fires an error');
+
+                    throws(function () {
+                        new Debug('x');
+                    }, 'Passing in a single letter string fires an error');
+
+                    throws(function () {
+                        new Debug('xy');
+                    }, 'Passing in a two letter string fires an error');
+
+                    //TODO: test more once PhantomJS is here
+                });
+
+                /*
+                 debug.log('testing a basic log');
+                 debug.log('testing a log with data', { name: 'brandon'});
+                 debug.warn('testing a warning');
+
+                 var diff = new Debug('diff');
+                 diff.log('testing a basic log with diff');
+                 diff.log('testing a log with data with diff', { name: 'brandon'});
+                 diff.warn('testing a warning with diff');
+                 diff.error('testing an error with diff');
+
+                 var yep = new Debug('yep');
+                 yep.log('testing a basic log with yep');
+                 */
+            })();
         }
     };
 
     var run = function () {
         tests.utils();
         tests.base64();
+        tests.player.iframe();
+        tests.Debug();
     };
 
     // Public API

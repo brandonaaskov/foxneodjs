@@ -4,7 +4,7 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
     'use strict';
 
     var buildTimestamp = '@@buildDate';
-    var debug = new Debug();
+    var debug = new Debug('core');
 
     var userAgentFlags = {
         android: false,
@@ -43,6 +43,6 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
         buildDate: '@@buildDate',
         player: player,
         utils: utils,
-        debug: debug
+        debug: Debug
     };
 });
