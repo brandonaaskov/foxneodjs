@@ -150,6 +150,13 @@
                 }
             },
 
+            shell : {
+                // scp build/ to a remote host
+                golive : {
+                    command : 'scp -r build staging@staging.saluteyourshorts.net:httpdocs/foxneod/'
+                }
+            },
+
             watch: {
                 files: ['<%= jshint.files %>'],
                 tasks: ['dev']
@@ -161,6 +168,8 @@
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-text-replace');
+        grunt.loadNpmTasks('grunt-shell');
+
 
         grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify']);
         grunt.registerTask('dev', ['jshint', 'requirejs', 'replace']);

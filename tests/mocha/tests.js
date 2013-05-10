@@ -23,15 +23,12 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
 
     suite('FoxNEOD', function () {
 
-        setup(function () {
-            console.log('Mocha setup');
-        });
-
+        //------------------------------------------------------------------------------------- utils
         suite('utils', function () {
             test('addPixelSuffix', function () {
                 assert.strictEqual(utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
                 assert.strictEqual(utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
-                assert.notStrictEqual(utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
+                assert.strictEqual(utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
             test('removePixelSuffix', function () {
@@ -40,31 +37,31 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 assert.strictEqual(utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
-//            test('dispatchEvent', 3, function () {
-//                assert.stop(2);
-//                var eventName = packageName + ':test';
-//
-//                window.addEventListener(eventName, function () {
-//                    window.removeEventListener(eventName);
-//                    assert.ok(true, "Event dispatching over the window object (no data payload).");
-//
-//                    console.log('ran one assert and removed the event listener for ' + eventName);
-//                    assert.start();
-//                });
-//                utils.dispatchEvent('test');
-//
-//                eventName = packageName + ':dataTest';
-//
-//                window.addEventListener(eventName, function (event) {
-//                    window.removeEventListener(eventName);
-//                    assert.strictEqual(event.data.movie, 'Django', 'Event dispatching over the window object (with data payload)');
-//                    assert.strictEqual(_.isObject(event.data), true, 'Data payload object is in fact, an Object');
-//
-//                    console.log('ran two asserts and removed the event listener for ' + eventName);
-//                    assert.start();
-//                });
-//                utils.dispatchEvent('dataTest', { movie: 'Django' });
-//            });
+            test('dispatchEvent', 3, function () {
+                assert.stop(2);
+                var eventName = packageName + ':test';
+
+                window.addEventListener(eventName, function () {
+                    window.removeEventListener(eventName);
+                    assert.ok(true, "Event dispatching over the window object (no data payload).");
+
+                    console.log('ran one assert and removed the event listener for ' + eventName);
+                    assert.start();
+                });
+                utils.dispatchEvent('test');
+
+                eventName = packageName + ':dataTest';
+
+                window.addEventListener(eventName, function (event) {
+                    window.removeEventListener(eventName);
+                    assert.strictEqual(event.data.movie, 'Django', 'Event dispatching over the window object (with data payload)');
+                    assert.strictEqual(_.isObject(event.data), true, 'Data payload object is in fact, an Object');
+
+                    console.log('ran two asserts and removed the event listener for ' + eventName);
+                    assert.start();
+                });
+                utils.dispatchEvent('dataTest', { movie: 'Django' });
+            });
 
             test('getColorFromString', function () {
                 assert.strictEqual(_.isString(utils.getColorFromString('FFFFFF')), true, 'Returns a string');
@@ -306,7 +303,11 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 assert.deepEqual(utils.getQueryParams(), expected, 'setURL works for other methods that do not explicitly pass the URL');
             });
         });
+        //------------------------------------------------------------------------------------- /utils
 
+
+
+        //------------------------------------------------------------------------------------- base64
         suite('base64', function () {
             test('jsonToBase64', function () {
                 var testObject = {
@@ -338,7 +339,11 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 assert.deepEqual(base64.base64ToJSON(base64String), expected, 'Base 64 string decoded to a shallow, basic object properly.');
             });
         });
+        //------------------------------------------------------------------------------------- /base64
 
+
+
+        //------------------------------------------------------------------------------------- player
         suite('player', function () {
             test('getPlayerAttributes', function () {
                 $('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
@@ -379,78 +384,44 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 }, error);
             });
         });
+        //------------------------------------------------------------------------------------- /player
 
+
+
+
+        //------------------------------------------------------------------------------------- Debug
         suite('Debug', function () {
             test('log', function () {
+
                 assert.throws(function () {
                     new Debug();
-                }, 'Not passing in a category string fires an error');
+                }, "You didn't supply a category string when you instantiated a Debug instance. That's required. Sorry kiddo!");
 
                 assert.throws(function () {
                     new Debug('');
-                }, 'Passing in an empty category string fires an error');
+                }, "Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
 
                 assert.throws(function () {
                     new Debug('x');
-                }, 'Passing in a single letter string fires an error');
+                }, "Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
 
                 assert.throws(function () {
                     new Debug('xy');
-                }, 'Passing in a two letter string fires an error');
+                }, "Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
+
+                assert.throws(function () {
+                    new Debug({});
+                }, "When instantiating the Debug class, it expects a string for the category name as the " +
+                    "only argument.");
 
                 //TODO: test more once PhantomJS is here
             });
         });
+        //------------------------------------------------------------------------------------- /Debug
     });
 
     mocha.run();
 });
-
-
-
-
-
-
-//require.config({
-//    baseUrl: '/backbone-tests/',
-//    paths: {
-//        'jquery'        : '/app/libs/jquery',
-//        'underscore'    : '/app/libs/underscore',
-//        'backbone'      : '/app/libs/backbone',
-//        'mocha'         : 'libs/mocha',
-//        'chai'          : 'libs/chai',
-//        'chai-jquery'   : 'libs/chai-jquery',
-//        'models'        : '/app/models'
-//    },
-//    shim: {
-//        'underscore': {
-//            exports: '_'
-//        },
-//        'jquery': {
-//            exports: '$'
-//        },
-//        'backbone': {
-//            deps: ['underscore', 'jquery'],
-//            exports: 'Backbone'
-//        },
-//        'chai-jquery': ['jquery', 'chai']
-//    },
-//    urlArgs: 'bust=' + (new Date()).getTime()
-//});
-//
-//require(['require', 'chai', 'chai-jquery', 'mocha', 'jquery'], function(require, chai, chaiJquery){
-//
-//    // Chai
-//    var should = chai.should();
-//    chai.use(chaiJquery);
-//
-//    /*globals mocha */
-//    mocha.setup('bdd');
-//
-//    require([
-//        'specs/model-test.js',
-//    ], function(require) {
-//        mocha.run();
-//    });
-//
-//});

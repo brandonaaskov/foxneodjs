@@ -29,21 +29,17 @@ define(['require', 'utils'], function (require, utils) {
     'use strict';
 
     return function (moduleName) {
-        var prefix = '@@packageName-@@version: ';
-        var lastUsedOptions = {};
-        var category = moduleName.toLowerCase();
-
         //-------------------------------------- validation
-        if (_.isUndefined(category))
+        if (_.isUndefined(moduleName))
         {
             throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
                 "That's required. Sorry kiddo!");
         }
-        else if (_.isString(category))
+        else if (_.isString(moduleName))
         {
             // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
             // at lazy developers ;)
-            if (category.length < 3)
+            if (moduleName.length < 3)
             {
                 throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
                     "Something at least 3 characters long, anyway, geez!");
@@ -57,7 +53,9 @@ define(['require', 'utils'], function (require, utils) {
         //-------------------------------------- /validation
 
 
-
+        var prefix = '@@packageName-@@version: ';
+        var lastUsedOptions = {};
+        var category = moduleName.toLowerCase();
 
         var log = function (message, data) {
             var options = {

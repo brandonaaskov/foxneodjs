@@ -438,21 +438,17 @@ define('debug',['require', 'utils'], function (require, utils) {
     
 
     return function (moduleName) {
-        var prefix = 'foxneod-0.1.5: ';
-        var lastUsedOptions = {};
-        var category = moduleName.toLowerCase();
-
         //-------------------------------------- validation
-        if (_.isUndefined(category))
+        if (_.isUndefined(moduleName))
         {
             throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
                 "That's required. Sorry kiddo!");
         }
-        else if (_.isString(category))
+        else if (_.isString(moduleName))
         {
             // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
             // at lazy developers ;)
-            if (category.length < 3)
+            if (moduleName.length < 3)
             {
                 throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
                     "Something at least 3 characters long, anyway, geez!");
@@ -466,7 +462,9 @@ define('debug',['require', 'utils'], function (require, utils) {
         //-------------------------------------- /validation
 
 
-
+        var prefix = 'foxneod-0.1.5: ';
+        var lastUsedOptions = {};
+        var category = moduleName.toLowerCase();
 
         var log = function (message, data) {
             var options = {
@@ -520,7 +518,7 @@ define('debug',['require', 'utils'], function (require, utils) {
 
         var getDebugModes = function () {
             var queryParam = require('utils').getParamValue('debug'); //fixes the circular dependency the RequireJS way
-            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['all'];
+            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['none'];
 
             return debugModes;
         };
@@ -2851,7 +2849,7 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
     
 
-    var buildTimestamp = '2013-05-10 11:05:45';
+    var buildTimestamp = '2013-05-10 02:05:28';
     var debug = new Debug('core');
 
     var userAgentFlags = {
@@ -2865,11 +2863,11 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-10 11:05:45',
+            buildDate: '2013-05-10 02:05:28',
             authors: 'https://twitter.com/brandonaaskov'
         });
 //        debug.log('Ready', {
-//            buildDate: '2013-05-10 11:05:45',
+//            buildDate: '2013-05-10 02:05:28',
 //            authors: 'https://twitter.com/brandonaaskov'
 //        }, '!');
 
@@ -2888,7 +2886,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     return {
         version: '0.1.5',
         packageName: 'foxneod',
-        buildDate: '2013-05-10 11:05:45',
+        buildDate: '2013-05-10 02:05:28',
         player: player,
         utils: utils,
         debug: Debug
