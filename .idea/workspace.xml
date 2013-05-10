@@ -5,52 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/index.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/web/js/lib/almond" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/build/foxneod-0.1.5.js" afterPath="$PROJECT_DIR$/build/foxneod-0.1.5.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/build/foxneod-0.1.5.min.js" afterPath="$PROJECT_DIR$/build/foxneod-0.1.5.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap-responsive.css" afterPath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap-responsive.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap-responsive.min.css" afterPath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap-responsive.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap.css" afterPath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/css/bootstrap.min.css" afterPath="$PROJECT_DIR$/examples/bootstrap/css/bootstrap.min.css" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/img/glyphicons-halflings-white.png" afterPath="$PROJECT_DIR$/examples/bootstrap/img/glyphicons-halflings-white.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/img/glyphicons-halflings.png" afterPath="$PROJECT_DIR$/examples/bootstrap/img/glyphicons-halflings.png" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/js/bootstrap.js" afterPath="$PROJECT_DIR$/examples/bootstrap/js/bootstrap.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/bootstrap/js/bootstrap.min.js" afterPath="$PROJECT_DIR$/examples/bootstrap/js/bootstrap.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/README.md" afterPath="$PROJECT_DIR$/examples/iframe/README.md" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/_player-custom.html" afterPath="$PROJECT_DIR$/examples/iframe/_player-custom.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/_player.html" afterPath="$PROJECT_DIR$/examples/iframe/_player.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/index.html" afterPath="$PROJECT_DIR$/examples/iframe/index.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/index.php" afterPath="$PROJECT_DIR$/examples/iframe/index.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/multiple-players.html" afterPath="$PROJECT_DIR$/examples/iframe/multiple-players.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/single-player-custom.html" afterPath="$PROJECT_DIR$/examples/iframe/single-player-custom.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/iframe/single-player.html" afterPath="$PROJECT_DIR$/examples/iframe/single-player.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/modal/_player.html" afterPath="$PROJECT_DIR$/examples/modal/_player.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/modal/index.php" afterPath="$PROJECT_DIR$/examples/modal/index.php" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/examples/modal/single-player.html" afterPath="$PROJECT_DIR$/examples/modal/single-player.html" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/base64.js" afterPath="$PROJECT_DIR$/js/base64.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/css.js" afterPath="$PROJECT_DIR$/js/css.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/debug.js" afterPath="$PROJECT_DIR$/js/debug.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/foxneod.js" afterPath="$PROJECT_DIR$/js/foxneod.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/jquery/jquery-2.0.0.js" afterPath="$PROJECT_DIR$/js/lib/jquery/jquery-2.0.0.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/jquery/jquery-2.0.0.min.js" afterPath="$PROJECT_DIR$/js/lib/jquery/jquery-2.0.0.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/labjs/LAB-debug.min.js" afterPath="$PROJECT_DIR$/js/lib/labjs/LAB-debug.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/labjs/LAB.js" afterPath="$PROJECT_DIR$/js/lib/labjs/LAB.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/labjs/LAB.min.js" afterPath="$PROJECT_DIR$/js/lib/labjs/LAB.min.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/labjs/LAB.src.js" afterPath="$PROJECT_DIR$/js/lib/labjs/LAB.src.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/modernizr/modernizr.custom.js" afterPath="$PROJECT_DIR$/js/lib/modernizr/modernizr.custom.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/requirejs/require.js" afterPath="$PROJECT_DIR$/js/lib/requirejs/require.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/lib/underscore/underscore.js" afterPath="$PROJECT_DIR$/js/lib/underscore/underscore.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/main.js" afterPath="$PROJECT_DIR$/js/main.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/modal.js" afterPath="$PROJECT_DIR$/js/modal.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/player.js" afterPath="$PROJECT_DIR$/js/player.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/player/iframe.js" afterPath="$PROJECT_DIR$/js/player/iframe.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/polyfills.js" afterPath="$PROJECT_DIR$/js/polyfills.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/web/js/utils.js" afterPath="$PROJECT_DIR$/js/utils.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/mocha/index.html" afterPath="$PROJECT_DIR$/tests/mocha/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/qunit/index.html" afterPath="$PROJECT_DIR$/tests/qunit/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/qunit/main.js" afterPath="$PROJECT_DIR$/tests/qunit/main.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/mocha/tests.js" afterPath="$PROJECT_DIR$/tests/mocha/tests.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -58,7 +12,7 @@
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368150436163" ignored="false" />
     <file path="/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796972669" ignored="false" />
     <file path="/loadscript.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365792078607" ignored="false" />
-    <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368206607318" ignored="false" />
+    <file path="/Dummy.txt" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368210356460" ignored="false" />
     <file path="$PROJECT_DIR$/../../cisco/js/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365785922324" ignored="false" />
     <file path="/main.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367694345635" ignored="false" />
     <file path="/scriptloader.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365793861405" ignored="false" />
@@ -115,7 +69,7 @@
     <file path="/modal.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368075345710" ignored="false" />
     <file path="/HTML Fragment (modal.js:4904).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367615305483" ignored="false" />
     <file path="/foxneod.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368138600230" ignored="false" />
-    <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368152558208" ignored="false" />
+    <file path="/tests.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368211847767" ignored="false" />
     <file path="/a.dummy" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367695562212" ignored="false" />
     <file path="/uri.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367864799919" ignored="false" />
     <file path="/single-player-custom.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367957737009" ignored="false" />
@@ -144,53 +98,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tests/mocha/index.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="27" selection-start="322" selection-end="322" vertical-scroll-proportion="-5.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="tests.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/mocha/tests.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="18" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0">
+            <state line="383" column="23" selection-start="18476" selection-end="18476" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="n#!!doc" expanded="true" />
+                <element signature="e#811#14104#0" expanded="false" />
+                <element signature="e#14144#15552#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tests/qunit/main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="66" selection-start="230" selection-end="230" vertical-scroll-proportion="0.11958998">
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="10" selection-start="31" selection-end="31" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="debug.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="debug.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/debug.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="35" selection-start="4200" selection-end="4200" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.25626424">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="iframe.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/player/iframe.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="14" column="33" selection-start="360" selection-end="676" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -227,8 +165,8 @@
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/js/utils.js" />
         <option value="$PROJECT_DIR$/js/polyfills.js" />
-        <option value="$PROJECT_DIR$/tests/mocha/tests.js" />
         <option value="$PROJECT_DIR$/tests/qunit/main.js" />
+        <option value="$PROJECT_DIR$/tests/mocha/tests.js" />
       </list>
     </option>
   </component>
@@ -350,6 +288,38 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="mocha" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nibbler" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fox-rebuild" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="nibbler" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fox-rebuild" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="player" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -520,25 +490,67 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/js/polyfills.js">
+    <entry file="file://$PROJECT_DIR$/examples/modal/single-player.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="19" selection-start="42" selection-end="42" vertical-scroll-proportion="0.034168564">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/iframe/single-player-custom.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/iframe/single-player.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/iframe/multiple-players.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="10" selection-start="31" selection-end="31" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/examples/iframe/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/mocha/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="27" selection-start="322" selection-end="322" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/qunit/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="50" selection-start="181" selection-end="181" vertical-scroll-proportion="0.12295082" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/qunit/main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="66" selection-start="230" selection-end="230" vertical-scroll-proportion="0.0">
           <folding>
-            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!doc" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/mocha/mocha.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-1.6300578">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/utils.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="32" selection-start="639" selection-end="639" vertical-scroll-proportion="0.4783599">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/player/iframe.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="9" selection-start="32" selection-end="32" vertical-scroll-proportion="0.034168564">
+        <state line="40" column="33" selection-start="935" selection-end="1009" vertical-scroll-proportion="-0.48633257">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
@@ -547,95 +559,43 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/player.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="13" selection-start="36" selection-end="36" vertical-scroll-proportion="0.034168564">
+        <state line="2" column="13" selection-start="36" selection-end="36" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+    <entry file="file://$PROJECT_DIR$/tests/qunit/tests.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="43" selection-start="4329" selection-end="4329" vertical-scroll-proportion="0.7359155">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/modal/_player.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="23" selection-start="425" selection-end="425" vertical-scroll-proportion="0.17564403">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/modal/single-player.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/iframe/single-player-custom.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/iframe/single-player.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/examples/iframe/multiple-players.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="10" selection-start="31" selection-end="31" vertical-scroll-proportion="0.0">
+        <state line="412" column="34" selection-start="20021" selection-end="20021" vertical-scroll-proportion="0.15028901">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/examples/iframe/index.html">
+    <entry file="file://$PROJECT_DIR$/js/player/iframe.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/mocha/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="27" selection-start="322" selection-end="322" vertical-scroll-proportion="-5.0">
-          <folding />
+        <state line="14" column="33" selection-start="360" selection-end="676" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/mocha/tests.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="18" selection-start="330" selection-end="330" vertical-scroll-proportion="0.0">
+        <state line="383" column="23" selection-start="18476" selection-end="18476" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="n#!!doc" expanded="true" />
+            <element signature="e#811#14104#0" expanded="false" />
+            <element signature="e#14144#15552#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/qunit/index.html">
+    <entry file="file://$PROJECT_DIR$/js/debug.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="50" selection-start="181" selection-end="181" vertical-scroll-proportion="0.12295082">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tests/qunit/main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="66" selection-start="230" selection-end="230" vertical-scroll-proportion="0.11958998">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.25626424">
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
