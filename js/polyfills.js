@@ -1,8 +1,11 @@
 /*global define, _ */
 
-define(['underscore', 'debug'], function (underscore, debug) {
+define(['underscore', 'debug', 'Dispatcher'], function (underscore, Debug, Dispatcher) {
 
     'use strict';
+
+    var debug = new Debug('polyfills'),
+        dispatcher = new Dispatcher();
 
     var fixBrokenFeatures = function ()
     {
@@ -17,7 +20,8 @@ define(['underscore', 'debug'], function (underscore, debug) {
                     {
                         case 'watch':
                             watch();
-//                            debug.log('watch polyfill added');
+                            debug.log("watch added");
+                            dispatcher.dispatch('watchReady');
                             break;
                     }
                 }
@@ -90,4 +94,11 @@ define(['underscore', 'debug'], function (underscore, debug) {
     (function init () {
         fixBrokenFeatures(['watch']);
     })();
+
+    // Public API
+    return {
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
+    };
 });

@@ -409,10 +409,59 @@ define("almond", function(){});
 
 /*global define, _ */
 
-define('utils',[], function () {
+define('Dispatcher',['debug'], function (Debug) {
     
 
-//    var debug = new Debug('utils');
+    var debug = new this.Debug('Dispatcher');
+
+    return function () {
+        var _listeners = [];
+
+        var addListener = function (eventName, callback) {
+            _listeners.push({
+                name: eventName,
+                callback: callback
+            });
+        };
+
+        var removeListener = function (eventName, callback) {
+            _listeners = _.without(_listeners, eventName);
+        };
+
+        var dispatch = function (eventName, data, dispatchOverWindow) {
+            var event = document.createEvent('Event');
+            var name = 'foxneod:' + eventName;
+            event.initEvent(name, true, true);
+            event.data = data || {};
+
+            if (!dispatchOverWindow)
+            {
+//                _.invoke(list, 'callback');
+                var listeners = _.where(listeners, {name: eventName});
+                _.each(_listeners, function (listener) {
+//                    debug.log('firing callback for...', listener);
+                    listener.callback(event);
+                });
+            }
+            else
+            {
+                window.dispatchEvent(event);
+            }
+        };
+
+        return {
+            addEventListener: addListener,
+            removeEventListener: removeEventListener,
+            dispatch: dispatch
+        };
+    };
+});
+/*global define, _ */
+
+define('utils',['Dispatcher'], function (Dispatcher) {
+    
+
+    var dispatcher = new Dispatcher();
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -604,14 +653,6 @@ define('utils',[], function () {
         return text;
     };
 
-    var dispatchEvent = function (eventName, data) {
-        var event = document.createEvent('Event');
-        var name = 'foxneod:' + eventName;
-        event.initEvent(name, true, true);
-        event.data = data || {};
-        window.dispatchEvent(event);
-    };
-
 
 
 
@@ -758,14 +799,14 @@ define('utils',[], function () {
         getColorFromString: getColorFromString,
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
-        dispatchEvent: dispatchEvent,
-        dispatch: dispatchEvent, //alias,
-
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
         setURL: setURL,
-        getURL: getURL
+        getURL: getURL,
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });
 /*global define, _, console */
@@ -903,698 +944,6 @@ define('debug',['utils'], function (utils) {
             error: error,
             _test: test
         };
-    };
-});
-/*global define, _ */
-
-/**
- * Just provides a safe interface to grab the PDK without having to worry about loading it.
- */
-define('ovp',['debug', 'utils'], function (Debug, utils) {
-    
-
-    var _pdk = {
-            controller: {} //dummy for starters since we alias this in player.js right off the bat
-        },
-        debug = new Debug('ovp');
-
-    /**
-     * TODO: if the pdk doesn't exist, and methods get called on this (not the global $pdk object), catch them and
-     * queue them for later (use underscore to queue and chain as needed)
-     */
-
-    (function () {
-        //init
-
-        if (_.has(window, '$pdk'))
-        {
-            _pdk = window.$pdk;
-            debug.log("Page already had the PDK loaded in, so we're using that.");
-        }
-        else
-        {
-            debug.log("PDK wasn't ready, so we're watching the window object now.");
-
-//            window.watch('$pdk', function (propertyName, oldValue, newValue) {
-//                debug.log("PDK available via watch(), and we're storing the new value.", newValue);
-////                _pdk = window.$pdk; //is this more reliable?
-//
-//                window.unwatch('$pdk');
-//                _pdk = newValue;
-//
-//                utils.dispatchEvent('apiReady', _pdk); //allows for listening so that people can know when to interact
-//            });
-        }
-    })();
-
-    // Public API
-    return _pdk;
-});
-/*global define, _ */
-
-define('player/iframe',['utils'], function (utils) {
-    
-
-    var playerIds = []; // stores the ids of the elements we find
-
-    var getPlayerAttributes = _.memoize(function (element) {
-        var playerAttributes = {};
-
-        if (element)
-        {
-            if (!_.isElement(element))
-            {
-                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
-                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
-                    "the element that you need. We try to not to depend on jQuery where we don't have to");
-            }
-
-            var allAttributes = element.attributes;
-
-
-            for (var i = 0, n = allAttributes.length; i < n; i++)
-            {
-                var attr = allAttributes[i],
-                    attrName = attr.nodeName;
-
-                if (attrName.indexOf('data-player') !== -1)
-                {
-                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
-
-                    /*
-                     * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
-                     * not always the same as the height and width of the player.
-                     */
-                    var lowercased = utils.lowerCasePropertyNames(playerAttributes);
-                    var defaults = {
-                        width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-                        height: (_.has(lowercased, 'height')) ? lowercased.height : 360
-                    };
-
-                    playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-                    playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
-                }
-            }
-        }
-
-        return playerAttributes;
-    });
-
-
-    var injectIframe = function (element, attributes, iframeURL) {
-        if (element && _.isObject(element))
-        {
-            var attributesString = utils.objectToPipeString(attributes);
-            attributes = utils.lowerCasePropertyNames(attributes);
-
-            element.innerHTML = '<iframe ' +
-                'src="'+ iframeURL + '?' + attributesString + '"' +
-                'scrolling="no" ' +
-                'frameborder="0" ' +
-                'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '"></iframe>';
-        }
-        else
-        {
-            throw new Error('The injectIframe() method expected an element, and it expects it to be an ' +
-                'basic js object (not an array of elements).');
-        }
-    };
-
-    var injectIframePlayers = function (selector, iframeURL) {
-        var players = document.querySelectorAll(selector);
-
-        for (var i = 0, n = players.length; i < n; i++)
-        {
-            var player = players[i];
-            var attributes = getPlayerAttributes(player);
-
-            injectIframe(player, attributes, iframeURL);
-        }
-    };
-
-    // This API is only Public to player.js, so we should surface everything so we can unit test it
-    return {
-        getPlayerAttributes: getPlayerAttributes,
-        injectIframe: injectIframe,
-        injectIframePlayers: injectIframePlayers
-    };
-});
-/*global define, _ */
-
-define('css',['utils', 'debug'], function (utils, debug) {
-    
-
-    var getStyles = function (allOptions) {
-        /**
-         * This for loop is concerned with display elements. We're iterating over the options now that the overrides
-         * have been applied, and creating some styles based on those.
-         */
-        var styles = '';
-        var options = utils.lowerCasePropertyNames(allOptions);
-
-        for (var option in options)
-        {
-            switch (option)
-            {
-                case 'display':
-                    styles += 'display: ' + options.display + ';';
-                    //TODO: check for possible values here
-                    break;
-                case 'position':
-                    styles += 'position: ' + options.position + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'top':
-                    styles += 'top: ' + utils.addPixelSuffix(options.top) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'left':
-                    styles += 'left: ' + utils.addPixelSuffix(options.left) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'right':
-                    styles += 'right: ' + utils.addPixelSuffix(options.right) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'bottom':
-                    styles += 'bottom: ' + utils.addPixelSuffix(options.bottom) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'margin':
-                    styles += 'margin: ' + utils.addPixelSuffix(options.margin) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'margintop':
-                    styles += 'margin-top: ' + utils.addPixelSuffix(options.margintop) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'marginright':
-                    styles += 'margin-right: ' + utils.addPixelSuffix(options.marginright) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'marginbottom':
-                    styles += 'margin-bottom: ' + utils.addPixelSuffix(options.marginbottom) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'marginleft':
-                    styles += 'margin-left: ' + utils.addPixelSuffix(options.marginleft) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'padding':
-                    styles += 'padding: ' + utils.addPixelSuffix(options.padding) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'paddingtop':
-                    styles += 'padding-top: ' + utils.addPixelSuffix(options.paddingtop) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'paddingright':
-                    styles += 'padding-right: ' + utils.addPixelSuffix(options.paddingright) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'paddingbottom':
-                    styles += 'padding-bottom: ' + utils.addPixelSuffix(options.paddingbottom) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'paddingleft':
-                    styles += 'padding-left: ' + utils.addPixelSuffix(options.paddingleft) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'textalign':
-                    styles += 'text-align: ' + options.textalign+ ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'width':
-                    styles += 'width: ' + utils.addPixelSuffix(options.width) + ';';
-                    break;
-
-                case 'height':
-                    styles += 'height: ' + utils.addPixelSuffix(options.height) + ';';
-                    break;
-
-                case 'bgcolor':
-                    styles += 'background-color: ' + utils.getColorFromString(options.bgcolor) + ';';
-                    break;
-
-                case 'color':
-                    styles += 'color: ' + utils.getColorFromString(options.color) + ';';
-                    break;
-
-                case 'fontsize':
-                    var size = options.fontsize;
-                    styles += 'font-size: ' + utils.addPixelSuffix(size) + ';';
-                    break;
-
-                case 'fontfamily':
-                    styles += 'font-family: ' + options.fontfamily + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'fontweight':
-                    styles += 'font-weight: ' + options.fontweight + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'lineheight':
-                    styles += 'line-height: ' + utils.addPixelSuffix(options.lineheight) + ';';
-                    //TODO: add in more checking here?
-                    break;
-
-                case 'zindex':
-                    if (_.isNumber(options.zindex))
-                    {
-                        styles += 'z-index: ' + options.zindex + ';';
-                    }
-                    break;
-
-                case 'opacity':
-                    styles += 'filter: alpha(opacity='+ options.opacity * 100 +');';
-                    styles += 'opacity: ' + options.opacity + ';';
-                    break;
-
-                case 'buttons':
-                    break;
-            }
-        }
-
-        return styles;
-    };
-
-    var updateStyles = function (selectorOrElement, style, value) {
-        var element = (!_.isString(arguments[0])) ? selectorOrElement : document.querySelector(selectorOrElement);
-        var styles = element.getAttribute('style');
-//        debug.log('styles', styles);
-
-        if (styles.indexOf(style) !== -1) //style already exists, so we should update it
-        {
-            styles = styles.replace(/style/g, value);
-        }
-        else
-        {
-            styles += style +': '+ value +';';
-        }
-
-        element.setAttribute('style', styles);
-    };
-
-    // Public API
-    return {
-        getStyles: getStyles,
-        updateStyles: updateStyles
-    };
-});
-/*global define, _, FDM_Player_vars, $pdk, console */
-
-define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
-    
-
-    //-------------------------------------------------------------------------------- private properties
-    var modalClearingListenerAdded = false;
-    //-------------------------------------------------------------------------------- /private properties
-
-
-
-    //-------------------------------------------------------------------------------- public methods
-    var displayModal = function (options) {
-        var modalOptions = {
-            message: '',
-            resetPlayer: false,
-            clearAfter: 0 //time in seconds: 0 means it will stay on screen indefinitely
-        };
-
-        for (var prop in options)
-        {
-            modalOptions[prop] = options[prop];
-        }
-
-        try
-        {
-            if (FDM_Player_vars.isFlash && _.isObject($pdk))
-            {
-                $pdk.controller.resetPlayer();
-                $pdk.controller.setPlayerMessage(modalOptions.message, modalOptions.clearAfter);
-            }
-            else if (FDM_Player_vars.isIOS)
-            {
-                var tpPlayers = document.querySelectorAll('.tpPlayer');
-
-                for (var i = 0, n = tpPlayers.length; i < n; i++)
-                {
-                    var tpPlayer = tpPlayers[i];
-                    injectModal(tpPlayer, modalOptions);
-                }
-            }
-        }
-        catch (exception)
-        {
-//            throw new Error(exception);
-            debug.log('The try/catch for the modal stuff failed');
-            // TODO: handle this, or get to a point where i don't have to use a try/catch
-        }
-    };
-
-    var injectModal = function (player, options) {
-        var modal = getModalOverlay({
-            width: player.offsetWidth,
-            height: player.offsetHeight,
-            text: options.message
-        });
-
-        if (_.isElement(player) && _.isElement(modal))
-        {
-            player.insertBefore(modal, player.firstChild);
-            verticallyCenter('.js-modal-container');
-            removeModals(options.clearAfter*1000);
-        }
-
-        if (options.resetPlayer)
-        {
-            var playerDiv = player.querySelector('.player'); //TODO: fix this hardcoded string?
-            $pdk.controller.pause(true);
-
-            //TODO: this is probably bad and will need to be externalized to a config
-            $pdk.controller.setReleaseURL('http://link.theplatform.com/s/fxnetworks/p9xHQIEhwoBi', true);
-            registerEventListener();
-        }
-    };
-
-    var registerEventListener = function () {
-        if (!modalClearingListenerAdded)
-        {
-            $pdk.controller.addEventListener('OnMediaLoadStart', function () {
-                removeModals(1);
-            });
-
-            modalClearingListenerAdded = true;
-        }
-    };
-
-    var removeModals = function (clearAfter) { //here, clearAfter is in milliseconds
-        var modalOverlays = document.querySelectorAll('.js-modal-overlay');
-
-        var iterateAndRemove = function () {
-            for (var i = 0, n = modalOverlays.length; i < n; i++)
-            {
-                var modal = modalOverlays[i];
-
-                modal.parentNode.removeChild(modal);
-            }
-        };
-
-        if (clearAfter > 0)
-        {
-            setTimeout(iterateAndRemove, clearAfter);
-        }
-    };
-    //-------------------------------------------------------------------------------- /public methods
-
-
-
-    //-------------------------------------------------------------------------------- private methods
-    var overrideDefaultOptions = function (defaults, overrides, skip) {
-        var itemsToSkip = skip || [];
-
-        /**
-         * This loops through the provided options object and overrides the defaults in the standardOptions object
-         * above. We can also do some type-checking here to make sure values are in the right format.
-         */
-
-        if (overrides && _.isObject(overrides))
-        {
-            for (var prop in overrides)
-            {
-                var propLowercase = prop.toLowerCase();
-                var value = overrides[prop];
-
-                if (defaults.hasOwnProperty(propLowercase)) //only override defaults
-                {
-                    var skipThisIteration = false;
-
-                    /**
-                     * Loops over the items in the third arg (array) and let's the next block know to skip over
-                     * them so that we can preserve defaults
-                     */
-                    for (var i = 0, n = itemsToSkip.length; i < n; i++)
-                    {
-                        if (propLowercase === itemsToSkip[i])
-                        {
-                            skipThisIteration = true;
-                        }
-                    }
-
-                    if (!skipThisIteration)
-                    {
-                        if (propLowercase === 'buttons' && !_.isArray(value))
-                        {
-                            overrides[propLowercase] = []; //if we didn't get an array, let's fix that
-                            //TODO: let the developer know they're screwing up
-                        }
-
-                        if (propLowercase === 'opacity' && _.isNumber(value))
-                        {
-                            if (value >= 1 && value <= 100) //supplied opacity is on the wrong scale (should be based on 1)
-                            {
-                                overrides[prop] = value/100;
-                            }
-                        }
-
-                        defaults[propLowercase] = value;
-                    }
-                }
-            }
-        }
-
-        return defaults || {};
-    };
-
-    /**
-     * Takes a single argument, an object of options, and creates an div tag for displaying a modal overlay.
-     * @param optionOverrides
-     * @returns {string}
-     */
-    var getModalOverlay = function (optionOverrides) {
-        var defaults = {
-            text: '',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: 640,
-            height: 360,
-            bgcolor: '#000000',
-            opacity: 1, //on a scale of 0 to 1
-            zindex: 10,
-            textalign: 'center',
-            padding: 0,
-            buttons: [] //this would be a list of button objects, but by default there are none
-        };
-
-        var titleOptions = {
-            color: '#FFFFFF',
-            fontsize: 18,
-            fontweight: 'normal',
-            margin: 0,
-            padding: 25,
-            lineheight: 27
-        };
-
-        var options = overrideDefaultOptions(defaults, optionOverrides);
-        var buttons = '';
-
-        if (_.isArray(options.buttons))
-        {
-            for (var i = 0, n = options.buttons.length; i < n; i++)
-            {
-                var button = options.buttons[i];
-                var modalButton = getModalButtonMarkup(button);
-
-                buttons += getModalButtonMarkup(button);
-            }
-        }
-
-        var modalContainerOptions = {
-            margin: '0px auto',
-            position: 'relative'
-        };
-
-        var element = '<div class="js-modal-container" style="'+ css.getStyles(modalContainerOptions) +'">\n        <h4 style="'+ css.getStyles(titleOptions) +'">'+options.text+'</h4>\n        <div class="js-modal-buttons">\n            '+ getButtons(options.buttons) +'\n        </div>\n    </div>';
-
-        var wrappingDiv = document.createElement('div');
-        wrappingDiv.setAttribute('class', 'js-modal-overlay');
-        wrappingDiv.setAttribute('style', css.getStyles(options));
-        wrappingDiv.innerHTML = element;
-
-        return wrappingDiv;
-    };
-
-    var getButtons = function (buttons) {
-        var buttonsMarkup = '';
-
-        if (_.isArray(buttons))
-        {
-            for (var i = 0, n = buttons.length; i < n; i++)
-            {
-                var button = buttons[i];
-                buttonsMarkup += getModalButtonMarkup(button);
-            }
-        }
-
-        return buttonsMarkup;
-    };
-
-    var getModalButtonMarkup = function (buttonOptions) {
-        var defaults = {
-            width: 100,
-            height: 40,
-            text: 'Okay',
-            color: '#000000'
-        };
-
-        var options = overrideDefaultOptions(defaults, buttonOptions);
-        var element = '<button class="modalButton" style="'+ css.getStyles(options) +'">'+ options.text +'</button>';
-
-        return element;
-    };
-
-    var verticallyCenter = function (selector) {
-        try {
-            var element = document.querySelector(selector);
-            var parent = element.parentNode;
-            var parentHeight = parent.offsetHeight;
-            var elementHeight = element.offsetHeight;
-            var middle = Math.round(parent.offsetHeight/2 - element.offsetHeight/2);
-
-            css.updateStyles(element, 'top', utils.addPixelSuffix(middle));
-        }
-        catch (error)
-        {
-
-        }
-    };
-    //-------------------------------------------------------------------------------- /private methods
-
-    // Public API
-    return {
-        displayModal: displayModal,
-        remove: removeModals
-    };
-});
-
-
-
-
-
-
-
-
-
-
-/*global define, _ */
-
-define('player',['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, iframe, modal, Debug) {
-    
-
-    var debug = new Debug('player');
-    var _currentVideo = {};
-
-    var setPlayerMessage = function (options) {
-        if (_.isObject(options))
-        {
-            modal.displayModal(options);
-        }
-        else
-        {
-            debug.log('setPlayerMessage expected 1 argument: an object of options.', options);
-        }
-    };
-
-    var clearPlayerMessage = function () {
-        modal.remove();
-    };
-
-    /**
-     * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
-     * will return false
-     * @param timeInSeconds
-     * @returns {boolean}
-     */
-    var seekTo = function (timeInSeconds) {
-        if (!_.isUndefined(ovp))
-        {
-            if (!_.isNaN(+timeInSeconds))
-            {
-                if (timeInSeconds >= 0)
-                {
-                    var seekTime = Math.round(timeInSeconds * 1000);
-                    debug.log("Seeking to (in seconds)...", seekTime/1000);
-                    ovp.seekToPosition(seekTime);
-                }
-                else
-                {
-                    debug.warn("The time you provided was less than 0, so no seeking occurred.", timeInSeconds);
-                    return false;
-                }
-            }
-            else
-            {
-                throw new Error("The value supplied was not a valid number.");
-            }
-        }
-        else
-        {
-            throw new Error("The OVP object was undefined.");
-        }
-
-        return true;
-    };
-
-    //---------------------------------------------- init
-    (function () {
-        //begin: add event listeners
-//        ovp.addEventListener('OnMediaLoadStart', function (event) {
-//            if (_.has(event.data, 'baseClip'))
-//            {
-//                _currentVideo = event.data;
-//                debug.log("OnMediaLoadStart fired, and event.data was saved.", _currentVideo);
-//            }
-//        });
-        //end: add event listeners
-    })();
-    //---------------------------------------------- /init
-
-    /**
-     * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
-     * entry point
-     */
-    return {
-        // Public API
-        setPlayerMessage: setPlayerMessage,
-        clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayers: iframe.injectIframePlayers,
-        seekTo: seekTo,
-        seek: seekTo, //alias
-
-        //Testing-only API (still public, but please DO NOT USE unless unit testing)
-        _test: {
-            getPlayerAttributes: iframe.getPlayerAttributes,
-            injectIframe: iframe.injectIframe
-        }
     };
 });
 //     Underscore.js 1.4.4
@@ -2851,9 +2200,12 @@ define("underscore", function(){});
 
 /*global define, _ */
 
-define('polyfills',['underscore', 'debug'], function (underscore, debug) {
+define('polyfills',['underscore', 'debug', 'Dispatcher'], function (underscore, Debug, Dispatcher) {
 
     
+
+    var debug = new Debug('polyfills'),
+        dispatcher = new Dispatcher();
 
     var fixBrokenFeatures = function ()
     {
@@ -2868,7 +2220,8 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
                     {
                         case 'watch':
                             watch();
-//                            debug.log('watch polyfill added');
+                            debug.log("watch added");
+                            dispatcher.dispatch('watchReady');
                             break;
                     }
                 }
@@ -2941,38 +2294,741 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
     (function init () {
         fixBrokenFeatures(['watch']);
     })();
+
+    // Public API
+    return {
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
+    };
+});
+/*global define, _ */
+
+/**
+ * Just provides a safe interface to grab the PDK without having to worry about loading it.
+ */
+define('ovp',['debug', 'utils', 'polyfills'], function (Debug, utils, polyfills) {
+    
+
+    var _pdk = {
+            controller: {} //dummy for starters since we alias this in player.js right off the bat
+        },
+        debug = new Debug('ovp');
+
+    /**
+     * TODO: if the pdk doesn't exist, and methods get called on this (not the global $pdk object), catch them and
+     * queue them for later (use underscore to queue and chain as needed)
+     */
+
+    (function () {
+        //init
+
+        if (_.has(window, '$pdk'))
+        {
+            _pdk = window.$pdk;
+            debug.log("Page already had the PDK loaded in, so we're using that.");
+        }
+        else
+        {
+            debug.log("PDK wasn't ready, so we're watching the window object now.");
+
+            polyfills.addEventListener('watchReady', function () {
+
+                window.watch('$pdk', function (propertyName, oldValue, newValue) {
+                    debug.log("PDK available via watch(), and we're storing the new value.", newValue);
+    //                _pdk = window.$pdk; //is this more reliable?
+
+                    window.unwatch('$pdk');
+                    _pdk = newValue;
+
+                    utils.dispatchWindowEvent('ovpReady', _pdk); //allows for listening so that people can know when to interact
+                });
+            });
+        }
+    })();
+
+    // Public API
+    return _pdk;
+});
+/*global define, _ */
+
+define('player/iframe',['utils'], function (utils) {
+    
+
+    var playerIds = []; // stores the ids of the elements we find
+
+    var getPlayerAttributes = _.memoize(function (element) {
+        var playerAttributes = {};
+
+        if (element)
+        {
+            if (!_.isElement(element))
+            {
+                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
+                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on jQuery where we don't have to");
+            }
+
+            var allAttributes = element.attributes;
+
+
+            for (var i = 0, n = allAttributes.length; i < n; i++)
+            {
+                var attr = allAttributes[i],
+                    attrName = attr.nodeName;
+
+                if (attrName.indexOf('data-player') !== -1)
+                {
+                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+
+                    /*
+                     * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+                     * not always the same as the height and width of the player.
+                     */
+                    var lowercased = utils.lowerCasePropertyNames(playerAttributes);
+                    var defaults = {
+                        width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
+                        height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+                    };
+
+                    playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
+                    playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+                }
+            }
+        }
+
+        return playerAttributes;
+    });
+
+
+    var injectIframe = function (element, attributes, iframeURL) {
+        if (element && _.isObject(element))
+        {
+            var attributesString = utils.objectToPipeString(attributes);
+            attributes = utils.lowerCasePropertyNames(attributes);
+
+            element.innerHTML = '<iframe ' +
+                'src="'+ iframeURL + '?' + attributesString + '"' +
+                'scrolling="no" ' +
+                'frameborder="0" ' +
+                'width="' + attributes.iframewidth + '"' +
+                'height="'+ attributes.iframeheight + '"></iframe>';
+        }
+        else
+        {
+            throw new Error('The injectIframe() method expected an element, and it expects it to be an ' +
+                'basic js object (not an array of elements).');
+        }
+    };
+
+    var injectIframePlayers = function (selector, iframeURL) {
+        var players = document.querySelectorAll(selector);
+
+        for (var i = 0, n = players.length; i < n; i++)
+        {
+            var player = players[i];
+            var attributes = getPlayerAttributes(player);
+
+            injectIframe(player, attributes, iframeURL);
+        }
+    };
+
+    // This API is only Public to player.js, so we should surface everything so we can unit test it
+    return {
+        getPlayerAttributes: getPlayerAttributes,
+        injectIframe: injectIframe,
+        injectIframePlayers: injectIframePlayers
+    };
+});
+/*global define, _ */
+
+define('css',['utils', 'debug'], function (utils, debug) {
+    
+
+    var getStyles = function (allOptions) {
+        /**
+         * This for loop is concerned with display elements. We're iterating over the options now that the overrides
+         * have been applied, and creating some styles based on those.
+         */
+        var styles = '';
+        var options = utils.lowerCasePropertyNames(allOptions);
+
+        for (var option in options)
+        {
+            switch (option)
+            {
+                case 'display':
+                    styles += 'display: ' + options.display + ';';
+                    //TODO: check for possible values here
+                    break;
+                case 'position':
+                    styles += 'position: ' + options.position + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'top':
+                    styles += 'top: ' + utils.addPixelSuffix(options.top) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'left':
+                    styles += 'left: ' + utils.addPixelSuffix(options.left) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'right':
+                    styles += 'right: ' + utils.addPixelSuffix(options.right) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'bottom':
+                    styles += 'bottom: ' + utils.addPixelSuffix(options.bottom) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'margin':
+                    styles += 'margin: ' + utils.addPixelSuffix(options.margin) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'margintop':
+                    styles += 'margin-top: ' + utils.addPixelSuffix(options.margintop) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'marginright':
+                    styles += 'margin-right: ' + utils.addPixelSuffix(options.marginright) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'marginbottom':
+                    styles += 'margin-bottom: ' + utils.addPixelSuffix(options.marginbottom) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'marginleft':
+                    styles += 'margin-left: ' + utils.addPixelSuffix(options.marginleft) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'padding':
+                    styles += 'padding: ' + utils.addPixelSuffix(options.padding) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'paddingtop':
+                    styles += 'padding-top: ' + utils.addPixelSuffix(options.paddingtop) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'paddingright':
+                    styles += 'padding-right: ' + utils.addPixelSuffix(options.paddingright) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'paddingbottom':
+                    styles += 'padding-bottom: ' + utils.addPixelSuffix(options.paddingbottom) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'paddingleft':
+                    styles += 'padding-left: ' + utils.addPixelSuffix(options.paddingleft) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'textalign':
+                    styles += 'text-align: ' + options.textalign+ ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'width':
+                    styles += 'width: ' + utils.addPixelSuffix(options.width) + ';';
+                    break;
+
+                case 'height':
+                    styles += 'height: ' + utils.addPixelSuffix(options.height) + ';';
+                    break;
+
+                case 'bgcolor':
+                    styles += 'background-color: ' + utils.getColorFromString(options.bgcolor) + ';';
+                    break;
+
+                case 'color':
+                    styles += 'color: ' + utils.getColorFromString(options.color) + ';';
+                    break;
+
+                case 'fontsize':
+                    var size = options.fontsize;
+                    styles += 'font-size: ' + utils.addPixelSuffix(size) + ';';
+                    break;
+
+                case 'fontfamily':
+                    styles += 'font-family: ' + options.fontfamily + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'fontweight':
+                    styles += 'font-weight: ' + options.fontweight + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'lineheight':
+                    styles += 'line-height: ' + utils.addPixelSuffix(options.lineheight) + ';';
+                    //TODO: add in more checking here?
+                    break;
+
+                case 'zindex':
+                    if (_.isNumber(options.zindex))
+                    {
+                        styles += 'z-index: ' + options.zindex + ';';
+                    }
+                    break;
+
+                case 'opacity':
+                    styles += 'filter: alpha(opacity='+ options.opacity * 100 +');';
+                    styles += 'opacity: ' + options.opacity + ';';
+                    break;
+
+                case 'buttons':
+                    break;
+            }
+        }
+
+        return styles;
+    };
+
+    var updateStyles = function (selectorOrElement, style, value) {
+        var element = (!_.isString(arguments[0])) ? selectorOrElement : document.querySelector(selectorOrElement);
+        var styles = element.getAttribute('style');
+//        debug.log('styles', styles);
+
+        if (styles.indexOf(style) !== -1) //style already exists, so we should update it
+        {
+            styles = styles.replace(/style/g, value);
+        }
+        else
+        {
+            styles += style +': '+ value +';';
+        }
+
+        element.setAttribute('style', styles);
+    };
+
+    // Public API
+    return {
+        getStyles: getStyles,
+        updateStyles: updateStyles
+    };
+});
+/*global define, _, FDM_Player_vars, $pdk, console */
+
+define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
+    
+
+    //-------------------------------------------------------------------------------- private properties
+    var modalClearingListenerAdded = false;
+    //-------------------------------------------------------------------------------- /private properties
+
+
+
+    //-------------------------------------------------------------------------------- public methods
+    var displayModal = function (options) {
+        var modalOptions = {
+            message: '',
+            resetPlayer: false,
+            clearAfter: 0 //time in seconds: 0 means it will stay on screen indefinitely
+        };
+
+        for (var prop in options)
+        {
+            modalOptions[prop] = options[prop];
+        }
+
+        try
+        {
+            if (FDM_Player_vars.isFlash && _.isObject($pdk))
+            {
+                $pdk.controller.resetPlayer();
+                $pdk.controller.setPlayerMessage(modalOptions.message, modalOptions.clearAfter);
+            }
+            else if (FDM_Player_vars.isIOS)
+            {
+                var tpPlayers = document.querySelectorAll('.tpPlayer');
+
+                for (var i = 0, n = tpPlayers.length; i < n; i++)
+                {
+                    var tpPlayer = tpPlayers[i];
+                    injectModal(tpPlayer, modalOptions);
+                }
+            }
+        }
+        catch (exception)
+        {
+//            throw new Error(exception);
+            debug.log('The try/catch for the modal stuff failed');
+            // TODO: handle this, or get to a point where i don't have to use a try/catch
+        }
+    };
+
+    var injectModal = function (player, options) {
+        var modal = getModalOverlay({
+            width: player.offsetWidth,
+            height: player.offsetHeight,
+            text: options.message
+        });
+
+        if (_.isElement(player) && _.isElement(modal))
+        {
+            player.insertBefore(modal, player.firstChild);
+            verticallyCenter('.js-modal-container');
+            removeModals(options.clearAfter*1000);
+        }
+
+        if (options.resetPlayer)
+        {
+            var playerDiv = player.querySelector('.player'); //TODO: fix this hardcoded string?
+            $pdk.controller.pause(true);
+
+            //TODO: this is probably bad and will need to be externalized to a config
+            $pdk.controller.setReleaseURL('http://link.theplatform.com/s/fxnetworks/p9xHQIEhwoBi', true);
+            registerEventListener();
+        }
+    };
+
+    var registerEventListener = function () {
+        if (!modalClearingListenerAdded)
+        {
+            $pdk.controller.addEventListener('OnMediaLoadStart', function () {
+                removeModals(1);
+            });
+
+            modalClearingListenerAdded = true;
+        }
+    };
+
+    var removeModals = function (clearAfter) { //here, clearAfter is in milliseconds
+        var modalOverlays = document.querySelectorAll('.js-modal-overlay');
+
+        var iterateAndRemove = function () {
+            for (var i = 0, n = modalOverlays.length; i < n; i++)
+            {
+                var modal = modalOverlays[i];
+
+                modal.parentNode.removeChild(modal);
+            }
+        };
+
+        if (clearAfter > 0)
+        {
+            setTimeout(iterateAndRemove, clearAfter);
+        }
+    };
+    //-------------------------------------------------------------------------------- /public methods
+
+
+
+    //-------------------------------------------------------------------------------- private methods
+    var overrideDefaultOptions = function (defaults, overrides, skip) {
+        var itemsToSkip = skip || [];
+
+        /**
+         * This loops through the provided options object and overrides the defaults in the standardOptions object
+         * above. We can also do some type-checking here to make sure values are in the right format.
+         */
+
+        if (overrides && _.isObject(overrides))
+        {
+            for (var prop in overrides)
+            {
+                var propLowercase = prop.toLowerCase();
+                var value = overrides[prop];
+
+                if (defaults.hasOwnProperty(propLowercase)) //only override defaults
+                {
+                    var skipThisIteration = false;
+
+                    /**
+                     * Loops over the items in the third arg (array) and let's the next block know to skip over
+                     * them so that we can preserve defaults
+                     */
+                    for (var i = 0, n = itemsToSkip.length; i < n; i++)
+                    {
+                        if (propLowercase === itemsToSkip[i])
+                        {
+                            skipThisIteration = true;
+                        }
+                    }
+
+                    if (!skipThisIteration)
+                    {
+                        if (propLowercase === 'buttons' && !_.isArray(value))
+                        {
+                            overrides[propLowercase] = []; //if we didn't get an array, let's fix that
+                            //TODO: let the developer know they're screwing up
+                        }
+
+                        if (propLowercase === 'opacity' && _.isNumber(value))
+                        {
+                            if (value >= 1 && value <= 100) //supplied opacity is on the wrong scale (should be based on 1)
+                            {
+                                overrides[prop] = value/100;
+                            }
+                        }
+
+                        defaults[propLowercase] = value;
+                    }
+                }
+            }
+        }
+
+        return defaults || {};
+    };
+
+    /**
+     * Takes a single argument, an object of options, and creates an div tag for displaying a modal overlay.
+     * @param optionOverrides
+     * @returns {string}
+     */
+    var getModalOverlay = function (optionOverrides) {
+        var defaults = {
+            text: '',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: 640,
+            height: 360,
+            bgcolor: '#000000',
+            opacity: 1, //on a scale of 0 to 1
+            zindex: 10,
+            textalign: 'center',
+            padding: 0,
+            buttons: [] //this would be a list of button objects, but by default there are none
+        };
+
+        var titleOptions = {
+            color: '#FFFFFF',
+            fontsize: 18,
+            fontweight: 'normal',
+            margin: 0,
+            padding: 25,
+            lineheight: 27
+        };
+
+        var options = overrideDefaultOptions(defaults, optionOverrides);
+        var buttons = '';
+
+        if (_.isArray(options.buttons))
+        {
+            for (var i = 0, n = options.buttons.length; i < n; i++)
+            {
+                var button = options.buttons[i];
+                var modalButton = getModalButtonMarkup(button);
+
+                buttons += getModalButtonMarkup(button);
+            }
+        }
+
+        var modalContainerOptions = {
+            margin: '0px auto',
+            position: 'relative'
+        };
+
+        var element = '<div class="js-modal-container" style="'+ css.getStyles(modalContainerOptions) +'">\n        <h4 style="'+ css.getStyles(titleOptions) +'">'+options.text+'</h4>\n        <div class="js-modal-buttons">\n            '+ getButtons(options.buttons) +'\n        </div>\n    </div>';
+
+        var wrappingDiv = document.createElement('div');
+        wrappingDiv.setAttribute('class', 'js-modal-overlay');
+        wrappingDiv.setAttribute('style', css.getStyles(options));
+        wrappingDiv.innerHTML = element;
+
+        return wrappingDiv;
+    };
+
+    var getButtons = function (buttons) {
+        var buttonsMarkup = '';
+
+        if (_.isArray(buttons))
+        {
+            for (var i = 0, n = buttons.length; i < n; i++)
+            {
+                var button = buttons[i];
+                buttonsMarkup += getModalButtonMarkup(button);
+            }
+        }
+
+        return buttonsMarkup;
+    };
+
+    var getModalButtonMarkup = function (buttonOptions) {
+        var defaults = {
+            width: 100,
+            height: 40,
+            text: 'Okay',
+            color: '#000000'
+        };
+
+        var options = overrideDefaultOptions(defaults, buttonOptions);
+        var element = '<button class="modalButton" style="'+ css.getStyles(options) +'">'+ options.text +'</button>';
+
+        return element;
+    };
+
+    var verticallyCenter = function (selector) {
+        try {
+            var element = document.querySelector(selector);
+            var parent = element.parentNode;
+            var parentHeight = parent.offsetHeight;
+            var elementHeight = element.offsetHeight;
+            var middle = Math.round(parent.offsetHeight/2 - element.offsetHeight/2);
+
+            css.updateStyles(element, 'top', utils.addPixelSuffix(middle));
+        }
+        catch (error)
+        {
+
+        }
+    };
+    //-------------------------------------------------------------------------------- /private methods
+
+    // Public API
+    return {
+        displayModal: displayModal,
+        remove: removeModals
+    };
+});
+
+
+
+
+
+
+
+
+
+
+/*global define, _ */
+
+define('player',['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, iframe, modal, Debug) {
+    
+
+    var debug = new Debug('player');
+    var _currentVideo = {};
+
+    var setPlayerMessage = function (options) {
+        if (_.isObject(options))
+        {
+            modal.displayModal(options);
+        }
+        else
+        {
+            debug.log('setPlayerMessage expected 1 argument: an object of options.', options);
+        }
+    };
+
+    var clearPlayerMessage = function () {
+        modal.remove();
+    };
+
+    /**
+     * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
+     * will return false
+     * @param timeInSeconds
+     * @returns {boolean}
+     */
+    var seekTo = function (timeInSeconds) {
+        if (!_.isUndefined(ovp))
+        {
+            if (!_.isNaN(+timeInSeconds))
+            {
+                if (timeInSeconds >= 0)
+                {
+                    var seekTime = Math.round(timeInSeconds * 1000);
+                    debug.log("Seeking to (in seconds)...", seekTime/1000);
+                    ovp.seekToPosition(seekTime);
+                }
+                else
+                {
+                    debug.warn("The time you provided was less than 0, so no seeking occurred.", timeInSeconds);
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Error("The value supplied was not a valid number.");
+            }
+        }
+        else
+        {
+            throw new Error("The OVP object was undefined.");
+        }
+
+        return true;
+    };
+
+    //---------------------------------------------- init
+    (function () {
+        //begin: add event listeners
+//        ovp.addEventListener('OnMediaLoadStart', function (event) {
+//            if (_.has(event.data, 'baseClip'))
+//            {
+//                _currentVideo = event.data;
+//                debug.log("OnMediaLoadStart fired, and event.data was saved.", _currentVideo);
+//            }
+//        });
+        //end: add event listeners
+    })();
+    //---------------------------------------------- /init
+
+    /**
+     * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
+     * entry point
+     */
+    return {
+        // Public API
+        setPlayerMessage: setPlayerMessage,
+        clearPlayerMessage: clearPlayerMessage,
+        injectIframePlayers: iframe.injectIframePlayers,
+        seekTo: seekTo,
+        seek: seekTo, //alias
+
+        //Testing-only API (still public, but please DO NOT USE unless unit testing)
+        _test: {
+            getPlayerAttributes: iframe.getPlayerAttributes,
+            injectIframe: iframe.injectIframe
+        }
+    };
 });
 /*global define, _, FDM_Player_vars, alert */
 
-define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
+define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'], function (player, utils, css, polyfills, Debug, Dispatcher) {
     
 
-    var buildTimestamp = '2013-05-13 08:05:24';
-    var debug = new Debug('core');
+    var buildTimestamp = '2013-05-14 09:05:49';
+    var debug = new Debug('core'),
+        dispatcher = new Dispatcher();
 
-    var userAgentFlags = {
-        android: false,
-        ios: false,
-        flash: false
-    };
+//    var userAgentFlags = {
+//        android: false,
+//        ios: false,
+//        flash: false
+//    };
     //-------------------------------------------------------------------------------- /private methods
 
     //-------------------------------------------------------------------------------- initialization
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-13 08:05:24',
+            buildDate: '2013-05-14 09:05:49',
             authors: 'https://twitter.com/brandonaaskov'
         });
 
-        if (FDM_Player_vars.isFlash)
-        {
-            userAgentFlags.flash = true;
-        }
-        else if (FDM_Player_vars.isIOS)
-        {
-            userAgentFlags.ios = true;
-        }
+//        if (FDM_Player_vars.isFlash)
+//        {
+//            userAgentFlags.flash = true;
+//        }
+//        else if (FDM_Player_vars.isIOS)
+//        {
+//            userAgentFlags.ios = true;
+//        }
     })();
     //-------------------------------------------------------------------------------- /initialization
 
@@ -2980,19 +3036,24 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     return {
         version: '0.1.6',
         packageName: 'foxneod',
-        buildDate: '2013-05-13 08:05:24',
+        buildDate: '2013-05-14 09:05:49',
         player: player,
         utils: utils,
-        debug: Debug
+        Debug: Debug,
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });
 /*global require */
 
-require(['almond', 'foxneod', 'utils'], function (almond, foxneod, utils) {
+require(['almond', 'foxneod', 'Dispatcher'], function (almond, foxneod, Dispatcher) {
     
 
+    var dispatcher = new Dispatcher();
+
     window.FoxNEOD = window.$f = foxneod;
-    utils.dispatchEvent('ready');
+    dispatcher.dispatch('ready', {}, true);
 });
 define("main", function(){});
 }());

@@ -91,7 +91,7 @@
             },
 
             replace: {
-                "Replacing Items RequireJS Output": { //can be any name, might as well make it descriptive
+                "in foxneod library": { //can be any name, might as well make it descriptive
                     src: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
                     dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
                     replacements: [

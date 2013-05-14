@@ -1,16 +1,17 @@
 /*global define, _, FDM_Player_vars, alert */
 
-define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
+define(['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'], function (player, utils, css, polyfills, Debug, Dispatcher) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
-    var debug = new Debug('core');
+    var debug = new Debug('core'),
+        dispatcher = new Dispatcher();
 
-    var userAgentFlags = {
-        android: false,
-        ios: false,
-        flash: false
-    };
+//    var userAgentFlags = {
+//        android: false,
+//        ios: false,
+//        flash: false
+//    };
     //-------------------------------------------------------------------------------- /private methods
 
     //-------------------------------------------------------------------------------- initialization
@@ -21,14 +22,14 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
             authors: '@@authors'
         });
 
-        if (FDM_Player_vars.isFlash)
-        {
-            userAgentFlags.flash = true;
-        }
-        else if (FDM_Player_vars.isIOS)
-        {
-            userAgentFlags.ios = true;
-        }
+//        if (FDM_Player_vars.isFlash)
+//        {
+//            userAgentFlags.flash = true;
+//        }
+//        else if (FDM_Player_vars.isIOS)
+//        {
+//            userAgentFlags.ios = true;
+//        }
     })();
     //-------------------------------------------------------------------------------- /initialization
 
@@ -39,6 +40,9 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
         buildDate: '@@buildDate',
         player: player,
         utils: utils,
-        debug: Debug
+        Debug: Debug,
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });

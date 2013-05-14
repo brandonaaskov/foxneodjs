@@ -3,7 +3,7 @@
 /**
  * Just provides a safe interface to grab the PDK without having to worry about loading it.
  */
-define(['debug', 'utils'], function (Debug, utils) {
+define(['debug', 'utils', 'polyfills'], function (Debug, utils, polyfills) {
     'use strict';
 
     var _pdk = {
@@ -28,15 +28,18 @@ define(['debug', 'utils'], function (Debug, utils) {
         {
             debug.log("PDK wasn't ready, so we're watching the window object now.");
 
-//            window.watch('$pdk', function (propertyName, oldValue, newValue) {
-//                debug.log("PDK available via watch(), and we're storing the new value.", newValue);
-////                _pdk = window.$pdk; //is this more reliable?
-//
-//                window.unwatch('$pdk');
-//                _pdk = newValue;
-//
-//                utils.dispatchEvent('apiReady', _pdk); //allows for listening so that people can know when to interact
-//            });
+            polyfills.addEventListener('watchReady', function () {
+
+                window.watch('$pdk', function (propertyName, oldValue, newValue) {
+                    debug.log("PDK available via watch(), and we're storing the new value.", newValue);
+    //                _pdk = window.$pdk; //is this more reliable?
+
+                    window.unwatch('$pdk');
+                    _pdk = newValue;
+
+                    utils.dispatchWindowEvent('ovpReady', _pdk); //allows for listening so that people can know when to interact
+                });
+            });
         }
     })();
 

@@ -1,8 +1,10 @@
 /*global require */
 
-require(['almond', 'foxneod', 'utils'], function (almond, foxneod, utils) {
+require(['almond', 'foxneod', 'Dispatcher'], function (almond, foxneod, Dispatcher) {
     'use strict';
 
+    var dispatcher = new Dispatcher();
+
     window.FoxNEOD = window.$f = foxneod;
-    utils.dispatchEvent('ready');
+    dispatcher.dispatch('ready', {}, true);
 });

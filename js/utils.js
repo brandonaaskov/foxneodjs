@@ -1,9 +1,9 @@
 /*global define, _ */
 
-define([], function () {
+define(['Dispatcher'], function (Dispatcher) {
     'use strict';
 
-//    var debug = new Debug('utils');
+    var dispatcher = new Dispatcher();
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -195,14 +195,6 @@ define([], function () {
         return text;
     };
 
-    var dispatchEvent = function (eventName, data) {
-        var event = document.createEvent('Event');
-        var name = '@@packageName:' + eventName;
-        event.initEvent(name, true, true);
-        event.data = data || {};
-        window.dispatchEvent(event);
-    };
-
 
 
 
@@ -349,13 +341,13 @@ define([], function () {
         getColorFromString: getColorFromString,
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
-        dispatchEvent: dispatchEvent,
-        dispatch: dispatchEvent, //alias,
-
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
         setURL: setURL,
-        getURL: getURL
+        getURL: getURL,
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });

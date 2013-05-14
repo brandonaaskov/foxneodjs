@@ -22,31 +22,31 @@ define(['utils', 'base64', 'player', 'debug'], function (utils, base64, player, 
                 });
             })();
 
-            test('dispatchEvent', 3, function () {
-                stop(2);
-                var eventName = packageName + ':test';
-
-                window.addEventListener(eventName, function () {
-                    window.removeEventListener(eventName);
-                    ok(true, "Event dispatching over the window object (no data payload).");
-
-                    console.log('ran one assert and removed the event listener for ' + eventName);
-                    start();
-                });
-                utils.dispatchEvent('test');
-
-                eventName = packageName + ':dataTest';
-
-                window.addEventListener(eventName, function (event) {
-                    window.removeEventListener(eventName);
-                    strictEqual(event.data.movie, 'Django', 'Event dispatching over the window object (with data payload)');
-                    strictEqual(_.isObject(event.data), true, 'Data payload object is in fact, an Object');
-
-                    console.log('ran two asserts and removed the event listener for ' + eventName);
-                    start();
-                });
-                utils.dispatchEvent('dataTest', { movie: 'Django' });
-            });
+//            test('dispatchEvent', 3, function () {
+//                stop(2);
+//                var eventName = packageName + ':test';
+//
+//                window.addEventListener(eventName, function () {
+//                    window.removeEventListener(eventName);
+//                    ok(true, "Event dispatching over the window object (no data payload).");
+//
+//                    console.log('ran one assert and removed the event listener for ' + eventName);
+//                    start();
+//                });
+//                utils.dispatchEvent('test');
+//
+//                eventName = packageName + ':dataTest';
+//
+//                window.addEventListener(eventName, function (event) {
+//                    window.removeEventListener(eventName);
+//                    strictEqual(event.data.movie, 'Django', 'Event dispatching over the window object (with data payload)');
+//                    strictEqual(_.isObject(event.data), true, 'Data payload object is in fact, an Object');
+//
+//                    console.log('ran two asserts and removed the event listener for ' + eventName);
+//                    start();
+//                });
+//                utils.dispatchEvent('dataTest', { movie: 'Django' });
+//            });
 
             (function getColorFromStringTests () {
                 test('getColorFromString', function () {
