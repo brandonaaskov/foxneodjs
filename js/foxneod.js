@@ -20,10 +20,6 @@ define(['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils
             buildDate: '@@buildDate',
             authors: '@@authors'
         });
-//        debug.log('Ready', {
-//            buildDate: '@@buildDate',
-//            authors: '@@authors'
-//        }, '!');
 
         if (FDM_Player_vars.isFlash)
         {

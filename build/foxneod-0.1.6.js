@@ -935,15 +935,15 @@ define('ovp',['debug', 'utils'], function (Debug, utils) {
         {
             debug.log("PDK wasn't ready, so we're watching the window object now.");
 
-            window.watch('$pdk', function (propertyName, oldValue, newValue) {
-                debug.log("PDK available via watch(), and we're storing the new value.", newValue);
-//                _pdk = window.$pdk; //is this more reliable?
-
-                window.unwatch('$pdk');
-                _pdk = newValue;
-
-                utils.dispatchEvent('apiReady', _pdk); //allows for listening so that people can know when to interact
-            });
+//            window.watch('$pdk', function (propertyName, oldValue, newValue) {
+//                debug.log("PDK available via watch(), and we're storing the new value.", newValue);
+////                _pdk = window.$pdk; //is this more reliable?
+//
+//                window.unwatch('$pdk');
+//                _pdk = newValue;
+//
+//                utils.dispatchEvent('apiReady', _pdk); //allows for listening so that people can know when to interact
+//            });
         }
     })();
 
@@ -2947,7 +2947,7 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
     
 
-    var buildTimestamp = '2013-05-13 07:05:19';
+    var buildTimestamp = '2013-05-13 08:05:24';
     var debug = new Debug('core');
 
     var userAgentFlags = {
@@ -2961,13 +2961,9 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-13 07:05:19',
+            buildDate: '2013-05-13 08:05:24',
             authors: 'https://twitter.com/brandonaaskov'
         });
-//        debug.log('Ready', {
-//            buildDate: '2013-05-13 07:05:19',
-//            authors: 'https://twitter.com/brandonaaskov'
-//        }, '!');
 
         if (FDM_Player_vars.isFlash)
         {
@@ -2984,7 +2980,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     return {
         version: '0.1.6',
         packageName: 'foxneod',
-        buildDate: '2013-05-13 07:05:19',
+        buildDate: '2013-05-13 08:05:24',
         player: player,
         utils: utils,
         debug: Debug
