@@ -25,7 +25,7 @@
  * Example: ?debug=utils,player,base64
  *
  */
-define(['require', 'utils'], function (require, utils) {
+define(['utils'], function (utils) {
     'use strict';
 
     return function (moduleName) {
@@ -108,7 +108,7 @@ define(['require', 'utils'], function (require, utils) {
         };
 
         var getDebugModes = function () {
-            var queryParam = require('utils').getParamValue('debug'); //fixes the circular dependency the RequireJS way
+            var queryParam = utils.getParamValue('debug');
             var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['@@debugMode'];
 
             return debugModes;

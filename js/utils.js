@@ -1,9 +1,9 @@
 /*global define, _ */
 
-define(['debug'], function (Debug) {
+define([], function () {
     'use strict';
 
-    var debug = new Debug('utils');
+//    var debug = new Debug('utils');
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -139,11 +139,11 @@ define(['debug'], function (Debug) {
 
                 return color.toLowerCase();
             }
-            else
-            {
-                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
-                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
-            }
+//            else
+//            {
+//                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
+//                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
+//            }
         }
 
         return null;

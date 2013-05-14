@@ -382,6 +382,30 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 assert.throws(function () {
                     player._test.getPlayerAttributes(document.querySelectorAll('.player'));
                 }, error);
+
+                assert.throws(function () {
+                    player.seekTo(3);
+                }, "The OVP object was undefined.");
+
+                //sets up dummy pdk object for testing
+                window.$pdk = {
+                    controller: {
+                        seekTo: function () {},
+                        seek: function () {}
+                    }
+                }
+                assert.strictEqual(player.seekTo(3), true, "Seeks to 3 seconds properly (assumes PDK existence).");
+                assert.strictEqual(player.seekTo(0), true, "Seeks to 0 seconds properly (assumes PDK existence).");
+                assert.throws(function () {
+                    player.seekTo();
+                }, "The value supplied was not a valid number.");
+                assert.strictEqual(player.seekTo("10"), true, "Seeks to position provided as string.");
+                assert.strictEqual(player.seekTo(40.5), true, "Seeks to floating point number.");
+                assert.strictEqual(player.seekTo("12.384734"), true, "Seeks to floating point number as a string");
+                assert.strictEqual(player.seekTo(-2), false, "Returns false (and does nothing) with a negative number.");
+                assert.strictEqual(player.seekTo("-30"), false, "Returns false (and does nothing) with a negative number as a string.");
+                assert.strictEqual(player.seekTo(100.55234582394572328345723048957), true, "Seeks properly to ");
+                assert.strictEqual(player.seekTo(1000000000000), false, "Seeks to value longer than the video.");
             });
         });
         //------------------------------------------------------------------------------------- /player

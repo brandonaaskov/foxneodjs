@@ -152,8 +152,12 @@
 
             shell : {
                 // scp build/ to a remote host
-                golive : {
+                golive: {
                     command : 'scp -r build staging@staging.saluteyourshorts.net:httpdocs/foxneod/'
+                },
+
+                phpbuild: {
+                    command: "cd ../fng_player_platform/branches/tRS1/ && node build fx btn fox"
                 }
             },
 
@@ -172,7 +176,7 @@
 
 
         grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify']);
-        grunt.registerTask('dev', ['jshint', 'requirejs', 'replace']);
+        grunt.registerTask('dev', ['jshint', 'requirejs', 'replace', 'shell:phpbuild']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'replace', 'uglify']);
     };
 })();

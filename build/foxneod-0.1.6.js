@@ -407,149 +407,12 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
-/*global define, _, console */
-
-/**
- * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
- * any point.
- *
- * When you want to provide a debugging level for a module, ask for the debug module as a dependency as you normally
- * would. As a convention, name the argument passed to your module Debug instead of debug. Having a capital letter
- * indicates that you can create new instances using the new keyword and it also allows for better syntax later (you'll
- * see what I mean).
- *
- * Example:
- * define(['debug'], function (Debug) {
- *  var debug = new Debug('modulename');
- *
- * The name that we pass when we instantiate a Debug instance is really important. Aesthetically, it just adds some
- * more context to a console message, but you can also filter debug statements on the page using that same module name.
- * For instance, if you wanted to see debug messages for an advertising module, you would use the query param
- * ?debug=advertising, assuming the string passed to debug was 'advertising' (Note: we actually lowercase everything
- * internally, so it doesn't matter what the case is of the string you supply). That will only show debug messages for
- * that module while you're testing. The default in dev is 'all', which allows you to see every debug message. In prod,
- * there is no default, so debugging can only be enabled by explicitly asking for it via a query param.
- *
- * If you want to see debug messages for many modules at once, just comma separate the items in the query param's value.
- * Example: ?debug=utils,player,base64
- *
- */
-define('debug',['require', 'utils'], function (require, utils) {
-    
-
-    return function (moduleName) {
-        //-------------------------------------- validation
-        if (_.isUndefined(moduleName))
-        {
-            throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
-                "That's required. Sorry kiddo!");
-        }
-        else if (_.isString(moduleName))
-        {
-            // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
-            // at lazy developers ;)
-            if (moduleName.length < 3)
-            {
-                throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
-                    "Something at least 3 characters long, anyway, geez!");
-            }
-        }
-        else
-        {
-            throw new Error("When instantiating the Debug class, it expects a string for the category name as the " +
-                "only argument.");
-        }
-        //-------------------------------------- /validation
-
-
-        var prefix = 'foxneod-0.1.5: ';
-        var lastUsedOptions = {};
-        var category = moduleName.toLowerCase();
-
-        var log = function (message, data) {
-            var options = {
-                message: message,
-                data: data
-            };
-
-            _log('log', options);
-
-            return options;
-        };
-
-        var warn = function (message, data) {
-            //we add the !!!WARNING!!! since most consoles don't have a native way to display console.warn() differently
-            var options = {
-                message: '!!!WARNING!!!: ' + message,
-                data: data
-            };
-
-            _log('warn', options);
-
-            return options;
-        };
-
-        var error = function (message, data) {
-            var options = {
-                message: message,
-                data: data
-            };
-
-            _log('error', options);
-
-            return options;
-        };
-
-        var _log = function (logLevel, options) {
-            var debugModes = getDebugModes();
-
-            for (var i = 0, n = debugModes.length; i < n; i++)
-            {
-                var mode = debugModes[i].toLowerCase();
-
-                if (mode === category.toLowerCase() || mode === 'all')
-                {
-                    console[logLevel](prefix + category + ': ' + options.message, options.data || '');
-//                    console.log('lastUsedOptions set');
-                    lastUsedOptions = _.clone(options);
-                }
-            }
-        };
-
-        var getDebugModes = function () {
-            var queryParam = require('utils').getParamValue('debug'); //fixes the circular dependency the RequireJS way
-            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['none'];
-
-            return debugModes;
-        };
-
-        // Surfaced for testing purposes
-        var test = {
-            getDebugModes: getDebugModes,
-            getLastUsedOptions: function () {
-                window.console.log('getLastUsedOptions', lastUsedOptions);
-                return lastUsedOptions;
-            },
-            getCategory: function () {
-                return category;
-            }
-        };
-
-        // Public API
-        return {
-            log: log,
-            warn: warn,
-            error: error,
-            _test: test
-        };
-    };
-});
 /*global define, _ */
 
-define('utils',['debug'], function (Debug) {
+define('utils',[], function () {
     
 
-    var debug = new Debug('utils');
+//    var debug = new Debug('utils');
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -685,11 +548,11 @@ define('utils',['debug'], function (Debug) {
 
                 return color.toLowerCase();
             }
-            else
-            {
-                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
-                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
-            }
+//            else
+//            {
+//                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
+//                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
+//            }
         }
 
         return null;
@@ -904,6 +767,188 @@ define('utils',['debug'], function (Debug) {
         setURL: setURL,
         getURL: getURL
     };
+});
+/*global define, _, console */
+
+/**
+ * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
+ * any point.
+ *
+ * When you want to provide a debugging level for a module, ask for the debug module as a dependency as you normally
+ * would. As a convention, name the argument passed to your module Debug instead of debug. Having a capital letter
+ * indicates that you can create new instances using the new keyword and it also allows for better syntax later (you'll
+ * see what I mean).
+ *
+ * Example:
+ * define(['debug'], function (Debug) {
+ *  var debug = new Debug('modulename');
+ *
+ * The name that we pass when we instantiate a Debug instance is really important. Aesthetically, it just adds some
+ * more context to a console message, but you can also filter debug statements on the page using that same module name.
+ * For instance, if you wanted to see debug messages for an advertising module, you would use the query param
+ * ?debug=advertising, assuming the string passed to debug was 'advertising' (Note: we actually lowercase everything
+ * internally, so it doesn't matter what the case is of the string you supply). That will only show debug messages for
+ * that module while you're testing. The default in dev is 'all', which allows you to see every debug message. In prod,
+ * there is no default, so debugging can only be enabled by explicitly asking for it via a query param.
+ *
+ * If you want to see debug messages for many modules at once, just comma separate the items in the query param's value.
+ * Example: ?debug=utils,player,base64
+ *
+ */
+define('debug',['utils'], function (utils) {
+    
+
+    return function (moduleName) {
+        //-------------------------------------- validation
+        if (_.isUndefined(moduleName))
+        {
+            throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
+                "That's required. Sorry kiddo!");
+        }
+        else if (_.isString(moduleName))
+        {
+            // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
+            // at lazy developers ;)
+            if (moduleName.length < 3)
+            {
+                throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
+            }
+        }
+        else
+        {
+            throw new Error("When instantiating the Debug class, it expects a string for the category name as the " +
+                "only argument.");
+        }
+        //-------------------------------------- /validation
+
+
+        var prefix = 'foxneod-0.1.6: ';
+        var lastUsedOptions = {};
+        var category = moduleName.toLowerCase();
+
+        var log = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('log', options);
+
+            return options;
+        };
+
+        var warn = function (message, data) {
+            //we add the !!!WARNING!!! since most consoles don't have a native way to display console.warn() differently
+            var options = {
+                message: '!!!WARNING!!!: ' + message,
+                data: data
+            };
+
+            _log('warn', options);
+
+            return options;
+        };
+
+        var error = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('error', options);
+
+            return options;
+        };
+
+        var _log = function (logLevel, options) {
+            var debugModes = getDebugModes();
+
+            for (var i = 0, n = debugModes.length; i < n; i++)
+            {
+                var mode = debugModes[i].toLowerCase();
+
+                if (mode === category.toLowerCase() || mode === 'all')
+                {
+                    console[logLevel](prefix + category + ': ' + options.message, options.data || '');
+//                    console.log('lastUsedOptions set');
+                    lastUsedOptions = _.clone(options);
+                }
+            }
+        };
+
+        var getDebugModes = function () {
+            var queryParam = utils.getParamValue('debug');
+            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['none'];
+
+            return debugModes;
+        };
+
+        // Surfaced for testing purposes
+        var test = {
+            getDebugModes: getDebugModes,
+            getLastUsedOptions: function () {
+                window.console.log('getLastUsedOptions', lastUsedOptions);
+                return lastUsedOptions;
+            },
+            getCategory: function () {
+                return category;
+            }
+        };
+
+        // Public API
+        return {
+            log: log,
+            warn: warn,
+            error: error,
+            _test: test
+        };
+    };
+});
+/*global define, _ */
+
+/**
+ * Just provides a safe interface to grab the PDK without having to worry about loading it.
+ */
+define('ovp',['debug', 'utils'], function (Debug, utils) {
+    
+
+    var _pdk = {
+            controller: {} //dummy for starters since we alias this in player.js right off the bat
+        },
+        debug = new Debug('ovp');
+
+    /**
+     * TODO: if the pdk doesn't exist, and methods get called on this (not the global $pdk object), catch them and
+     * queue them for later (use underscore to queue and chain as needed)
+     */
+
+    (function () {
+        //init
+
+        if (_.has(window, '$pdk'))
+        {
+            _pdk = window.$pdk;
+            debug.log("Page already had the PDK loaded in, so we're using that.");
+        }
+        else
+        {
+            debug.log("PDK wasn't ready, so we're watching the window object now.");
+
+            window.watch('$pdk', function (propertyName, oldValue, newValue) {
+                debug.log("PDK available via watch(), and we're storing the new value.", newValue);
+//                _pdk = window.$pdk; //is this more reliable?
+
+                window.unwatch('$pdk');
+                _pdk = newValue;
+
+                utils.dispatchEvent('apiReady', _pdk); //allows for listening so that people can know when to interact
+            });
+        }
+    })();
+
+    // Public API
+    return _pdk;
 });
 /*global define, _ */
 
@@ -1462,10 +1507,11 @@ define('modal',['css', 'utils', 'debug'], function (css, utils, debug) {
 
 /*global define, _ */
 
-define('player',['player/iframe', 'modal', 'debug'], function (iframe, modal, Debug) {
+define('player',['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, iframe, modal, Debug) {
     
 
     var debug = new Debug('player');
+    var _currentVideo = {};
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -1483,6 +1529,56 @@ define('player',['player/iframe', 'modal', 'debug'], function (iframe, modal, De
     };
 
     /**
+     * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
+     * will return false
+     * @param timeInSeconds
+     * @returns {boolean}
+     */
+    var seekTo = function (timeInSeconds) {
+        if (!_.isUndefined(ovp))
+        {
+            if (!_.isNaN(+timeInSeconds))
+            {
+                if (timeInSeconds >= 0)
+                {
+                    var seekTime = Math.round(timeInSeconds * 1000);
+                    debug.log("Seeking to (in seconds)...", seekTime/1000);
+                    ovp.seekToPosition(seekTime);
+                }
+                else
+                {
+                    debug.warn("The time you provided was less than 0, so no seeking occurred.", timeInSeconds);
+                    return false;
+                }
+            }
+            else
+            {
+                throw new Error("The value supplied was not a valid number.");
+            }
+        }
+        else
+        {
+            throw new Error("The OVP object was undefined.");
+        }
+
+        return true;
+    };
+
+    //---------------------------------------------- init
+    (function () {
+        //begin: add event listeners
+//        ovp.addEventListener('OnMediaLoadStart', function (event) {
+//            if (_.has(event.data, 'baseClip'))
+//            {
+//                _currentVideo = event.data;
+//                debug.log("OnMediaLoadStart fired, and event.data was saved.", _currentVideo);
+//            }
+//        });
+        //end: add event listeners
+    })();
+    //---------------------------------------------- /init
+
+    /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
      * entry point
      */
@@ -1491,6 +1587,8 @@ define('player',['player/iframe', 'modal', 'debug'], function (iframe, modal, De
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
         injectIframePlayers: iframe.injectIframePlayers,
+        seekTo: seekTo,
+        seek: seekTo, //alias
 
         //Testing-only API (still public, but please DO NOT USE unless unit testing)
         _test: {
@@ -2849,7 +2947,7 @@ define('polyfills',['underscore', 'debug'], function (underscore, debug) {
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (player, utils, css, polyfills, Debug) {
     
 
-    var buildTimestamp = '2013-05-13 12:05:01';
+    var buildTimestamp = '2013-05-13 07:05:19';
     var debug = new Debug('core');
 
     var userAgentFlags = {
@@ -2863,11 +2961,11 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-13 12:05:01',
+            buildDate: '2013-05-13 07:05:19',
             authors: 'https://twitter.com/brandonaaskov'
         });
 //        debug.log('Ready', {
-//            buildDate: '2013-05-13 12:05:01',
+//            buildDate: '2013-05-13 07:05:19',
 //            authors: 'https://twitter.com/brandonaaskov'
 //        }, '!');
 
@@ -2884,9 +2982,9 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug'], function (pla
 
     // Public API
     return {
-        version: '0.1.5',
+        version: '0.1.6',
         packageName: 'foxneod',
-        buildDate: '2013-05-13 12:05:01',
+        buildDate: '2013-05-13 07:05:19',
         player: player,
         utils: utils,
         debug: Debug
