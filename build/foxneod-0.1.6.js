@@ -407,12 +407,10 @@ var requirejs, require, define;
 
 define("almond", function(){});
 
-/*global define, _ */
+/*global define, _, console */
 
-define('Dispatcher',['debug'], function (Debug) {
+define('Dispatcher',[], function () {
     
-
-    var debug = new this.Debug('Dispatcher');
 
     return function () {
         var _listeners = [];
@@ -439,7 +437,6 @@ define('Dispatcher',['debug'], function (Debug) {
 //                _.invoke(list, 'callback');
                 var listeners = _.where(listeners, {name: eventName});
                 _.each(_listeners, function (listener) {
-//                    debug.log('firing callback for...', listener);
                     listener.callback(event);
                 });
             }
@@ -2205,7 +2202,8 @@ define('polyfills',['underscore', 'debug', 'Dispatcher'], function (underscore, 
     
 
     var debug = new Debug('polyfills'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        _polyfillsAdded = [];
 
     var fixBrokenFeatures = function ()
     {
@@ -2216,17 +2214,46 @@ define('polyfills',['underscore', 'debug', 'Dispatcher'], function (underscore, 
             {
                 if (typeof polyfillList[i] === 'string')
                 {
-                    switch (polyfillList[i].toLowerCase())
+                    var polyfillName = polyfillList[i].toLowerCase();
+
+                    switch (polyfillName)
                     {
                         case 'watch':
                             watch();
-                            debug.log("watch added");
-                            dispatcher.dispatch('watchReady');
+                            _polyfillsAdded.push(polyfillName);
+                            debug.log(polyfillName + " added");
+                            dispatcher.dispatch(polyfillName + 'Ready');
                             break;
                     }
                 }
             }
         }
+    };
+
+    /**
+     * Does a little bit extra than the Dispatcher class
+     */
+    var addEventListener = function (eventName, callback) {
+        //instead of requiring a dev to check if it already fired AND listen as a backup, we can take care of that here
+        if (added(eventName.split('Ready')[0]))
+        {
+            debug.log('polyfill already added, just dispatching', eventName);
+            dispatcher.addEventListener(eventName, callback);
+            dispatcher.dispatch(eventName);
+        }
+        else
+        {
+            debug.log('polyfill not already added');
+            dispatcher.addEventListener(eventName, callback);
+        }
+    };
+
+    var added = function (polyfillName)
+    {
+        var polyfillNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName)]) ? true : false;
+        var eventNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName + 'Ready')]) ? true : false;
+
+        return (polyfillNameFound || eventNameFound);
     };
 
     //---------------------------------------------- custom polyfills
@@ -2297,54 +2324,39 @@ define('polyfills',['underscore', 'debug', 'Dispatcher'], function (underscore, 
 
     // Public API
     return {
+        added: added,
         dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.addEventListener,
+        addEventListener: addEventListener,
         removeEventListener: dispatcher.removeEventListener
     };
 });
-/*global define, _ */
+/*global define, _, $ */
 
 /**
  * Just provides a safe interface to grab the PDK without having to worry about loading it.
  */
-define('ovp',['debug', 'utils', 'polyfills'], function (Debug, utils, polyfills) {
+define('ovp',['debug', 'Dispatcher', 'utils', 'polyfills'], function (Debug, Dispatcher, utils, polyfills) {
     
 
-    var _pdk = {
-            controller: {} //dummy for starters since we alias this in player.js right off the bat
-        },
-        debug = new Debug('ovp');
-
-    /**
-     * TODO: if the pdk doesn't exist, and methods get called on this (not the global $pdk object), catch them and
-     * queue them for later (use underscore to queue and chain as needed)
-     */
+    var _pdk = {},
+        debug = new Debug('ovp'),
+        dispatcher = new Dispatcher();
 
     (function () {
         //init
 
-        if (_.has(window, '$pdk'))
-        {
-            _pdk = window.$pdk;
-            debug.log("Page already had the PDK loaded in, so we're using that.");
-        }
-        else
-        {
-            debug.log("PDK wasn't ready, so we're watching the window object now.");
+        //yuck... so ghetto
+        var interval = setInterval(function () {
+            if (window.$pdk && _.has(window.$pdk, 'version'))
+            {
+                clearInterval(interval);
+                _pdk = window.$pdk;
+                debug.log('PDK: Fully Loaded (sequel to Herbie: Fully Loaded)');
 
-            polyfills.addEventListener('watchReady', function () {
-
-                window.watch('$pdk', function (propertyName, oldValue, newValue) {
-                    debug.log("PDK available via watch(), and we're storing the new value.", newValue);
-    //                _pdk = window.$pdk; //is this more reliable?
-
-                    window.unwatch('$pdk');
-                    _pdk = newValue;
-
-                    utils.dispatchWindowEvent('ovpReady', _pdk); //allows for listening so that people can know when to interact
-                });
-            });
-        }
+                debug.log("putting jQuery into noConflict() mode (pdk doesn't do this)");
+                window.jQuery.noConflict();
+            }
+        }, 250);
     })();
 
     // Public API
@@ -3002,33 +3014,18 @@ define('player',['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, ifram
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'], function (player, utils, css, polyfills, Debug, Dispatcher) {
     
 
-    var buildTimestamp = '2013-05-14 09:05:49';
+    var buildTimestamp = '2013-05-14 05:05:57';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
-
-//    var userAgentFlags = {
-//        android: false,
-//        ios: false,
-//        flash: false
-//    };
     //-------------------------------------------------------------------------------- /private methods
 
     //-------------------------------------------------------------------------------- initialization
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-14 09:05:49',
+            buildDate: '2013-05-14 05:05:57',
             authors: 'https://twitter.com/brandonaaskov'
         });
-
-//        if (FDM_Player_vars.isFlash)
-//        {
-//            userAgentFlags.flash = true;
-//        }
-//        else if (FDM_Player_vars.isIOS)
-//        {
-//            userAgentFlags.ios = true;
-//        }
     })();
     //-------------------------------------------------------------------------------- /initialization
 
@@ -3036,7 +3033,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'],
     return {
         version: '0.1.6',
         packageName: 'foxneod',
-        buildDate: '2013-05-14 09:05:49',
+        buildDate: '2013-05-14 05:05:57',
         player: player,
         utils: utils,
         Debug: Debug,

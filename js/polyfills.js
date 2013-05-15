@@ -5,7 +5,8 @@ define(['underscore', 'debug', 'Dispatcher'], function (underscore, Debug, Dispa
     'use strict';
 
     var debug = new Debug('polyfills'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        _polyfillsAdded = [];
 
     var fixBrokenFeatures = function ()
     {
@@ -16,17 +17,46 @@ define(['underscore', 'debug', 'Dispatcher'], function (underscore, Debug, Dispa
             {
                 if (typeof polyfillList[i] === 'string')
                 {
-                    switch (polyfillList[i].toLowerCase())
+                    var polyfillName = polyfillList[i].toLowerCase();
+
+                    switch (polyfillName)
                     {
                         case 'watch':
                             watch();
-                            debug.log("watch added");
-                            dispatcher.dispatch('watchReady');
+                            _polyfillsAdded.push(polyfillName);
+                            debug.log(polyfillName + " added");
+                            dispatcher.dispatch(polyfillName + 'Ready');
                             break;
                     }
                 }
             }
         }
+    };
+
+    /**
+     * Does a little bit extra than the Dispatcher class
+     */
+    var addEventListener = function (eventName, callback) {
+        //instead of requiring a dev to check if it already fired AND listen as a backup, we can take care of that here
+        if (added(eventName.split('Ready')[0]))
+        {
+            debug.log('polyfill already added, just dispatching', eventName);
+            dispatcher.addEventListener(eventName, callback);
+            dispatcher.dispatch(eventName);
+        }
+        else
+        {
+            debug.log('polyfill not already added');
+            dispatcher.addEventListener(eventName, callback);
+        }
+    };
+
+    var added = function (polyfillName)
+    {
+        var polyfillNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName)]) ? true : false;
+        var eventNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName + 'Ready')]) ? true : false;
+
+        return (polyfillNameFound || eventNameFound);
     };
 
     //---------------------------------------------- custom polyfills
@@ -97,8 +127,9 @@ define(['underscore', 'debug', 'Dispatcher'], function (underscore, Debug, Dispa
 
     // Public API
     return {
+        added: added,
         dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.addEventListener,
+        addEventListener: addEventListener,
         removeEventListener: dispatcher.removeEventListener
     };
 });

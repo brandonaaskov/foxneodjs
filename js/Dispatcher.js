@@ -1,9 +1,7 @@
-/*global define, _ */
+/*global define, _, console */
 
-define(['debug'], function (Debug) {
+define([], function () {
     'use strict';
-
-    var debug = new this.Debug('Dispatcher');
 
     return function () {
         var _listeners = [];
@@ -30,7 +28,6 @@ define(['debug'], function (Debug) {
 //                _.invoke(list, 'callback');
                 var listeners = _.where(listeners, {name: eventName});
                 _.each(_listeners, function (listener) {
-//                    debug.log('firing callback for...', listener);
                     listener.callback(event);
                 });
             }

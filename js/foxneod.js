@@ -6,12 +6,6 @@ define(['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'], function 
     var buildTimestamp = '@@buildDate';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
-
-//    var userAgentFlags = {
-//        android: false,
-//        ios: false,
-//        flash: false
-//    };
     //-------------------------------------------------------------------------------- /private methods
 
     //-------------------------------------------------------------------------------- initialization
@@ -21,15 +15,6 @@ define(['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'], function 
             buildDate: '@@buildDate',
             authors: '@@authors'
         });
-
-//        if (FDM_Player_vars.isFlash)
-//        {
-//            userAgentFlags.flash = true;
-//        }
-//        else if (FDM_Player_vars.isIOS)
-//        {
-//            userAgentFlags.ios = true;
-//        }
     })();
     //-------------------------------------------------------------------------------- /initialization
 
