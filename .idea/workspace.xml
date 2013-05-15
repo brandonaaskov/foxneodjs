@@ -4,15 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/../../tests/fox/btn/iframe-conversion.html" description="&lt;title&gt;iframe conversion test&lt;/title&gt;" line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/Dispatcher.js" afterPath="$PROJECT_DIR$/js/Dispatcher.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/foxneod-0.1.6.js" afterPath="$PROJECT_DIR$/build/foxneod-0.1.6.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/foxneod-0.1.6.min.js" afterPath="$PROJECT_DIR$/build/foxneod-0.1.6.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/foxneod.js" afterPath="$PROJECT_DIR$/js/foxneod.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/ovp.js" afterPath="$PROJECT_DIR$/js/ovp.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/polyfills.js" afterPath="$PROJECT_DIR$/js/polyfills.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="" />
     <ignored path=".idea/workspace.xml" />
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368150436163" ignored="false" />
     <file path="/app.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1365796972669" ignored="false" />

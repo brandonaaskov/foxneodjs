@@ -3014,7 +3014,7 @@ define('player',['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, ifram
 define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'], function (player, utils, css, polyfills, Debug, Dispatcher) {
     
 
-    var buildTimestamp = '2013-05-14 05:05:57';
+    var buildTimestamp = '2013-05-14 11:05:19';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3023,7 +3023,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'],
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-14 05:05:57',
+            buildDate: '2013-05-14 11:05:19',
             authors: 'https://twitter.com/brandonaaskov'
         });
     })();
@@ -3033,7 +3033,7 @@ define('foxneod',['player', 'utils', 'css', 'polyfills', 'debug', 'Dispatcher'],
     return {
         version: '0.1.6',
         packageName: 'foxneod',
-        buildDate: '2013-05-14 05:05:57',
+        buildDate: '2013-05-14 11:05:19',
         player: player,
         utils: utils,
         Debug: Debug,
