@@ -76,29 +76,11 @@
                         paths: {
                             almond: 'lib/almond/almond'
 //                            , jquery: 'lib/jquery/jquery-1.9.1.min' //this doesn't work (at least with this name) since jQuery defines their own AMD definition with the same name
+//                            , pdkloader: 'lib/theplatform/pdkloader'
                             , jqueryloader: 'lib/jquery/jqueryloader'
                             , underscore: 'lib/underscore/underscore'
                             , domready: 'lib/requirejs/domReady'
                         },
-
-                        shim: {
-                            'main': [
-                                'lib/jquery/jqueryloader',
-                                'lib/almond/almond',
-                                'lib/requirejs/domReady',
-                                'lib/underscore/underscore',
-                                'player/pdkwatcher'
-                            ]
-                        },
-
-//                        deps: ['lib/almond/almond', 'lib/underscore/underscore', 'lib/jquery/jqueryloader', 'lib/requirejs/domReady!'],
-
-//                        shim: {
-//                            'underscore': {
-//                                deps: ['lib/underscore/underscore'],
-//                                exports: '_'
-//                            }
-//                        },
 
                         //Defines the loading time for modules. Depending on the complexity of the
                         //dependencies and the size of the involved libraries, increasing the wait

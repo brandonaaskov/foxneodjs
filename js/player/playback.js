@@ -20,7 +20,7 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
                 {
                     var seekTime = Math.round(timeInSeconds * 1000);
                     debug.log("Seeking to (in seconds)...", seekTime/1000);
-                    ovp.controller.seekToPosition(seekTime);
+                    ovp.controller().seekToPosition(seekTime);
                 }
                 else
                 {
@@ -42,12 +42,17 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
     };
 
     var play = function () {
-        ovp.controller.play();
+        return ovp.controller().pause(false);
+    };
+
+    var pause = function () {
+        return ovp.controller().pause(true);
     };
 
     //public api
     return {
         seekTo: seekTo,
-        play: play
+        play: play,
+        pause: pause
     };
 });

@@ -1,6 +1,13 @@
-/*global require, requirejs */
+/*global require, requirejs, console */
 
-require(['domready!', 'almond', 'jqueryloader', 'underscore', 'Dispatcher', 'debug', 'foxneod'], function (doc, almond, jquery, underscore, Dispatcher, Debug, foxneod) {
+require([
+    'almond',
+    'jqueryloader',
+    'underscore',
+    'Dispatcher',
+    'Debug',
+    'foxneod'
+], function (almond, jquery, underscore, Dispatcher, Debug, foxneod) {
     'use strict';
 
     //This function is called once the DOM is ready, notice the value for 'domReady!' is the current document.
@@ -9,10 +16,10 @@ require(['domready!', 'almond', 'jqueryloader', 'underscore', 'Dispatcher', 'deb
         debug = new Debug('core');
 
     window.jQuery = jquery;
-    debug.log('jQuery version after noConflict', jquery().jquery);
+    debug.log('jQuery version after noConflict is', jquery().jquery);
 
     (function () {
-        debug.log('domready', doc);
+        debug.log('foxneod assignment');
         dispatcher.dispatch('ready', {}, true);
         window.FoxNEOD = window.$f = foxneod;
     })();

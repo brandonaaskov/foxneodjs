@@ -1,10 +1,17 @@
 /*global define, _ */
 
-define(['require', 'ovp', 'player/iframe', 'player/playback', 'player/pdkwatcher', 'modal', 'debug'], function (require, ovp, iframe, playback, pdkwatcher, modal, Debug) {
+define(['require',
+        'ovp',
+        'player/iframe',
+        'player/playback',
+        'modal',
+        'Debug'
+    ], function (require, ovp, iframe, playback, modal, Debug) {
     'use strict';
 
-    var debug = new Debug('player');
-    var _currentVideo = {};
+    var debug = new Debug('player'),
+        _currentVideo = {},
+        _mostRecentAd = {};
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -21,17 +28,42 @@ define(['require', 'ovp', 'player/iframe', 'player/playback', 'player/pdkwatcher
         modal.remove();
     };
 
+    var getCurrentVideo = function () {
+        return _currentVideo;
+    };
+
+    function constructor () {
+        ovp.addEventListener('ready', function () {
+            ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
+                if (!event.data.baseClip.isAd)
+                {
+                    _currentVideo = event.data;
+                    debug.log("OnMediaLoadStart fired for content, and event.data was saved.", _currentVideo);
+                }
+                else
+                {
+                    _mostRecentAd = event.data;
+                    debug.log("OnMediaLoadStart fired for an ad, and event.data was saved.", _mostRecentAd);
+                }
+            });
+        });
+    }
+
+    var hide = function () {
+
+    };
+
+    var _destroy = function () {
+        _currentVideo = {};
+        _mostRecentAd = {};
+
+        ovp.removeEventListener('ready');
+        ovp.controller().removeEventListener('onMediaLoadStart');
+    };
+
     //---------------------------------------------- init
     (function () {
-        //begin: add event listeners
-//        ovp.addEventListener('OnMediaLoadStart', function (event) {
-//            if (_.has(event.data, 'baseClip'))
-//            {
-//                _currentVideo = event.data;
-//                debug.log("OnMediaLoadStart fired, and event.data was saved.", _currentVideo);
-//            }
-//        });
-        //end: add event listeners
+        constructor();
     })();
     //---------------------------------------------- /init
 
@@ -45,21 +77,20 @@ define(['require', 'ovp', 'player/iframe', 'player/playback', 'player/pdkwatcher
         clearPlayerMessage: clearPlayerMessage,
         injectIframePlayers: iframe.injectIframePlayers,
         destroy: ovp.destroy,
+        currentVideo: _currentVideo,
+        getCurrentVideo: getCurrentVideo,
 
         //control methods
         seekTo: playback.seekTo,
-        seek: playback.seekTo, //alias
         play: playback.play,
+        pause: playback.pause,
+        hide: ovp.hide,
 
         //testing-only api (still public, but please DO NOT USE unless unit testing)
         __test__: {
             ovp: ovp,
             getPlayerAttributes: iframe.getPlayerAttributes,
             injectIframe: iframe.injectIframe
-        },
-
-        check: function () {
-            return pdkwatcher;
         }
     };
 });
