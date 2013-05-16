@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, iframe, modal, Debug) {
+define(['require', 'ovp', 'player/iframe', 'player/playback', 'player/pdkwatcher', 'modal', 'debug'], function (require, ovp, iframe, playback, pdkwatcher, modal, Debug) {
     'use strict';
 
     var debug = new Debug('player');
@@ -19,42 +19,6 @@ define(['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, iframe, modal,
 
     var clearPlayerMessage = function () {
         modal.remove();
-    };
-
-    /**
-     * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
-     * will return false
-     * @param timeInSeconds
-     * @returns {boolean}
-     */
-    var seekTo = function (timeInSeconds) {
-        if (!_.isUndefined(ovp))
-        {
-            if (!_.isNaN(+timeInSeconds))
-            {
-                if (timeInSeconds >= 0)
-                {
-                    var seekTime = Math.round(timeInSeconds * 1000);
-                    debug.log("Seeking to (in seconds)...", seekTime/1000);
-                    ovp.seekToPosition(seekTime);
-                }
-                else
-                {
-                    debug.warn("The time you provided was less than 0, so no seeking occurred.", timeInSeconds);
-                    return false;
-                }
-            }
-            else
-            {
-                throw new Error("The value supplied was not a valid number.");
-            }
-        }
-        else
-        {
-            throw new Error("The OVP object was undefined.");
-        }
-
-        return true;
     };
 
     //---------------------------------------------- init
@@ -76,17 +40,26 @@ define(['ovp', 'player/iframe', 'modal', 'debug'], function (ovp, iframe, modal,
      * entry point
      */
     return {
-        // Public API
+        //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
         injectIframePlayers: iframe.injectIframePlayers,
-        seekTo: seekTo,
-        seek: seekTo, //alias
+        destroy: ovp.destroy,
 
-        //Testing-only API (still public, but please DO NOT USE unless unit testing)
-        _test: {
+        //control methods
+        seekTo: playback.seekTo,
+        seek: playback.seekTo, //alias
+        play: playback.play,
+
+        //testing-only api (still public, but please DO NOT USE unless unit testing)
+        __test__: {
+            ovp: ovp,
             getPlayerAttributes: iframe.getPlayerAttributes,
             injectIframe: iframe.injectIframe
+        },
+
+        check: function () {
+            return pdkwatcher;
         }
     };
 });

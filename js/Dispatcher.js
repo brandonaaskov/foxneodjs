@@ -1,4 +1,4 @@
-/*global define, _, console */
+/*global define, _ */
 
 define([], function () {
     'use strict';

@@ -1,4 +1,4 @@
-/*global define, _, $ */
+/*global define, _ */
 
 /**
  * Just provides a safe interface to grab the PDK without having to worry about loading it.
@@ -10,23 +10,29 @@ define(['debug', 'Dispatcher', 'utils', 'polyfills'], function (Debug, Dispatche
         debug = new Debug('ovp'),
         dispatcher = new Dispatcher();
 
-    (function () {
+    var destroy = function (selectorString) {
+        if (!_.isUndefined(selectorString) && !_.isString(selectorString))
+        {
+            throw new Error("The selector you supplied to the destroy() method was not a string.");
+        }
+
+        var selector = selectorString || 'object[data^="http://player.foxfdm.com"]';
+        window.jQuery(selector).parent().remove();
+
+        return true;
+    };
+
+    var destroyScripts = function () {
+        window.jQuery('script[src^="http://player.foxfdm.com/shared/1.4.522/pdk/"]').remove();
+    };
+
+    (function (_pdk) {
         //init
 
-        //yuck... so ghetto
-        var interval = setInterval(function () {
-            if (window.$pdk && _.has(window.$pdk, 'version'))
-            {
-                clearInterval(interval);
-                _pdk = window.$pdk;
-                debug.log('PDK: Fully Loaded (sequel to Herbie: Fully Loaded)');
-
-                debug.log("putting jQuery into noConflict() mode (pdk doesn't do this)");
-                window.jQuery.noConflict();
-            }
-        }, 250);
     })();
 
     // Public API
-    return _pdk;
+    return {
+//        destroy: pdkwatcher.then().destroy
+    };
 });

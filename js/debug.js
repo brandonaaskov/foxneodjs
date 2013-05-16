@@ -131,7 +131,7 @@ define(['utils'], function (utils) {
             log: log,
             warn: warn,
             error: error,
-            _test: test
+            __test__: test
         };
     };
 });
