@@ -5,19 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7845965d-7113-4671-8bb9-dc5d12de7ce6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gruntfile.js" afterPath="$PROJECT_DIR$/Gruntfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/css.js" afterPath="$PROJECT_DIR$/js/css.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/foxneod-0.1.7.js" afterPath="$PROJECT_DIR$/build/foxneod-0.1.7.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/foxneod-0.1.7.min.js" afterPath="$PROJECT_DIR$/build/foxneod-0.1.7.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/foxneod.js" afterPath="$PROJECT_DIR$/js/foxneod.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/main.js" afterPath="$PROJECT_DIR$/js/main.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/modal.js" afterPath="$PROJECT_DIR$/js/modal.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/ovp.js" afterPath="$PROJECT_DIR$/js/ovp.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/player/pdkwatcher.js" afterPath="$PROJECT_DIR$/js/player/pdkwatcher.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/player/playback.js" afterPath="$PROJECT_DIR$/js/player/playback.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/player.js" afterPath="$PROJECT_DIR$/js/player.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/polyfills.js" afterPath="$PROJECT_DIR$/js/polyfills.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path=".idea/workspace.xml" />
     <file path="/index.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368150436163" ignored="false" />
@@ -71,7 +62,7 @@
     <file path="$PROJECT_DIR$/../../tests/fox/btn/reference_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1366929313929" ignored="false" />
     <file path="/utils.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368545935371" ignored="false" />
     <file path="/replace.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367438391870" ignored="false" />
-    <file path="/player.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368748664698" ignored="false" />
+    <file path="/player.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368748868501" ignored="false" />
     <file path="/HTML Fragment (foxneo.js:6535).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367543067472" ignored="false" />
     <file path="/HTML Fragment (foxneo.js:6851).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367605630724" ignored="false" />
     <file path="/HTML Fragment (foxneo.js:7654).html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1367608349153" ignored="false" />
@@ -91,7 +82,7 @@
     <file path="/reference_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368645361266" ignored="false" />
     <file path="/fx_player_qa.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368074566150" ignored="false" />
     <file path="/pdk.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368493884021" ignored="false" />
-    <file path="/ovp.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368731210159" ignored="false" />
+    <file path="/ovp.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368749622106" ignored="false" />
     <file path="$PROJECT_DIR$/../../tests/fox/libraries/mootools/reference_player.html" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368684798966" ignored="false" />
     <file path="/EventDispatcher.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368513916775" ignored="false" />
     <file path="/Dispatcher.js" changelist="7845965d-7113-4671-8bb9-dc5d12de7ce6" time="1368555593428" ignored="false" />
@@ -139,7 +130,7 @@
       <file leaf-file-name="ovp.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/ovp.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="0" selection-start="1183" selection-end="5975" vertical-scroll-proportion="0.18007202">
+            <state line="16" column="47" selection-start="610" selection-end="610" vertical-scroll-proportion="0.28811523">
               <folding />
             </state>
           </provider>
@@ -148,7 +139,7 @@
       <file leaf-file-name="player.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/player.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="23" selection-start="2405" selection-end="2405" vertical-scroll-proportion="0.0">
+            <state line="75" column="22" selection-start="2031" selection-end="2031" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -183,11 +174,11 @@
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/js/main.js" />
         <option value="$PROJECT_DIR$/js/polyfills.js" />
-        <option value="$PROJECT_DIR$/js/ovp.js" />
         <option value="$PROJECT_DIR$/js/modal.js" />
         <option value="$PROJECT_DIR$/js/css.js" />
         <option value="$PROJECT_DIR$/js/foxneod.js" />
         <option value="$PROJECT_DIR$/js/player.js" />
+        <option value="$PROJECT_DIR$/js/ovp.js" />
       </list>
     </option>
   </component>
@@ -604,14 +595,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/player.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="23" selection-start="2405" selection-end="2405" vertical-scroll-proportion="0.0">
+        <state line="75" column="22" selection-start="2031" selection-end="2031" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/ovp.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="0" selection-start="1183" selection-end="5975" vertical-scroll-proportion="0.18007202">
+        <state line="16" column="47" selection-start="610" selection-end="610" vertical-scroll-proportion="0.28811523">
           <folding />
         </state>
       </provider>

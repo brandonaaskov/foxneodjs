@@ -53,12 +53,8 @@ define(['require',
 
     };
 
-    var _destroy = function () {
-        _currentVideo = {};
-        _mostRecentAd = {};
+    var show = function () {
 
-        ovp.removeEventListener('ready');
-        ovp.controller().removeEventListener('onMediaLoadStart');
     };
 
     //---------------------------------------------- init
@@ -76,7 +72,8 @@ define(['require',
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
         injectIframePlayers: iframe.injectIframePlayers,
-        destroy: ovp.destroy,
+        hide: ovp.hide,
+        show: ovp.show,
         currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
 
@@ -84,7 +81,6 @@ define(['require',
         seekTo: playback.seekTo,
         play: playback.play,
         pause: playback.pause,
-        hide: ovp.hide,
 
         //testing-only api (still public, but please DO NOT USE unless unit testing)
         __test__: {
