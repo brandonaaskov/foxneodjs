@@ -1,6 +1,12 @@
 /*global define, _ */
 
-define(['Dispatcher', 'Debug', 'polyfills', 'utils', 'player'], function (Dispatcher, Debug, polyfills, utils, player) {
+define([
+    'Dispatcher',
+    'Debug',
+    'polyfills',
+    'utils',
+    'player',
+    'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
@@ -28,6 +34,7 @@ define(['Dispatcher', 'Debug', 'polyfills', 'utils', 'player'], function (Dispat
         Debug: Debug,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
-        removeEventListener: dispatcher.removeEventListener
+        removeEventListener: dispatcher.removeEventListener,
+        system: system
     };
 });

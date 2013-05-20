@@ -78,8 +78,8 @@
 //                            , jquery: 'lib/jquery/jquery-1.9.1.min' //this doesn't work (at least with this name) since jQuery defines their own AMD definition with the same name
 //                            , pdkloader: 'lib/theplatform/pdkloader'
                             , jqueryloader: 'lib/jquery/jqueryloader'
+                            , modernizrloader: 'lib/modernizr/modernizrloader'
                             , underscore: 'lib/underscore/underscore'
-                            , domready: 'lib/requirejs/domReady'
                         },
 
                         //Defines the loading time for modules. Depending on the complexity of the
@@ -158,7 +158,7 @@
                 },
 
                 phpbuild: {
-                    command: "cd ../fng_player_platform/branches/tRS1/ && node build fx btn fox"
+                    command: "cd ../fng_player_platform/branches/tRS1/ && node build fx btn fox deportes"
                 }
             },
 

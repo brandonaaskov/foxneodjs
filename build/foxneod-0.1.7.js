@@ -421,6 +421,555 @@ define('jqueryloader',['lib/jquery/jquery-1.9.1.min'], function () {
 
     return jQuery.noConflict(true);
 });
+/* Modernizr 2.6.2 (Custom Build) | MIT & BSD
+ * Build: http://modernizr.com/download/#-fontface-backgroundsize-borderimage-borderradius-boxshadow-opacity-rgba-textshadow-cssanimations-generatedcontent-cssgradients-csstransforms-csstransitions-applicationcache-canvas-canvastext-draganddrop-hashchange-history-audio-video-indexeddb-input-inputtypes-localstorage-postmessage-sessionstorage-websockets-websqldatabase-shiv-cssclasses-teststyles-testprop-testallprops-hasevent-prefixes-domprefixes-load
+ */
+;window.Modernizr=function(a,b,c){function B(a){j.cssText=a}function C(a,b){return B(n.join(a+";")+(b||""))}function D(a,b){return typeof a===b}function E(a,b){return!!~(""+a).indexOf(b)}function F(a,b){for(var d in a){var e=a[d];if(!E(e,"-")&&j[e]!==c)return b=="pfx"?e:!0}return!1}function G(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:D(f,"function")?f.bind(d||b):f}return!1}function H(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+p.join(d+" ")+d).split(" ");return D(b,"string")||D(b,"undefined")?F(e,b):(e=(a+" "+q.join(d+" ")+d).split(" "),G(e,b,c))}function I(){e.input=function(c){for(var d=0,e=c.length;d<e;d++)t[c[d]]=c[d]in k;return t.list&&(t.list=!!b.createElement("datalist")&&!!a.HTMLDataListElement),t}("autocomplete autofocus list placeholder max min multiple pattern required step".split(" ")),e.inputtypes=function(a){for(var d=0,e,f,h,i=a.length;d<i;d++)k.setAttribute("type",f=a[d]),e=k.type!=="text",e&&(k.value=l,k.style.cssText="position:absolute;visibility:hidden;",/^range$/.test(f)&&k.style.WebkitAppearance!==c?(g.appendChild(k),h=b.defaultView,e=h.getComputedStyle&&h.getComputedStyle(k,null).WebkitAppearance!=="textfield"&&k.offsetHeight!==0,g.removeChild(k)):/^(search|tel)$/.test(f)||(/^(url|email)$/.test(f)?e=k.checkValidity&&k.checkValidity()===!1:e=k.value!=l)),s[a[d]]=!!e;return s}("search tel url email datetime date month week time datetime-local number range color".split(" "))}var d="2.6.2",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k=b.createElement("input"),l=":)",m={}.toString,n=" -webkit- -moz- -o- -ms- ".split(" "),o="Webkit Moz O ms",p=o.split(" "),q=o.toLowerCase().split(" "),r={},s={},t={},u=[],v=u.slice,w,x=function(a,c,d,e){var f,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:h+(d+1),l.appendChild(j);return f=["&#173;",'<style id="s',h,'">',a,"</style>"].join(""),l.id=h,(m?l:n).innerHTML+=f,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=g.style.overflow,g.style.overflow="hidden",g.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),g.style.overflow=k),!!i},y=function(){function d(d,e){e=e||b.createElement(a[d]||"div"),d="on"+d;var f=d in e;return f||(e.setAttribute||(e=b.createElement("div")),e.setAttribute&&e.removeAttribute&&(e.setAttribute(d,""),f=D(e[d],"function"),D(e[d],"undefined")||(e[d]=c),e.removeAttribute(d))),e=null,f}var a={select:"input",change:"input",submit:"form",reset:"form",error:"img",load:"img",abort:"img"};return d}(),z={}.hasOwnProperty,A;!D(z,"undefined")&&!D(z.call,"undefined")?A=function(a,b){return z.call(a,b)}:A=function(a,b){return b in a&&D(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=v.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(v.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(v.call(arguments)))};return e}),r.canvas=function(){var a=b.createElement("canvas");return!!a.getContext&&!!a.getContext("2d")},r.canvastext=function(){return!!e.canvas&&!!D(b.createElement("canvas").getContext("2d").fillText,"function")},r.postmessage=function(){return!!a.postMessage},r.websqldatabase=function(){return!!a.openDatabase},r.indexedDB=function(){return!!H("indexedDB",a)},r.hashchange=function(){return y("hashchange",a)&&(b.documentMode===c||b.documentMode>7)},r.history=function(){return!!a.history&&!!history.pushState},r.draganddrop=function(){var a=b.createElement("div");return"draggable"in a||"ondragstart"in a&&"ondrop"in a},r.websockets=function(){return"WebSocket"in a||"MozWebSocket"in a},r.rgba=function(){return B("background-color:rgba(150,255,150,.5)"),E(j.backgroundColor,"rgba")},r.backgroundsize=function(){return H("backgroundSize")},r.borderimage=function(){return H("borderImage")},r.borderradius=function(){return H("borderRadius")},r.boxshadow=function(){return H("boxShadow")},r.textshadow=function(){return b.createElement("div").style.textShadow===""},r.opacity=function(){return C("opacity:.55"),/^0.55$/.test(j.opacity)},r.cssanimations=function(){return H("animationName")},r.cssgradients=function(){var a="background-image:",b="gradient(linear,left top,right bottom,from(#9f9),to(white));",c="linear-gradient(left top,#9f9, white);";return B((a+"-webkit- ".split(" ").join(b+a)+n.join(c+a)).slice(0,-a.length)),E(j.backgroundImage,"gradient")},r.csstransforms=function(){return!!H("transform")},r.csstransitions=function(){return H("transition")},r.fontface=function(){var a;return x('@font-face {font-family:"font";src:url("https://")}',function(c,d){var e=b.getElementById("smodernizr"),f=e.sheet||e.styleSheet,g=f?f.cssRules&&f.cssRules[0]?f.cssRules[0].cssText:f.cssText||"":"";a=/src/i.test(g)&&g.indexOf(d.split(" ")[0])===0}),a},r.generatedcontent=function(){var a;return x(["#",h,"{font:0/0 a}#",h,':after{content:"',l,'";visibility:hidden;font:3px/1 a}'].join(""),function(b){a=b.offsetHeight>=3}),a},r.video=function(){var a=b.createElement("video"),c=!1;try{if(c=!!a.canPlayType)c=new Boolean(c),c.ogg=a.canPlayType('video/ogg; codecs="theora"').replace(/^no$/,""),c.h264=a.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/^no$/,""),c.webm=a.canPlayType('video/webm; codecs="vp8, vorbis"').replace(/^no$/,"")}catch(d){}return c},r.audio=function(){var a=b.createElement("audio"),c=!1;try{if(c=!!a.canPlayType)c=new Boolean(c),c.ogg=a.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/,""),c.mp3=a.canPlayType("audio/mpeg;").replace(/^no$/,""),c.wav=a.canPlayType('audio/wav; codecs="1"').replace(/^no$/,""),c.m4a=(a.canPlayType("audio/x-m4a;")||a.canPlayType("audio/aac;")).replace(/^no$/,"")}catch(d){}return c},r.localstorage=function(){try{return localStorage.setItem(h,h),localStorage.removeItem(h),!0}catch(a){return!1}},r.sessionstorage=function(){try{return sessionStorage.setItem(h,h),sessionStorage.removeItem(h),!0}catch(a){return!1}},r.applicationcache=function(){return!!a.applicationCache};for(var J in r)A(r,J)&&(w=J.toLowerCase(),e[w]=r[J](),u.push((e[w]?"":"no-")+w));return e.input||I(),e.addTest=function(a,b){if(typeof a=="object")for(var d in a)A(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof f!="undefined"&&f&&(g.className+=" "+(b?"":"no-")+a),e[a]=b}return e},B(""),i=k=null,function(a,b){function k(a,b){var c=a.createElement("p"),d=a.getElementsByTagName("head")[0]||a.documentElement;return c.innerHTML="x<style>"+b+"</style>",d.insertBefore(c.lastChild,d.firstChild)}function l(){var a=r.elements;return typeof a=="string"?a.split(" "):a}function m(a){var b=i[a[g]];return b||(b={},h++,a[g]=h,i[h]=b),b}function n(a,c,f){c||(c=b);if(j)return c.createElement(a);f||(f=m(c));var g;return f.cache[a]?g=f.cache[a].cloneNode():e.test(a)?g=(f.cache[a]=f.createElem(a)).cloneNode():g=f.createElem(a),g.canHaveChildren&&!d.test(a)?f.frag.appendChild(g):g}function o(a,c){a||(a=b);if(j)return a.createDocumentFragment();c=c||m(a);var d=c.frag.cloneNode(),e=0,f=l(),g=f.length;for(;e<g;e++)d.createElement(f[e]);return d}function p(a,b){b.cache||(b.cache={},b.createElem=a.createElement,b.createFrag=a.createDocumentFragment,b.frag=b.createFrag()),a.createElement=function(c){return r.shivMethods?n(c,a,b):b.createElem(c)},a.createDocumentFragment=Function("h,f","return function(){var n=f.cloneNode(),c=n.createElement;h.shivMethods&&("+l().join().replace(/\w+/g,function(a){return b.createElem(a),b.frag.createElement(a),'c("'+a+'")'})+");return n}")(r,b.frag)}function q(a){a||(a=b);var c=m(a);return r.shivCSS&&!f&&!c.hasCSS&&(c.hasCSS=!!k(a,"article,aside,figcaption,figure,footer,header,hgroup,nav,section{display:block}mark{background:#FF0;color:#000}")),j||p(a,c),a}var c=a.html5||{},d=/^<|^(?:button|map|select|textarea|object|iframe|option|optgroup)$/i,e=/^(?:a|b|code|div|fieldset|h1|h2|h3|h4|h5|h6|i|label|li|ol|p|q|span|strong|style|table|tbody|td|th|tr|ul)$/i,f,g="_html5shiv",h=0,i={},j;(function(){try{var a=b.createElement("a");a.innerHTML="<xyz></xyz>",f="hidden"in a,j=a.childNodes.length==1||function(){b.createElement("a");var a=b.createDocumentFragment();return typeof a.cloneNode=="undefined"||typeof a.createDocumentFragment=="undefined"||typeof a.createElement=="undefined"}()}catch(c){f=!0,j=!0}})();var r={elements:c.elements||"abbr article aside audio bdi canvas data datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video",shivCSS:c.shivCSS!==!1,supportsUnknownElements:j,shivMethods:c.shivMethods!==!1,type:"default",shivDocument:q,createElement:n,createDocumentFragment:o};a.html5=r,q(b)}(this,b),e._version=d,e._prefixes=n,e._domPrefixes=q,e._cssomPrefixes=p,e.hasEvent=y,e.testProp=function(a){return F([a])},e.testAllProps=H,e.testStyles=x,g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" js "+u.join(" "):""),e}(this,this.document),function(a,b,c){function d(a){return"[object Function]"==o.call(a)}function e(a){return"string"==typeof a}function f(){}function g(a){return!a||"loaded"==a||"complete"==a||"uninitialized"==a}function h(){var a=p.shift();q=1,a?a.t?m(function(){("c"==a.t?B.injectCss:B.injectJs)(a.s,0,a.a,a.x,a.e,1)},0):(a(),h()):q=0}function i(a,c,d,e,f,i,j){function k(b){if(!o&&g(l.readyState)&&(u.r=o=1,!q&&h(),l.onload=l.onreadystatechange=null,b)){"img"!=a&&m(function(){t.removeChild(l)},50);for(var d in y[c])y[c].hasOwnProperty(d)&&y[c][d].onload()}}var j=j||B.errorTimeout,l=b.createElement(a),o=0,r=0,u={t:d,s:c,e:f,a:i,x:j};1===y[c]&&(r=1,y[c]=[]),"object"==a?l.data=c:(l.src=c,l.type=a),l.width=l.height="0",l.onerror=l.onload=l.onreadystatechange=function(){k.call(this,r)},p.splice(e,0,u),"img"!=a&&(r||2===y[c]?(t.insertBefore(l,s?null:n),m(k,j)):y[c].push(l))}function j(a,b,c,d,f){return q=0,b=b||"j",e(a)?i("c"==b?v:u,a,b,this.i++,c,d,f):(p.splice(this.i++,0,a),1==p.length&&h()),this}function k(){var a=B;return a.loader={load:j,i:0},a}var l=b.documentElement,m=a.setTimeout,n=b.getElementsByTagName("script")[0],o={}.toString,p=[],q=0,r="MozAppearance"in l.style,s=r&&!!b.createRange().compareNode,t=s?l:n.parentNode,l=a.opera&&"[object Opera]"==o.call(a.opera),l=!!b.attachEvent&&!l,u=r?"object":l?"script":"img",v=l?"script":u,w=Array.isArray||function(a){return"[object Array]"==o.call(a)},x=[],y={},z={timeout:function(a,b){return b.length&&(a.timeout=b[0]),a}},A,B;B=function(a){function b(a){var a=a.split("!"),b=x.length,c=a.pop(),d=a.length,c={url:c,origUrl:c,prefixes:a},e,f,g;for(f=0;f<d;f++)g=a[f].split("="),(e=z[g.shift()])&&(c=e(c,g));for(f=0;f<b;f++)c=x[f](c);return c}function g(a,e,f,g,h){var i=b(a),j=i.autoCallback;i.url.split(".").pop().split("?").shift(),i.bypass||(e&&(e=d(e)?e:e[a]||e[g]||e[a.split("/").pop().split("?")[0]]),i.instead?i.instead(a,e,f,g,h):(y[i.url]?i.noexec=!0:y[i.url]=1,f.load(i.url,i.forceCSS||!i.forceJS&&"css"==i.url.split(".").pop().split("?").shift()?"c":c,i.noexec,i.attrs,i.timeout),(d(e)||d(j))&&f.load(function(){k(),e&&e(i.origUrl,h,g),j&&j(i.origUrl,h,g),y[i.url]=2})))}function h(a,b){function c(a,c){if(a){if(e(a))c||(j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}),g(a,j,b,0,h);else if(Object(a)===a)for(n in m=function(){var b=0,c;for(c in a)a.hasOwnProperty(c)&&b++;return b}(),a)a.hasOwnProperty(n)&&(!c&&!--m&&(d(j)?j=function(){var a=[].slice.call(arguments);k.apply(this,a),l()}:j[n]=function(a){return function(){var b=[].slice.call(arguments);a&&a.apply(this,b),l()}}(k[n])),g(a[n],j,b,n,h))}else!c&&l()}var h=!!a.test,i=a.load||a.both,j=a.callback||f,k=j,l=a.complete||f,m,n;c(h?a.yep:a.nope,!!i),i&&c(i)}var i,j,l=this.yepnope.loader;if(e(a))g(a,0,l,0);else if(w(a))for(i=0;i<a.length;i++)j=a[i],e(j)?g(j,0,l,0):w(j)?B(j):Object(j)===j&&h(j,l);else Object(a)===a&&h(a,l)},B.addPrefix=function(a,b){z[a]=b},B.addFilter=function(a){x.push(a)},B.errorTimeout=1e4,null==b.readyState&&b.addEventListener&&(b.readyState="loading",b.addEventListener("DOMContentLoaded",A=function(){b.removeEventListener("DOMContentLoaded",A,0),b.readyState="complete"},0)),a.yepnope=k(),a.yepnope.executeStack=h,a.yepnope.injectJs=function(a,c,d,e,i,j){var k=b.createElement("script"),l,o,e=e||B.errorTimeout;k.src=a;for(o in d)k.setAttribute(o,d[o]);c=j?h:c||f,k.onreadystatechange=k.onload=function(){!l&&g(k.readyState)&&(l=1,c(),k.onload=k.onreadystatechange=null)},m(function(){l||(l=1,c(1))},e),i?k.onload():n.parentNode.insertBefore(k,n)},a.yepnope.injectCss=function(a,c,d,e,g,i){var e=b.createElement("link"),j,c=i?h:c||f;e.href=a,e.rel="stylesheet",e.type="text/css";for(j in d)e.setAttribute(j,d[j]);g||(n.parentNode.insertBefore(e,n),m(c,0))}}(this,document),Modernizr.load=function(){yepnope.apply(window,[].slice.call(arguments,0))};
+define("lib/modernizr/modernizr.custom", function(){});
+
+/*global define, _ */
+
+define('Dispatcher',[], function () {
+    
+
+    return function () {
+        var _listeners = [];
+
+        var addListener = function (eventName, callback) {
+            _listeners.push({
+                name: eventName,
+                callback: callback
+            });
+        };
+
+        var removeListener = function (eventName, callback) {
+            _listeners = _.without(_listeners, eventName);
+        };
+
+        var dispatch = function (eventName, data, dispatchOverWindow) {
+            var event = document.createEvent('Event');
+            var name = 'foxneod:' + eventName;
+            event.initEvent(name, true, true);
+            event.data = data || {};
+
+            if (!dispatchOverWindow)
+            {
+//                _.invoke(list, 'callback');
+                var listeners = _.where(listeners, {name: eventName});
+                _.each(_listeners, function (listener) {
+                    listener.callback(event);
+                });
+            }
+            else
+            {
+                window.dispatchEvent(event);
+            }
+        };
+
+        return {
+            addEventListener: addListener,
+            removeEventListener: removeEventListener,
+            dispatch: dispatch
+        };
+    };
+});
+/*global define, _ */
+
+define('utils',['Dispatcher'], function (Dispatcher) {
+    
+
+    var dispatcher = new Dispatcher();
+
+    var arrayToObject = function (arr) {
+        var obj = {};
+
+        for (var i = 0, n = arr.length; i < n; i++)
+        {
+            var item = arr[i];
+            if (item.indexOf('=') !== -1)
+            {
+                var itemPieces = item.split('=');
+
+                obj[itemPieces[0]] = itemPieces[1];
+            }
+            else
+            {
+                obj[i] = item;
+            }
+        }
+
+        return obj;
+    };
+
+    //only supports shallow objects right now
+    var objectToArray = function (obj) {
+        var outputArray = [];
+
+        for (var prop in obj)
+        {
+            if (!(_.isObject(obj[prop]) || _.isArray(obj[prop])))
+            {
+                outputArray.push(prop + '=' + obj[prop]);
+            }
+            else
+            {
+                throw new Error('objectToArray only supports shallow objects (no nested objects or arrays).');
+            }
+        }
+
+        return outputArray;
+    };
+
+    /**
+     * Loops through the provided object (shallow) and when value matches, the key is returned.
+     * @param obj
+     * @param value
+     * @returns {String}
+     */
+    var getKeyFromValue = function (obj, value) {
+        for (var prop in obj)
+        {
+            if (_.has(obj, prop))
+            {
+                //we want this to be flexible, so we check the string versions (want to keep strict equal)
+                // (see /tests/qunit/tests.js)
+                if (String(obj[prop]) === String(value))
+                {
+                    return prop;
+                }
+            }
+        }
+
+        return '';
+    };
+
+    var pipeStringToObject = function (pipeString) {
+        var obj = {};
+
+        var kvPairs = pipeString.split('|');
+
+        for (var i = 0, n = kvPairs.length; i < n; i++)
+        {
+            var pair = kvPairs[i].split(/=(.+)?/, 2); //makes sure we only split on the first = found
+            var value = pair[1] || null; //i prefer null in this case
+            obj[pair[0]] = value; //sets the key value pair on our return object
+        }
+
+        return obj;
+    };
+
+    var objectToPipeString = function (obj, delimiter) {
+        var properties = [];
+
+        for (var prop in obj)
+        {
+            properties.push(prop + '=' + obj[prop]);
+        }
+
+        return properties.join(delimiter || '|');
+    };
+
+    var lowerCasePropertyNames = function (obj) { //only does a shallow lookup
+        var output = {};
+
+        for (var prop in obj)
+        {
+            output[prop.toLowerCase()] = obj[prop];
+        }
+
+        return output;
+    };
+
+//    var getRandomColor = function () {
+//        var letters = '0123456789ABCDEF'.split('');
+//        var color = '#';
+//
+//        for (var i = 0; i < 6; i++)
+//        {
+//            color += letters[Math.round(Math.random() * 15)];
+//        }
+//
+//        return color;
+//    };
+
+    var getColorFromString = function (color) {
+        if (!_.isUndefined(color))
+        {
+            if (!_.isString(color))
+            {
+                throw new Error('The value supplied to getColorFromString() should be a string, not whatever you passed in.');
+            }
+
+            /**
+             * We want to make sure that the color supplied is the right length (6 characters without a hash
+             * and 7 with). Then, if no hash exists, we add it ourselves.
+             */
+            var correctLength = (color.length === 6 || color.length === 7);
+            if (correctLength)
+            {
+                if (color.length === 6 && color.indexOf('#') === -1)
+                {
+                    color = '#' + color;
+                }
+
+                return color.toLowerCase();
+            }
+//            else
+//            {
+//                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
+//                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
+//            }
+        }
+
+        return null;
+    };
+
+    var addPixelSuffix = function (text) {
+        var size = String(text);
+        var index = String(size).indexOf('px');
+
+        if (index === -1)
+        {
+            size = size + 'px';
+        }
+//        else if (index < (text.length-1))
+//        {
+              //hmmmm - should I strip the px out of the string if it's mid string, add the px and return that but warn anyway?
+//            debug.log({
+//                type: 'utils',
+//                message: "Whatever you supplied to addPixelSuffix() already had px in it, but it wasn't at the end of " +
+//                    "the string, which is probably a bad thing.",
+//                warn: true
+//            });
+//        }
+
+        return size;
+    };
+
+    var removePixelSuffix = function (text) {
+        text = String(text);
+        var index = text.indexOf('px');
+
+        if (index !== -1)
+        {
+            if (index === (text.length-2))
+            {
+                return text.substr(0, index);
+            }
+//            else
+//            {
+//                debug.log({
+//                    type: 'utils',
+//                    message: "Whatever you supplied to removePixelSuffix() already had px in it, but it wasn't at the " +
+//                        "end of the string, which is probably a bad thing.",
+//                    warn: true
+//                });
+//            }
+        }
+
+        return text;
+    };
+
+
+
+
+    //---------------------------------------------- url stuff
+    var urlString = window.location.href;
+
+    var getQueryParams = function (url) {
+        var queryParamsObject = {}; //this is what we're storing and returning
+        url = url || urlString;
+
+        if (url.indexOf('?') !== -1)
+        {
+            var urlSplit = url.split('?');
+            var queryParams = urlSplit[1].split('&');
+
+            /**
+             * final data will look like so:
+             * {
+                     *     playerParams: {
+                     *         id: "player",
+                     *         width: 640,
+                     *         ...
+                     *     }
+                     * }
+             */
+
+            if (urlSplit[1].indexOf('|') !== -1)
+            {
+                for (var i = 0, n = queryParams.length; i < n; i++)
+                {
+                    var queryParam = queryParams[i];
+                    var firstEqIndex = queryParam.indexOf('=');
+                    if (firstEqIndex !== -1)
+                    {
+                        var keyValuePairsString = queryParam;
+                        var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
+                        queryParamsObject[collectionKey] = {};
+                        var keyValuePairsArray = keyValuePairsString.split('|');
+
+                        for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
+                        {
+                            var keyValuePair = keyValuePairsArray[j].split('=');
+                            var key = keyValuePair[0];
+                            var value = keyValuePair[1];
+
+                            if (urlSplit[1].indexOf('&') !== -1)
+                            {
+                                keyValuePairsString = queryParam.substr(firstEqIndex+1);
+                                //if we have an ampersand, it's not just a basic pipe string, so we need to make a
+                                // more complex object
+                                queryParamsObject[collectionKey][key] = value;
+                            }
+                            else
+                            {
+                                //just a pipe string, no other key-value pairs so we can make a basic object
+                                queryParamsObject[key] = value;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                queryParamsObject = arrayToObject(queryParams);
+            }
+        }
+
+        return queryParamsObject;
+    };
+
+    var getParamValue = function (key, url) {
+        var queryParams = getQueryParams(url);
+
+        if (_.isObject(queryParams)) //it should always be an object, but just in case
+        {
+            for (var prop in queryParams)
+            {
+                if (prop === key)
+                {
+                    return queryParams[prop];
+                }
+            }
+        }
+
+        return;
+    };
+
+    //second and third params optional
+    var paramExists = function (key, value, url) {
+        var queryParams = getQueryParams(url);
+
+        for (var prop in queryParams)
+        {
+            if (queryParams.hasOwnProperty(prop))
+            {
+                if (prop === key)
+                {
+                    if (value)
+                    {
+                        if (queryParams[prop] === value)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    };
+
+    /**
+     * This is mostly for testing purposes so we can spoof URLs easily, but it's public since I'm big on the "eat your
+     * own dog food" thing.
+     * @param url
+     */
+    var setURL = function (url) {
+        urlString = url;
+
+        return urlString;
+    };
+
+    var getURL = function () {
+        return urlString;
+    };
+    //---------------------------------------------- /url stuff
+
+
+    // Public API
+    return {
+        arrayToObject: arrayToObject,
+        objectToArray: objectToArray,
+        getKeyFromValue: getKeyFromValue,
+        pipeStringToObject: pipeStringToObject,
+        objectToPipeString: objectToPipeString,
+        lowerCasePropertyNames: lowerCasePropertyNames,
+//        getRandomColor: getRandomColor,
+        getColorFromString: getColorFromString,
+        addPixelSuffix: addPixelSuffix,
+        removePixelSuffix: removePixelSuffix,
+        getParamValue: getParamValue,
+        getQueryParams: getQueryParams,
+        paramExists: paramExists,
+        setURL: setURL,
+        getURL: getURL,
+        dispatch: dispatcher.dispatch,
+        addEventListener: dispatcher.addEventListener,
+        removeEventListener: dispatcher.removeEventListener
+    };
+});
+/*global define, _, console */
+
+/**
+ * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
+ * any point.
+ *
+ * When you want to provide a debugging level for a module, ask for the debug module as a dependency as you normally
+ * would. As a convention, name the argument passed to your module Debug instead of debug. Having a capital letter
+ * indicates that you can create new instances using the new keyword and it also allows for better syntax later (you'll
+ * see what I mean).
+ *
+ * Example:
+ * define(['debug'], function (Debug) {
+ *  var debug = new Debug('modulename');
+ *
+ * The name that we pass when we instantiate a Debug instance is really important. Aesthetically, it just adds some
+ * more context to a console message, but you can also filter debug statements on the page using that same module name.
+ * For instance, if you wanted to see debug messages for an advertising module, you would use the query param
+ * ?debug=advertising, assuming the string passed to debug was 'advertising' (Note: we actually lowercase everything
+ * internally, so it doesn't matter what the case is of the string you supply). That will only show debug messages for
+ * that module while you're testing. The default in dev is 'all', which allows you to see every debug message. In prod,
+ * there is no default, so debugging can only be enabled by explicitly asking for it via a query param.
+ *
+ * If you want to see debug messages for many modules at once, just comma separate the items in the query param's value.
+ * Example: ?debug=utils,player,base64
+ *
+ */
+define('Debug',['utils'], function (utils) {
+    
+
+    return function (moduleName) {
+        //-------------------------------------- validation
+        if (_.isUndefined(moduleName))
+        {
+            throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
+                "That's required. Sorry kiddo!");
+        }
+        else if (_.isString(moduleName))
+        {
+            // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
+            // at lazy developers ;)
+            if (moduleName.length < 3)
+            {
+                throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
+            }
+        }
+        else
+        {
+            throw new Error("When instantiating the Debug class, it expects a string for the category name as the " +
+                "only argument.");
+        }
+        //-------------------------------------- /validation
+
+
+        var prefix = 'foxneod-0.1.7: ';
+        var lastUsedOptions = {};
+        var category = moduleName.toLowerCase();
+
+        var log = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('log', options);
+
+            return options;
+        };
+
+        var warn = function (message, data) {
+            //we add the !!!WARNING!!! since most consoles don't have a native way to display console.warn() differently
+            var options = {
+                message: '!!!WARNING!!!: ' + message,
+                data: data
+            };
+
+            _log('warn', options);
+
+            return options;
+        };
+
+        var error = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('error', options);
+
+            return options;
+        };
+
+        var _log = function (logLevel, options) {
+            var debugModes = getDebugModes();
+
+            for (var i = 0, n = debugModes.length; i < n; i++)
+            {
+                var mode = debugModes[i].toLowerCase();
+
+                if (mode === category.toLowerCase() || mode === 'all')
+                {
+                    console[logLevel](prefix + category + ': ' + options.message, options.data || '');
+//                    console.log('lastUsedOptions set');
+                    lastUsedOptions = _.clone(options);
+                }
+            }
+        };
+
+        var getDebugModes = function () {
+            var queryParam = utils.getParamValue('debug');
+            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['none'];
+
+            return debugModes;
+        };
+
+        // Surfaced for testing purposes
+        var test = {
+            getDebugModes: getDebugModes,
+            getLastUsedOptions: function () {
+                window.console.log('getLastUsedOptions', lastUsedOptions);
+                return lastUsedOptions;
+            },
+            getCategory: function () {
+                return category;
+            }
+        };
+
+        // Public API
+        return {
+            log: log,
+            warn: warn,
+            error: error,
+            __test__: test
+        };
+    };
+});
+/*global define, _ */
+
+define('modernizrloader',['lib/modernizr/modernizr.custom', 'Debug'], function (Modernizr, Debug) {
+    
+
+    return window.Modernizr;
+});
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -1675,542 +2224,6 @@ define("underscore", function(){});
 
 /*global define, _ */
 
-define('Dispatcher',[], function () {
-    
-
-    return function () {
-        var _listeners = [];
-
-        var addListener = function (eventName, callback) {
-            _listeners.push({
-                name: eventName,
-                callback: callback
-            });
-        };
-
-        var removeListener = function (eventName, callback) {
-            _listeners = _.without(_listeners, eventName);
-        };
-
-        var dispatch = function (eventName, data, dispatchOverWindow) {
-            var event = document.createEvent('Event');
-            var name = 'foxneod:' + eventName;
-            event.initEvent(name, true, true);
-            event.data = data || {};
-
-            if (!dispatchOverWindow)
-            {
-//                _.invoke(list, 'callback');
-                var listeners = _.where(listeners, {name: eventName});
-                _.each(_listeners, function (listener) {
-                    listener.callback(event);
-                });
-            }
-            else
-            {
-                window.dispatchEvent(event);
-            }
-        };
-
-        return {
-            addEventListener: addListener,
-            removeEventListener: removeEventListener,
-            dispatch: dispatch
-        };
-    };
-});
-/*global define, _ */
-
-define('utils',['Dispatcher'], function (Dispatcher) {
-    
-
-    var dispatcher = new Dispatcher();
-
-    var arrayToObject = function (arr) {
-        var obj = {};
-
-        for (var i = 0, n = arr.length; i < n; i++)
-        {
-            var item = arr[i];
-            if (item.indexOf('=') !== -1)
-            {
-                var itemPieces = item.split('=');
-
-                obj[itemPieces[0]] = itemPieces[1];
-            }
-            else
-            {
-                obj[i] = item;
-            }
-        }
-
-        return obj;
-    };
-
-    //only supports shallow objects right now
-    var objectToArray = function (obj) {
-        var outputArray = [];
-
-        for (var prop in obj)
-        {
-            if (!(_.isObject(obj[prop]) || _.isArray(obj[prop])))
-            {
-                outputArray.push(prop + '=' + obj[prop]);
-            }
-            else
-            {
-                throw new Error('objectToArray only supports shallow objects (no nested objects or arrays).');
-            }
-        }
-
-        return outputArray;
-    };
-
-    /**
-     * Loops through the provided object (shallow) and when value matches, the key is returned.
-     * @param obj
-     * @param value
-     * @returns {String}
-     */
-    var getKeyFromValue = function (obj, value) {
-        for (var prop in obj)
-        {
-            if (_.has(obj, prop))
-            {
-                //we want this to be flexible, so we check the string versions (want to keep strict equal)
-                // (see /tests/qunit/tests.js)
-                if (String(obj[prop]) === String(value))
-                {
-                    return prop;
-                }
-            }
-        }
-
-        return '';
-    };
-
-    var pipeStringToObject = function (pipeString) {
-        var obj = {};
-
-        var kvPairs = pipeString.split('|');
-
-        for (var i = 0, n = kvPairs.length; i < n; i++)
-        {
-            var pair = kvPairs[i].split(/=(.+)?/, 2); //makes sure we only split on the first = found
-            var value = pair[1] || null; //i prefer null in this case
-            obj[pair[0]] = value; //sets the key value pair on our return object
-        }
-
-        return obj;
-    };
-
-    var objectToPipeString = function (obj, delimiter) {
-        var properties = [];
-
-        for (var prop in obj)
-        {
-            properties.push(prop + '=' + obj[prop]);
-        }
-
-        return properties.join(delimiter || '|');
-    };
-
-    var lowerCasePropertyNames = function (obj) { //only does a shallow lookup
-        var output = {};
-
-        for (var prop in obj)
-        {
-            output[prop.toLowerCase()] = obj[prop];
-        }
-
-        return output;
-    };
-
-//    var getRandomColor = function () {
-//        var letters = '0123456789ABCDEF'.split('');
-//        var color = '#';
-//
-//        for (var i = 0; i < 6; i++)
-//        {
-//            color += letters[Math.round(Math.random() * 15)];
-//        }
-//
-//        return color;
-//    };
-
-    var getColorFromString = function (color) {
-        if (!_.isUndefined(color))
-        {
-            if (!_.isString(color))
-            {
-                throw new Error('The value supplied to getColorFromString() should be a string, not whatever you passed in.');
-            }
-
-            /**
-             * We want to make sure that the color supplied is the right length (6 characters without a hash
-             * and 7 with). Then, if no hash exists, we add it ourselves.
-             */
-            var correctLength = (color.length === 6 || color.length === 7);
-            if (correctLength)
-            {
-                if (color.length === 6 && color.indexOf('#') === -1)
-                {
-                    color = '#' + color;
-                }
-
-                return color.toLowerCase();
-            }
-//            else
-//            {
-//                debug.warn('Whatever you supplied to getColorFromString() was either not a string, not a number ' +
-//                    'and/or not the right length (should be 6 characters with no hash and 7 with).');
-//            }
-        }
-
-        return null;
-    };
-
-    var addPixelSuffix = function (text) {
-        var size = String(text);
-        var index = String(size).indexOf('px');
-
-        if (index === -1)
-        {
-            size = size + 'px';
-        }
-//        else if (index < (text.length-1))
-//        {
-              //hmmmm - should I strip the px out of the string if it's mid string, add the px and return that but warn anyway?
-//            debug.log({
-//                type: 'utils',
-//                message: "Whatever you supplied to addPixelSuffix() already had px in it, but it wasn't at the end of " +
-//                    "the string, which is probably a bad thing.",
-//                warn: true
-//            });
-//        }
-
-        return size;
-    };
-
-    var removePixelSuffix = function (text) {
-        text = String(text);
-        var index = text.indexOf('px');
-
-        if (index !== -1)
-        {
-            if (index === (text.length-2))
-            {
-                return text.substr(0, index);
-            }
-//            else
-//            {
-//                debug.log({
-//                    type: 'utils',
-//                    message: "Whatever you supplied to removePixelSuffix() already had px in it, but it wasn't at the " +
-//                        "end of the string, which is probably a bad thing.",
-//                    warn: true
-//                });
-//            }
-        }
-
-        return text;
-    };
-
-
-
-
-    //---------------------------------------------- url stuff
-    var urlString = window.location.href;
-
-    var getQueryParams = function (url) {
-        var queryParamsObject = {}; //this is what we're storing and returning
-        url = url || urlString;
-
-        if (url.indexOf('?') !== -1)
-        {
-            var urlSplit = url.split('?');
-            var queryParams = urlSplit[1].split('&');
-
-            /**
-             * final data will look like so:
-             * {
-                     *     playerParams: {
-                     *         id: "player",
-                     *         width: 640,
-                     *         ...
-                     *     }
-                     * }
-             */
-
-            if (urlSplit[1].indexOf('|') !== -1)
-            {
-                for (var i = 0, n = queryParams.length; i < n; i++)
-                {
-                    var queryParam = queryParams[i];
-                    var firstEqIndex = queryParam.indexOf('=');
-                    if (firstEqIndex !== -1)
-                    {
-                        var keyValuePairsString = queryParam;
-                        var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
-                        queryParamsObject[collectionKey] = {};
-                        var keyValuePairsArray = keyValuePairsString.split('|');
-
-                        for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
-                        {
-                            var keyValuePair = keyValuePairsArray[j].split('=');
-                            var key = keyValuePair[0];
-                            var value = keyValuePair[1];
-
-                            if (urlSplit[1].indexOf('&') !== -1)
-                            {
-                                keyValuePairsString = queryParam.substr(firstEqIndex+1);
-                                //if we have an ampersand, it's not just a basic pipe string, so we need to make a
-                                // more complex object
-                                queryParamsObject[collectionKey][key] = value;
-                            }
-                            else
-                            {
-                                //just a pipe string, no other key-value pairs so we can make a basic object
-                                queryParamsObject[key] = value;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                queryParamsObject = arrayToObject(queryParams);
-            }
-        }
-
-        return queryParamsObject;
-    };
-
-    var getParamValue = function (key, url) {
-        var queryParams = getQueryParams(url);
-
-        if (_.isObject(queryParams)) //it should always be an object, but just in case
-        {
-            for (var prop in queryParams)
-            {
-                if (prop === key)
-                {
-                    return queryParams[prop];
-                }
-            }
-        }
-
-        return;
-    };
-
-    //second and third params optional
-    var paramExists = function (key, value, url) {
-        var queryParams = getQueryParams(url);
-
-        for (var prop in queryParams)
-        {
-            if (queryParams.hasOwnProperty(prop))
-            {
-                if (prop === key)
-                {
-                    if (value)
-                    {
-                        if (queryParams[prop] === value)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    };
-
-    /**
-     * This is mostly for testing purposes so we can spoof URLs easily, but it's public since I'm big on the "eat your
-     * own dog food" thing.
-     * @param url
-     */
-    var setURL = function (url) {
-        urlString = url;
-
-        return urlString;
-    };
-
-    var getURL = function () {
-        return urlString;
-    };
-    //---------------------------------------------- /url stuff
-
-
-    // Public API
-    return {
-        arrayToObject: arrayToObject,
-        objectToArray: objectToArray,
-        getKeyFromValue: getKeyFromValue,
-        pipeStringToObject: pipeStringToObject,
-        objectToPipeString: objectToPipeString,
-        lowerCasePropertyNames: lowerCasePropertyNames,
-//        getRandomColor: getRandomColor,
-        getColorFromString: getColorFromString,
-        addPixelSuffix: addPixelSuffix,
-        removePixelSuffix: removePixelSuffix,
-        getParamValue: getParamValue,
-        getQueryParams: getQueryParams,
-        paramExists: paramExists,
-        setURL: setURL,
-        getURL: getURL,
-        dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.addEventListener,
-        removeEventListener: dispatcher.removeEventListener
-    };
-});
-/*global define, _, console */
-
-/**
- * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
- * any point.
- *
- * When you want to provide a debugging level for a module, ask for the debug module as a dependency as you normally
- * would. As a convention, name the argument passed to your module Debug instead of debug. Having a capital letter
- * indicates that you can create new instances using the new keyword and it also allows for better syntax later (you'll
- * see what I mean).
- *
- * Example:
- * define(['debug'], function (Debug) {
- *  var debug = new Debug('modulename');
- *
- * The name that we pass when we instantiate a Debug instance is really important. Aesthetically, it just adds some
- * more context to a console message, but you can also filter debug statements on the page using that same module name.
- * For instance, if you wanted to see debug messages for an advertising module, you would use the query param
- * ?debug=advertising, assuming the string passed to debug was 'advertising' (Note: we actually lowercase everything
- * internally, so it doesn't matter what the case is of the string you supply). That will only show debug messages for
- * that module while you're testing. The default in dev is 'all', which allows you to see every debug message. In prod,
- * there is no default, so debugging can only be enabled by explicitly asking for it via a query param.
- *
- * If you want to see debug messages for many modules at once, just comma separate the items in the query param's value.
- * Example: ?debug=utils,player,base64
- *
- */
-define('Debug',['utils'], function (utils) {
-    
-
-    return function (moduleName) {
-        //-------------------------------------- validation
-        if (_.isUndefined(moduleName))
-        {
-            throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
-                "That's required. Sorry kiddo!");
-        }
-        else if (_.isString(moduleName))
-        {
-            // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
-            // at lazy developers ;)
-            if (moduleName.length < 3)
-            {
-                throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
-                    "Something at least 3 characters long, anyway, geez!");
-            }
-        }
-        else
-        {
-            throw new Error("When instantiating the Debug class, it expects a string for the category name as the " +
-                "only argument.");
-        }
-        //-------------------------------------- /validation
-
-
-        var prefix = 'foxneod-0.1.7: ';
-        var lastUsedOptions = {};
-        var category = moduleName.toLowerCase();
-
-        var log = function (message, data) {
-            var options = {
-                message: message,
-                data: data
-            };
-
-            _log('log', options);
-
-            return options;
-        };
-
-        var warn = function (message, data) {
-            //we add the !!!WARNING!!! since most consoles don't have a native way to display console.warn() differently
-            var options = {
-                message: '!!!WARNING!!!: ' + message,
-                data: data
-            };
-
-            _log('warn', options);
-
-            return options;
-        };
-
-        var error = function (message, data) {
-            var options = {
-                message: message,
-                data: data
-            };
-
-            _log('error', options);
-
-            return options;
-        };
-
-        var _log = function (logLevel, options) {
-            var debugModes = getDebugModes();
-
-            for (var i = 0, n = debugModes.length; i < n; i++)
-            {
-                var mode = debugModes[i].toLowerCase();
-
-                if (mode === category.toLowerCase() || mode === 'all')
-                {
-                    console[logLevel](prefix + category + ': ' + options.message, options.data || '');
-//                    console.log('lastUsedOptions set');
-                    lastUsedOptions = _.clone(options);
-                }
-            }
-        };
-
-        var getDebugModes = function () {
-            var queryParam = utils.getParamValue('debug');
-            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['none'];
-
-            return debugModes;
-        };
-
-        // Surfaced for testing purposes
-        var test = {
-            getDebugModes: getDebugModes,
-            getLastUsedOptions: function () {
-                window.console.log('getLastUsedOptions', lastUsedOptions);
-                return lastUsedOptions;
-            },
-            getCategory: function () {
-                return category;
-            }
-        };
-
-        // Public API
-        return {
-            log: log,
-            warn: warn,
-            error: error,
-            __test__: test
-        };
-    };
-});
-/*global define, _ */
-
 define('polyfills',['underscore', 'Debug', 'Dispatcher'], function (underscore, Debug, Dispatcher) {
 
     
@@ -3405,10 +3418,605 @@ define('player',['require',
 });
 /*global define, _ */
 
-define('foxneod',['Dispatcher', 'Debug', 'polyfills', 'utils', 'player'], function (Dispatcher, Debug, polyfills, utils, player) {
+define('UAParser',[], function () {
+
+    // UAParser.js v0.6.1
+    // Lightweight JavaScript-based User-Agent string parser
+    // https://github.com/faisalman/ua-parser-js
+    //
+    // Copyright © 2012-2013 Faisalman <fyzlman@gmail.com>
+    // Dual licensed under GPLv2 & MIT
+
     
 
-    var buildTimestamp = '2013-05-16 05:05:03';
+    //////////////
+    // Constants
+    /////////////
+
+
+    var EMPTY       = '',
+        UNKNOWN     = '?',
+        FUNC_TYPE   = 'function',
+        UNDEF_TYPE  = 'undefined',
+        OBJ_TYPE    = 'object',
+        MAJOR       = 'major',
+        MODEL       = 'model',
+        NAME        = 'name',
+        TYPE        = 'type',
+        VENDOR      = 'vendor',
+        VERSION     = 'version',
+        ARCHITECTURE= 'architecture',
+        CONSOLE     = 'console',
+        MOBILE      = 'mobile',
+        TABLET      = 'tablet';
+
+
+    ///////////
+    // Helper
+    //////////
+
+
+    var util = {
+        has : function (str1, str2) {
+            return str2.toLowerCase().indexOf(str1.toLowerCase()) !== -1;
+        },
+        lowerize : function (str) {
+            return str.toLowerCase();
+        }
+    };
+
+
+    ///////////////
+    // Map helper
+    //////////////
+
+
+    var mapper = {
+
+        rgx : function () {
+
+            // loop through all regexes maps
+            for (var result, i = 0, j, k, p, q, matches, match, args = arguments; i < args.length; i += 2) {
+
+                var regex = args[i],       // even sequence (0,2,4,..)
+                    props = args[i + 1];   // odd sequence (1,3,5,..)
+
+                // construct object barebones
+                if (typeof(result) === UNDEF_TYPE) {
+                    result = {};
+                    for (p in props) {
+                        q = props[p];
+                        if (typeof(q) === OBJ_TYPE) {
+                            result[q[0]] = undefined;
+                        } else {
+                            result[q] = undefined;
+                        }
+                    }
+                }
+
+                // try matching uastring with regexes
+                for (j = k = 0; j < regex.length; j++) {
+                    matches = regex[j].exec(this.getUA());
+                    if (!!matches) {
+                        for (p in props) {
+                            match = matches[++k];
+                            q = props[p];
+                            // check if given property is actually array
+                            if (typeof(q) === OBJ_TYPE && q.length > 0) {
+                                if (q.length === 2) {
+                                    if (typeof(q[1]) === FUNC_TYPE) {
+                                        // assign modified match
+                                        result[q[0]] = q[1].call(this, match);
+                                    } else {
+                                        // assign given value, ignore regex match
+                                        result[q[0]] = q[1];
+                                    }
+                                } else if (q.length === 3) {
+                                    // check whether function or regex
+                                    if (typeof(q[1]) === FUNC_TYPE && !(q[1].exec && q[1].test)) {
+                                        // call function (usually string mapper)
+                                        result[q[0]] = match ? q[1].call(this, match, q[2]) : undefined;
+                                    } else {
+                                        // sanitize match using given regex
+                                        result[q[0]] = match ? match.replace(q[1], q[2]) : undefined;
+                                    }
+                                } else if (q.length === 4) {
+                                    result[q[0]] = match ? q[3].call(this, match.replace(q[1], q[2])) : undefined;
+                                }
+                            } else {
+                                result[q] = match ? match : undefined;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if(!!matches)
+                {
+                    break; // break the loop immediately if match found
+                }
+            }
+            return result;
+        },
+
+        str : function (str, map) {
+
+            for (var i in map) {
+                // check if array
+                if (typeof(map[i]) === OBJ_TYPE && map[i].length > 0) {
+                    for (var j in map[i]) {
+                        if (util.has(map[i][j], str)) {
+                            return (i === UNKNOWN) ? undefined : i;
+                        }
+                    }
+                } else if (util.has(map[i], str)) {
+                    return (i === UNKNOWN) ? undefined : i;
+                }
+            }
+            return str;
+        }
+    };
+
+
+    ///////////////
+    // String map
+    //////////////
+
+
+    var maps = {
+
+        browser : {
+            oldsafari : {
+                major : {
+                    '1' : ['/8', '/1', '/3'],
+                    '2' : '/4',
+                    '?' : '/'
+                },
+                version : {
+                    '1.0'   : '/8',
+                    '1.2'   : '/1',
+                    '1.3'   : '/3',
+                    '2.0'   : '/412',
+                    '2.0.2' : '/416',
+                    '2.0.3' : '/417',
+                    '2.0.4' : '/419',
+                    '?'     : '/'
+                }
+            }
+        },
+
+        device : {
+            sprint : {
+                model : {
+                    'Evo Shift 4G' : '7373KT'
+                },
+                vendor : {
+                    'HTC'       : 'APA',
+                    'Sprint'    : 'Sprint'
+                }
+            }
+        },
+
+        os : {
+            windows : {
+                version : {
+                    'ME'        : '4.90',
+                    'NT 3.11'   : 'NT3.51',
+                    'NT 4.0'    : 'NT4.0',
+                    '2000'      : 'NT 5.0',
+                    'XP'        : ['NT 5.1', 'NT 5.2'],
+                    'Vista'     : 'NT 6.0',
+                    '7'         : 'NT 6.1',
+                    '8'         : 'NT 6.2',
+                    'RT'        : 'ARM'
+                }
+            }
+        }
+    };
+
+
+    //////////////
+    // Regex map
+    /////////////
+
+
+    var regexes = {
+
+        browser : [[
+
+            // Presto based
+            /(opera\smini)\/((\d+)?[\w\.-]+)/i,                                 // Opera Mini
+            /(opera\s[mobiletab]+).+version\/((\d+)?[\w\.-]+)/i,                // Opera Mobi/Tablet
+            /(opera).+version\/((\d+)?[\w\.]+)/i,                               // Opera > 9.80
+            /(opera)[\/\s]+((\d+)?[\w\.]+)/i                                    // Opera < 9.80
+
+        ], [NAME, VERSION, MAJOR], [
+
+            /\s(opr)\/((\d+)?[\w\.]+)/i                                         // Opera Webkit
+        ], [[NAME, 'Opera'], VERSION, MAJOR], [
+
+            // Mixed
+            /(kindle)\/((\d+)?[\w\.]+)/i,                                       // Kindle
+            /(lunascape|maxthon|netfront|jasmine|blazer)[\/\s]?((\d+)?[\w\.]+)*/i,
+            // Lunascape/Maxthon/Netfront/Jasmine/Blazer
+
+            // Trident based
+            /(avant\s|iemobile|slim|baidu)(?:browser)?[\/\s]?((\d+)?[\w\.]*)/i,
+            // Avant/IEMobile/SlimBrowser/Baidu
+            /(?:ms|\()(ie)\s((\d+)?[\w\.]+)/i,                                  // Internet Explorer
+
+            // Webkit/KHTML based
+            /(rekonq)((?:\/)[\w\.]+)*/i,                                        // Rekonq
+            /(chromium|flock|rockmelt|midori|epiphany|silk|skyfire|ovibrowser|bolt)\/((\d+)?[\w\.-]+)/i
+            // Chromium/Flock/RockMelt/Midori/Epiphany/Silk/Skyfire/Bolt
+        ], [NAME, VERSION, MAJOR], [
+
+            /(yabrowser)\/((\d+)?[\w\.]+)/i                                     // Yandex
+        ], [[NAME, 'Yandex'], VERSION, MAJOR], [
+
+            /(comodo_dragon)\/((\d+)?[\w\.]+)/i                                 // Comodo Dragon
+        ], [[NAME, /_/g, ' '], VERSION, MAJOR], [
+
+            /(chrome|omniweb|arora|[tizenoka]{5}\s?browser)\/v?((\d+)?[\w\.]+)/i
+            // Chrome/OmniWeb/Arora/Tizen/Nokia
+        ], [NAME, VERSION, MAJOR], [
+
+            /(dolfin)\/((\d+)?[\w\.]+)/i                                        // Dolphin
+        ], [[NAME, 'Dolphin'], VERSION, MAJOR], [
+
+            /((?:android.+)crmo|crios)\/((\d+)?[\w\.]+)/i                       // Chrome for Android/iOS
+        ], [[NAME, 'Chrome'], VERSION, MAJOR], [
+
+            /version\/((\d+)?[\w\.]+).+?mobile\/\w+\s(safari)/i                 // Mobile Safari
+        ], [VERSION, MAJOR, [NAME, 'Mobile Safari']], [
+
+            /version\/((\d+)?[\w\.]+).+?(mobile\s?safari|safari)/i              // Safari & Safari Mobile
+        ], [VERSION, MAJOR, NAME], [
+
+            /webkit.+?(mobile\s?safari|safari)((\/[\w\.]+))/i                   // Safari < 3.0
+        ], [NAME, [MAJOR, mapper.str, maps.browser.oldsafari.major], [VERSION, mapper.str, maps.browser.oldsafari.version]], [
+
+            /(konqueror)\/((\d+)?[\w\.]+)/i,                                    // Konqueror
+            /(webkit|khtml)\/((\d+)?[\w\.]+)/i
+        ], [NAME, VERSION, MAJOR], [
+
+            // Gecko based
+            /(navigator|netscape)\/((\d+)?[\w\.-]+)/i                           // Netscape
+        ], [[NAME, 'Netscape'], VERSION, MAJOR], [
+            /(swiftfox)/i,                                                      // Swiftfox
+            /(iceweasel|camino|chimera|fennec|maemo\sbrowser|minimo|conkeror)[\/\s]?((\d+)?[\w\.\+]+)/i,
+            // Iceweasel/Camino/Chimera/Fennec/Maemo/Minimo/Conkeror
+            /(firefox|seamonkey|k-meleon|icecat|iceape|firebird|phoenix)\/((\d+)?[\w\.-]+)/i,
+            // Firefox/SeaMonkey/K-Meleon/IceCat/IceApe/Firebird/Phoenix
+            /(mozilla)\/((\d+)?[\w\.]+).+rv\:.+gecko\/\d+/i,                    // Mozilla
+
+            // Other
+            /(uc\s?browser|polaris|lynx|dillo|icab|doris|amaya|w3m|netsurf)[\/\s]?((\d+)?[\w\.]+)/i,
+            // UCBrowser/Polaris/Lynx/Dillo/iCab/Doris/Amaya/w3m/NetSurf
+            /(links)\s\(((\d+)?[\w\.]+)/i,                                      // Links
+            /(gobrowser)\/?((\d+)?[\w\.]+)*/i,                                  // GoBrowser
+            /(ice\s?browser)\/v?((\d+)?[\w\._]+)/i,                             // ICE Browser
+            /(mosaic)[\/\s]((\d+)?[\w\.]+)/i                                    // Mosaic
+        ], [NAME, VERSION, MAJOR]
+        ],
+
+        cpu : [[
+
+            /(?:(amd|x(?:(?:86|64)[_-])?|wow|win)64)[;\)]/i                     // AMD64
+        ], [[ARCHITECTURE, 'amd64']], [
+
+            /((?:i[346]|x)86)[;\)]/i                                            // IA32
+        ], [[ARCHITECTURE, 'ia32']], [
+
+            // PocketPC mistakenly identified as PowerPC
+            /windows\s(ce|mobile);\sppc;/i
+        ], [[ARCHITECTURE, 'arm']], [
+
+            /((?:ppc|powerpc)(?:64)?)(?:\smac|;|\))/i                           // PowerPC
+        ], [[ARCHITECTURE, /ower/, '', util.lowerize]], [
+
+            /(sun4\w)[;\)]/i                                                    // SPARC
+        ], [[ARCHITECTURE, 'sparc']], [
+
+            /(ia64(?=;)|68k(?=\))|arm(?=v\d+;)|(?:irix|mips|sparc)(?:64)?(?=;)|pa-risc)/i
+            // IA64, 68K, ARM, IRIX, MIPS, SPARC, PA-RISC
+        ], [ARCHITECTURE, util.lowerize]
+        ],
+
+        device : [[
+
+            /\((ipad|playbook);[\w\s\);-]+(rim|apple)/i                         // iPad/PlayBook
+        ], [MODEL, VENDOR, [TYPE, TABLET]], [
+
+            /(hp).+(touchpad)/i,                                                // HP TouchPad
+            /(kindle)\/([\w\.]+)/i,                                             // Kindle
+            /\s(nook)[\w\s]+build\/(\w+)/i,                                     // Nook
+            /(dell)\s(strea[kpr\s\d]*[\dko])/i                                  // Dell Streak
+        ], [VENDOR, MODEL, [TYPE, TABLET]], [
+
+            /\((ip[honed]+);.+(apple)/i                                         // iPod/iPhone
+        ], [MODEL, VENDOR, [TYPE, MOBILE]], [
+
+            /(blackberry)[\s-]?(\w+)/i,                                         // BlackBerry
+            /(blackberry|benq|palm(?=\-)|sonyericsson|acer|asus|dell|huawei|meizu|motorola)[\s_-]?([\w-]+)*/i,
+            // BenQ/Palm/Sony-Ericsson/Acer/Asus/Dell/Huawei/Meizu/Motorola
+            /(hp)\s([\w\s]+\w)/i,                                               // HP iPAQ
+            /(asus)-?(\w+)/i                                                    // Asus
+        ], [VENDOR, MODEL, [TYPE, MOBILE]], [
+            /\((bb10);\s(\w+)/i                                                 // BlackBerry 10
+        ], [[VENDOR, 'BlackBerry'], MODEL, [TYPE, MOBILE]], [
+
+            /android.+((transfo[prime\s]{4,10}\s\w+|eeepc|slider\s\w+))/i       // Asus Tablets
+        ], [[VENDOR, 'Asus'], MODEL, [TYPE, TABLET]], [
+
+            /(sony)\s(tablet\s[ps])/i                                           // Sony Tablets
+        ], [VENDOR, MODEL, [TYPE, TABLET]], [
+
+            /(nintendo)\s([wids3u]+)/i                                          // Nintendo
+        ], [VENDOR, MODEL, [TYPE, CONSOLE]], [
+
+            /((playstation)\s[3portablevi]+)/i                                  // Playstation
+        ], [[VENDOR, 'Sony'], MODEL, [TYPE, CONSOLE]], [
+
+            /(sprint\s(\w+))/i                                                  // Sprint Phones
+        ], [[VENDOR, mapper.str, maps.device.sprint.vendor], [MODEL, mapper.str, maps.device.sprint.model], [TYPE, MOBILE]], [
+
+            /(htc)[;_\s-]+([\w\s]+(?=\))|\w+)*/i,                               // HTC
+            /(zte)-(\w+)*/i,                                                    // ZTE
+            /(alcatel|geeksphone|huawei|lenovo|nexian|panasonic|(?=;\s)sony)[_\s-]?([\w-]+)*/i
+            // Alcatel/GeeksPhone/Huawei/Lenovo/Nexian/Panasonic/Sony
+        ], [VENDOR, [MODEL, /_/g, ' '], [TYPE, MOBILE]], [
+
+            /\s((milestone|droid[2x]?))[globa\s]*\sbuild\//i,                   // Motorola
+            /(mot)[\s-]?(\w+)*/i
+        ], [[VENDOR, 'Motorola'], MODEL, [TYPE, MOBILE]], [
+            /android.+\s((mz60\d|xoom[\s2]{0,2}))\sbuild\//i
+        ], [[VENDOR, 'Motorola'], MODEL, [TYPE, TABLET]], [
+
+            /android.+((sch-i[89]0\d|shw-m380s|gt-p\d{4}|gt-n8000|sgh-t8[56]9))/i
+        ], [[VENDOR, 'Samsung'], MODEL, [TYPE, TABLET]], [                  // Samsung
+            /((s[cgp]h-\w+|gt-\w+|galaxy\snexus))/i,
+            /(sam[sung]*)[\s-]*(\w+-?[\w-]*)*/i,
+            /sec-((sgh\w+))/i
+        ], [[VENDOR, 'Samsung'], MODEL, [TYPE, MOBILE]], [
+            /(sie)-(\w+)*/i                                                     // Siemens
+        ], [[VENDOR, 'Siemens'], MODEL, [TYPE, MOBILE]], [
+
+            /(maemo|nokia).*(n900|lumia\s\d+)/i,                                // Nokia
+            /(nokia)[\s_-]?([\w-]+)*/i
+        ], [[VENDOR, 'Nokia'], MODEL, [TYPE, MOBILE]], [
+
+            /android\s3\.[\s\w-;]{10}((a\d{3}))/i                               // Acer
+        ], [[VENDOR, 'Acer'], MODEL, [TYPE, TABLET]], [
+
+            /android\s3\.[\s\w-;]{10}(lg?)-([06cv9]{3,4})/i                     // LG
+        ], [[VENDOR, 'LG'], MODEL, [TYPE, TABLET]], [
+            /((nexus\s4))/i,
+            /(lg)[e;\s-\/]+(\w+)*/i
+        ], [[VENDOR, 'LG'], MODEL, [TYPE, MOBILE]], [
+
+            /(mobile|tablet);.+rv\:.+gecko\//i                                  // Unidentifiable
+        ], [TYPE, VENDOR, MODEL]
+        ],
+
+        engine : [[
+
+            /(presto)\/([\w\.]+)/i,                                             // Presto
+            /(webkit|trident|netfront|netsurf|amaya|lynx|w3m)\/([\w\.]+)/i,     // WebKit/Trident/NetFront/NetSurf/Amaya/Lynx/w3m
+            /(khtml|tasman|links)[\/\s]\(?([\w\.]+)/i,                          // KHTML/Tasman/Links
+            /(icab)[\/\s]([23]\.[\d\.]+)/i                                      // iCab
+        ], [NAME, VERSION], [
+
+            /rv\:([\w\.]+).*(gecko)/i                                           // Gecko
+        ], [VERSION, NAME]
+        ],
+
+        os : [[
+
+            // Windows based
+            /(windows)\snt\s6\.2;\s(arm)/i,                                     // Windows RT
+            /(windows\sphone(?:\sos)*|windows\smobile|windows)[\s\/]?([ntce\d\.\s]+\w)/i
+        ], [NAME, [VERSION, mapper.str, maps.os.windows.version]], [
+            /(win(?=3|9|n)|win\s9x\s)([nt\d\.]+)/i
+        ], [[NAME, 'Windows'], [VERSION, mapper.str, maps.os.windows.version]], [
+
+            // Mobile/Embedded OS
+            /\((bb)(10);/i                                                      // BlackBerry 10
+        ], [[NAME, 'BlackBerry'], VERSION], [
+            /(blackberry)\w*\/?([\w\.]+)*/i,                                    // Blackberry
+            /(tizen)\/([\w\.]+)/i,                                              // Tizen
+            /(android|webos|palm\os|qnx|bada|rim\stablet\sos|meego)[\/\s-]?([\w\.]+)*/i
+            // Android/WebOS/Palm/QNX/Bada/RIM/MeeGo
+        ], [NAME, VERSION], [
+            /(symbian\s?os|symbos|s60(?=;))[\/\s-]?([\w\.]+)*/i                 // Symbian
+        ], [[NAME, 'Symbian'], VERSION],[
+            /mozilla.+\(mobile;.+gecko.+firefox/i                               // Firefox OS
+        ], [[NAME, 'Firefox OS'], VERSION], [
+
+            // Console
+            /(nintendo|playstation)\s([wids3portablevu]+)/i,                    // Nintendo/Playstation
+
+            // GNU/Linux based
+            /(mint)[\/\s\(]?(\w+)*/i,                                           // Mint
+            /(joli|[kxln]?ubuntu|debian|[open]*suse|gentoo|arch|slackware|fedora|mandriva|centos|pclinuxos|redhat|zenwalk)[\/\s-]?([\w\.-]+)*/i,
+            // Joli/Ubuntu/Debian/SUSE/Gentoo/Arch/Slackware
+            // Fedora/Mandriva/CentOS/PCLinuxOS/RedHat/Zenwalk
+            /(hurd|linux)\s?([\w\.]+)*/i,                                       // Hurd/Linux
+            /(gnu)\s?([\w\.]+)*/i                                               // GNU
+        ], [NAME, VERSION], [
+
+            /(cros)\s[\w]+\s([\w\.]+\w)/i                                       // Chromium OS
+        ], [[NAME, 'Chromium OS'], VERSION],[
+
+            // Solaris
+            /(sunos)\s?([\w\.]+\d)*/i                                           // Solaris
+        ], [[NAME, 'Solaris'], VERSION], [
+
+            // BSD based
+            /\s([frentopc-]{0,4}bsd|dragonfly)\s?([\w\.]+)*/i                   // FreeBSD/NetBSD/OpenBSD/PC-BSD/DragonFly
+        ], [NAME, VERSION],[
+
+            /(ip[honead]+)(?:.*os\s*([\w]+)*\slike\smac|;\sopera)/i             // iOS
+        ], [[NAME, 'iOS'], [VERSION, /_/g, '.']], [
+
+            /(mac\sos\sx)\s?([\w\s\.]+\w)*/i                                    // Mac OS
+        ], [NAME, [VERSION, /_/g, '.']], [
+
+            // Other
+            /(haiku)\s(\w+)/i,                                                  // Haiku
+            /(aix)\s((\d)(?=\.|\)|\s)[\w\.]*)*/i,                               // AIX
+            /(macintosh|mac(?=_powerpc)|plan\s9|minix|beos|os\/2|amigaos|morphos|risc\sos)/i,
+            // Plan9/Minix/BeOS/OS2/AmigaOS/MorphOS/RISCOS
+            /(unix)\s?([\w\.]+)*/i                                              // UNIX
+        ], [NAME, VERSION]
+        ]
+    };
+
+
+    /////////////////
+    // Constructor
+    ////////////////
+
+
+    var UAParser = function (uastring) {
+
+        var ua = uastring || ((window && window.navigator && window.navigator.userAgent) ? window.navigator.userAgent : EMPTY);
+
+        if (!(this instanceof UAParser)) {
+            return new UAParser(uastring).getResult();
+        }
+        this.getBrowser = function () {
+            return mapper.rgx.apply(this, regexes.browser);
+        };
+        this.getCPU = function () {
+            return mapper.rgx.apply(this, regexes.cpu);
+        };
+        this.getDevice = function () {
+            return mapper.rgx.apply(this, regexes.device);
+        };
+        this.getEngine = function () {
+            return mapper.rgx.apply(this, regexes.engine);
+        };
+        this.getOS = function () {
+            return mapper.rgx.apply(this, regexes.os);
+        };
+        this.getResult = function() {
+            return {
+                ua      : this.getUA(),
+                browser : this.getBrowser(),
+                engine  : this.getEngine(),
+                os      : this.getOS(),
+                device  : this.getDevice(),
+                cpu     : this.getCPU()
+            };
+        };
+        this.getUA = function () {
+            return ua;
+        };
+        this.setUA = function (uastring) {
+            ua = uastring;
+            return this;
+        };
+        this.setUA(ua);
+    };
+
+    return UAParser;
+
+
+    ///////////
+    // Export
+    //////////
+
+
+//    // check js environment
+//    if (typeof(exports) !== UNDEF_TYPE) {
+//        // nodejs env
+//        if (typeof(module) !== UNDEF_TYPE && module.exports) {
+//            exports = module.exports = UAParser;
+//        }
+//        exports.UAParser = UAParser;
+//    } else {
+//        // browser env
+//        window.UAParser = UAParser;
+//        // requirejs env (optional)
+//        if (typeof(define) === FUNC_TYPE && define.amd) {
+//            define(function () {
+//                return UAParser;
+//            });
+//        }
+//        // jQuery specific (optional)
+//        if (typeof(window.jQuery) !== UNDEF_TYPE) {
+//            var $ = window.jQuery;
+//            var parser = new UAParser();
+//            $.ua = parser.getResult();
+//            $.ua.get = function() {
+//                return parser.getUA();
+//            };
+//            $.ua.set = function (uastring) {
+//                parser.setUA(uastring);
+//                var result = parser.getResult();
+//                for (var prop in result) {
+//                    $.ua[prop] = result[prop];
+//                }
+//            };
+//        }
+//    }
+});
+/*global define, _ */
+
+define('system',['UAParser', 'Debug'], function (UAParser, Debug) {
+    
+
+    var uaparser = new UAParser();
+    var debug = new Debug('system');
+
+    var browser = uaparser.getBrowser();
+    var device = uaparser.getDevice();
+    var engine = uaparser.getEngine();
+    var os = uaparser.getOS();
+    var userAgentString = uaparser.getUA();
+
+    var system = {
+        browser: {
+            major: browser.major,
+            name: browser.name,
+            version: browser.version
+        },
+        device: {
+            model: device.model,
+            type: device.type,
+            vendor: device.vendor
+        },
+        engine: {
+            name: engine.name,
+            version: engine.version
+        },
+        os: {
+            name: os.name,
+            version: os.version
+        },
+        ua: userAgentString
+    };
+
+    debug.log('(browser)', [browser.name, browser.version].join(' '));
+    debug.log('(device)', [device.vendor, device.model, device.type].join(' '));
+    debug.log('(engine)', [engine.name, engine.version].join(' '));
+    debug.log('(os)', [os.name, os.version].join(' '));
+
+    return system;
+});
+/*global define, _ */
+
+define('foxneod',[
+    'Dispatcher',
+    'Debug',
+    'polyfills',
+    'utils',
+    'player',
+    'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
+    
+
+    var buildTimestamp = '2013-05-19 10:05:31';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3417,7 +4025,7 @@ define('foxneod',['Dispatcher', 'Debug', 'polyfills', 'utils', 'player'], functi
     (function init () {
 
         debug.log('ready', {
-            buildDate: '2013-05-16 05:05:03',
+            buildDate: '2013-05-19 10:05:31',
             authors: 'https://twitter.com/brandonaaskov'
         });
     })();
@@ -3427,13 +4035,14 @@ define('foxneod',['Dispatcher', 'Debug', 'polyfills', 'utils', 'player'], functi
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-16 05:05:03',
+        buildDate: '2013-05-19 10:05:31',
         player: player,
         utils: utils,
         Debug: Debug,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
-        removeEventListener: dispatcher.removeEventListener
+        removeEventListener: dispatcher.removeEventListener,
+        system: system
     };
 });
 /*global require, requirejs, console */
@@ -3441,11 +4050,11 @@ define('foxneod',['Dispatcher', 'Debug', 'polyfills', 'utils', 'player'], functi
 require([
     'almond',
     'jqueryloader',
+    'modernizrloader',
     'underscore',
     'Dispatcher',
     'Debug',
-    'foxneod'
-], function (almond, jquery, underscore, Dispatcher, Debug, foxneod) {
+    'foxneod'], function (almond, jquery, modernizr, underscore, Dispatcher, Debug, foxneod) {
     
 
     //This function is called once the DOM is ready, notice the value for 'domReady!' is the current document.
@@ -3455,11 +4064,12 @@ require([
 
     window.jQuery = jquery;
     debug.log('jQuery version after noConflict is', jquery().jquery);
+    debug.log('Modernizr ready', modernizr);
 
     (function () {
-        debug.log('foxneod assignment');
-        dispatcher.dispatch('ready', {}, true);
         window.FoxNEOD = window.$f = foxneod;
+        dispatcher.dispatch('ready', {}, true);
+        debug.log('foxneod assigned to window.FoxNEOD and window.$f');
     })();
 });
 define("main", function(){});
