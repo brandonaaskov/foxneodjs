@@ -25,7 +25,7 @@
  * Example: ?debug=utils,player,base64
  *
  */
-define(['utils'], function (utils) {
+define(['utils', 'underscoreloader'], function (utils, _) {
     'use strict';
 
     return function (moduleName) {

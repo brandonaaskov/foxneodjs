@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['lib/requirejs/domReady!', 'jqueryloader', 'debug'], function (dom, jquery, Debug) {
+define(['Debug', 'jqueryloader', 'underscoreloader'], function (Debug, jquery, _) {
     'use strict';
 
     var debug = new Debug('pdkwatcher'),

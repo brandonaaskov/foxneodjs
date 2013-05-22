@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define([], function () {
+define(['underscoreloader'], function (_) {
     'use strict';
 
     return function () {

@@ -78,6 +78,7 @@
 //                            , jquery: 'lib/jquery/jquery-1.9.1.min' //this doesn't work (at least with this name) since jQuery defines their own AMD definition with the same name
 //                            , pdkloader: 'lib/theplatform/pdkloader'
                             , jqueryloader: 'lib/jquery/jqueryloader'
+                            , underscoreloader: 'lib/underscore/underscoreloader'
                             , modernizrloader: 'lib/modernizr/modernizrloader'
                             , underscore: 'lib/underscore/underscore'
                         },

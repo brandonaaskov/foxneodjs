@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['utils'], function (utils) {
+define(['utils', 'underscoreloader'], function (utils, _) {
     'use strict';
 
     var playerIds = []; // stores the ids of the elements we find

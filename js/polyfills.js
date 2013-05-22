@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['underscore', 'Debug', 'Dispatcher'], function (underscore, Debug, Dispatcher) {
+define(['Debug', 'Dispatcher', 'underscoreloader'], function (Debug, Dispatcher, _) {
 
     'use strict';
 
@@ -22,7 +22,7 @@ define(['underscore', 'Debug', 'Dispatcher'], function (underscore, Debug, Dispa
                     switch (polyfillName)
                     {
                         case 'watch':
-                            watch();
+                            polyfillWatch();
                             _polyfillsAdded.push(polyfillName);
                             debug.log(polyfillName + " added");
                             dispatcher.dispatch(polyfillName + 'Ready');
@@ -63,7 +63,7 @@ define(['underscore', 'Debug', 'Dispatcher'], function (underscore, Debug, Dispa
     /**
      * This allows us to monitor property changes on objects and run callbacks when that happens.
      */
-    function watch () {
+    function polyfillWatch () {
         /*
          * object.watch polyfill
          *
@@ -122,7 +122,7 @@ define(['underscore', 'Debug', 'Dispatcher'], function (underscore, Debug, Dispa
     //---------------------------------------------- /custom polyfills
 
     (function init () {
-        fixBrokenFeatures(['watch']);
+        fixBrokenFeatures(['watch', 'addEventListener']);
     })();
 
     // Public API

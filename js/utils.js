@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['Dispatcher'], function (Dispatcher) {
+define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     'use strict';
 
     var dispatcher = new Dispatcher();
@@ -195,6 +195,13 @@ define(['Dispatcher'], function (Dispatcher) {
         return text;
     };
 
+    var stringToBoolean = function (flag) {
+        return (flag === 'true') ? true : false;
+    };
+
+    var booleanToString = function (flag) {
+        return String(flag).toLowerCase();
+    };
 
 
 
@@ -329,6 +336,17 @@ define(['Dispatcher'], function (Dispatcher) {
     //---------------------------------------------- /url stuff
 
 
+    (function () {
+        _.mixin({
+            stringToBoolean: stringToBoolean,
+            booleanToString: booleanToString,
+            arrayToObject: arrayToObject,
+            isDefined: function (obj) {
+                return !_.isUndefined(obj);
+            }
+        });
+    })();
+
     // Public API
     return {
         arrayToObject: arrayToObject,
@@ -341,6 +359,7 @@ define(['Dispatcher'], function (Dispatcher) {
         getColorFromString: getColorFromString,
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
+        stringToBoolean: stringToBoolean,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
