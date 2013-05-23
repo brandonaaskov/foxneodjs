@@ -203,6 +203,24 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return String(flag).toLowerCase();
     };
 
+    var isDefined = function (obj) {
+        return !_.isUndefined(obj);
+    };
+
+    var isLooseEqual = function (itemA, itemB) {
+        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
+            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
+
+        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
+        // and I've already cast the objects to strings anyway
+        if (normalizedA === normalizedB)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -341,9 +359,8 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
             arrayToObject: arrayToObject,
-            isDefined: function (obj) {
-                return !_.isUndefined(obj);
-            }
+            isDefined: isDefined,
+            isLooseEqual: isLooseEqual
         });
     })();
 

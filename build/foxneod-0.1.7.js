@@ -1931,6 +1931,24 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return String(flag).toLowerCase();
     };
 
+    var isDefined = function (obj) {
+        return !_.isUndefined(obj);
+    };
+
+    var isLooseEqual = function (itemA, itemB) {
+        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
+            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
+
+        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
+        // and I've already cast the objects to strings anyway
+        if (normalizedA === normalizedB)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -2069,9 +2087,8 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
             arrayToObject: arrayToObject,
-            isDefined: function (obj) {
-                return !_.isUndefined(obj);
-            }
+            isDefined: isDefined,
+            isLooseEqual: isLooseEqual
         });
     })();
 
@@ -3739,23 +3756,26 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
     };
 
     var checkMatch = function (list, valueToMatch) {
-        _.each(list, function (itemValue) {
-            if ((_.isDefined(valueToMatch) && _.isDefined(itemValue)) && (String(itemValue).toLowerCase() === String(valueToMatch).toLowerCase()))
-            {
-                debug.log(String(itemValue).toLowerCase() +' === '+ String(valueToMatch).toLowerCase());
+        var matched = false;
 
-                return true;
+        _.find(list, function (itemValue) {
+            debug.log(itemValue +' vs. '+ valueToMatch);
+
+            if (_.isDefined(valueToMatch) && _.isDefined(itemValue) && _.isLooseEqual(valueToMatch, itemValue))
+            {
+                matched = true;
             }
         });
 
-        debug.log('returning false');
-        return false;
+//        debug.log("returning " + _.booleanToString(matched));
+        return matched;
     };
 
     var _match = function (list, name, version) {
         if (_.isUndefined(name))
         {
             debug.error("The name you provided to search through was undefined.");
+            return false;
         }
 
         var nameMatch = checkMatch(list, name);
@@ -3763,8 +3783,6 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
 
         debug.log(name + ' matched?', _.booleanToString(nameMatch));
         debug.log(version + ' matched?', _.booleanToString(versionMatch));
-
-        debugger;
 
         //if name and version were passed in, we need to match on both to return true
         if (!_.isUndefined(version))
@@ -3805,7 +3823,10 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
             name: os.name,
             version: os.version
         },
-        ua: userAgentString
+        ua: userAgentString,
+        __test__: {
+            checkMatch: checkMatch
+        }
     };
 
     debug.log('(browser)', [browser.name, browser.version].join(' '));
@@ -3826,7 +3847,7 @@ define('foxneod',[
     'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
     
 
-    var buildTimestamp = '2013-05-21 06:05:51';
+    var buildTimestamp = '2013-05-22 05:05:07';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3836,14 +3857,12 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-21 06:05:51)');
+        debug.log('ready (build date: 2013-05-22 05:05:07)');
 
-//        if ()
-        if (system.isBrowser("chrome", 29) && system.isEngine('trident', 6))
+        if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
-            debug.log('isBrowser');
-            window.alert("You're currently using IE10 in \"Compatibility\" mode, which has been known to provide a " +
-                "poor playback experience. Please switch your browser into \"Standards\" mode to get a better " +
+            window.alert("You're currently using Internet Explorer 10 in \"Compatibility\" mode, which has been " +
+                "known to freeze the video. Please switch your browser into \"Standards\" mode to get a better " +
                 "experience.");
         }
     };
@@ -3854,7 +3873,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-21 06:05:51',
+        buildDate: '2013-05-22 05:05:07',
         init: init,
         player: player,
         utils: utils,

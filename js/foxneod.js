@@ -21,12 +21,10 @@ define([
     var init = function () {
         debug.log('ready (build date: @@buildDate)');
 
-//        if ()
-        if (system.isBrowser("chrome", 29) && system.isEngine('trident', 6))
+        if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
-            debug.log('isBrowser');
-            window.alert("You're currently using IE10 in \"Compatibility\" mode, which has been known to provide a " +
-                "poor playback experience. Please switch your browser into \"Standards\" mode to get a better " +
+            window.alert("You're currently using Internet Explorer 10 in \"Compatibility\" mode, which has been " +
+                "known to freeze the video. Please switch your browser into \"Standards\" mode to get a better " +
                 "experience.");
         }
     };

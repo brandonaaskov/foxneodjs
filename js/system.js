@@ -29,23 +29,26 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
     };
 
     var checkMatch = function (list, valueToMatch) {
-        _.each(list, function (itemValue) {
-            if ((_.isDefined(valueToMatch) && _.isDefined(itemValue)) && (String(itemValue).toLowerCase() === String(valueToMatch).toLowerCase()))
-            {
-                debug.log(String(itemValue).toLowerCase() +' === '+ String(valueToMatch).toLowerCase());
+        var matched = false;
 
-                return true;
+        _.find(list, function (itemValue) {
+            debug.log(itemValue +' vs. '+ valueToMatch);
+
+            if (_.isDefined(valueToMatch) && _.isDefined(itemValue) && _.isLooseEqual(valueToMatch, itemValue))
+            {
+                matched = true;
             }
         });
 
-        debug.log('returning false');
-        return false;
+//        debug.log("returning " + _.booleanToString(matched));
+        return matched;
     };
 
     var _match = function (list, name, version) {
         if (_.isUndefined(name))
         {
             debug.error("The name you provided to search through was undefined.");
+            return false;
         }
 
         var nameMatch = checkMatch(list, name);
@@ -53,8 +56,6 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
 
         debug.log(name + ' matched?', _.booleanToString(nameMatch));
         debug.log(version + ' matched?', _.booleanToString(versionMatch));
-
-        debugger;
 
         //if name and version were passed in, we need to match on both to return true
         if (!_.isUndefined(version))
@@ -95,7 +96,10 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
             name: os.name,
             version: os.version
         },
-        ua: userAgentString
+        ua: userAgentString,
+        __test__: {
+            checkMatch: checkMatch
+        }
     };
 
     debug.log('(browser)', [browser.name, browser.version].join(' '));
