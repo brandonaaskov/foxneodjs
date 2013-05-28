@@ -167,8 +167,8 @@ FDM_Player.prototype.init=function(pst,pre){
 		}
 
 		//-------------------------- Share
-		if((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') && String(player.share) != 'false') {
-					p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/SharePlugin.swf'+((typeof player.share_email != "undefined" && String(player.share_email) != 'false')?'|emailscript='+player.share_email:'')+'|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : ''+'|hidepostup='+player.hidePostup);
+		if(((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') || (typeof player.share_deeplinkfunc != 'undefined' && player.share_deeplinkfunc != '')) && String(player.share) != 'false') {
+					p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/SharePlugin.swf'+((typeof player.share_email != "undefined" && String(player.share_email) != 'false')?'|emailscript='+player.share_email:'')+'|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');
 		}
 
 		//-------------------------- Closed Captioning
@@ -354,7 +354,7 @@ p.pluginNewFreewheel =
 		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.524/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-			p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+			p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/OmniturePlugin.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
 		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 
 	p.pluginFreewheel='type=advertising|URL=http://adm.fwmrm.net/p/fox_live/ThePlatformPDKPlugin.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
@@ -3764,12 +3764,12 @@ define('modal',['css', 'utils', 'Debug'], function (css, utils, debug) {
 /*global define, _ */
 
 define('player',['require',
-        'ovp',
-        'player/iframe',
-        'player/playback',
-        'modal',
-        'Debug'
-    ], function (require, ovp, iframe, playback, modal, Debug) {
+    'ovp',
+    'player/iframe',
+    'player/playback',
+    'modal',
+    'Debug'
+], function (require, ovp, iframe, playback, modal, Debug) {
     
 
     var debug = new Debug('player'),
@@ -3793,6 +3793,17 @@ define('player',['require',
 
     var getCurrentVideo = function () {
         return _currentVideo;
+    };
+
+    var getMostRecentAd = function () {
+        return _mostRecentAd;
+    };
+
+    var getVideo = function (keyToMatch, valueToMatch) {
+        if (_.isUndefined(keyToMatch))
+        {
+            debug.error("The key you supplied to getVideo() was undefined.");
+        }
     };
 
     function constructor () {
@@ -4521,7 +4532,7 @@ define('foxneod',[
     'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
     
 
-    var buildTimestamp = '2013-05-22 05:05:07';
+    var buildTimestamp = '2013-05-24 12:05:43';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4531,7 +4542,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-22 05:05:07)');
+        debug.log('ready (build date: 2013-05-24 12:05:43)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4547,7 +4558,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-22 05:05:07',
+        buildDate: '2013-05-24 12:05:43',
         init: init,
         player: player,
         utils: utils,

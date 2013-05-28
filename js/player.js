@@ -1,12 +1,12 @@
 /*global define, _ */
 
 define(['require',
-        'ovp',
-        'player/iframe',
-        'player/playback',
-        'modal',
-        'Debug'
-    ], function (require, ovp, iframe, playback, modal, Debug) {
+    'ovp',
+    'player/iframe',
+    'player/playback',
+    'modal',
+    'Debug'
+], function (require, ovp, iframe, playback, modal, Debug) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -30,6 +30,25 @@ define(['require',
 
     var getCurrentVideo = function () {
         return _currentVideo;
+    };
+
+    var getMostRecentAd = function () {
+        return _mostRecentAd;
+    };
+
+    var getVideo = function (keyToMatch, valueToMatch) {
+        if (_.isUndefined(keyToMatch))
+        {
+            debug.error("The key you supplied to getVideo() was undefined.");
+        }
+
+        //if feed, load first video in feed
+
+        //if release, load release
+
+        //if release list, load... something?
+
+        //if guid, load guid from feed
     };
 
     function constructor () {
@@ -76,6 +95,7 @@ define(['require',
         show: ovp.show,
         currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
+        getMostRecentAd: getMostRecentAd,
 
         //control methods
         seekTo: playback.seekTo,

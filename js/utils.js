@@ -354,11 +354,22 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     //---------------------------------------------- /url stuff
 
 
+    //adds our helper methods to Underscore
     (function () {
         _.mixin({
-            stringToBoolean: stringToBoolean,
-            booleanToString: booleanToString,
             arrayToObject: arrayToObject,
+            objectToArray: objectToArray,
+            getKeyFromValue: getKeyFromValue,
+            pipeStringToObject: pipeStringToObject,
+            objectToPipeString: objectToPipeString,
+            lowerCasePropertyNames: lowerCasePropertyNames,
+            getColorFromString: getColorFromString,
+            addPixelSuffix: addPixelSuffix,
+            removePixelSuffix: removePixelSuffix,
+            stringToBoolean: stringToBoolean,
+            getParamValue: getParamValue,
+            getQueryParams: getQueryParams,
+            paramExists: paramExists,
             isDefined: isDefined,
             isLooseEqual: isLooseEqual
         });
@@ -380,6 +391,8 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
+        isDefined: isDefined,
+        isLooseEqual: isLooseEqual,
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,

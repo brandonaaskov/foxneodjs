@@ -2082,11 +2082,22 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     //---------------------------------------------- /url stuff
 
 
+    //adds our helper methods to Underscore
     (function () {
         _.mixin({
-            stringToBoolean: stringToBoolean,
-            booleanToString: booleanToString,
             arrayToObject: arrayToObject,
+            objectToArray: objectToArray,
+            getKeyFromValue: getKeyFromValue,
+            pipeStringToObject: pipeStringToObject,
+            objectToPipeString: objectToPipeString,
+            lowerCasePropertyNames: lowerCasePropertyNames,
+            getColorFromString: getColorFromString,
+            addPixelSuffix: addPixelSuffix,
+            removePixelSuffix: removePixelSuffix,
+            stringToBoolean: stringToBoolean,
+            getParamValue: getParamValue,
+            getQueryParams: getQueryParams,
+            paramExists: paramExists,
             isDefined: isDefined,
             isLooseEqual: isLooseEqual
         });
@@ -2108,6 +2119,8 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
+        isDefined: isDefined,
+        isLooseEqual: isLooseEqual,
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,
@@ -3090,12 +3103,12 @@ define('modal',['css', 'utils', 'Debug'], function (css, utils, debug) {
 /*global define, _ */
 
 define('player',['require',
-        'ovp',
-        'player/iframe',
-        'player/playback',
-        'modal',
-        'Debug'
-    ], function (require, ovp, iframe, playback, modal, Debug) {
+    'ovp',
+    'player/iframe',
+    'player/playback',
+    'modal',
+    'Debug'
+], function (require, ovp, iframe, playback, modal, Debug) {
     
 
     var debug = new Debug('player'),
@@ -3119,6 +3132,25 @@ define('player',['require',
 
     var getCurrentVideo = function () {
         return _currentVideo;
+    };
+
+    var getMostRecentAd = function () {
+        return _mostRecentAd;
+    };
+
+    var getVideo = function (keyToMatch, valueToMatch) {
+        if (_.isUndefined(keyToMatch))
+        {
+            debug.error("The key you supplied to getVideo() was undefined.");
+        }
+
+        //if feed, load first video in feed
+
+        //if release, load release
+
+        //if release list, load... something?
+
+        //if guid, load guid from feed
     };
 
     function constructor () {
@@ -3165,6 +3197,7 @@ define('player',['require',
         show: ovp.show,
         currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
+        getMostRecentAd: getMostRecentAd,
 
         //control methods
         seekTo: playback.seekTo,
@@ -3847,7 +3880,7 @@ define('foxneod',[
     'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
     
 
-    var buildTimestamp = '2013-05-22 05:05:07';
+    var buildTimestamp = '2013-05-27 11:05:51';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3857,7 +3890,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-22 05:05:07)');
+        debug.log('ready (build date: 2013-05-27 11:05:51)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3873,7 +3906,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-22 05:05:07',
+        buildDate: '2013-05-27 11:05:51',
         init: init,
         player: player,
         utils: utils,
