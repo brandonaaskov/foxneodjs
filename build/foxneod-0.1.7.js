@@ -2095,6 +2095,7 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
             addPixelSuffix: addPixelSuffix,
             removePixelSuffix: removePixelSuffix,
             stringToBoolean: stringToBoolean,
+            booleanToString: booleanToString,
             getParamValue: getParamValue,
             getQueryParams: getQueryParams,
             paramExists: paramExists,
@@ -2116,6 +2117,7 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
         stringToBoolean: stringToBoolean,
+        booleanToString: booleanToString,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
@@ -3880,7 +3882,7 @@ define('foxneod',[
     'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
     
 
-    var buildTimestamp = '2013-05-27 11:05:51';
+    var buildTimestamp = '2013-05-28 10:05:37';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3890,7 +3892,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-27 11:05:51)');
+        debug.log('ready (build date: 2013-05-28 10:05:37)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3906,7 +3908,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-27 11:05:51',
+        buildDate: '2013-05-28 10:05:37',
         init: init,
         player: player,
         utils: utils,

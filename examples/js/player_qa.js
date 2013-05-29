@@ -2756,11 +2756,23 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     //---------------------------------------------- /url stuff
 
 
+    //adds our helper methods to Underscore
     (function () {
         _.mixin({
+            arrayToObject: arrayToObject,
+            objectToArray: objectToArray,
+            getKeyFromValue: getKeyFromValue,
+            pipeStringToObject: pipeStringToObject,
+            objectToPipeString: objectToPipeString,
+            lowerCasePropertyNames: lowerCasePropertyNames,
+            getColorFromString: getColorFromString,
+            addPixelSuffix: addPixelSuffix,
+            removePixelSuffix: removePixelSuffix,
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
-            arrayToObject: arrayToObject,
+            getParamValue: getParamValue,
+            getQueryParams: getQueryParams,
+            paramExists: paramExists,
             isDefined: isDefined,
             isLooseEqual: isLooseEqual
         });
@@ -2779,9 +2791,12 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
         stringToBoolean: stringToBoolean,
+        booleanToString: booleanToString,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         paramExists: paramExists,
+        isDefined: isDefined,
+        isLooseEqual: isLooseEqual,
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,
@@ -3804,6 +3819,14 @@ define('player',['require',
         {
             debug.error("The key you supplied to getVideo() was undefined.");
         }
+
+        //if feed, load first video in feed
+
+        //if release, load release
+
+        //if release list, load... something?
+
+        //if guid, load guid from feed
     };
 
     function constructor () {
@@ -3850,6 +3873,7 @@ define('player',['require',
         show: ovp.show,
         currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
+        getMostRecentAd: getMostRecentAd,
 
         //control methods
         seekTo: playback.seekTo,
@@ -4532,7 +4556,7 @@ define('foxneod',[
     'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
     
 
-    var buildTimestamp = '2013-05-24 12:05:43';
+    var buildTimestamp = '2013-05-28 10:05:37';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4542,7 +4566,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-24 12:05:43)');
+        debug.log('ready (build date: 2013-05-28 10:05:37)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4558,7 +4582,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-24 12:05:43',
+        buildDate: '2013-05-28 10:05:37',
         init: init,
         player: player,
         utils: utils,

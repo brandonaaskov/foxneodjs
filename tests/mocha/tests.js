@@ -1,18 +1,4 @@
-/*global require */
-
-require.config({
-    baseUrl: '../../js/',
-    paths: {
-        almond: 'lib/almond/almond'
-        , jquery: 'lib/jquery/jquery-2.0.0.min'
-        , underscore: 'lib/underscore/underscore'
-        , modernizr: 'lib/modernizr/modernizr.custom'
-        , mocha: '../node_modules/mocha/mocha'
-        , chai: '../node_modules/chai/chai'
-    }
-});
-
-require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'underscore', 'jquery'], function (require, chai, utils, base64, player, Debug) {
+(function () {
     'use strict';
 
     mocha.setup('tdd');
@@ -26,15 +12,15 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
         //------------------------------------------------------------------------------------- utils
         suite('utils', function () {
             test('addPixelSuffix', function () {
-                assert.strictEqual(utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
-                assert.strictEqual(utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
-                assert.strictEqual(utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
+                assert.strictEqual($f.utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
+                assert.strictEqual($f.utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
+                assert.strictEqual($f.utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
             test('removePixelSuffix', function () {
-                assert.strictEqual(utils.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
-                assert.strictEqual(utils.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
-                assert.strictEqual(utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
+                assert.strictEqual($f.utils.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
+                assert.strictEqual($f.utils.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
+                assert.strictEqual($f.utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
             test('dispatchEvent', 3, function () {
@@ -48,7 +34,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     console.log('ran one assert and removed the event listener for ' + eventName);
                     assert.start();
                 });
-                utils.dispatchEvent('test');
+                $f.utils.dispatchEvent('test');
 
                 eventName = packageName + ':dataTest';
 
@@ -60,34 +46,34 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     console.log('ran two asserts and removed the event listener for ' + eventName);
                     assert.start();
                 });
-                utils.dispatchEvent('dataTest', { movie: 'Django' });
+                $f.utils.dispatchEvent('dataTest', { movie: 'Django' });
             });
 
             test('getColorFromString', function () {
-                assert.strictEqual(_.isString(utils.getColorFromString('FFFFFF')), true, 'Returns a string');
-                assert.strictEqual(utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string');
-                assert.strictEqual(utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase');
-                assert.strictEqual(utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid');
-                assert.strictEqual(utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase');
+                assert.strictEqual(_.isString($f.utils.getColorFromString('FFFFFF')), true, 'Returns a string');
+                assert.strictEqual($f.utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string');
+                assert.strictEqual($f.utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase');
+                assert.strictEqual($f.utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid');
+                assert.strictEqual($f.utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase');
 
                 assert.throws(function () {
-                    utils.getColorFromString(102345);
+                    $f.utils.getColorFromString(102345);
                 }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
 
                 assert.throws(function () {
-                    utils.getColorFromString({})
+                    $f.utils.getColorFromString({})
                 }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
 
                 assert.throws(function () {
-                    utils.getColorFromString([])
+                    $f.utils.getColorFromString([])
                 }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
             });
 
 
             test('arrayToObject', function () {
-                assert.deepEqual(utils.arrayToObject([]), {}, 'Empty array to empty object.');
+                assert.deepEqual($f.utils.arrayToObject([]), {}, 'Empty array to empty object.');
 
-                assert.deepEqual(utils.arrayToObject([
+                assert.deepEqual($f.utils.arrayToObject([
                     'key=value',
                     'something=else',
                     'name=brandon'
@@ -97,7 +83,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     name: 'brandon'
                 }, 'Array with key-value pairs to standard object.');
 
-                assert.deepEqual(utils.arrayToObject([
+                assert.deepEqual($f.utils.arrayToObject([
                     'something',
                     'blah',
                     'foo'
@@ -112,7 +98,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 var testObject = {},
                     testArray = [];
 
-                assert.deepEqual(utils.objectToArray(testObject), testArray, 'Empty object to empty array.');
+                assert.deepEqual($f.utils.objectToArray(testObject), testArray, 'Empty object to empty array.');
 
                 testObject = {
                     key: 'value',
@@ -126,7 +112,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     'name=brandon'
                 ];
 
-                assert.deepEqual(utils.objectToArray(testObject), testArray, 'Object to array with key-value pairs as strings.');
+                assert.deepEqual($f.utils.objectToArray(testObject), testArray, 'Object to array with key-value pairs as strings.');
 
                 testObject = {
                     0: 'something',
@@ -140,7 +126,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     '2=foo'
                 ];
 
-                assert.deepEqual(utils.objectToArray(testObject), testArray, 'Array without key-value pairs to on object with indexes as keys.');
+                assert.deepEqual($f.utils.objectToArray(testObject), testArray, 'Array without key-value pairs to on object with indexes as keys.');
 
                 testObject = {
                     key: 'value',
@@ -153,7 +139,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                 };
 
                 assert.throws(function () {
-                    utils.objectToArray(testObject);
+                    $f.utils.objectToArray(testObject);
                 }, 'objectToArray only supports shallow objects (no nested objects or arrays).');
             });
 
@@ -166,16 +152,16 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     score: 93.7491
                 };
 
-                assert.strictEqual(utils.getKeyFromValue(testObject, 'R'), 'rating', 'Retrieved the key based on the value from a basic object');
-                assert.strictEqual(utils.getKeyFromValue(testObject, 93.7491), 'score', 'Retrieved the key based on the floating point value from a basic object');
-                assert.equal(utils.getKeyFromValue(testObject, '93.7491'), 'score', 'Retrieved the key based on the string value of a floating point number from a basic object');
-                assert.strictEqual(utils.getKeyFromValue(testObject, 'nonexistent'), '', 'Got an empty string when looking for a value that did not exist in the provided object');
-                assert.strictEqual(utils.getKeyFromValue(testObject, 0), '', 'Got an empty string when looking for the value 0 which does not exist in the provided object');
+                assert.strictEqual($f.utils.getKeyFromValue(testObject, 'R'), 'rating', 'Retrieved the key based on the value from a basic object');
+                assert.strictEqual($f.utils.getKeyFromValue(testObject, 93.7491), 'score', 'Retrieved the key based on the floating point value from a basic object');
+                assert.equal($f.utils.getKeyFromValue(testObject, '93.7491'), 'score', 'Retrieved the key based on the string value of a floating point number from a basic object');
+                assert.strictEqual($f.utils.getKeyFromValue(testObject, 'nonexistent'), '', 'Got an empty string when looking for a value that did not exist in the provided object');
+                assert.strictEqual($f.utils.getKeyFromValue(testObject, 0), '', 'Got an empty string when looking for the value 0 which does not exist in the provided object');
 
                 testObject.nested = {
                     extra: 'stuff'
                 };
-                assert.strictEqual(utils.getKeyFromValue(testObject, 'stuff'), '', 'Got an empty string when looking for a value that was too deep in the provided object');
+                assert.strictEqual($f.utils.getKeyFromValue(testObject, 'stuff'), '', 'Got an empty string when looking for a value that was too deep in the provided object');
             })
 
             test('pipeStringToObject', function () {
@@ -188,7 +174,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
 
                 var testPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.';
 
-                assert.deepEqual(utils.pipeStringToObject(testPipeString), testObject, 'Standard, shallow object converted to pipe string.');
+                assert.deepEqual($f.utils.pipeStringToObject(testPipeString), testObject, 'Standard, shallow object converted to pipe string.');
 
                 var brokenPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.|what|nothing|huh';
                 var objectFromBrokenPipeString = {
@@ -201,7 +187,7 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     huh: null
                 };
 
-                assert.deepEqual(utils.pipeStringToObject(brokenPipeString), objectFromBrokenPipeString, 'Pipe string with some values that aren\'t key-value pairs.');
+                assert.deepEqual($f.utils.pipeStringToObject(brokenPipeString), objectFromBrokenPipeString, 'Pipe string with some values that aren\'t key-value pairs.');
             });
 
             test('objectToPipeString', function () {
@@ -214,13 +200,13 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
 
                 var testPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.';
 
-                assert.strictEqual(utils.objectToPipeString(testObject), testPipeString, 'Key-value pair, pipe separated string converted to standard, shallow object');
+                assert.strictEqual($f.utils.objectToPipeString(testObject), testPipeString, 'Key-value pair, pipe separated string converted to standard, shallow object');
 
                 var nestedTestObject = testObject;
                 nestedTestObject['nested'] = {
                     test: 'value'
                 };
-                assert.throws(utils.objectToPipeString(nestedTestObject), 'Nested object throws an error.');
+                assert.throws($f.utils.objectToPipeString(nestedTestObject), 'Nested object throws an error.');
             });
 
             test('lowerCasePropertyNames', function () {
@@ -247,8 +233,8 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     test: 'value'
                 };
 
-                assert.deepEqual(utils.lowerCasePropertyNames(testObject), expected, 'Basic, shallow object converted property names to all lowercase.');
-                assert.throws(utils.lowerCasePropertyNames(nestedObject), 'Nested object throws error.');
+                assert.deepEqual($f.utils.lowerCasePropertyNames(testObject), expected, 'Basic, shallow object converted property names to all lowercase.');
+                assert.throws($f.utils.lowerCasePropertyNames(nestedObject), 'Nested object throws error.');
             });
 
             test('getQueryParams', function () {
@@ -259,33 +245,33 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     testing: 'good'
                 };
 
-                assert.deepEqual(utils.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
+                assert.deepEqual($f.utils.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
 
                 testURL = "http://domain.com/page.html?key=value|something=what|testing=good";
-                assert.deepEqual(utils.getQueryParams(testURL), expected, 'Typical query params separated with pipes (instead of &) converted to an object.');
+                assert.deepEqual($f.utils.getQueryParams(testURL), expected, 'Typical query params separated with pipes (instead of &) converted to an object.');
             });
 
             test('getParamValue', function () {
                 var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
 
-                utils.setURL(testURL);
-                assert.strictEqual(utils.getParamValue('something'), 'what', 'Grabbed the param value from a query string on a url');
+                $f.utils.setURL(testURL);
+                assert.strictEqual($f.utils.getParamValue('something'), 'what', 'Grabbed the param value from a query string on a url');
             });
 
             test('paramExists', function () {
                 var testURL = "http://domain.com/page.html?myKey=value&otherKey=testValue&yetAnother=good";
 
-                utils.setURL(testURL);
-                assert.strictEqual(utils.paramExists('myKey', null, testURL), true, 'Tests for a key that does exist in the query params');
+                $f.utils.setURL(testURL);
+                assert.strictEqual($f.utils.paramExists('myKey', null, testURL), true, 'Tests for a key that does exist in the query params');
 
-                utils.setURL(testURL);
-                assert.strictEqual(utils.paramExists('otherKey', 'testValue', testURL), true, 'Tests for a key-value pair match');
+                $f.utils.setURL(testURL);
+                assert.strictEqual($f.utils.paramExists('otherKey', 'testValue', testURL), true, 'Tests for a key-value pair match');
 
-                utils.setURL(testURL);
-                assert.strictEqual(utils.paramExists('otherKey', 'invalidValue', testURL), false, 'Tests for a key-value pair match that does not exist');
+                $f.utils.setURL(testURL);
+                assert.strictEqual($f.utils.paramExists('otherKey', 'invalidValue', testURL), false, 'Tests for a key-value pair match that does not exist');
 
-                utils.setURL(testURL);
-                assert.strictEqual(utils.paramExists('noKey', null, testURL), false, 'Tests for a key that does not exist');
+                $f.utils.setURL(testURL);
+                assert.strictEqual($f.utils.paramExists('noKey', null, testURL), false, 'Tests for a key that does not exist');
             });
 
             test('setURL', function () {
@@ -296,11 +282,11 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
                     testing: 'good'
                 };
 
-                assert.strictEqual(utils.setURL('test'), utils.getURL(), 'setURL works on a non-URI string');
-                assert.strictEqual(utils.setURL(testURL), testURL, 'setURL works on a typical URI string');
+                assert.strictEqual($f.utils.setURL('test'), $f.utils.getURL(), 'setURL works on a non-URI string');
+                assert.strictEqual($f.utils.setURL(testURL), testURL, 'setURL works on a typical URI string');
 
-                utils.setURL(testURL);
-                assert.deepEqual(utils.getQueryParams(), expected, 'setURL works for other methods that do not explicitly pass the URL');
+                $f.utils.setURL(testURL);
+                assert.deepEqual($f.utils.getQueryParams(), expected, 'setURL works for other methods that do not explicitly pass the URL');
             });
         });
         //------------------------------------------------------------------------------------- /utils
@@ -448,4 +434,4 @@ require(['require', 'chai', 'utils', 'base64', 'player', 'debug', 'mocha', 'unde
     });
 
     mocha.run();
-});
+})();
