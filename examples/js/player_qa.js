@@ -22,7 +22,7 @@ var FDMtpHead		= document.getElementsByTagName('head')[0],
 	FDMtpPreferredRuntime	= document.createElement('meta');
 
 FDMtpBaseUrl.name		= 'tp:baseUrl';
-FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.524/pdk';
+FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.525/pdk';
 
 FDMtpPreferredFormat.name		= 'tp:preferredFormats';
 FDMtpPreferredFormat.content	= 'mpeg4,webm,ogg,flv';
@@ -85,7 +85,7 @@ function FDM_Player(i,w,h,pst,pre) {
 		};
 
 	j.type='text/javascript';
-	j.src=FDM_Player_vars.host+'/shared/1.4.524/pdk/tpPdk.js';
+	j.src=FDM_Player_vars.host+'/shared/1.4.525/pdk/tpPdk.js';
 
 	j.onreadystatechange = lf;
 	j.onload = function() {
@@ -152,27 +152,27 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.fp.wmode='opaque';
 		p.previewScrubbing='false';
 
-		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/LayoutPlugin.swf';
+		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/LayoutPlugin.swf';
 		p.skinURL=FDM_Player_vars.host+'/fox/swf/skinFox.swf';
 		p.layoutUrl=FDM_Player_vars.host+'/fox/config/foxLayout.xml';
 
 		//-------------------------- Go Live
 		if(String(player.golive_show) == 'true') {
-			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/GoLivePlugIn.swf';
+			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/GoLivePlugIn.swf';
 		}
 
 		//-------------------------- Bumper
 		if(typeof player.introURL !== 'undefined' || typeof player.outroURL !== 'undefined') {
-			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Share
 		if(((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') || (typeof player.share_deeplinkfunc != 'undefined' && player.share_deeplinkfunc != '')) && String(player.share) != 'false') {
-					p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/SharePlugin.swf'+((typeof player.share_email != "undefined" && String(player.share_email) != 'false')?'|emailscript='+player.share_email:'')+'|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');
+					p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/SharePlugin.swf'+((typeof player.share_email != "undefined" && String(player.share_email) != 'false')?'|emailscript='+player.share_email:'')+'|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');
 		}
 
 		//-------------------------- Closed Captioning
-		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/ClosedCaptionPlugin.swf';
+		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/ClosedCaptionPlugin.swf';
 
 		//-------------------------- End Card
 		if(String(player.endcard) != 'false') {
@@ -187,7 +187,7 @@ FDM_Player.prototype.init=function(pst,pre){
 				player.endcard_editorial = player.endcard_editorial + ((player.endcard_editorial.indexOf('form=json') != -1) ? '' : (player.endcard_editorial.indexOf('?') != -1) ? '&form=json' : '?form=json');
 			}
 			
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 			if(player.endcard_playlist)		{ p.pluginEndcard+='|playlist='+player.endcard_playlist; }
 			if(player.endcard_related)		{ p.pluginEndcard+='|related='+player.endcard_related; }
 			if(player.endcard_editorial)	{ p.pluginEndcard+='|editorial='+player.endcard_editorial; }
@@ -202,14 +202,14 @@ FDM_Player.prototype.init=function(pst,pre){
 //				}
 //				else 
 				if(player.plugins[i].name == 'BlueKai') {
-					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
+					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
 				}
 			}
 		}
 
 		//-------------------------- Watermark
 		if(String(player.watermark_show) == 'true') {
-			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/WatermarkPlugin.swf';
+			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/WatermarkPlugin.swf';
 			if(player.watermark_corner)		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(player.watermark_src)		{ p.pluginWatermark+='|src='+player.watermark_src; }
 			if(player.watermark_opacity)	{ p.pluginWatermark+='|opacity='+player.watermark_opacity; }
@@ -217,32 +217,32 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Play Overlay
 		if(String(player.play_overlay_show) == 'true') {
-			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/PlayOverlayPlugin.swf';
+			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/PlayOverlayPlugin.swf';
 			p.pluginPlayOverlay+='|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset;
 			p.pluginPlayOverlay+='|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 		}
-		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/foxUrlSigningPlugIn.swf';
-		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.524/pdk/swf/authentication.swf|priority=3|cookie=authToken';
+		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/foxUrlSigningPlugIn.swf';
+		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/authentication.swf|priority=3|cookie=authToken';
 
-		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.524/pdk/swf/akamaiHD.swf|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.524|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
+		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/akamaiHD.swf|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.525|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
 
 		//-------------------------- Analytics
-			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
-//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
+			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
 
-			p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
-		p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.524|additionalPropsMethodName=player.extraInfo';
+			p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
+		p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.525|additionalPropsMethodName=player.extraInfo';
 
-p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/swf/ggtp395.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
+p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/ggtp395.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
 
 
 
-			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.524|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
+			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.525|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
 	
 
 p.pluginNewFreewheel = 
 	'type=adcomponent|' + 
-	'url='+FDM_Player_vars.host+'/shared/1.4.524/pdk/swf/freewheel.swf|' + 
+	'url='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/freewheel.swf|' + 
 	'pemURLsSeparator=~|' + 
 	'siteSectionId=' + player.siteSection + '|' + 
 	'isLive=false|' + 
@@ -282,7 +282,7 @@ p.pluginNewFreewheel =
 			mycss.rel='stylesheet';
 			mycss.type='text/css';
 
-		mycss.href=FDM_Player_vars.host+'/shared/1.4.524/css/html5_main.css';
+		mycss.href=FDM_Player_vars.host+'/shared/1.4.525/css/html5_main.css';
 		FDMtpHead.appendChild(mycss);
 
 		p.autoPlay=false; // Always set to false, because if true, it causes wildly different experiences and on certain devices, issues.
@@ -310,16 +310,16 @@ p.pluginNewFreewheel =
 					break;
 			}
 		}
-		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
+		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 
 		//-------------------------- Bumper
 		if(typeof player.introURL != 'undefined' || typeof player.outroURL != 'undefined') {
-			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Watermark
 		if(typeof player.watermark_src != 'undefined' && player.watermark_src != '') {
-			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxWatermarkPlugin.js';
+			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxWatermarkPlugin.js';
 			if(typeof player.watermark_corner != 'undefined')		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(typeof player.watermark_src != 'undefined')		{ p.pluginWatermark+='|watermarkSrc='+player.watermark_src; }
 			if(typeof player.watermark_opacity != 'undefined')	{ p.pluginWatermark+='|watermarkOpacity='+player.watermark_opacity; }
@@ -327,7 +327,7 @@ p.pluginNewFreewheel =
 
 		//-------------------------- Share
 		if((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') && String(player.share) != 'false') {
-				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
+				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
 		}
 
 
@@ -344,18 +344,18 @@ p.pluginNewFreewheel =
 				player.endcard_editorial = player.endcard_editorial + ((player.endcard_editorial.indexOf('form=json') != -1) ? '' : (player.endcard_editorial.indexOf('?') != -1) ? '&form=json' : '?form=json');
 			}
 
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
 				'|upNextDisplay=' + (( player.endcard_playlist && player.endcard_playlist != '' ) ? 'true' : 'false') +
 				((player.endcard_playlist && player.endcard_playlist != '') ? '|playlist=' + player.endcard_playlist : '') +
 				((player.endcard_related && player.endcard_related != '') ? '|related=' + player.endcard_related : '') +
 				((player.endcard_editorial && player.endcard_editorial != '') ? '|editorial=' + player.endcard_editorial : '');
 		}
 
-		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.524/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
+		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-			p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/OmniturePlugin.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
-		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.524/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+			p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/OmniturePlugin.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 
 	p.pluginFreewheel='type=advertising|URL=http://adm.fwmrm.net/p/fox_live/ThePlatformPDKPlugin.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
 
@@ -2428,6 +2428,45 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return obj;
     };
 
+    var booleanToString = function (flag) {
+        return String(flag).toLowerCase();
+    };
+
+    var isDefined = function (obj) {
+        return !_.isUndefined(obj);
+    };
+
+    var isLooseEqual = function (itemA, itemB) {
+        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
+            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
+
+        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
+        // and I've already cast the objects to strings anyway
+        if (normalizedA === normalizedB)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    var isShallowObject = function (obj) {
+        var shallow = true;
+
+        _.each(obj, function (index, item) {
+            window.console.log('args', arguments);
+
+            var value = obj[item];
+
+            if (_.isObject(value))
+            {
+                shallow = false;
+            }
+        });
+
+        return shallow;
+    };
+
     //only supports shallow objects right now
     var objectToArray = function (obj) {
         var outputArray = [];
@@ -2488,9 +2527,16 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var objectToPipeString = function (obj, delimiter) {
         var properties = [];
 
-        for (var prop in obj)
+        if (isShallowObject(obj))
         {
-            properties.push(prop + '=' + obj[prop]);
+            _.each(obj, function (value, key) {
+                properties.push(key + '=' + value);
+            });
+        }
+        else
+        {
+            throw new Error("The first argument you supplied to objectToPipeString() was not a " +
+                "valid object. The objectToPipeString() method only supports a shallow object of strings and numbers.");
         }
 
         return properties.join(delimiter || '|');
@@ -2599,28 +2645,6 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
 
     var stringToBoolean = function (flag) {
         return (flag === 'true') ? true : false;
-    };
-
-    var booleanToString = function (flag) {
-        return String(flag).toLowerCase();
-    };
-
-    var isDefined = function (obj) {
-        return !_.isUndefined(obj);
-    };
-
-    var isLooseEqual = function (itemA, itemB) {
-        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
-            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
-
-        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
-        // and I've already cast the objects to strings anyway
-        if (normalizedA === normalizedB)
-        {
-            return true;
-        }
-
-        return false;
     };
 
 
@@ -3170,7 +3194,7 @@ define('player/iframe',['utils', 'underscoreloader'], function (utils, _) {
 
     var playerIds = []; // stores the ids of the elements we find
 
-    var getPlayerAttributes = _.memoize(function (element) {
+    var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 
         if (element)
@@ -3211,7 +3235,7 @@ define('player/iframe',['utils', 'underscoreloader'], function (utils, _) {
         }
 
         return playerAttributes;
-    });
+    };
 
 
     var injectIframe = function (element, attributes, iframeURL) {
@@ -4464,6 +4488,13 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
         return _match(system.engine, name, version);
     };
 
+    /**
+     * Iterates over the provided list and when the value to match is loosely equal, we return true that we found
+     * a match
+     * @param list
+     * @param valueToMatch
+     * @returns {boolean}
+     */
     var checkMatch = function (list, valueToMatch) {
         var matched = false;
 
@@ -4545,6 +4576,31 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
 
     return system;
 });
+/*global define */
+
+define('base64',[], function () {
+    
+
+    var jsonToBase64 = function (objectToEncode) {
+        var jsonString = JSON.stringify(objectToEncode);
+        var base64String = btoa(jsonString);
+
+        return base64String;
+    };
+
+    var base64ToJSON = function (base64String) {
+        var jsonString = atob(base64String);
+        var json = JSON.parse(jsonString);
+
+        return json;
+    };
+
+    // Public API
+    return  {
+        jsonToBase64: jsonToBase64,
+        base64ToJSON: base64ToJSON
+    };
+});
 /*global define, _ */
 
 define('foxneod',[
@@ -4553,10 +4609,11 @@ define('foxneod',[
     'polyfills',
     'utils',
     'player',
-    'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
+    'system',
+    'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     
 
-    var buildTimestamp = '2013-05-28 10:05:37';
+    var buildTimestamp = '2013-05-30 11:05:53';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4566,7 +4623,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-28 10:05:37)');
+        debug.log('ready (build date: 2013-05-30 11:05:53)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4582,7 +4639,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-28 10:05:37',
+        buildDate: '2013-05-30 11:05:53',
         init: init,
         player: player,
         utils: utils,
@@ -4590,7 +4647,10 @@ define('foxneod',[
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         removeEventListener: dispatcher.removeEventListener,
-        system: system
+        system: system,
+        __test__: {
+            base64: base64
+        }
     };
 });
 /*global require, requirejs, console */
@@ -4609,13 +4669,12 @@ require([
     var dispatcher = new Dispatcher(),
         debug = new Debug('core');
 
-    window.jQuery = jquery;
-    window._ = underscore;
-    debug.log('jQuery version after noConflict is', jquery().jquery);
-    debug.log('Underscore version after noConflict is', underscore.VERSION);
-//    debug.log('Modernizr ready', modernizr);
-
     (function () {
+        window.jQuery = jquery;
+        window._ = underscore;
+        debug.log('jQuery version after noConflict is', jquery().jquery);
+        debug.log('Underscore version after noConflict is', underscore.VERSION);
+
         window.FoxNEOD = window.$f = foxneod;
         foxneod.init();
         dispatcher.dispatch('ready', {}, true);

@@ -12,15 +12,15 @@
         //------------------------------------------------------------------------------------- utils
         suite('utils', function () {
             test('addPixelSuffix', function () {
-                assert.strictEqual($f.utils.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
-                assert.strictEqual($f.utils.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
-                assert.strictEqual($f.utils.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
+                assert.strictEqual(_.addPixelSuffix('12'), '12px', 'Adds the "px" suffix to a string passed in with no existing "px" in it.');
+                assert.strictEqual(_.addPixelSuffix(12), '12px', 'Adds the "px" suffix to a number passed in.');
+                assert.strictEqual(_.addPixelSuffix('30px'), '30px', 'Adds the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
             test('removePixelSuffix', function () {
-                assert.strictEqual($f.utils.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
-                assert.strictEqual($f.utils.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
-                assert.strictEqual($f.utils.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
+                assert.strictEqual(_.removePixelSuffix('12'), '12', 'Removes the "px" suffix to a string passed in with no existing "px" in it.');
+                assert.strictEqual(_.removePixelSuffix(12), '12', 'Removes the "px" suffix to a number passed in.');
+                assert.strictEqual(_.removePixelSuffix('30px'), '30', 'Removes the "px" suffix to a string passed in that already has a "px" suffix.');
             });
 
             test('dispatchEvent', 3, function () {
@@ -34,7 +34,7 @@
                     console.log('ran one assert and removed the event listener for ' + eventName);
                     assert.start();
                 });
-                $f.utils.dispatchEvent('test');
+                _.dispatchEvent('test');
 
                 eventName = packageName + ':dataTest';
 
@@ -46,34 +46,34 @@
                     console.log('ran two asserts and removed the event listener for ' + eventName);
                     assert.start();
                 });
-                $f.utils.dispatchEvent('dataTest', { movie: 'Django' });
+                _.dispatchEvent('dataTest', { movie: 'Django' });
             });
 
             test('getColorFromString', function () {
-                assert.strictEqual(_.isString($f.utils.getColorFromString('FFFFFF')), true, 'Returns a string');
-                assert.strictEqual($f.utils.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string');
-                assert.strictEqual($f.utils.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase');
-                assert.strictEqual($f.utils.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid');
-                assert.strictEqual($f.utils.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase');
+                assert.strictEqual(_.isString(_.getColorFromString('FFFFFF')), true, 'Returns a string');
+                assert.strictEqual(_.getColorFromString('FF00FF'), '#ff00ff', 'Adds a hash to a color string');
+                assert.strictEqual(_.getColorFromString('ff00ff'), '#ff00ff', 'Adds a hash to a color string and lowercase');
+                assert.strictEqual(_.getColorFromString('#FF0000'), '#ff0000', 'Adds a hash to a color string that already is valid');
+                assert.strictEqual(_.getColorFromString('#ff0000'), '#ff0000', 'Adds a hash to a color string that already is valid and lowercase');
 
                 assert.throws(function () {
-                    $f.utils.getColorFromString(102345);
+                    _.getColorFromString(102345);
                 }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
 
                 assert.throws(function () {
-                    $f.utils.getColorFromString({})
+                    _.getColorFromString({})
                 }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
 
                 assert.throws(function () {
-                    $f.utils.getColorFromString([])
+                    _.getColorFromString([])
                 }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
             });
 
 
             test('arrayToObject', function () {
-                assert.deepEqual($f.utils.arrayToObject([]), {}, 'Empty array to empty object.');
+                assert.deepEqual(_.arrayToObject([]), {}, 'Empty array to empty object.');
 
-                assert.deepEqual($f.utils.arrayToObject([
+                assert.deepEqual(_.arrayToObject([
                     'key=value',
                     'something=else',
                     'name=brandon'
@@ -83,7 +83,7 @@
                     name: 'brandon'
                 }, 'Array with key-value pairs to standard object.');
 
-                assert.deepEqual($f.utils.arrayToObject([
+                assert.deepEqual(_.arrayToObject([
                     'something',
                     'blah',
                     'foo'
@@ -98,7 +98,7 @@
                 var testObject = {},
                     testArray = [];
 
-                assert.deepEqual($f.utils.objectToArray(testObject), testArray, 'Empty object to empty array.');
+                assert.deepEqual(_.objectToArray(testObject), testArray, 'Empty object to empty array.');
 
                 testObject = {
                     key: 'value',
@@ -112,7 +112,7 @@
                     'name=brandon'
                 ];
 
-                assert.deepEqual($f.utils.objectToArray(testObject), testArray, 'Object to array with key-value pairs as strings.');
+                assert.deepEqual(_.objectToArray(testObject), testArray, 'Object to array with key-value pairs as strings.');
 
                 testObject = {
                     0: 'something',
@@ -126,7 +126,7 @@
                     '2=foo'
                 ];
 
-                assert.deepEqual($f.utils.objectToArray(testObject), testArray, 'Array without key-value pairs to on object with indexes as keys.');
+                assert.deepEqual(_.objectToArray(testObject), testArray, 'Array without key-value pairs to on object with indexes as keys.');
 
                 testObject = {
                     key: 'value',
@@ -139,7 +139,7 @@
                 };
 
                 assert.throws(function () {
-                    $f.utils.objectToArray(testObject);
+                    _.objectToArray(testObject);
                 }, 'objectToArray only supports shallow objects (no nested objects or arrays).');
             });
 
@@ -152,16 +152,16 @@
                     score: 93.7491
                 };
 
-                assert.strictEqual($f.utils.getKeyFromValue(testObject, 'R'), 'rating', 'Retrieved the key based on the value from a basic object');
-                assert.strictEqual($f.utils.getKeyFromValue(testObject, 93.7491), 'score', 'Retrieved the key based on the floating point value from a basic object');
-                assert.equal($f.utils.getKeyFromValue(testObject, '93.7491'), 'score', 'Retrieved the key based on the string value of a floating point number from a basic object');
-                assert.strictEqual($f.utils.getKeyFromValue(testObject, 'nonexistent'), '', 'Got an empty string when looking for a value that did not exist in the provided object');
-                assert.strictEqual($f.utils.getKeyFromValue(testObject, 0), '', 'Got an empty string when looking for the value 0 which does not exist in the provided object');
+                assert.strictEqual(_.getKeyFromValue(testObject, 'R'), 'rating', 'Retrieved the key based on the value from a basic object');
+                assert.strictEqual(_.getKeyFromValue(testObject, 93.7491), 'score', 'Retrieved the key based on the floating point value from a basic object');
+                assert.equal(_.getKeyFromValue(testObject, '93.7491'), 'score', 'Retrieved the key based on the string value of a floating point number from a basic object');
+                assert.strictEqual(_.getKeyFromValue(testObject, 'nonexistent'), '', 'Got an empty string when looking for a value that did not exist in the provided object');
+                assert.strictEqual(_.getKeyFromValue(testObject, 0), '', 'Got an empty string when looking for the value 0 which does not exist in the provided object');
 
                 testObject.nested = {
                     extra: 'stuff'
                 };
-                assert.strictEqual($f.utils.getKeyFromValue(testObject, 'stuff'), '', 'Got an empty string when looking for a value that was too deep in the provided object');
+                assert.strictEqual(_.getKeyFromValue(testObject, 'stuff'), '', 'Got an empty string when looking for a value that was too deep in the provided object');
             })
 
             test('pipeStringToObject', function () {
@@ -174,7 +174,7 @@
 
                 var testPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.';
 
-                assert.deepEqual($f.utils.pipeStringToObject(testPipeString), testObject, 'Standard, shallow object converted to pipe string.');
+                assert.deepEqual(_.pipeStringToObject(testPipeString), testObject, 'Standard, shallow object converted to pipe string.');
 
                 var brokenPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.|what|nothing|huh';
                 var objectFromBrokenPipeString = {
@@ -187,7 +187,8 @@
                     huh: null
                 };
 
-                assert.deepEqual($f.utils.pipeStringToObject(brokenPipeString), objectFromBrokenPipeString, 'Pipe string with some values that aren\'t key-value pairs.');
+                assert.deepEqual(_.pipeStringToObject(brokenPipeString), objectFromBrokenPipeString, 'Pipe string with ' +
+                    'some values that aren\'t key-value pairs.');
             });
 
             test('objectToPipeString', function () {
@@ -199,14 +200,18 @@
                 };
 
                 var testPipeString = 'name=Point Break|rating=R|director=Kathryn Bigelow|summary=Awesome.';
-
-                assert.strictEqual($f.utils.objectToPipeString(testObject), testPipeString, 'Key-value pair, pipe separated string converted to standard, shallow object');
+                assert.strictEqual(_.objectToPipeString(testObject), testPipeString, 'Key-value pair, pipe separated ' +
+                    'string converted to standard, shallow object');
 
                 var nestedTestObject = testObject;
                 nestedTestObject['nested'] = {
                     test: 'value'
                 };
-                assert.throws($f.utils.objectToPipeString(nestedTestObject), 'Nested object throws an error.');
+
+
+                assert.throws(_.objectToPipeString(nestedTestObject), "The first argument you supplied to " +
+                    "objectToPipeString() was not a valid object. The objectToPipeString() method only supports a " +
+                    "shallow object of strings and numbers.");
             });
 
             test('lowerCasePropertyNames', function () {
@@ -233,8 +238,8 @@
                     test: 'value'
                 };
 
-                assert.deepEqual($f.utils.lowerCasePropertyNames(testObject), expected, 'Basic, shallow object converted property names to all lowercase.');
-                assert.throws($f.utils.lowerCasePropertyNames(nestedObject), 'Nested object throws error.');
+                assert.deepEqual(_.lowerCasePropertyNames(testObject), expected, 'Basic, shallow object converted property names to all lowercase.');
+                assert.throws(_.lowerCasePropertyNames(nestedObject), 'Nested object throws error.');
             });
 
             test('getQueryParams', function () {
@@ -245,33 +250,33 @@
                     testing: 'good'
                 };
 
-                assert.deepEqual($f.utils.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
+                assert.deepEqual(_.getQueryParams(testURL), expected, 'Typical query params (key-value pairs) converted to an object.');
 
                 testURL = "http://domain.com/page.html?key=value|something=what|testing=good";
-                assert.deepEqual($f.utils.getQueryParams(testURL), expected, 'Typical query params separated with pipes (instead of &) converted to an object.');
+                assert.deepEqual(_.getQueryParams(testURL), expected, 'Typical query params separated with pipes (instead of &) converted to an object.');
             });
 
             test('getParamValue', function () {
                 var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
 
                 $f.utils.setURL(testURL);
-                assert.strictEqual($f.utils.getParamValue('something'), 'what', 'Grabbed the param value from a query string on a url');
+                assert.strictEqual(_.getParamValue('something'), 'what', 'Grabbed the param value from a query string on a url');
             });
 
             test('paramExists', function () {
                 var testURL = "http://domain.com/page.html?myKey=value&otherKey=testValue&yetAnother=good";
 
                 $f.utils.setURL(testURL);
-                assert.strictEqual($f.utils.paramExists('myKey', null, testURL), true, 'Tests for a key that does exist in the query params');
+                assert.strictEqual(_.paramExists('myKey', null, testURL), true, 'Tests for a key that does exist in the query params');
 
                 $f.utils.setURL(testURL);
-                assert.strictEqual($f.utils.paramExists('otherKey', 'testValue', testURL), true, 'Tests for a key-value pair match');
+                assert.strictEqual(_.paramExists('otherKey', 'testValue', testURL), true, 'Tests for a key-value pair match');
 
                 $f.utils.setURL(testURL);
-                assert.strictEqual($f.utils.paramExists('otherKey', 'invalidValue', testURL), false, 'Tests for a key-value pair match that does not exist');
+                assert.strictEqual(_.paramExists('otherKey', 'invalidValue', testURL), false, 'Tests for a key-value pair match that does not exist');
 
                 $f.utils.setURL(testURL);
-                assert.strictEqual($f.utils.paramExists('noKey', null, testURL), false, 'Tests for a key that does not exist');
+                assert.strictEqual(_.paramExists('noKey', null, testURL), false, 'Tests for a key that does not exist');
             });
 
             test('setURL', function () {
@@ -286,7 +291,7 @@
                 assert.strictEqual($f.utils.setURL(testURL), testURL, 'setURL works on a typical URI string');
 
                 $f.utils.setURL(testURL);
-                assert.deepEqual($f.utils.getQueryParams(), expected, 'setURL works for other methods that do not explicitly pass the URL');
+                assert.deepEqual(_.getQueryParams(), expected, 'setURL works for other methods that do not explicitly pass the URL');
             });
         });
         //------------------------------------------------------------------------------------- /utils
@@ -307,7 +312,7 @@
 
                 var expected = 'eyJuYW1lIjoiUG9pbnQgQnJlYWsiLCJyYXRpbmciOiJSIiwiZGlyZWN0b3IiOiJLYXRocnluIEJpZ2Vsb3ciLCJzdW1tYXJ5IjoiQXdlc29tZS4iLCJjYW1lbENhc2UiOmZhbHNlLCJsb3dlckNhc2UiOnRydWV9';
 
-                assert.strictEqual(base64.jsonToBase64(testObject), expected, 'Basic, shallow object converted to JSON and then base64 properly.');
+                assert.strictEqual($f.__test__.base64.jsonToBase64(testObject), expected, 'Basic, shallow object converted to JSON and then base64 properly.');
             });
 
             test('base64ToJSON', function () {
@@ -322,7 +327,7 @@
 
                 var base64String = 'eyJuYW1lIjoiUG9pbnQgQnJlYWsiLCJyYXRpbmciOiJSIiwiZGlyZWN0b3IiOiJLYXRocnluIEJpZ2Vsb3ciLCJzdW1tYXJ5IjoiQXdlc29tZS4iLCJjYW1lbENhc2UiOmZhbHNlLCJsb3dlckNhc2UiOnRydWV9';
 
-                assert.deepEqual(base64.base64ToJSON(base64String), expected, 'Base 64 string decoded to a shallow, basic object properly.');
+                assert.deepEqual($f.__test__.base64.base64ToJSON(base64String), expected, 'Base 64 string decoded to a shallow, basic object properly.');
             });
         });
         //------------------------------------------------------------------------------------- /base64
@@ -332,7 +337,7 @@
         //------------------------------------------------------------------------------------- player
         suite('player', function () {
             test('getPlayerAttributes', function () {
-                $('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
+                jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
 
                 var element = document.querySelector('#playerID');
                 var expected = {
@@ -350,11 +355,12 @@
                     "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
                     "the element that you need. We try to not to depend on jQuery where we don't have to";
 
-                assert.strictEqual(_.isObject(player._test.getPlayerAttributes(element)), true, 'getPlayerAttributes returned an object');
-                assert.deepEqual(player._test.getPlayerAttributes(element), expected, "The object returned as expected");
+                var elementAttributes = $f.player.__test__.getPlayerAttributes(element);
+                assert.strictEqual(elementAttributes, expected, 'getPlayerAttributes returned an object');
+                assert.deepEqual(elementAttributes, expected, "The object returned as expected");
 
                 assert.throws(function () {
-                    player._test.getPlayerAttributes($('#playerID'));
+                    $f.player.__test__.getPlayerAttributes($('#playerID'));
                 }, error);
 
                 // add multiple players
@@ -395,7 +401,6 @@
             });
         });
         //------------------------------------------------------------------------------------- /player
-
 
 
 

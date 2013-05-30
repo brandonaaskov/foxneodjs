@@ -6,7 +6,8 @@ define([
     'polyfills',
     'utils',
     'player',
-    'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
+    'system',
+    'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
@@ -43,6 +44,9 @@ define([
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         removeEventListener: dispatcher.removeEventListener,
-        system: system
+        system: system,
+        __test__: {
+            base64: base64
+        }
     };
 });

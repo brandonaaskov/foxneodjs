@@ -26,6 +26,45 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return obj;
     };
 
+    var booleanToString = function (flag) {
+        return String(flag).toLowerCase();
+    };
+
+    var isDefined = function (obj) {
+        return !_.isUndefined(obj);
+    };
+
+    var isLooseEqual = function (itemA, itemB) {
+        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
+            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
+
+        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
+        // and I've already cast the objects to strings anyway
+        if (normalizedA === normalizedB)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    var isShallowObject = function (obj) {
+        var shallow = true;
+
+        _.each(obj, function (index, item) {
+            window.console.log('args', arguments);
+
+            var value = obj[item];
+
+            if (_.isObject(value))
+            {
+                shallow = false;
+            }
+        });
+
+        return shallow;
+    };
+
     //only supports shallow objects right now
     var objectToArray = function (obj) {
         var outputArray = [];
@@ -86,9 +125,16 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var objectToPipeString = function (obj, delimiter) {
         var properties = [];
 
-        for (var prop in obj)
+        if (isShallowObject(obj))
         {
-            properties.push(prop + '=' + obj[prop]);
+            _.each(obj, function (value, key) {
+                properties.push(key + '=' + value);
+            });
+        }
+        else
+        {
+            throw new Error("The first argument you supplied to objectToPipeString() was not a " +
+                "valid object. The objectToPipeString() method only supports a shallow object of strings and numbers.");
         }
 
         return properties.join(delimiter || '|');
@@ -197,28 +243,6 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
 
     var stringToBoolean = function (flag) {
         return (flag === 'true') ? true : false;
-    };
-
-    var booleanToString = function (flag) {
-        return String(flag).toLowerCase();
-    };
-
-    var isDefined = function (obj) {
-        return !_.isUndefined(obj);
-    };
-
-    var isLooseEqual = function (itemA, itemB) {
-        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
-            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
-
-        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
-        // and I've already cast the objects to strings anyway
-        if (normalizedA === normalizedB)
-        {
-            return true;
-        }
-
-        return false;
     };
 
 

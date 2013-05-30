@@ -14,13 +14,12 @@ require([
     var dispatcher = new Dispatcher(),
         debug = new Debug('core');
 
-    window.jQuery = jquery;
-    window._ = underscore;
-    debug.log('jQuery version after noConflict is', jquery().jquery);
-    debug.log('Underscore version after noConflict is', underscore.VERSION);
-//    debug.log('Modernizr ready', modernizr);
-
     (function () {
+        window.jQuery = jquery;
+        window._ = underscore;
+        debug.log('jQuery version after noConflict is', jquery().jquery);
+        debug.log('Underscore version after noConflict is', underscore.VERSION);
+
         window.FoxNEOD = window.$f = foxneod;
         foxneod.init();
         dispatcher.dispatch('ready', {}, true);

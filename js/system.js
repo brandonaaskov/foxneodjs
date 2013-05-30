@@ -28,6 +28,13 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
         return _match(system.engine, name, version);
     };
 
+    /**
+     * Iterates over the provided list and when the value to match is loosely equal, we return true that we found
+     * a match
+     * @param list
+     * @param valueToMatch
+     * @returns {boolean}
+     */
     var checkMatch = function (list, valueToMatch) {
         var matched = false;
 

@@ -5,7 +5,7 @@ define(['utils', 'underscoreloader'], function (utils, _) {
 
     var playerIds = []; // stores the ids of the elements we find
 
-    var getPlayerAttributes = _.memoize(function (element) {
+    var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 
         if (element)
@@ -46,7 +46,7 @@ define(['utils', 'underscoreloader'], function (utils, _) {
         }
 
         return playerAttributes;
-    });
+    };
 
 
     var injectIframe = function (element, attributes, iframeURL) {

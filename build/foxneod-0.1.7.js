@@ -1754,6 +1754,45 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return obj;
     };
 
+    var booleanToString = function (flag) {
+        return String(flag).toLowerCase();
+    };
+
+    var isDefined = function (obj) {
+        return !_.isUndefined(obj);
+    };
+
+    var isLooseEqual = function (itemA, itemB) {
+        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
+            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
+
+        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
+        // and I've already cast the objects to strings anyway
+        if (normalizedA === normalizedB)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    var isShallowObject = function (obj) {
+        var shallow = true;
+
+        _.each(obj, function (index, item) {
+            window.console.log('args', arguments);
+
+            var value = obj[item];
+
+            if (_.isObject(value))
+            {
+                shallow = false;
+            }
+        });
+
+        return shallow;
+    };
+
     //only supports shallow objects right now
     var objectToArray = function (obj) {
         var outputArray = [];
@@ -1814,9 +1853,16 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var objectToPipeString = function (obj, delimiter) {
         var properties = [];
 
-        for (var prop in obj)
+        if (isShallowObject(obj))
         {
-            properties.push(prop + '=' + obj[prop]);
+            _.each(obj, function (value, key) {
+                properties.push(key + '=' + value);
+            });
+        }
+        else
+        {
+            throw new Error("The first argument you supplied to objectToPipeString() was not a " +
+                "valid object. The objectToPipeString() method only supports a shallow object of strings and numbers.");
         }
 
         return properties.join(delimiter || '|');
@@ -1925,28 +1971,6 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
 
     var stringToBoolean = function (flag) {
         return (flag === 'true') ? true : false;
-    };
-
-    var booleanToString = function (flag) {
-        return String(flag).toLowerCase();
-    };
-
-    var isDefined = function (obj) {
-        return !_.isUndefined(obj);
-    };
-
-    var isLooseEqual = function (itemA, itemB) {
-        var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
-            normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
-
-        //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
-        // and I've already cast the objects to strings anyway
-        if (normalizedA === normalizedB)
-        {
-            return true;
-        }
-
-        return false;
     };
 
 
@@ -2496,7 +2520,7 @@ define('player/iframe',['utils', 'underscoreloader'], function (utils, _) {
 
     var playerIds = []; // stores the ids of the elements we find
 
-    var getPlayerAttributes = _.memoize(function (element) {
+    var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 
         if (element)
@@ -2537,7 +2561,7 @@ define('player/iframe',['utils', 'underscoreloader'], function (utils, _) {
         }
 
         return playerAttributes;
-    });
+    };
 
 
     var injectIframe = function (element, attributes, iframeURL) {
@@ -3790,6 +3814,13 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
         return _match(system.engine, name, version);
     };
 
+    /**
+     * Iterates over the provided list and when the value to match is loosely equal, we return true that we found
+     * a match
+     * @param list
+     * @param valueToMatch
+     * @returns {boolean}
+     */
     var checkMatch = function (list, valueToMatch) {
         var matched = false;
 
@@ -3871,6 +3902,31 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
 
     return system;
 });
+/*global define */
+
+define('base64',[], function () {
+    
+
+    var jsonToBase64 = function (objectToEncode) {
+        var jsonString = JSON.stringify(objectToEncode);
+        var base64String = btoa(jsonString);
+
+        return base64String;
+    };
+
+    var base64ToJSON = function (base64String) {
+        var jsonString = atob(base64String);
+        var json = JSON.parse(jsonString);
+
+        return json;
+    };
+
+    // Public API
+    return  {
+        jsonToBase64: jsonToBase64,
+        base64ToJSON: base64ToJSON
+    };
+});
 /*global define, _ */
 
 define('foxneod',[
@@ -3879,10 +3935,11 @@ define('foxneod',[
     'polyfills',
     'utils',
     'player',
-    'system'], function (Dispatcher, Debug, polyfills, utils, player, system) {
+    'system',
+    'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     
 
-    var buildTimestamp = '2013-05-28 10:05:37';
+    var buildTimestamp = '2013-05-30 11:05:53';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3892,7 +3949,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-28 10:05:37)');
+        debug.log('ready (build date: 2013-05-30 11:05:53)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3908,7 +3965,7 @@ define('foxneod',[
     return {
         version: '0.1.7',
         packageName: 'foxneod',
-        buildDate: '2013-05-28 10:05:37',
+        buildDate: '2013-05-30 11:05:53',
         init: init,
         player: player,
         utils: utils,
@@ -3916,7 +3973,10 @@ define('foxneod',[
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         removeEventListener: dispatcher.removeEventListener,
-        system: system
+        system: system,
+        __test__: {
+            base64: base64
+        }
     };
 });
 /*global require, requirejs, console */
@@ -3935,13 +3995,12 @@ require([
     var dispatcher = new Dispatcher(),
         debug = new Debug('core');
 
-    window.jQuery = jquery;
-    window._ = underscore;
-    debug.log('jQuery version after noConflict is', jquery().jquery);
-    debug.log('Underscore version after noConflict is', underscore.VERSION);
-//    debug.log('Modernizr ready', modernizr);
-
     (function () {
+        window.jQuery = jquery;
+        window._ = underscore;
+        debug.log('jQuery version after noConflict is', jquery().jquery);
+        debug.log('Underscore version after noConflict is', underscore.VERSION);
+
         window.FoxNEOD = window.$f = foxneod;
         foxneod.init();
         dispatcher.dispatch('ready', {}, true);
