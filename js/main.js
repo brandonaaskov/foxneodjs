@@ -20,7 +20,7 @@ require([
         debug.log('jQuery version after noConflict is', jquery().jquery);
         debug.log('Underscore version after noConflict is', underscore.VERSION);
 
-        window.FoxNEOD = window.$f = foxneod;
+        window['@@packageName'] = window.$f = foxneod;
         foxneod.init();
         dispatcher.dispatch('ready', {}, true);
         debug.log('foxneod assigned to window.FoxNEOD and window.$f');
