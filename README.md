@@ -20,16 +20,16 @@ If you find that you need to access a global, please access it through a referen
 * If you're writing a constructor function (meaning the intent is to create new instances using the `new` keyword), name the module with a capital letter and make sure that it actually returns a function
 * If your module isn't a constructor function, to expose the methods you want other modules to be able to use, just return them in an object (see any existing module as an example)
 	* If there are functions that you don't want to expose, but need to be tested for unit testing, please expose them in a `__test__` object:
-	```javascript
-	//Public API
-	return {
-		play: player.play,
-		something: myFunctionName,
-		__test__: {
-			secretThing: secretFunction
-		}	
-	};
-	```
+```javascript
+//Public API
+return {
+	play: player.play,
+	something: myFunctionName,
+	__test__: {
+		secretThing: secretFunction
+	}	
+};
+```
 * Use an underscore before any variable or method names if you want to make it clear to another developer to not modify the contents
 * No single variable names - if you use a single variable name, I'm going to assume you either work for Omniture or hate the concept of find/replace.
 	* Furthermore, don't be afraid of descriptive names. We're compressing all of this javascript, so keep readability for developers in mind and don't be concerned over bits
