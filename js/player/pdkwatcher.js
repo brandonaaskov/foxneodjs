@@ -6,7 +6,7 @@ define(['Debug', 'jqueryloader', 'underscoreloader'], function (Debug, jquery, _
     var debug = new Debug('pdkwatcher'),
     _deferred = jquery.Deferred();
 
-    //yuck... so ghetto
+    //yuck... so ghetto (the PDK should dispatch an event when it's ready)
     var interval = setInterval(function () {
         if (window.$pdk && _.has(window.$pdk, 'controller'))
         {

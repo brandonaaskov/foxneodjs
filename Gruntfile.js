@@ -5,7 +5,10 @@
 
     module.exports = function (grunt) {
         var packageJSON = grunt.file.readJSON('package.json');
-        var timestamp = new Date().getTime();
+        var timestamp = function () {
+            return new Date().getTime();
+        };
+
         var _tokenReplacements = [
             {
                 from: '@@packageName',
@@ -18,14 +21,14 @@
             {
                 from: '@@buildDate',
                 to: function () {
-                    var buildDate = grunt.template.date(timestamp, "yyyy-mm-dd hh:mm:ss");
+                    var buildDate = grunt.template.date(timestamp(), "yyyy-mm-dd hh:mm:ss");
 
                     return buildDate;
                 }
             },
             {
                 from: '@@timestamp',
-                to: timestamp
+                to: timestamp()
             },
             {
                 from: '@@debugMode',

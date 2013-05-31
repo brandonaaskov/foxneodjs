@@ -26,8 +26,31 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return obj;
     };
 
+    //only supports shallow objects right now
+    var objectToArray = function (obj) {
+        var outputArray = [];
+
+        _.each(obj, function (value, key) {
+            if (!_.isObject(value))
+            {
+                outputArray.push(key +'='+ value);
+            }
+            else
+            {
+                throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
+                    "shallow object");
+            }
+        });
+
+        return outputArray;
+    };
+
     var booleanToString = function (flag) {
         return String(flag).toLowerCase();
+    };
+
+    var stringToBoolean = function (flag) {
+        return (flag === 'true') ? true : false;
     };
 
     var isDefined = function (obj) {
@@ -75,25 +98,6 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         }
 
         return false;
-    };
-
-    //only supports shallow objects right now
-    var objectToArray = function (obj) {
-        var outputArray = [];
-
-        _.each(obj, function (value, key) {
-            if (!_.isObject(value))
-            {
-                outputArray.push(key +'='+ value);
-            }
-            else
-            {
-                throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
-                    "shallow object");
-            }
-        });
-
-        return outputArray;
     };
 
     /**
@@ -263,10 +267,6 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         }
 
         return text;
-    };
-
-    var stringToBoolean = function (flag) {
-        return (flag === 'true') ? true : false;
     };
 
 

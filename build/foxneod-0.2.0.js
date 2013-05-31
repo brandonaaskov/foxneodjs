@@ -1754,8 +1754,31 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return obj;
     };
 
+    //only supports shallow objects right now
+    var objectToArray = function (obj) {
+        var outputArray = [];
+
+        _.each(obj, function (value, key) {
+            if (!_.isObject(value))
+            {
+                outputArray.push(key +'='+ value);
+            }
+            else
+            {
+                throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
+                    "shallow object");
+            }
+        });
+
+        return outputArray;
+    };
+
     var booleanToString = function (flag) {
         return String(flag).toLowerCase();
+    };
+
+    var stringToBoolean = function (flag) {
+        return (flag === 'true') ? true : false;
     };
 
     var isDefined = function (obj) {
@@ -1803,25 +1826,6 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         }
 
         return false;
-    };
-
-    //only supports shallow objects right now
-    var objectToArray = function (obj) {
-        var outputArray = [];
-
-        _.each(obj, function (value, key) {
-            if (!_.isObject(value))
-            {
-                outputArray.push(key +'='+ value);
-            }
-            else
-            {
-                throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
-                    "shallow object");
-            }
-        });
-
-        return outputArray;
     };
 
     /**
@@ -1991,10 +1995,6 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         }
 
         return text;
-    };
-
-    var stringToBoolean = function (flag) {
-        return (flag === 'true') ? true : false;
     };
 
 
@@ -2462,7 +2462,7 @@ define('player/pdkwatcher',['Debug', 'jqueryloader', 'underscoreloader'], functi
     var debug = new Debug('pdkwatcher'),
     _deferred = jquery.Deferred();
 
-    //yuck... so ghetto
+    //yuck... so ghetto (the PDK should dispatch an event when it's ready)
     var interval = setInterval(function () {
         if (window.$pdk && _.has(window.$pdk, 'controller'))
         {
@@ -3213,8 +3213,10 @@ define('player',['require',
         //if guid, load guid from feed
     };
 
-    function constructor () {
+    function init () {
+        debug.log('init');
         ovp.addEventListener('ready', function () {
+            window.alert('asdfasdfsadf');
             ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
                 if (!event.data.baseClip.isAd)
                 {
@@ -3230,17 +3232,9 @@ define('player',['require',
         });
     }
 
-    var hide = function () {
-
-    };
-
-    var show = function () {
-
-    };
-
     //---------------------------------------------- init
     (function () {
-        constructor();
+        init();
     })();
     //---------------------------------------------- /init
 
@@ -3973,7 +3967,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     
 
-    var buildTimestamp = '2013-05-31 02:05:59';
+    var buildTimestamp = '2013-05-31 03:05:18';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3983,7 +3977,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-31 02:05:59)');
+        debug.log('ready (build date: 2013-05-31 03:05:18)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3999,7 +3993,7 @@ define('foxneod',[
     return {
         version: '0.2.0',
         packageName: 'foxneod',
-        buildDate: '2013-05-31 02:05:59',
+        buildDate: '2013-05-31 03:05:18',
         init: init,
         player: player,
         utils: utils,

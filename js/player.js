@@ -51,8 +51,10 @@ define(['require',
         //if guid, load guid from feed
     };
 
-    function constructor () {
+    function init () {
+        debug.log('init');
         ovp.addEventListener('ready', function () {
+            window.alert('asdfasdfsadf');
             ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
                 if (!event.data.baseClip.isAd)
                 {
@@ -68,17 +70,9 @@ define(['require',
         });
     }
 
-    var hide = function () {
-
-    };
-
-    var show = function () {
-
-    };
-
     //---------------------------------------------- init
     (function () {
-        constructor();
+        init();
     })();
     //---------------------------------------------- /init
 
