@@ -52,8 +52,6 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         var shallow = true;
 
         _.each(obj, function (index, item) {
-            window.console.log('args', arguments);
-
             var value = obj[item];
 
             if (_.isObject(value))
@@ -65,21 +63,35 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return shallow;
     };
 
+    var isTrueObject = function (obj) {
+        if (_.isUndefined(obj))
+        {
+            throw new Error("The value you supplied to isTrueObject() was undefined");
+        }
+
+        if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj))
+        {
+            return true;
+        }
+
+        return false;
+    };
+
     //only supports shallow objects right now
     var objectToArray = function (obj) {
         var outputArray = [];
 
-        for (var prop in obj)
-        {
-            if (!(_.isObject(obj[prop]) || _.isArray(obj[prop])))
+        _.each(obj, function (value, key) {
+            if (!_.isObject(value))
             {
-                outputArray.push(prop + '=' + obj[prop]);
+                outputArray.push(key +'='+ value);
             }
             else
             {
-                throw new Error('objectToArray only supports shallow objects (no nested objects or arrays).');
+                throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
+                    "shallow object");
             }
-        }
+        });
 
         return outputArray;
     };
@@ -143,10 +155,22 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var lowerCasePropertyNames = function (obj) { //only does a shallow lookup
         var output = {};
 
-        for (var prop in obj)
-        {
-            output[prop.toLowerCase()] = obj[prop];
-        }
+//        for (var prop in obj)
+//        {
+//            output[prop.toLowerCase()] = obj[prop];
+//        }
+//
+        _.each(obj, function (value, key) {
+
+            //it's just a true object (i.e. {})
+            if (_.isObject(value) && !_.isFunction(value) && !_.isArray(value))
+            {
+//                throw new Error("lowerCasePropertyNames() only supports a shallow object.");
+                value = lowerCasePropertyNames(value);
+            }
+
+            output[key.toLowerCase()] = value;
+        });
 
         return output;
     };
@@ -396,7 +420,9 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
             getQueryParams: getQueryParams,
             paramExists: paramExists,
             isDefined: isDefined,
-            isLooseEqual: isLooseEqual
+            isLooseEqual: isLooseEqual,
+            isShallowObject: isShallowObject,
+            isTrueObject: isTrueObject
         });
     })();
 
@@ -419,6 +445,8 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         paramExists: paramExists,
         isDefined: isDefined,
         isLooseEqual: isLooseEqual,
+        isShallowObject: isShallowObject,
+        isTrueObject: isTrueObject,
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,

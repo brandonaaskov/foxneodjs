@@ -1,20 +1,21 @@
 /*global define, _ */
 
-define(['utils', 'underscoreloader'], function (utils, _) {
+define(['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
     'use strict';
 
+    var debug = new Debug('player/iframe');
     var playerIds = []; // stores the ids of the elements we find
 
     var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 
-        if (element)
+        if (_.isDefined(element))
         {
             if (!_.isElement(element))
             {
                 throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
                     "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
-                    "the element that you need. We try to not to depend on jQuery where we don't have to");
+                    "the element that you need. We try to not to depend on jQuery where we don't have to.");
             }
 
             var allAttributes = element.attributes;
@@ -43,6 +44,11 @@ define(['utils', 'underscoreloader'], function (utils, _) {
                     playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
                 }
             }
+        }
+        else
+        {
+            debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
+                "undefined. Thought you should know since it's probably giving you a headache by now :)");
         }
 
         return playerAttributes;

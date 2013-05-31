@@ -1780,8 +1780,6 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         var shallow = true;
 
         _.each(obj, function (index, item) {
-            window.console.log('args', arguments);
-
             var value = obj[item];
 
             if (_.isObject(value))
@@ -1793,21 +1791,35 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return shallow;
     };
 
+    var isTrueObject = function (obj) {
+        if (_.isUndefined(obj))
+        {
+            throw new Error("The value you supplied to isTrueObject() was undefined");
+        }
+
+        if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj))
+        {
+            return true;
+        }
+
+        return false;
+    };
+
     //only supports shallow objects right now
     var objectToArray = function (obj) {
         var outputArray = [];
 
-        for (var prop in obj)
-        {
-            if (!(_.isObject(obj[prop]) || _.isArray(obj[prop])))
+        _.each(obj, function (value, key) {
+            if (!_.isObject(value))
             {
-                outputArray.push(prop + '=' + obj[prop]);
+                outputArray.push(key +'='+ value);
             }
             else
             {
-                throw new Error('objectToArray only supports shallow objects (no nested objects or arrays).');
+                throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
+                    "shallow object");
             }
-        }
+        });
 
         return outputArray;
     };
@@ -1871,10 +1883,22 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var lowerCasePropertyNames = function (obj) { //only does a shallow lookup
         var output = {};
 
-        for (var prop in obj)
-        {
-            output[prop.toLowerCase()] = obj[prop];
-        }
+//        for (var prop in obj)
+//        {
+//            output[prop.toLowerCase()] = obj[prop];
+//        }
+//
+        _.each(obj, function (value, key) {
+
+            //it's just a true object (i.e. {})
+            if (_.isObject(value) && !_.isFunction(value) && !_.isArray(value))
+            {
+//                throw new Error("lowerCasePropertyNames() only supports a shallow object.");
+                value = lowerCasePropertyNames(value);
+            }
+
+            output[key.toLowerCase()] = value;
+        });
 
         return output;
     };
@@ -2124,7 +2148,9 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
             getQueryParams: getQueryParams,
             paramExists: paramExists,
             isDefined: isDefined,
-            isLooseEqual: isLooseEqual
+            isLooseEqual: isLooseEqual,
+            isShallowObject: isShallowObject,
+            isTrueObject: isTrueObject
         });
     })();
 
@@ -2147,6 +2173,8 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         paramExists: paramExists,
         isDefined: isDefined,
         isLooseEqual: isLooseEqual,
+        isShallowObject: isShallowObject,
+        isTrueObject: isTrueObject,
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,
@@ -2209,7 +2237,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.1.7: ';
+        var prefix = 'foxneod-0.2.0: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -2515,21 +2543,22 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
 });
 /*global define, _ */
 
-define('player/iframe',['utils', 'underscoreloader'], function (utils, _) {
+define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
     
 
+    var debug = new Debug('player/iframe');
     var playerIds = []; // stores the ids of the elements we find
 
     var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 
-        if (element)
+        if (_.isDefined(element))
         {
             if (!_.isElement(element))
             {
                 throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
                     "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
-                    "the element that you need. We try to not to depend on jQuery where we don't have to");
+                    "the element that you need. We try to not to depend on jQuery where we don't have to.");
             }
 
             var allAttributes = element.attributes;
@@ -2558,6 +2587,11 @@ define('player/iframe',['utils', 'underscoreloader'], function (utils, _) {
                     playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
                 }
             }
+        }
+        else
+        {
+            debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
+                "undefined. Thought you should know since it's probably giving you a headache by now :)");
         }
 
         return playerAttributes;
@@ -3939,7 +3973,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     
 
-    var buildTimestamp = '2013-05-30 11:05:53';
+    var buildTimestamp = '2013-05-31 01:05:52';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3949,7 +3983,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-30 11:05:53)');
+        debug.log('ready (build date: 2013-05-31 01:05:52)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3963,9 +3997,9 @@ define('foxneod',[
 
     // Public API
     return {
-        version: '0.1.7',
+        version: '0.2.0',
         packageName: 'foxneod',
-        buildDate: '2013-05-30 11:05:53',
+        buildDate: '2013-05-31 01:05:52',
         init: init,
         player: player,
         utils: utils,
@@ -4001,7 +4035,7 @@ require([
         debug.log('jQuery version after noConflict is', jquery().jquery);
         debug.log('Underscore version after noConflict is', underscore.VERSION);
 
-        window.FoxNEOD = window.$f = foxneod;
+        window['foxneod'] = window.$f = foxneod;
         foxneod.init();
         dispatcher.dispatch('ready', {}, true);
         debug.log('foxneod assigned to window.FoxNEOD and window.$f');

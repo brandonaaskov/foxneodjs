@@ -6,6 +6,45 @@
     module.exports = function (grunt) {
         var packageJSON = grunt.file.readJSON('package.json');
         var timestamp = new Date().getTime();
+        var _tokenReplacements = [
+            {
+                from: '@@packageName',
+                to: packageJSON.name
+            },
+            {
+                from: '@@version',
+                to: packageJSON.version
+            },
+            {
+                from: '@@buildDate',
+                to: function () {
+                    var buildDate = grunt.template.date(timestamp, "yyyy-mm-dd hh:mm:ss");
+
+                    return buildDate;
+                }
+            },
+            {
+                from: '@@timestamp',
+                to: timestamp
+            },
+            {
+                from: '@@debugMode',
+                to: packageJSON.debugMode
+            },
+            {
+                from: '@@debugMessagePrefix',
+                to: '<%= pkg.name %>-<%= pkg.version %>: '
+            },
+            {
+                from: '@@authors',
+                to: function () {
+                    return packageJSON.authors.join(',');
+                }
+            }
+        ];
+
+
+
 
         grunt.initConfig({
             pkg: packageJSON,
@@ -96,42 +135,12 @@
                 "in foxneod library": { //can be any name, might as well make it descriptive
                     src: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
                     dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
-                    replacements: [
-                        {
-                            from: '@@packageName',
-                            to: packageJSON.name
-                        },
-                        {
-                            from: '@@version',
-                            to: packageJSON.version
-                        },
-                        {
-                            from: '@@buildDate',
-                            to: function () {
-                                var buildDate = grunt.template.date(timestamp, "yyyy-mm-dd hh:mm:ss");
-
-                                return buildDate;
-                            }
-                        },
-                        {
-                            from: '@@timestamp',
-                            to: timestamp
-                        },
-                        {
-                            from: '@@debugMode',
-                            to: packageJSON.debugMode
-                        },
-                        {
-                            from: '@@debugMessagePrefix',
-                            to: '<%= pkg.name %>-<%= pkg.version %>: '
-                        },
-                        {
-                            from: '@@authors',
-                            to: function () {
-                                return packageJSON.authors.join(',');
-                            }
-                        }
-                    ]
+                    replacements: _tokenReplacements
+                },
+                "for versionless file": { //can be any name, might as well make it descriptive
+                    src: 'build/<%= pkg.name %>-<%= pkg.version %>.js',
+                    dest: 'build/<%= pkg.name %>.js',
+                    replacements: _tokenReplacements
                 }
             },
 
@@ -147,7 +156,8 @@
                 },
                 minification: {
                     files: {
-                        'build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['build/<%= pkg.name %>-<%= pkg.version %>.js']
+                        'build/<%= pkg.name %>-<%= pkg.version %>.min.js': ['build/<%= pkg.name %>-<%= pkg.version %>.js'],
+                        'build/<%= pkg.name %>.min.js': ['build/<%= pkg.name %>-<%= pkg.version %>.js']
                     }
                 }
             },
