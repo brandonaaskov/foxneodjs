@@ -10,6 +10,7 @@ Most questions you'll have about code can be found in the files as code comments
 * If you're going to use an iterator, use Underscore's `_.each()` method to loop through objects and lists alike (you don't have to use only `_.each()` as Underscore has [several fantastic collections functions](http://underscorejs.org/#collections))
 * If you're only using jQuery to _find_ an element (and not modify it or manipulate it), please use [`document.querySelector()`](https://developer.mozilla.org/en-US/docs/Web/API/Document.querySelector) or [`document.querySelectorAll()`](https://developer.mozilla.org/en-US/docs/Web/API/Document.querySelectorAll) instead
 * Do not add any global definitions to the head of a module other than the standard: 
+
 ```javascript
 /*global define, _ */
 ```
@@ -20,6 +21,7 @@ If you find that you need to access a global, please access it through a referen
 * If you're writing a constructor function (meaning the intent is to create new instances using the `new` keyword), name the module with a capital letter and make sure that it actually returns a function
 * If your module isn't a constructor function, to expose the methods you want other modules to be able to use, just return them in an object (see any existing module as an example)
 	* If there are functions that you don't want to expose, but need to be tested for unit testing, please expose them in a `__test__` object:
+	
 ```javascript
 //Public API
 return {

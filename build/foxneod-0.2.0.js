@@ -3967,7 +3967,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     
 
-    var buildTimestamp = '2013-05-31 03:05:18';
+    var buildTimestamp = '2013-05-31 01:05:22';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3977,7 +3977,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-05-31 03:05:18)');
+        debug.log('ready (build date: 2013-05-31 01:05:22)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3993,7 +3993,7 @@ define('foxneod',[
     return {
         version: '0.2.0',
         packageName: 'foxneod',
-        buildDate: '2013-05-31 03:05:18',
+        buildDate: '2013-05-31 01:05:22',
         init: init,
         player: player,
         utils: utils,
