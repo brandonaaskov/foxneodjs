@@ -3302,37 +3302,21 @@ define('player',['require',
 });
 /*global define, _ */
 
-define('query',['Debug'], function (Debug) {
+define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
     
 
     var debug = new Debug('query'),
-        _defaults = {
-            feedURL: 'http://feed.theplatform.com/f/fox.com/videos'
+        _defaultConfig = {
+            feedURL: 'http://feed.theplatform.com/f/fox.com/videos',
+            fields: [
+                'id',
+                'title',
+                'expirationDate',
+                'content',
+                'thumbnails'
+            ]
         },
         _config = {};
-
-    var getVideo = function (obj) {
-        if (isFeedURL(obj)) //feed, releaseURL, release, guid
-        {
-            var feedURL = _.removeQueryParams(obj);
-            feedURL += '?range=1-1';
-        }
-        else if (isReleaseURL(obj))
-        {
-            var releaseURL = _.removeQueryParams(obj);
-        }
-        else if (_.isNumber(obj) && _.isFinite(obj)) //id
-        {
-            return; //TODO remove this
-        }
-
-
-        //release
-
-        //guid
-
-        //id
-    };
 
     var isFeedURL = function (url) {
         if (_.isString(url) && _.isURL(url) && url.indexOf('feed.theplatform.com') !== -1)
@@ -3352,17 +3336,73 @@ define('query',['Debug'], function (Debug) {
         return false;
     };
 
-    var getFeedDetails = function () {};
+    var isGuid = function (guid) {
+        var regex = /^\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?$/i;
+
+        return regex.test(guid);
+    };
+
+    var getFeedDetails = function (feedURL) {
+        if (_.isFeedURL(feedURL))
+        {
+            jquery.ajax({
+                url: feedURL
+            }).done(function () {
+                debug.log('done', arguments);
+            });
+        }
+    };
+
+    var getVideo = function (obj) {
+        var video = {};
+
+        if (isFeedURL(obj)) //feed url
+        {
+            var feedURL = _.removeQueryParams(obj);
+            feedURL += '?range=1-1';
+        }
+        else if (isReleaseURL(obj)) //release url
+        {
+            var releaseURL = _.removeQueryParams(obj);
+        }
+        else if (isGuid(obj)) //guid
+        {
+            var guid = _.removeQueryParams(obj);
+        }
+        else if (_.isString(obj)) //release
+        {
+            _.noop(); //TODO remove this
+        }
+        else if (_.isNumber(obj) && _.isFinite(obj)) //id
+        {
+            _.noop(); //TODO remove this
+        }
+
+        //just throw this warning for developers so they can debug more easily
+        if (_.isEmpty(video))
+        {
+            debug.warn("getVideo() returned an empty object... so something went wrong along the way");
+        }
+
+        return video;
+    };
+
 
 
     function init (config) {
         if (_.isDefined(config))
         {
-            _config = _.defaults(config, _defaults); //apply defaults to any null/undefined values
+            _config = _.defaults(config, _defaultConfig); //apply defaults to any null/undefined values
         }
     }
 
-    return {};
+    return {
+        getVideo: getVideo,
+        getFeedDetails: getFeedDetails,
+        isFeedURL: isFeedURL,
+        isReleaseURL: isReleaseURL,
+        isGuid: isGuid
+    };
 });
 /*global define, _ */
 
@@ -4066,7 +4106,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     
 
-    var buildTimestamp = '2013-06-03 01:06:43';
+    var buildTimestamp = '2013-06-03 09:06:37';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4076,7 +4116,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-03 01:06:43)');
+        debug.log('ready (build date: 2013-06-03 09:06:37)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4092,7 +4132,7 @@ define('foxneod',[
     return {
         version: '0.3.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-03 01:06:43',
+        buildDate: '2013-06-03 09:06:37',
         init: init,
         player: player,
         query: query,
