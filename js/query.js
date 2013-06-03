@@ -43,35 +43,34 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
     var getFeedDetails = function (feedURL) {
         if (_.isFeedURL(feedURL))
         {
-            jquery.ajax({
-                url: feedURL
-            }).done(function () {
-                debug.log('done', arguments);
-            });
+            _.noop(); //TODO remove this
         }
     };
 
-    var getVideo = function (obj) {
+    var getVideo = function (obj, callback) {
         var video = {};
+        var deferred = jquery.Deferred();
 
         if (isFeedURL(obj)) //feed url
         {
             var feedURL = _.removeQueryParams(obj);
-            feedURL += '?range=1-1';
+            feedURL += '?form=json&range=1-1';
+
+            return _makeRequest(feedURL, callback);
         }
         else if (isReleaseURL(obj)) //release url
         {
             var releaseURL = _.removeQueryParams(obj);
         }
-        else if (isGuid(obj)) //guid
+        else if (isGuid(obj)) //true guid
         {
             var guid = _.removeQueryParams(obj);
         }
-        else if (_.isString(obj)) //release
+        else if (_.isFinite(obj)) //id
         {
             _.noop(); //TODO remove this
         }
-        else if (_.isNumber(obj) && _.isFinite(obj)) //id
+        else if (_.isString(obj)) //release, guid
         {
             _.noop(); //TODO remove this
         }
@@ -84,6 +83,39 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
 
         return video;
     };
+
+    function _makeRequest (requestURL, callback) {
+        var deferred = jquery.Deferred();
+
+        if (_.isURL(requestURL))
+        {
+            var jqxhr = jquery.get(requestURL)
+                .done(function (jsonString) {
+                    try {
+                        var json = JSON.parse(jsonString);
+                        deferred.done(json);
+
+                        if (_.isFunction(callback))
+                        {
+                            callback.apply(window['@@packageName'], [json]);
+                        }
+                    }
+                    catch (error)
+                    {
+                        deferred.fail(JSON.parse(error));
+                    }
+                })
+                .fail(function (error) {
+                    debug.log('failed', arguments);
+                    deferred.fail(JSON.parse(error));
+                })
+                .always(function () {
+                    debug.log('always logged', arguments);
+                });
+        }
+
+        return deferred;
+    }
 
 
 

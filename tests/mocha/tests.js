@@ -101,13 +101,115 @@
 
             suite('stringToBoolean()', function () {});
 
-            suite('isDefined()', function () {});
+            suite('isDefined()', function () {
+                test('No arguments returns false', function () {
+                    assert.strictEqual(_.isDefined(), false);
+                });
+
+                test('Passing in undefined returns false', function () {
+                    assert.strictEqual(_.isDefined(undefined), false);
+                });
+
+                test('Passing in null returns false', function () {
+                    assert.strictEqual(_.isDefined(null), false);
+                });
+
+                test('Passing in true returns true', function () {
+                    assert.strictEqual(_.isDefined(true), true);
+                });
+
+                test('Passing in an empty object returns true', function () {
+                    assert.strictEqual(_.isDefined({}), true);
+                });
+
+                test('Passing in an empty object with isEmpty check returns false', function () {
+                    assert.strictEqual(_.isDefined({}, true), false);
+                });
+
+                test('Passing in an empty string returns true', function () {
+                    assert.strictEqual(_.isDefined(''), true);
+                });
+
+                test('Passing in an empty string with isEmpty check returns false', function () {
+                    assert.strictEqual(_.isDefined('', true), false);
+                });
+
+                test('Passing in an empty array returns true', function () {
+                    assert.strictEqual(_.isDefined([]), true);
+                });
+
+                test('Passing in an empty array with isEmpty check returns false', function () {
+                    assert.strictEqual(_.isDefined([], true), false);
+                });
+
+                test('Passing in function returns true', function () {
+                    assert.strictEqual(_.isDefined(function(){}), true);
+                });
+
+                test('Passing in an element returns true', function () {
+                    assert.strictEqual(_.isDefined(document.querySelector('body')), true);
+                });
+
+                test('Passing in a jQuery object returns true', function () {
+                    assert.strictEqual(_.isDefined(jQuery('body')), true);
+                });
+            });
 
             suite('isLooseEqual()', function () {});
 
             suite('isShallowObject()', function () {});
 
             suite('isTrueObject()', function () {});
+
+            suite('isURL()', function () {
+                test('Passing in nothing returns false', function () {
+                    assert.strictEqual(_.isURL(), false);
+                });
+
+                test('Passing in null returns false', function () {
+                    assert.strictEqual(_.isURL(null), false);
+                });
+
+                test('Passing in undefined returns false', function () {
+                    assert.strictEqual(_.isURL(undefined), false);
+                });
+
+                test('Passing in an empty string returns false', function () {
+                    assert.strictEqual(_.isURL(''), false);
+                });
+
+                test('Passing in a number returns false', function () {
+                    assert.strictEqual(_.isURL(25), false);
+                });
+
+                test('Passing in an empty array returns false', function () {
+                    assert.strictEqual(_.isURL([]), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isURL({}), false);
+                });
+
+                test('Passing in a function returns false', function () {
+                    assert.strictEqual(_.isURL(function () {}), false);
+                });
+
+                test('Passing in an valid url (with "www") returns true', function () {
+                    assert.strictEqual(_.isURL('http://www.google.com'), true);
+                });
+
+                test('Passing in an valid url (no "www") returns true', function () {
+                    assert.strictEqual(_.isURL('http://feed.theplatform.com'), true);
+                });
+
+                test('Passing in an valid https url returns true', function () {
+                    assert.strictEqual(_.isURL('https://feed.theplatform.com'), true);
+                });
+
+                test('Passing in an valid url with query params returns true', function () {
+                    assert.strictEqual(_.isURL('http://feed.theplatform.com?form=json&range=1-1'), true);
+                });
+            });
 
             suite('getKeyFromValue()', function () {
                 var testObject = {
@@ -460,13 +562,25 @@
 
         //------------------------------------------------------------------------------------- player
         suite('player', function () {
-
             suite('getPlayerAttributes', function () {
-                jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true' +
-                    '|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true' +
-                    '|siteSection=myFWSiteSection"></div>');
 
-                var element = document.querySelector('#playerID');
+                beforeEach(function () {
+                    jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
+
+                    // add multiple players
+                    jQuery('#players')
+                        .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/c8_9hFRvZiQB?mbr=true|siteSection=myFWSiteSection"></div>')
+                        .append('<div class="player" data-player="autoplay=true|width=400|height=200|fb=true|releaseURL=http://link.theplatform.com/s/btn/tKi4ID3iI0Tm?mbr=true|siteSection=myFWSiteSection"></div>')
+                        .append('<div class="player" data-player="autoplay=true|width=720|height=480|fb=true|releaseURL=http://link.theplatform.com/s/btn/jivltGVCLTXU?mbr=true|siteSection=myFWSiteSection"></div>')
+                        .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/8rjdPiR1XR_3?mbr=true|siteSection=myFWSiteSection"></div>')
+                        .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/4EfeflYQCTPm?mbr=true|siteSection=myFWSiteSection"></div>');
+                });
+
+                afterEach(function () {
+                    jQuery('#player').empty();
+                    jQuery('#players').empty();
+                });
+
                 var expected = {
                     autoplay: 'true',
                     width: '640',
@@ -483,7 +597,7 @@
                     "the element that you need. We try to not to depend on jQuery where we don't have to.";
 
                 test('converts data-player attributes pipe-separated kv pairs and adds iframeheight and iframewidth', function () {
-                    var elementAttributes = $f.player.__test__.getPlayerAttributes(element);
+                    var elementAttributes = $f.player.__test__.getPlayerAttributes(document.querySelector('#playerID'));
                     assert.deepEqual(elementAttributes, expected, 'getPlayerAttributes returned an object');
                 });
 
@@ -494,14 +608,6 @@
                 });
 
                 test('Throws an error when an array of elements is supplied', function () {
-                    // add multiple players
-                    jQuery('#players')
-                        .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/c8_9hFRvZiQB?mbr=true|siteSection=myFWSiteSection"></div>')
-                        .append('<div class="player" data-player="autoplay=true|width=400|height=200|fb=true|releaseURL=http://link.theplatform.com/s/btn/tKi4ID3iI0Tm?mbr=true|siteSection=myFWSiteSection"></div>')
-                        .append('<div class="player" data-player="autoplay=true|width=720|height=480|fb=true|releaseURL=http://link.theplatform.com/s/btn/jivltGVCLTXU?mbr=true|siteSection=myFWSiteSection"></div>')
-                        .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/8rjdPiR1XR_3?mbr=true|siteSection=myFWSiteSection"></div>')
-                        .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/4EfeflYQCTPm?mbr=true|siteSection=myFWSiteSection"></div>');
-
                     assert.throws(function () {
                         $f.player.__test__.getPlayerAttributes(document.querySelectorAll('.player'));
                     }, noElementError);
@@ -569,6 +675,59 @@
         //------------------------------------------------------------------------------------- /player
 
 
+        //------------------------------------------------------------------------------------- query
+        suite('query', function () {
+            suite('isGuid()', function () {
+                test('Passing in nothing returns false', function () {
+                    assert.strictEqual($f.query.isGuid(), false);
+                });
+
+                test('Passing in an empty string returns false', function () {
+                    assert.strictEqual($f.query.isGuid(''), false);
+                });
+
+                test('Passing in null returns false', function () {
+                    assert.strictEqual($f.query.isGuid(null), false);
+                });
+
+                test('Passing in undefined returns false', function () {
+                    assert.strictEqual($f.query.isGuid(undefined), false);
+                });
+
+                test('Passing in a number returns false', function () {
+                    assert.strictEqual($f.query.isGuid(25), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual($f.query.isGuid({}), false);
+                });
+
+                test('Passing in an empty array returns false', function () {
+                    assert.strictEqual($f.query.isGuid([]), false);
+                });
+
+                test('Passing in a real string (with spaces) returns false', function () {
+                    assert.strictEqual($f.query.isGuid('this is a real string'), false);
+                });
+
+                test('Passing in a real string (without spaces) returns false', function () {
+                    assert.strictEqual($f.query.isGuid('thisisarealstring'), false);
+                });
+
+                test('Passing in a real string (without spaces and 4 hyphens) returns false', function () {
+                    assert.strictEqual($f.query.isGuid('this-is-a-real-string'), false);
+                });
+
+                test('Passing in almost a real guid (one missing character) returns false', function () {
+                    assert.strictEqual($f.query.isGuid('bd24bca-f2b9-407c-b6e9-f1d650b10e86'), false);
+                });
+
+                test('Passing in a real guid returns true', function () {
+                    assert.strictEqual($f.query.isGuid('bd324bca-f2b9-407c-b6e9-f1d650b10e86'), true);
+                });
+            });
+        });
+        //------------------------------------------------------------------------------------- /query
 
         //------------------------------------------------------------------------------------- Debug
         suite('Debug', function () {

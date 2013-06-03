@@ -1781,8 +1781,27 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return (flag === 'true') ? true : false;
     };
 
-    var isDefined = function (obj) {
-        return !_.isUndefined(obj);
+    var isDefined = function (obj, checkEmpty) {
+
+        if (_.isUndefined(obj))
+        {
+            return false;
+        }
+
+        if (_.isNull(obj))
+        {
+            return false;
+        }
+
+        if (checkEmpty)
+        {
+            if (_.isEmpty(obj))
+            {
+                return false;
+            }
+        }
+
+        return true;
     };
 
     var isLooseEqual = function (itemA, itemB) {
@@ -1829,7 +1848,17 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var isURL = function (url) {
-        var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        if (_.isUndefined(url) || _.isEmpty(url))
+        {
+            return false;
+        }
+
+        if (!_.isString(url))
+        {
+            return false;
+        }
+
+        var urlRegex = /^(https?:\/\/)?(www)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
 
         return urlRegex.test(url);
     };
@@ -3345,35 +3374,34 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
     var getFeedDetails = function (feedURL) {
         if (_.isFeedURL(feedURL))
         {
-            jquery.ajax({
-                url: feedURL
-            }).done(function () {
-                debug.log('done', arguments);
-            });
+            _.noop(); //TODO remove this
         }
     };
 
-    var getVideo = function (obj) {
+    var getVideo = function (obj, callback) {
         var video = {};
+        var deferred = jquery.Deferred();
 
         if (isFeedURL(obj)) //feed url
         {
             var feedURL = _.removeQueryParams(obj);
-            feedURL += '?range=1-1';
+            feedURL += '?form=json&range=1-1';
+
+            return _makeRequest(feedURL, callback);
         }
         else if (isReleaseURL(obj)) //release url
         {
             var releaseURL = _.removeQueryParams(obj);
         }
-        else if (isGuid(obj)) //guid
+        else if (isGuid(obj)) //true guid
         {
             var guid = _.removeQueryParams(obj);
         }
-        else if (_.isString(obj)) //release
+        else if (_.isFinite(obj)) //id
         {
             _.noop(); //TODO remove this
         }
-        else if (_.isNumber(obj) && _.isFinite(obj)) //id
+        else if (_.isString(obj)) //release, guid
         {
             _.noop(); //TODO remove this
         }
@@ -3386,6 +3414,39 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
 
         return video;
     };
+
+    function _makeRequest (requestURL, callback) {
+        var deferred = jquery.Deferred();
+
+        if (_.isURL(requestURL))
+        {
+            var jqxhr = jquery.get(requestURL)
+                .done(function (jsonString) {
+                    try {
+                        var json = JSON.parse(jsonString);
+                        deferred.done(json);
+
+                        if (_.isFunction(callback))
+                        {
+                            callback.apply(window['foxneod'], [json]);
+                        }
+                    }
+                    catch (error)
+                    {
+                        deferred.fail(JSON.parse(error));
+                    }
+                })
+                .fail(function (error) {
+                    debug.log('failed', arguments);
+                    deferred.fail(JSON.parse(error));
+                })
+                .always(function () {
+                    debug.log('always logged', arguments);
+                });
+        }
+
+        return deferred;
+    }
 
 
 
@@ -4106,7 +4167,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     
 
-    var buildTimestamp = '2013-06-03 09:06:37';
+    var buildTimestamp = '2013-06-03 02:06:24';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4116,7 +4177,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-03 09:06:37)');
+        debug.log('ready (build date: 2013-06-03 02:06:24)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4132,7 +4193,7 @@ define('foxneod',[
     return {
         version: '0.3.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-03 09:06:37',
+        buildDate: '2013-06-03 02:06:24',
         init: init,
         player: player,
         query: query,

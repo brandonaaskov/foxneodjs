@@ -53,8 +53,27 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return (flag === 'true') ? true : false;
     };
 
-    var isDefined = function (obj) {
-        return !_.isUndefined(obj);
+    var isDefined = function (obj, checkEmpty) {
+
+        if (_.isUndefined(obj))
+        {
+            return false;
+        }
+
+        if (_.isNull(obj))
+        {
+            return false;
+        }
+
+        if (checkEmpty)
+        {
+            if (_.isEmpty(obj))
+            {
+                return false;
+            }
+        }
+
+        return true;
     };
 
     var isLooseEqual = function (itemA, itemB) {
@@ -101,7 +120,17 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var isURL = function (url) {
-        var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+        if (_.isUndefined(url) || _.isEmpty(url))
+        {
+            return false;
+        }
+
+        if (!_.isString(url))
+        {
+            return false;
+        }
+
+        var urlRegex = /^(https?:\/\/)?(www)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
 
         return urlRegex.test(url);
     };
