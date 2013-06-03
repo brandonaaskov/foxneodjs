@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['underscore'], function () {
+define(['lib/underscore/underscore'], function () {
     'use strict';
 
     return _.noConflict();

@@ -1671,11 +1671,11 @@ define('jqueryloader',['lib/jquery/jquery-1.9.1.min'], function () {
 
 }).call(this);
 
-define("underscore", function(){});
+define("lib/underscore/underscore", function(){});
 
 /*global define, _ */
 
-define('underscoreloader',['underscore'], function () {
+define('underscoreloader',['lib/underscore/underscore'], function () {
     
 
     return _.noConflict();
@@ -3966,7 +3966,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
     
 
-    var buildTimestamp = '2013-06-01 11:06:53';
+    var buildTimestamp = '2013-06-03 12:06:56';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -3976,7 +3976,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-01 11:06:53)');
+        debug.log('ready (build date: 2013-06-03 12:06:56)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -3992,7 +3992,7 @@ define('foxneod',[
     return {
         version: '0.2.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-01 11:06:53',
+        buildDate: '2013-06-03 12:06:56',
         init: init,
         player: player,
         utils: utils,

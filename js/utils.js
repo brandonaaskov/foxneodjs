@@ -100,6 +100,12 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return false;
     };
 
+    var isURL = function (url) {
+        var urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+
+        return urlRegex.test(url);
+    };
+
     /**
      * Loops through the provided object (shallow) and when value matches, the key is returned.
      * @param obj
@@ -338,6 +344,31 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return queryParamsObject;
     };
 
+    var removeQueryParams = function (url) {
+        var cleanedURL = '';
+
+        if (_.isDefined(url) && _.isURL(url))
+        {
+            cleanedURL = url;
+
+            if (url.indexOf('?') !== -1)
+            {
+                cleanedURL = url.split('?')[0];
+            }
+            else
+            {
+                cleanedURL = url;
+            }
+        }
+
+//        if (_.isEmpty(cleanedURL))
+//        {
+//            debug.warn("For whatever reason, the URL supplied to removeQueryParams() ended up returning an empty string.");
+//        }
+
+        return cleanedURL;
+    };
+
     var getParamValue = function (key, url) {
         var queryParams = getQueryParams(url);
 
@@ -418,11 +449,13 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
             booleanToString: booleanToString,
             getParamValue: getParamValue,
             getQueryParams: getQueryParams,
+            removeQueryParams: removeQueryParams,
             paramExists: paramExists,
             isDefined: isDefined,
             isLooseEqual: isLooseEqual,
             isShallowObject: isShallowObject,
-            isTrueObject: isTrueObject
+            isTrueObject: isTrueObject,
+            isURL: isURL
         });
     })();
 
@@ -434,7 +467,6 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         pipeStringToObject: pipeStringToObject,
         objectToPipeString: objectToPipeString,
         lowerCasePropertyNames: lowerCasePropertyNames,
-//        getRandomColor: getRandomColor,
         getColorFromString: getColorFromString,
         addPixelSuffix: addPixelSuffix,
         removePixelSuffix: removePixelSuffix,
@@ -442,11 +474,14 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         booleanToString: booleanToString,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
+        removeQueryParams: removeQueryParams,
         paramExists: paramExists,
         isDefined: isDefined,
         isLooseEqual: isLooseEqual,
         isShallowObject: isShallowObject,
         isTrueObject: isTrueObject,
+        isURL: isURL,
+
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,

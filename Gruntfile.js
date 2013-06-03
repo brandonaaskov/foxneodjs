@@ -122,7 +122,15 @@
                             , jqueryloader: 'lib/jquery/jqueryloader'
                             , underscoreloader: 'lib/underscore/underscoreloader'
                             , modernizrloader: 'lib/modernizr/modernizrloader'
-                            , underscore: 'lib/underscore/underscore'
+                        },
+
+                        shim: {
+                            jqueryloader: {
+                                exports: '$'
+                            },
+                            underscoreloader: {
+                                exports: '_'
+                            }
                         },
 
                         //Defines the loading time for modules. Depending on the complexity of the

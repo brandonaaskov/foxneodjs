@@ -6,8 +6,9 @@ define([
     'polyfills',
     'utils',
     'player',
+    'query',
     'system',
-    'base64'], function (Dispatcher, Debug, polyfills, utils, player, system, base64) {
+    'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     'use strict';
 
     var buildTimestamp = '@@buildDate';
@@ -39,6 +40,7 @@ define([
         buildDate: '@@buildDate',
         init: init,
         player: player,
+        query: query,
         utils: utils,
         Debug: Debug,
         dispatch: dispatcher.dispatch,
