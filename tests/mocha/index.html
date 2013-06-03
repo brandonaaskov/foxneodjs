@@ -11,9 +11,21 @@
     </head>
     <body>
         <div id="mocha"></div>
-        <div id="player"></div>
-    </body>
+        <script src="../../node_modules/mocha/mocha.js"></script>
+        <script>
+            mocha.setup({
+                ui: 'tdd',
+                globals: ['foxneod', '$f'],
+                ignoreLeaks: false
+            });
+        </script>
 
-    <script type="text/javascript" src="../../node_modules/mocha/mocha.js"></script>
-    <script type="text/javascript" src="./tests.js"></script>
+        <script src="tests.js"></script>
+        <script>
+            mocha.run();
+        </script>
+
+        <div id="player"></div>
+        <div id="players"></div>
+    </body>
 </html>

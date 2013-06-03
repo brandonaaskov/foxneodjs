@@ -54,7 +54,6 @@ define(['require',
     function init () {
         debug.log('init');
         ovp.addEventListener('ready', function () {
-            window.alert('asdfasdfsadf');
             ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
                 if (!event.data.baseClip.isAd)
                 {
