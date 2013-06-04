@@ -1774,7 +1774,25 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var booleanToString = function (flag) {
-        return String(flag).toLowerCase();
+        if (_.isUndefined(flag))
+        {
+//            debug.warn("Whatever you passed to booleanToString() was undefined, so we returned false to play it safe.");
+            return 'false';
+        }
+        else if (!_.isBoolean(flag)) //if we don't get a boolean, just return false
+        {
+            if (_.isString(flag))
+            {
+//                debug.warn("You passed a string ("+ flag +") to the booleanToString() method. Don't do that.");
+                flag = booleanToString(flag);
+            }
+
+            return 'false';
+        }
+
+        var boolString = String(flag).toLowerCase();
+
+        return boolString || 'false';
     };
 
     var stringToBoolean = function (flag) {
@@ -1805,6 +1823,11 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var isLooseEqual = function (itemA, itemB) {
+        if (_.isUndefined(itemA) || _.isUndefined(itemB))
+        {
+            return false;
+        }
+
         var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
             normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
 
@@ -1820,6 +1843,11 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
 
     var isShallowObject = function (obj) {
         var shallow = true;
+
+        if (_.isUndefined(obj) || !_.isTrueObject(obj) || !_.isEmpty(obj))
+        {
+            return false;
+        }
 
         _.each(obj, function (index, item) {
             var value = obj[item];
@@ -4027,17 +4055,14 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
 
     //-------------------------------------------------------------------------------- checkers
     var isBrowser = function (name, version) {
-        debug.log('isBrowser() ...');
         return _match(system.browser, name, version);
     };
 
     var isOS = function (name, version) {
-        debug.log('isOS() ...');
         return _match(system.os, name, version);
     };
 
     var isEngine = function (name, version) {
-        debug.log('isEngine() ...');
         return _match(system.engine, name, version);
     };
 
@@ -4074,8 +4099,8 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
         var nameMatch = checkMatch(list, name);
         var versionMatch = checkMatch(list, version);
 
-        debug.log(name + ' matched?', _.booleanToString(nameMatch));
-        debug.log(version + ' matched?', _.booleanToString(versionMatch));
+//        debug.log(name + ' matched?', _.booleanToString(nameMatch));
+//        debug.log(version + ' matched?', _.booleanToString(versionMatch));
 
         //if name and version were passed in, we need to match on both to return true
         if (!_.isUndefined(version))
@@ -4167,7 +4192,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     
 
-    var buildTimestamp = '2013-06-03 02:06:24';
+    var buildTimestamp = '2013-06-03 06:06:58';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4177,7 +4202,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-03 02:06:24)');
+        debug.log('ready (build date: 2013-06-03 06:06:58)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4193,7 +4218,7 @@ define('foxneod',[
     return {
         version: '0.3.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-03 02:06:24',
+        buildDate: '2013-06-03 06:06:58',
         init: init,
         player: player,
         query: query,
@@ -4225,15 +4250,18 @@ require([
         debug = new Debug('core');
 
     (function () {
-        window.jQuery = jquery;
-        window._ = underscore;
-        debug.log('jQuery version after noConflict is', jquery().jquery);
-        debug.log('Underscore version after noConflict is', underscore.VERSION);
+        if (underscore.isUndefined(window['foxneod'])) //protects against the file being loaded multiple times
+        {
+            window.jQuery = jquery;
+            window._ = underscore;
+            debug.log('jQuery version after noConflict is', jquery().jquery);
+            debug.log('Underscore version after noConflict is', underscore.VERSION);
 
-        window['foxneod'] = window.$f = foxneod;
-        foxneod.init();
-        dispatcher.dispatch('ready', {}, true);
-        debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+            window['foxneod'] = window.$f = foxneod;
+            foxneod.init();
+            dispatcher.dispatch('ready', {}, true);
+            debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+        }
     })();
 });
 define("main", function(){});

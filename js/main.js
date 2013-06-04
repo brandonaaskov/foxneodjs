@@ -15,14 +15,17 @@ require([
         debug = new Debug('core');
 
     (function () {
-        window.jQuery = jquery;
-        window._ = underscore;
-        debug.log('jQuery version after noConflict is', jquery().jquery);
-        debug.log('Underscore version after noConflict is', underscore.VERSION);
+        if (underscore.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
+        {
+            window.jQuery = jquery;
+            window._ = underscore;
+            debug.log('jQuery version after noConflict is', jquery().jquery);
+            debug.log('Underscore version after noConflict is', underscore.VERSION);
 
-        window['@@packageName'] = window.$f = foxneod;
-        foxneod.init();
-        dispatcher.dispatch('ready', {}, true);
-        debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+            window['@@packageName'] = window.$f = foxneod;
+            foxneod.init();
+            dispatcher.dispatch('ready', {}, true);
+            debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+        }
     })();
 });

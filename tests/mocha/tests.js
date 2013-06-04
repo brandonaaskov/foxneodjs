@@ -97,9 +97,65 @@
                 });
             });
 
-            suite('booleanToString()', function () {});
+            suite('booleanToString()', function () {
+                test('Passing in no arguments returns an empty string', function () {
+                    assert.strictEqual(_.booleanToString(), 'false');
+                });
 
-            suite('stringToBoolean()', function () {});
+                test('Passing in a number returns the string "false"', function () {
+                    assert.strictEqual(_.booleanToString(12), 'false');
+                });
+
+                test('Passing in an object returns the string "false"', function () {
+                    assert.strictEqual(_.booleanToString({}), 'false');
+                });
+
+                test('Passing in an array returns the string "false"', function () {
+                    assert.strictEqual(_.booleanToString([]), 'false');
+                });
+
+                test('Passing in a function returns the string "false"', function () {
+                    assert.strictEqual(_.booleanToString(function(){}), 'false');
+                });
+
+                test('Passing in the boolean true returns the string "true"', function () {
+                    assert.strictEqual(_.booleanToString(true), 'true');
+                });
+
+                test('Passing in the boolean false returns the string "false"', function () {
+                    assert.strictEqual(_.booleanToString(false), 'false');
+                });
+            });
+
+            suite('stringToBoolean()', function () {
+                test('Passing in no arguments returns false', function () {
+                    assert.strictEqual(_.stringToBoolean(), false);
+                });
+
+                test('Passing in a number returns false', function () {
+                    assert.strictEqual(_.stringToBoolean(12), false);
+                });
+
+                test('Passing in an object returns false', function () {
+                    assert.strictEqual(_.stringToBoolean({}), false);
+                });
+
+                test('Passing in an array returns false', function () {
+                    assert.strictEqual(_.stringToBoolean([]), false);
+                });
+
+                test('Passing in a function returns false', function () {
+                    assert.strictEqual(_.stringToBoolean(function(){}), false);
+                });
+
+                test('Passing in the string "true" returns true', function () {
+                    assert.strictEqual(_.stringToBoolean('true'), true);
+                });
+
+                test('Passing in the string "false" returns false', function () {
+                    assert.strictEqual(_.stringToBoolean('false'), false);
+                });
+            });
 
             suite('isDefined()', function () {
                 test('No arguments returns false', function () {
@@ -155,9 +211,92 @@
                 });
             });
 
-            suite('isLooseEqual()', function () {});
+            suite('isLooseEqual()', function () {
+                test('Comparing null to null returns true', function () {
+                    assert.strictEqual(_.isLooseEqual(null, null), true);
+                });
 
-            suite('isShallowObject()', function () {});
+                test('Passing in no arguments returns false', function () {
+                    assert.strictEqual(_.isLooseEqual(), false);
+                });
+
+                test('Passing in anonymous functions returns true', function () {
+                    assert.strictEqual(_.isLooseEqual(function(){}, function(){}), true);
+                });
+
+                test('Passing in slightly different anonymous functions returns false', function () {
+                    assert.strictEqual(_.isLooseEqual(function(){}, function(){ jQuery.noop(); }), false);
+                });
+
+                test('Passing in two empty strings returns true', function () {
+                    assert.strictEqual(_.isLooseEqual('', ''), true);
+                });
+
+                test('Passing in two empty objects returns true', function () {
+                    assert.strictEqual(_.isLooseEqual({}, {}), true);
+                });
+
+                test('Passing in two empty arrays returns true', function () {
+                    assert.strictEqual(_.isLooseEqual([], []), true);
+                });
+
+                test('Passing in a matching number and string returns true', function () {
+                    assert.strictEqual(_.isLooseEqual('25', 25), true);
+                });
+
+                test('Passing in a matching number and string returns true (arguments flipped)', function () {
+                    assert.strictEqual(_.isLooseEqual(25, '25'), true);
+                });
+            });
+
+            suite('isShallowObject()', function () {
+                test('Leaving off arguments returns false', function () {
+                    assert.strictEqual(_.isShallowObject(), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isShallowObject({}), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isShallowObject([]), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isShallowObject(function(){}), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isShallowObject(''), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isShallowObject('25'), false);
+                });
+
+                test('Passing in an empty object returns false', function () {
+                    assert.strictEqual(_.isShallowObject(25), false);
+                });
+
+                test('Passing in an empty string returns false', function () {
+                    assert.strictEqual(_.isShallowObject(''), false);
+                });
+
+                test('Passing in a shallow object returns true', function () {
+                    assert.strictEqual(_.isShallowObject({
+                        key: 'value'
+                    }), true);
+                });
+
+                test('Passing in a nested object returns false', function () {
+                    assert.strictEqual(_.isShallowObject({
+                        key: 'value',
+                        nested: {
+                            moore: 'gibbons' //watchmen reference ;)
+                        }
+                    }), true);
+                });
+            });
 
             suite('isTrueObject()', function () {});
 

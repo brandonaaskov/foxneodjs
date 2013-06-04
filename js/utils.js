@@ -46,7 +46,25 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var booleanToString = function (flag) {
-        return String(flag).toLowerCase();
+        if (_.isUndefined(flag))
+        {
+//            debug.warn("Whatever you passed to booleanToString() was undefined, so we returned false to play it safe.");
+            return 'false';
+        }
+        else if (!_.isBoolean(flag)) //if we don't get a boolean, just return false
+        {
+            if (_.isString(flag))
+            {
+//                debug.warn("You passed a string ("+ flag +") to the booleanToString() method. Don't do that.");
+                flag = booleanToString(flag);
+            }
+
+            return 'false';
+        }
+
+        var boolString = String(flag).toLowerCase();
+
+        return boolString || 'false';
     };
 
     var stringToBoolean = function (flag) {
@@ -77,6 +95,11 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var isLooseEqual = function (itemA, itemB) {
+        if (_.isUndefined(itemA) || _.isUndefined(itemB))
+        {
+            return false;
+        }
+
         var normalizedA = !_.isFinite(itemA) ? String(itemA).toLowerCase() : +itemA,
             normalizedB = !_.isFinite(itemB) ? String(itemB).toLowerCase() : +itemB;
 
@@ -92,6 +115,11 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
 
     var isShallowObject = function (obj) {
         var shallow = true;
+
+        if (_.isUndefined(obj) || !_.isTrueObject(obj) || !_.isEmpty(obj))
+        {
+            return false;
+        }
 
         _.each(obj, function (index, item) {
             var value = obj[item];

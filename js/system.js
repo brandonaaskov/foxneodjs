@@ -14,17 +14,14 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
 
     //-------------------------------------------------------------------------------- checkers
     var isBrowser = function (name, version) {
-        debug.log('isBrowser() ...');
         return _match(system.browser, name, version);
     };
 
     var isOS = function (name, version) {
-        debug.log('isOS() ...');
         return _match(system.os, name, version);
     };
 
     var isEngine = function (name, version) {
-        debug.log('isEngine() ...');
         return _match(system.engine, name, version);
     };
 
@@ -61,8 +58,8 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
         var nameMatch = checkMatch(list, name);
         var versionMatch = checkMatch(list, version);
 
-        debug.log(name + ' matched?', _.booleanToString(nameMatch));
-        debug.log(version + ' matched?', _.booleanToString(versionMatch));
+//        debug.log(name + ' matched?', _.booleanToString(nameMatch));
+//        debug.log(version + ' matched?', _.booleanToString(versionMatch));
 
         //if name and version were passed in, we need to match on both to return true
         if (!_.isUndefined(version))
