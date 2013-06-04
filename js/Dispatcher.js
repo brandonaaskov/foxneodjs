@@ -39,7 +39,7 @@ define(['underscoreloader'], function (_) {
 
         return {
             addEventListener: addListener,
-            removeEventListener: removeEventListener,
+            removeEventListener: removeListener,
             dispatch: dispatch
         };
     };

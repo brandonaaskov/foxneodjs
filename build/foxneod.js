@@ -1721,7 +1721,7 @@ define('Dispatcher',['underscoreloader'], function (_) {
 
         return {
             addEventListener: addListener,
-            removeEventListener: removeEventListener,
+            removeEventListener: removeListener,
             dispatch: dispatch
         };
     };
@@ -1842,17 +1842,27 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var isShallowObject = function (obj) {
-        var shallow = true;
-
-        if (_.isUndefined(obj) || !_.isTrueObject(obj) || !_.isEmpty(obj))
+        if (_.isUndefined(obj))
         {
             return false;
         }
 
+        if (!_.isTrueObject(obj))
+        {
+            return false;
+        }
+
+        if (_.isTrueObject(obj) && _.isEmpty(obj))
+        {
+            return false;
+        }
+
+        var shallow = true;
+
         _.each(obj, function (index, item) {
             var value = obj[item];
 
-            if (_.isObject(value))
+            if (_.isTrueObject(value))
             {
                 shallow = false;
             }
@@ -1864,7 +1874,7 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var isTrueObject = function (obj) {
         if (_.isUndefined(obj))
         {
-            throw new Error("The value you supplied to isTrueObject() was undefined");
+            return false;
         }
 
         if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj))
@@ -2789,7 +2799,7 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
 });
 /*global define, _ */
 
-define('css',['utils', 'Debug'], function (utils, debug) {
+define('css',['utils', 'Debug'], function (utils, Debug) {
     
 
     var getStyles = function (allOptions) {
@@ -2969,11 +2979,12 @@ define('css',['utils', 'Debug'], function (utils, debug) {
 });
 /*global define, _, FDM_Player_vars, $pdk, console */
 
-define('modal',['css', 'utils', 'Debug'], function (css, utils, debug) {
+define('modal',['css', 'utils', 'Debug'], function (css, utils, Debug) {
     
 
     //-------------------------------------------------------------------------------- private properties
-    var modalClearingListenerAdded = false;
+    var debug = new Debug('modal'),
+        modalClearingListenerAdded = false;
     //-------------------------------------------------------------------------------- /private properties
 
 
@@ -3399,21 +3410,59 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         return regex.test(guid);
     };
 
-    var getFeedDetails = function (feedURL) {
-        if (_.isFeedURL(feedURL))
+    var getFeedDetails = function (feedURL, callback) { //callback is optional since we return a Promise
+        var deferred = new jquery.Deferred();
+        var errorResponse = {
+            type: 'error',
+            description: "You didn't supply a URL to getFeedDetails()"
+        };
+
+        if (_.isUndefined(feedURL))
         {
-            _.noop(); //TODO remove this
+            errorResponse.description = "Whatever was passed to getFeedDetails() was undefined";
+            return deferred.reject(errorResponse);
         }
+        else if (!isFeedURL(feedURL))
+        {
+            errorResponse.description = "You didn't supply a valid feed URL to getFeedDetails()";
+            return deferred.reject(errorResponse);
+        }
+
+        feedURL = _.removeQueryParams(feedURL);
+        feedURL += '?form=json&range=1-1';
+
+        _makeRequest(feedURL).always(function (response) {
+            //with every error response coming from _makeRequest, there's a type property, so we know this is an error
+            // if it's defined
+            if (_.isUndefined(response.type))
+            {
+                deferred.resolve(response);
+            }
+            else
+            {
+                deferred.reject(response);
+            }
+
+            //if a callback was passed in (optional), then we can call it back here with the foxneod scope
+            if (_.isFunction(callback))
+            {
+                callback.apply(window['foxneod'], response);
+            }
+        });
+
+        return deferred;
     };
 
     var getVideo = function (obj, callback) {
         var video = {};
-        var deferred = jquery.Deferred();
+        var deferred = new jquery.Deferred();
 
         if (isFeedURL(obj)) //feed url
         {
             var feedURL = _.removeQueryParams(obj);
             feedURL += '?form=json&range=1-1';
+
+            debugger;
 
             return _makeRequest(feedURL, callback);
         }
@@ -3443,35 +3492,38 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         return video;
     };
 
-    function _makeRequest (requestURL, callback) {
-        var deferred = jquery.Deferred();
+    function _makeRequest (requestURL) {
+        var deferred = new jquery.Deferred();
+        debug.log('_makeRequest', requestURL);
 
-        if (_.isURL(requestURL))
+        if (!_.isURL(requestURL))
         {
-            var jqxhr = jquery.get(requestURL)
-                .done(function (jsonString) {
-                    try {
-                        var json = JSON.parse(jsonString);
-                        deferred.done(json);
+            var errorResponse = {
+                type: 'error',
+                description: "You didn't supply a URL"
+            };
 
-                        if (_.isFunction(callback))
-                        {
-                            callback.apply(window['foxneod'], [json]);
-                        }
-                    }
-                    catch (error)
-                    {
-                        deferred.fail(JSON.parse(error));
-                    }
-                })
-                .fail(function (error) {
-                    debug.log('failed', arguments);
-                    deferred.fail(JSON.parse(error));
-                })
-                .always(function () {
-                    debug.log('always logged', arguments);
-                });
+            return deferred.reject(errorResponse);
         }
+
+        var jqxhr = jquery.get(requestURL)
+            .done(function (jsonString) {
+                try {
+                    var json = JSON.parse(jsonString);
+                    deferred.resolve(json);
+                }
+                catch (error)
+                {
+                    deferred.reject(error);
+                }
+            })
+            .fail(function (error) {
+                debug.log('failed', arguments);
+                deferred.reject(JSON.parse(error));
+            })
+            .always(function () {
+                debug.log('always logged', arguments);
+            });
 
         return deferred;
     }
@@ -4192,7 +4244,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     
 
-    var buildTimestamp = '2013-06-03 06:06:58';
+    var buildTimestamp = '2013-06-04 10:06:57';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4202,7 +4254,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-03 06:06:58)');
+        debug.log('ready (build date: 2013-06-04 10:06:57)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4218,7 +4270,7 @@ define('foxneod',[
     return {
         version: '0.3.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-03 06:06:58',
+        buildDate: '2013-06-04 10:06:57',
         init: init,
         player: player,
         query: query,

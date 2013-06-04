@@ -114,17 +114,27 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     };
 
     var isShallowObject = function (obj) {
-        var shallow = true;
-
-        if (_.isUndefined(obj) || !_.isTrueObject(obj) || !_.isEmpty(obj))
+        if (_.isUndefined(obj))
         {
             return false;
         }
 
+        if (!_.isTrueObject(obj))
+        {
+            return false;
+        }
+
+        if (_.isTrueObject(obj) && _.isEmpty(obj))
+        {
+            return false;
+        }
+
+        var shallow = true;
+
         _.each(obj, function (index, item) {
             var value = obj[item];
 
-            if (_.isObject(value))
+            if (_.isTrueObject(value))
             {
                 shallow = false;
             }
@@ -136,7 +146,7 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
     var isTrueObject = function (obj) {
         if (_.isUndefined(obj))
         {
-            throw new Error("The value you supplied to isTrueObject() was undefined");
+            return false;
         }
 
         if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj))

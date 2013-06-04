@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['utils', 'Debug'], function (utils, debug) {
+define(['utils', 'Debug'], function (utils, Debug) {
     'use strict';
 
     var getStyles = function (allOptions) {

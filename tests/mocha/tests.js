@@ -258,28 +258,24 @@
                     assert.strictEqual(_.isShallowObject({}), false);
                 });
 
-                test('Passing in an empty object returns false', function () {
+                test('Passing in an empty array returns false', function () {
                     assert.strictEqual(_.isShallowObject([]), false);
                 });
 
-                test('Passing in an empty object returns false', function () {
+                test('Passing in an anonymous function returns false', function () {
                     assert.strictEqual(_.isShallowObject(function(){}), false);
-                });
-
-                test('Passing in an empty object returns false', function () {
-                    assert.strictEqual(_.isShallowObject(''), false);
-                });
-
-                test('Passing in an empty object returns false', function () {
-                    assert.strictEqual(_.isShallowObject('25'), false);
-                });
-
-                test('Passing in an empty object returns false', function () {
-                    assert.strictEqual(_.isShallowObject(25), false);
                 });
 
                 test('Passing in an empty string returns false', function () {
                     assert.strictEqual(_.isShallowObject(''), false);
+                });
+
+                test('Passing in the string "25" false', function () {
+                    assert.strictEqual(_.isShallowObject('25'), false);
+                });
+
+                test('Passing in the number 25 returns false', function () {
+                    assert.strictEqual(_.isShallowObject(25), false);
                 });
 
                 test('Passing in a shallow object returns true', function () {
@@ -294,11 +290,54 @@
                         nested: {
                             moore: 'gibbons' //watchmen reference ;)
                         }
-                    }), true);
+                    }), false);
                 });
             });
 
-            suite('isTrueObject()', function () {});
+            suite('isTrueObject()', function () {
+                test('Passing in nothing returns false', function () {
+                    assert.strictEqual(_.isTrueObject(), false);
+                });
+
+                test('Passing in null returns false', function () {
+                    assert.strictEqual(_.isTrueObject(null), false);
+                });
+
+                test('Passing in undefined returns false', function () {
+                    assert.strictEqual(_.isTrueObject(undefined), false);
+                });
+
+                test('Passing in an empty array returns false', function () {
+                    assert.strictEqual(_.isTrueObject([]), false);
+                });
+
+                test('Passing in an empty string returns false', function () {
+                    assert.strictEqual(_.isTrueObject(''), false);
+                });
+
+                test('Passing in an anonymous function returns false', function () {
+                    assert.strictEqual(_.isTrueObject(function () {}), false);
+                });
+
+                test('Passing in an empty object returns true', function () {
+                    assert.strictEqual(_.isTrueObject({}), true);
+                });
+
+                test('Passing in a shallow object returns true', function () {
+                    assert.strictEqual(_.isTrueObject({
+                        key: 'value'
+                    }), true);
+                });
+
+                test('Passing in a nested object returns true', function () {
+                    assert.strictEqual(_.isTrueObject({
+                        key: 'value',
+                        nested: {
+                            name: 'Robert Paulson'
+                        }
+                    }), true);
+                });
+            });
 
             suite('isURL()', function () {
                 test('Passing in nothing returns false', function () {
@@ -558,34 +597,63 @@
                 });
             });
 
-//            suite('dispatchEvent()', function () {
-//                //FILL ME WITH GREAT THINGS
-//            });
-//            test('dispatchEvent', 3, function () {
-//                assert.stop(2);
-//                var eventName = packageName + ':test';
-//
-//                window.addEventListener(eventName, function () {
-//                    window.removeEventListener(eventName);
-//                    assert.ok(true, "Event dispatching over the window object (no data payload).");
-//
-//                    console.log('ran one assert and removed the event listener for ' + eventName);
-//                    assert.start();
-//                });
-//                _.dispatchEvent('test');
-//
-//                eventName = packageName + ':dataTest';
-//
-//                window.addEventListener(eventName, function (event) {
-//                    window.removeEventListener(eventName);
-//                    assert.strictEqual(event.data.movie, 'Django', 'Event dispatching over the window object (with data payload)');
-//                    assert.strictEqual(_.isObject(event.data), true, 'Data payload object is in fact, an Object');
-//
-//                    console.log('ran two asserts and removed the event listener for ' + eventName);
-//                    assert.start();
-//                });
-//                _.dispatchEvent('dataTest', { movie: 'Django' });
-//            });
+            suite('dispatchEvent()', function () {
+                test('Event dispatches over the library core (with no data payload)', function (done) {
+                    var eventName = 'test';
+
+                    $f.addEventListener(eventName, function (event) {
+                        $f.removeEventListener($f.packageName +':'+ eventName);
+                        done();
+                    });
+
+                    $f.dispatch(eventName);
+                });
+
+                test('Event dispatches over the library core (with data payload)', function (done) {
+                    var eventName = 'dataTest';
+
+                    $f.addEventListener(eventName, function (event) {
+                        if (event.data.movie === 'Django')
+                        {
+                            done();
+                        }
+
+                        $f.removeEventListener($f.packageName +':'+ eventName);
+                    });
+
+                    $f.dispatch(eventName, {
+                        movie: 'Django'
+                    });
+                });
+
+                test('Event dispatches over the window object (no data payload)', function (done) {
+                    var eventName = 'test';
+
+                    window.addEventListener($f.packageName +':'+ eventName, function () {
+                        window.removeEventListener(eventName);
+                        done();
+                    });
+
+                    $f.dispatch(eventName, {}, true);
+                });
+
+                test('Event dispatches over the window object (with data payload)', function (done) {
+                    var eventName = 'dataTest';
+
+                    window.addEventListener($f.packageName +':'+ eventName, function (event) {
+                        if (event.data.movie === 'Django')
+                        {
+                            done();
+                        }
+
+                        window.removeEventListener(eventName);
+                    });
+
+                    $f.dispatch(eventName, {
+                        movie: 'Django'
+                    }, true);
+                });
+            });
 
             suite('getQueryParams()', function () {
                 var testURL = "http://domain.com/page.html?key=value&something=what&testing=good";
@@ -665,7 +733,7 @@
 
         //------------------------------------------------------------------------------------- base64
         suite('base64', function () {
-            test('jsonToBase64', function () {
+            test('jsonToBase64()', function () {
                 var testObject = {
                     name: 'Point Break',
                     rating: 'R',
@@ -680,7 +748,7 @@
                 assert.strictEqual($f.__test__.base64.jsonToBase64(testObject), expected, 'Basic, shallow object converted to JSON and then base64 properly.');
             });
 
-            test('base64ToJSON', function () {
+            test('base64ToJSON()', function () {
                 var expected = {
                     name: 'Point Break',
                     rating: 'R',
@@ -701,7 +769,7 @@
 
         //------------------------------------------------------------------------------------- player
         suite('player', function () {
-            suite('getPlayerAttributes', function () {
+            suite('getPlayerAttributes()', function () {
 
                 beforeEach(function () {
                     jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
@@ -816,6 +884,180 @@
 
         //------------------------------------------------------------------------------------- query
         suite('query', function () {
+            suite('getFeedDetails()', function () {
+                test('Passing in nothing returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails().fail(function (error) {
+                        if (error.type === 'error' && error.description === "Whatever was passed to getFeedDetails() was undefined")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in null returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails(null).fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in undefined returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails(undefined).fail(function (error) {
+                        if (error.type === 'error' && error.description === "Whatever was passed to getFeedDetails() was undefined")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in an empty string returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails('').fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in an empty array returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails([]).fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in an empty object returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails({}).fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in an empty anonymous function returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails(function () {}).fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in an invalid URL returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails('http://google').fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in a valid URL, but invalid feed URL returns a failed Promise', function (done) {
+                    $f.query.getFeedDetails('http://google').fail(function (error) {
+                        if (error.type === 'error' && error.description === "You didn't supply a valid feed URL to getFeedDetails()")
+                        {
+                            done();
+                        }
+                    });
+                });
+
+                test('Passing in a valid feed URL returns a resolved Promise', function (done) {
+                    $f.query.getFeedDetails('http://feed.theplatform.com/f/fox.com/videos').done(function (json) {
+                        if (_.isDefined(json))
+                        {
+                            console.dir(json);
+                            done();
+                        }
+                    });
+                });
+
+                test('Getting a valid feed returns a shallow object (no arrays either)', function (done) {
+                    $f.query.getFeedDetails('http://feed.theplatform.com/f/fox.com/videos').done(function (json) {
+                        if (_.isDefined(json) && _.isShallowObject(json))
+                        {
+                            done();
+                        }
+                    });
+                });
+            });
+
+            suite('getVideo()', function () {});
+
+            suite('isFeedURL()', function () {
+                test('Passing in nothing returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL(), false);
+                });
+
+                test('Passing in null returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL(null), false);
+                });
+
+                test('Passing in undefined returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL(undefined), false);
+                });
+
+                test('Passing in empty string returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL(''), false);
+                });
+
+                test('Passing in empty object returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL({}), false);
+                });
+
+                test('Passing in empty array returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL([]), false);
+                });
+
+                test('Passing in number returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL(50), false);
+                });
+
+                test('Passing in string returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('string test'), false);
+                });
+
+                test('Passing in URL with no protocol with www returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('www.google.com'), false);
+                });
+
+                test('Passing in URL with no protocol and no www returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('google.com'), false);
+                });
+
+                test('Passing in http://google.com (valid URL) returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('http://google.com'), false);
+                });
+
+                test('Passing in release URL returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('http://link.theplatform.com'), false);
+                });
+
+                test('Passing in URL with http:// returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('http://fox.com'), false);
+                });
+
+                test('Passing in URL with https:// returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('https://fox.com'), false);
+                });
+
+                test('Passing in URL with subdomain returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('http://something.theplatform.com'), false);
+                });
+
+                test('Passing in URL with query params returns false', function () {
+                    assert.strictEqual($f.query.isFeedURL('https://www.google.com/?q=recursion'), false);
+                });
+
+                test('Passing in valid feed URL returns true', function () {
+                    assert.strictEqual($f.query.isFeedURL('http://feed.theplatform.com/f/fox.com/videos?form=json&range=1-1'), true);
+                });
+            });
+
             suite('isGuid()', function () {
                 test('Passing in nothing returns false', function () {
                     assert.strictEqual($f.query.isGuid(), false);
@@ -863,6 +1105,76 @@
 
                 test('Passing in a real guid returns true', function () {
                     assert.strictEqual($f.query.isGuid('bd324bca-f2b9-407c-b6e9-f1d650b10e86'), true);
+                });
+            });
+
+            suite('isReleaseURL()', function () {
+                test('Passing in nothing returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL(), false);
+                });
+
+                test('Passing in null returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL(null), false);
+                });
+
+                test('Passing in undefined returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL(undefined), false);
+                });
+
+                test('Passing in empty string returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL(''), false);
+                });
+
+                test('Passing in empty object returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL({}), false);
+                });
+
+                test('Passing in empty array returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL([]), false);
+                });
+
+                test('Passing in number returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL(50), false);
+                });
+
+                test('Passing in string returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('string test'), false);
+                });
+
+                test('Passing in URL with no protocol with www returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('www.google.com'), false);
+                });
+
+                test('Passing in URL with no protocol and no www returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('google.com'), false);
+                });
+
+                test('Passing in http://google.com (valid URL) returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('http://google.com'), false);
+                });
+
+                test('Passing in feed URL returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('http://feed.theplatform.com'), false);
+                });
+
+                test('Passing in URL with http:// returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('http://fox.com'), false);
+                });
+
+                test('Passing in URL with https:// returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('https://fox.com'), false);
+                });
+
+                test('Passing in URL with subdomain returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('http://something.theplatform.com'), false);
+                });
+
+                test('Passing in URL with query params returns false', function () {
+                    assert.strictEqual($f.query.isReleaseURL('https://www.google.com/?q=recursion'), false);
+                });
+
+                test('Passing in valid feed URL returns true', function () {
+                    assert.strictEqual($f.query.isReleaseURL('link.theplatform.com/s/fox.com/0Yrl5k4IJZwI?mbr=true&format=json'), true);
                 });
             });
         });

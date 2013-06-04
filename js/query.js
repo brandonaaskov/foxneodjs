@@ -40,21 +40,59 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         return regex.test(guid);
     };
 
-    var getFeedDetails = function (feedURL) {
-        if (_.isFeedURL(feedURL))
+    var getFeedDetails = function (feedURL, callback) { //callback is optional since we return a Promise
+        var deferred = new jquery.Deferred();
+        var errorResponse = {
+            type: 'error',
+            description: "You didn't supply a URL to getFeedDetails()"
+        };
+
+        if (_.isUndefined(feedURL))
         {
-            _.noop(); //TODO remove this
+            errorResponse.description = "Whatever was passed to getFeedDetails() was undefined";
+            return deferred.reject(errorResponse);
         }
+        else if (!isFeedURL(feedURL))
+        {
+            errorResponse.description = "You didn't supply a valid feed URL to getFeedDetails()";
+            return deferred.reject(errorResponse);
+        }
+
+        feedURL = _.removeQueryParams(feedURL);
+        feedURL += '?form=json&range=1-1';
+
+        _makeRequest(feedURL).always(function (response) {
+            //with every error response coming from _makeRequest, there's a type property, so we know this is an error
+            // if it's defined
+            if (_.isUndefined(response.type))
+            {
+                deferred.resolve(response);
+            }
+            else
+            {
+                deferred.reject(response);
+            }
+
+            //if a callback was passed in (optional), then we can call it back here with the @@packageName scope
+            if (_.isFunction(callback))
+            {
+                callback.apply(window['@@packageName'], response);
+            }
+        });
+
+        return deferred;
     };
 
     var getVideo = function (obj, callback) {
         var video = {};
-        var deferred = jquery.Deferred();
+        var deferred = new jquery.Deferred();
 
         if (isFeedURL(obj)) //feed url
         {
             var feedURL = _.removeQueryParams(obj);
             feedURL += '?form=json&range=1-1';
+
+            debugger;
 
             return _makeRequest(feedURL, callback);
         }
@@ -84,35 +122,38 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         return video;
     };
 
-    function _makeRequest (requestURL, callback) {
-        var deferred = jquery.Deferred();
+    function _makeRequest (requestURL) {
+        var deferred = new jquery.Deferred();
+        debug.log('_makeRequest', requestURL);
 
-        if (_.isURL(requestURL))
+        if (!_.isURL(requestURL))
         {
-            var jqxhr = jquery.get(requestURL)
-                .done(function (jsonString) {
-                    try {
-                        var json = JSON.parse(jsonString);
-                        deferred.done(json);
+            var errorResponse = {
+                type: 'error',
+                description: "You didn't supply a URL"
+            };
 
-                        if (_.isFunction(callback))
-                        {
-                            callback.apply(window['@@packageName'], [json]);
-                        }
-                    }
-                    catch (error)
-                    {
-                        deferred.fail(JSON.parse(error));
-                    }
-                })
-                .fail(function (error) {
-                    debug.log('failed', arguments);
-                    deferred.fail(JSON.parse(error));
-                })
-                .always(function () {
-                    debug.log('always logged', arguments);
-                });
+            return deferred.reject(errorResponse);
         }
+
+        var jqxhr = jquery.get(requestURL)
+            .done(function (jsonString) {
+                try {
+                    var json = JSON.parse(jsonString);
+                    deferred.resolve(json);
+                }
+                catch (error)
+                {
+                    deferred.reject(error);
+                }
+            })
+            .fail(function (error) {
+                debug.log('failed', arguments);
+                deferred.reject(JSON.parse(error));
+            })
+            .always(function () {
+                debug.log('always logged', arguments);
+            });
 
         return deferred;
     }

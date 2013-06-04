@@ -1,10 +1,11 @@
 /*global define, _, FDM_Player_vars, $pdk, console */
 
-define(['css', 'utils', 'Debug'], function (css, utils, debug) {
+define(['css', 'utils', 'Debug'], function (css, utils, Debug) {
     'use strict';
 
     //-------------------------------------------------------------------------------- private properties
-    var modalClearingListenerAdded = false;
+    var debug = new Debug('modal'),
+        modalClearingListenerAdded = false;
     //-------------------------------------------------------------------------------- /private properties
 
 
