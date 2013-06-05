@@ -970,7 +970,6 @@
                     $f.query.getFeedDetails('http://feed.theplatform.com/f/fox.com/videos').done(function (json) {
                         if (_.isDefined(json))
                         {
-                            console.dir(json);
                             done();
                         }
                     });
@@ -986,7 +985,62 @@
                 });
             });
 
-            suite('getVideo()', function () {});
+            suite('getVideo() (returns a Promise)', function () {
+                test('Passing in nothing fails', function (done) {
+                    $f.query.getVideo().fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in null fails', function (done) {
+                    $f.query.getVideo(null).fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in undefined fails', function (done) {
+                    $f.query.getVideo(undefined).fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in an empty string fails', function (done) {
+                    $f.query.getVideo('').fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in an empty array fails', function (done) {
+                    $f.query.getVideo([]).fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in an empty object fails', function (done) {
+                    $f.query.getVideo({}).fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in an anoynmous function fails', function (done) {
+                    $f.query.getVideo(function () {}).fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in a string, but not a valid one fails', function (done) {
+                    $f.query.getVideo('something to think about').fail(function () {
+                        done();
+                    });
+                });
+
+                test('Passing in a feed URL returns a video object', function (done) {
+                    $f.query.getVideo('http://feed.theplatform.com/f/fox.com/videos').always(function (response) {
+                        console.dir(response);
+                        done();
+                    });
+                });
+            });
 
             suite('isFeedURL()', function () {
                 test('Passing in nothing returns false', function () {

@@ -3436,7 +3436,16 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
             // if it's defined
             if (_.isUndefined(response.type))
             {
-                deferred.resolve(response);
+                var shallowified = {};
+
+                _.each(response, function (value, key) {
+                    if (!_.isObject(value))
+                    {
+                        shallowified[key] = value;
+                    }
+                });
+
+                deferred.resolve(shallowified);
             }
             else
             {
@@ -3457,14 +3466,29 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         var video = {};
         var deferred = new jquery.Deferred();
 
+        if (!_.isDefined(obj) || _.isEmpty(obj) || !_.isArray(obj))
+        {
+            deferred.reject(false);
+        }
+
         if (isFeedURL(obj)) //feed url
         {
             var feedURL = _.removeQueryParams(obj);
             feedURL += '?form=json&range=1-1';
 
-            debugger;
-
-            return _makeRequest(feedURL, callback);
+            _makeRequest(feedURL)
+                .done(function (response) {
+                    deferred.resolve(response);
+                })
+                .fail(function (response) {
+                    deferred.fail(response);
+                })
+                .always(function (response) {
+                    if (_.isFunction(callback))
+                    {
+                        callback.apply(response);
+                    }
+                });
         }
         else if (isReleaseURL(obj)) //release url
         {
@@ -3476,11 +3500,11 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         }
         else if (_.isFinite(obj)) //id
         {
-            _.noop(); //TODO remove this
+            jquery.noop();
         }
         else if (_.isString(obj)) //release, guid
         {
-            _.noop(); //TODO remove this
+            jquery.noop();
         }
 
         //just throw this warning for developers so they can debug more easily
@@ -3489,7 +3513,7 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
             debug.warn("getVideo() returned an empty object... so something went wrong along the way");
         }
 
-        return video;
+        return deferred;
     };
 
     function _makeRequest (requestURL) {
@@ -4244,7 +4268,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     
 
-    var buildTimestamp = '2013-06-04 10:06:57';
+    var buildTimestamp = '2013-06-04 06:06:25';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4254,7 +4278,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-04 10:06:57)');
+        debug.log('ready (build date: 2013-06-04 06:06:25)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4270,7 +4294,7 @@ define('foxneod',[
     return {
         version: '0.3.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-04 10:06:57',
+        buildDate: '2013-06-04 06:06:25',
         init: init,
         player: player,
         query: query,

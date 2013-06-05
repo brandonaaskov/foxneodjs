@@ -66,7 +66,16 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
             // if it's defined
             if (_.isUndefined(response.type))
             {
-                deferred.resolve(response);
+                var shallowified = {};
+
+                _.each(response, function (value, key) {
+                    if (!_.isObject(value))
+                    {
+                        shallowified[key] = value;
+                    }
+                });
+
+                deferred.resolve(shallowified);
             }
             else
             {
@@ -87,14 +96,29 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         var video = {};
         var deferred = new jquery.Deferred();
 
+        if (!_.isDefined(obj) || _.isEmpty(obj) || !_.isArray(obj))
+        {
+            deferred.reject(false);
+        }
+
         if (isFeedURL(obj)) //feed url
         {
             var feedURL = _.removeQueryParams(obj);
             feedURL += '?form=json&range=1-1';
 
-            debugger;
-
-            return _makeRequest(feedURL, callback);
+            _makeRequest(feedURL)
+                .done(function (response) {
+                    deferred.resolve(response);
+                })
+                .fail(function (response) {
+                    deferred.fail(response);
+                })
+                .always(function (response) {
+                    if (_.isFunction(callback))
+                    {
+                        callback.apply(response);
+                    }
+                });
         }
         else if (isReleaseURL(obj)) //release url
         {
@@ -106,11 +130,11 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         }
         else if (_.isFinite(obj)) //id
         {
-            _.noop(); //TODO remove this
+            jquery.noop();
         }
         else if (_.isString(obj)) //release, guid
         {
-            _.noop(); //TODO remove this
+            jquery.noop();
         }
 
         //just throw this warning for developers so they can debug more easily
@@ -119,7 +143,7 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
             debug.warn("getVideo() returned an empty object... so something went wrong along the way");
         }
 
-        return video;
+        return deferred;
     };
 
     function _makeRequest (requestURL) {
