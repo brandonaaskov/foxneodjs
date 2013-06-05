@@ -1,0 +1,5 @@
+--require chai
+--reporter spec
+--ui tdd
+--check-leaks
+--globals window

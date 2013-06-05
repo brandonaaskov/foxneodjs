@@ -27,5 +27,9 @@ require([
             dispatcher.dispatch('ready', {}, true);
             debug.log('foxneod assigned to window.FoxNEOD and window.$f');
         }
+        else
+        {
+            debug.error('The @@packageName library has already been loaded into the page. Fix this!!!')
+        }
     })();
 });

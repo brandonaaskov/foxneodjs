@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    var chai = (require) ? require('../node_modules/chai/chai.js') : chai;
+
     var assert = chai.assert,
         expect = chai.expect,
         should = chai.should;
