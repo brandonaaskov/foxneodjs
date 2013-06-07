@@ -4268,7 +4268,7 @@ define('foxneod',[
     'base64'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64) {
     
 
-    var buildTimestamp = '2013-06-04 06:06:25';
+    var buildTimestamp = '2013-06-06 12:06:47';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4278,7 +4278,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-04 06:06:25)');
+        debug.log('ready (build date: 2013-06-06 12:06:47)');
 
         if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
         {
@@ -4294,7 +4294,7 @@ define('foxneod',[
     return {
         version: '0.3.0',
         packageName: 'foxneod',
-        buildDate: '2013-06-04 06:06:25',
+        buildDate: '2013-06-06 12:06:47',
         init: init,
         player: player,
         query: query,
@@ -4337,6 +4337,10 @@ require([
             foxneod.init();
             dispatcher.dispatch('ready', {}, true);
             debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+        }
+        else
+        {
+            debug.error('The foxneod library has already been loaded into the page. Fix this!!!');
         }
     })();
 });

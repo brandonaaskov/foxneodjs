@@ -29,7 +29,7 @@ require([
         }
         else
         {
-            debug.error('The @@packageName library has already been loaded into the page. Fix this!!!')
+            debug.error('The @@packageName library has already been loaded into the page. Fix this!!!');
         }
     })();
 });
