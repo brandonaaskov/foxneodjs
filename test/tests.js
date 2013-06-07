@@ -1,7 +1,8 @@
 (function () {
     'use strict';
 
-    var chai = (require) ? require('../node_modules/chai/chai.js') : chai;
+    var chai = require('../node_modules/chai/chai.js')
+        , foxneod = require('../build/foxneod.js');
 
     var assert = chai.assert,
         expect = chai.expect,
