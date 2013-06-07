@@ -30,11 +30,9 @@ define([
         }
 
         //show site modal
-//        VideoAuth.Modal.open(null,'Incompatible Browser');
-//        VideoAuth.Modal.content.set(jQuery('<div id="oops" class="video-auth"><h1 class="error-heading">Oops, so sorry!</h1><p class="error-message">Well, that didn\'t work.</p></div>'));
-        if (_.has(window, 'VideoAuth') && _.has(window.VideoAuthyh, 'Modal'))
+        if (_.has(window, 'VideoAuth') && _.has(window.VideoAuth, 'Modal') && (!_.isEmpty(title) && !_.isEmpty(message)))
         {
-            var $htmlFragment = jquery('<div id="foxneod-error"></div>');
+            var $htmlFragment = jquery('<div id="foxneod-error">\n    <h1>Warning</h1>\n    <p class="error-message">' + message + '</p>\n</div>');
 
             VideoAuth.Modal.open(null, title);
             VideoAuth.Modal.content.set($htmlFragment);
