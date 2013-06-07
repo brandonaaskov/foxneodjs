@@ -34,10 +34,10 @@ define([
         {
             var $htmlFragment = jquery('<div id="foxneod-error">\n    <h1>Warning</h1>\n    <p class="error-message">' + message + '</p>\n</div>');
 
-            VideoAuth.Modal.open(null, title);
-            VideoAuth.Modal.content.set($htmlFragment);
+            window.VideoAuth.Modal.open(null, title);
+            window.VideoAuth.Modal.content.set($htmlFragment);
         }
-    };
+    }
 
 
     //-------------------------------------------------------------------------------- initialization
