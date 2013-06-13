@@ -1,7 +1,7 @@
+/*global module, console */
+
 (function(){
     'use strict';
-
-/*global module, console */
 
     module.exports = function (grunt) {
         var packageJSON = grunt.file.readJSON('package.json');
@@ -173,6 +173,28 @@
                 }
             },
 
+            mocha_phantomjs: {
+                all:
+                {
+                    options:
+                    {
+                        urls: ['http://baaskov.local/foxneod.js/test/index.html']
+                    }
+                },
+
+                connect:
+                {
+                    server:
+                    {
+                        options:
+                        {
+                            port: 8000
+                        }
+                    }
+                }
+            },
+
+
             shell : {
                 // scp build/ to a remote host
                 golive: {
@@ -195,6 +217,7 @@
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-text-replace');
+        grunt.loadNpmTasks('grunt-mocha-phantomjs');
         grunt.loadNpmTasks('grunt-shell');
 
 

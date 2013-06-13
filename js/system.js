@@ -36,7 +36,7 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
         var matched = false;
 
         _.find(list, function (itemValue) {
-            debug.log(itemValue +' vs. '+ valueToMatch);
+//            debug.log(itemValue +' vs. '+ valueToMatch);
 
             if (_.isDefined(valueToMatch) && _.isDefined(itemValue) && _.isLooseEqual(valueToMatch, itemValue))
             {
@@ -106,10 +106,26 @@ define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) 
         }
     };
 
-    debug.log('(browser)', [browser.name, browser.version].join(' '));
-    debug.log('(device)', [device.vendor, device.model, device.type].join(' '));
-    debug.log('(engine)', [engine.name, engine.version].join(' '));
-    debug.log('(os)', [os.name, os.version].join(' '));
+    //no sense logging this stuff if the object is empty
+    if (_.has(browser, 'name'))
+    {
+        debug.log('(browser)', [browser.name, browser.version].join(' '));
+    }
+
+    if (_.has(device, 'name'))
+    {
+        debug.log('(device)', [device.vendor, device.model, device.type].join(' '));
+    }
+
+    if (_.has(engine, 'name'))
+    {
+        debug.log('(engine)', [engine.name, engine.version].join(' '));
+    }
+
+    if (_.has(os, 'name'))
+    {
+        debug.log('(os)', [os.name, os.version].join(' '));
+    }
 
     return system;
 });

@@ -5,7 +5,7 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
 
     var debug = new Debug('query'),
         _defaultConfig = {
-            feedURL: 'http://feed.theplatform.com/f/fox.com/videos',
+            feedURL: null,
             fields: [
                 'id',
                 'title',
@@ -16,29 +16,43 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         },
         _config = {};
 
-    var isFeedURL = function (url) {
-        if (_.isString(url) && _.isURL(url) && url.indexOf('feed.theplatform.com') !== -1)
+    function _makeRequest (requestURL) {
+        var deferred = new jquery.Deferred();
+        debug.log('_makeRequest', requestURL);
+
+        if (!_.isURL(requestURL))
         {
-            return true;
+            var errorResponse = {
+                type: 'error',
+                description: "You didn't supply a URL"
+            };
+
+            deferred.reject(errorResponse);
+        }
+        else
+        {
+            var jqxhr = jquery.get(requestURL)
+                .done(function (jsonString) {
+                    try {
+                        var json = JSON.parse(jsonString);
+                        deferred.resolve(json);
+                    }
+                    catch (error)
+                    {
+                        deferred.reject(error);
+                    }
+                })
+                .fail(function (error) {
+                    debug.log('failed', arguments);
+                    deferred.reject(JSON.parse(error));
+                })
+                .always(function () {
+                    debug.log('always logged', arguments);
+                });
         }
 
-        return false;
-    };
-
-    var isReleaseURL = function (url) {
-        if (_.isString(url) && _.isURL(url) && url.indexOf('link.theplatform.com') !== -1)
-        {
-            return true;
-        }
-
-        return false;
-    };
-
-    var isGuid = function (guid) {
-        var regex = /^\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?$/i;
-
-        return regex.test(guid);
-    };
+        return deferred;
+    }
 
     var getFeedDetails = function (feedURL, callback) { //callback is optional since we return a Promise
         var deferred = new jquery.Deferred();
@@ -93,18 +107,49 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
     };
 
     var getVideo = function (obj, callback) {
-        var video = {};
-        var deferred = new jquery.Deferred();
+        var video = {},
+            deferred = new jquery.Deferred(),
+            feedURL = _.removeQueryParams(obj) || _defaultConfig.feedURL,
+            errorResponse = {
+                type: 'error',
+                description: ""
+            };
 
-        if (!_.isDefined(obj) || _.isEmpty(obj) || !_.isArray(obj))
+        if (!_.isDefined(obj) || _.isEmpty(obj) || _.isArray(obj) && !feedURL)
         {
+            errorResponse.description = "You need to supply SOMETHING to getVideo()";
             deferred.reject(false);
         }
 
         if (isFeedURL(obj)) //feed url
         {
-            var feedURL = _.removeQueryParams(obj);
-            feedURL += '?form=json&range=1-1';
+            feedURL += '?form=json&range=1-1'; //we just want to grab the first video, so let's make the request lighter
+        }
+//        else if (isReleaseURL(obj)) //release url
+//        {
+//            var releaseURL = _.removeQueryParams(obj);
+//        }
+        else if (isGuid(obj)) //true guid
+        {
+            debug.log("byGuid=" + obj);
+            feedURL += "?form=json&range=1-1&byGuid=" + obj;
+        }
+        else //start making assumptions and trying stuff
+        {
+//            if (_.isFinite(obj)) //id
+//            {
+//                jquery.noop();
+//            }
+
+            feedURL += "?form=json&range=1-1&byGuid=" + obj; //try guid
+//            feedURL += "?form=json&range=1-1&byReleaseId=" + obj; //try release id
+//            feedURL += "?form=json&range=1-1&byReleaseGuid=" + obj; //try release guid
+//            feedURL += "?form=json&range=1-1&byPid=" + obj; //try pid
+        }
+
+        if (isFeedURL(feedURL))
+        {
+            debug.log("Making request for getVideo()", feedURL);
 
             _makeRequest(feedURL)
                 .done(function (response) {
@@ -114,73 +159,62 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
                     deferred.fail(response);
                 })
                 .always(function (response) {
+                    // if we've been given a callback, we should call it no matter what
                     if (_.isFunction(callback))
                     {
                         callback.apply(response);
                     }
                 });
         }
-        else if (isReleaseURL(obj)) //release url
+        else
         {
-            var releaseURL = _.removeQueryParams(obj);
-        }
-        else if (isGuid(obj)) //true guid
-        {
-            var guid = _.removeQueryParams(obj);
-        }
-        else if (_.isFinite(obj)) //id
-        {
-            jquery.noop();
-        }
-        else if (_.isString(obj)) //release, guid
-        {
-            jquery.noop();
-        }
-
-        //just throw this warning for developers so they can debug more easily
-        if (_.isEmpty(video))
-        {
-            debug.warn("getVideo() returned an empty object... so something went wrong along the way");
+            errorResponse.description = "If you'd like to get a video just from its GUID, please set a default feed to use first using setDefaultFeedURL()";
+            deferred.reject(errorResponse);
+            if (_.isFunction(callback))
+            {
+                callback.apply(errorResponse);
+            }
         }
 
         return deferred;
     };
 
-    function _makeRequest (requestURL) {
-        var deferred = new jquery.Deferred();
-        debug.log('_makeRequest', requestURL);
-
-        if (!_.isURL(requestURL))
+    var isFeedURL = function (url) {
+        if (_.isString(url) && _.isURL(url) && url.indexOf('feed.theplatform.com') !== -1)
         {
-            var errorResponse = {
-                type: 'error',
-                description: "You didn't supply a URL"
-            };
-
-            return deferred.reject(errorResponse);
+            return true;
         }
 
-        var jqxhr = jquery.get(requestURL)
-            .done(function (jsonString) {
-                try {
-                    var json = JSON.parse(jsonString);
-                    deferred.resolve(json);
-                }
-                catch (error)
-                {
-                    deferred.reject(error);
-                }
-            })
-            .fail(function (error) {
-                debug.log('failed', arguments);
-                deferred.reject(JSON.parse(error));
-            })
-            .always(function () {
-                debug.log('always logged', arguments);
-            });
+        return false;
+    };
 
-        return deferred;
-    }
+    var isGuid = function (guid) {
+        var regex = /^\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?$/i;
+
+        return regex.test(guid);
+    };
+
+    var isReleaseURL = function (url) {
+        if (_.isString(url) && _.isURL(url) && url.indexOf('link.theplatform.com') !== -1)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    var setDefaultFeedURL  = function (feedURL) {
+        if (!isFeedURL(feedURL))
+        {
+            throw new Error("The feed URL you provided to setDefaultFeedURL() is not a valid feed");
+        }
+        else
+        {
+            _defaultConfig.feedURL = _.removeQueryParams(feedURL);
+        }
+
+        return true;
+    };
 
 
 
@@ -192,10 +226,11 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
     }
 
     return {
-        getVideo: getVideo,
         getFeedDetails: getFeedDetails,
+        getVideo: getVideo,
         isFeedURL: isFeedURL,
+        isGuid: isGuid,
         isReleaseURL: isReleaseURL,
-        isGuid: isGuid
+        setDefaultFeedURL: setDefaultFeedURL
     };
 });

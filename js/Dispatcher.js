@@ -13,8 +13,21 @@ define(['underscoreloader'], function (_) {
             });
         };
 
-        var removeListener = function (eventName, callback) {
-            _listeners = _.without(_listeners, eventName);
+        var removeListener = function (eventName) {
+            window.console.log('removeListener for ' + eventName);
+            window.console.log('before: _listeners', _listeners);
+
+            var updated = [];
+
+            _.each(_listeners, function (listener) {
+                if (listener.name !== eventName)
+                {
+                    updated.push(listener);
+                }
+            });
+
+            _listeners = updated;
+            window.console.log('after: _listeners', _listeners);
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
@@ -25,7 +38,6 @@ define(['underscoreloader'], function (_) {
 
             if (!dispatchOverWindow)
             {
-//                _.invoke(list, 'callback');
                 var listeners = _.where(listeners, {name: eventName});
                 _.each(_listeners, function (listener) {
                     listener.callback(event);
@@ -37,10 +49,30 @@ define(['underscoreloader'], function (_) {
             }
         };
 
+        var getEventListeners = function (eventName) {
+
+            if (_.isUndefined(eventName))
+            {
+                return _listeners;
+            }
+
+            var found = [];
+
+            _.each(_listeners, function (listener) {
+                if (listener.name === eventName)
+                {
+                    found.push(listener);
+                }
+            });
+
+            return found;
+        };
+
         return {
             addEventListener: addListener,
-            removeEventListener: removeListener,
-            dispatch: dispatch
+            dispatch: dispatch,
+            getEventListeners: getEventListeners,
+            removeEventListener: removeListener
         };
     };
 });

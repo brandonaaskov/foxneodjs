@@ -51,18 +51,19 @@ define([
 
     // Public API
     return {
-        version: '@@version',
-        packageName: '@@packageName',
+        _init: init,
         buildDate: '@@buildDate',
-        init: init,
-        player: player,
-        query: query,
-        utils: utils,
-        Debug: Debug,
+        packageName: '@@packageName',
+        version: '@@version',
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
+        getEventListeners: dispatcher.getEventListeners,
         removeEventListener: dispatcher.removeEventListener,
+        Debug: Debug,
+        player: player,
+        query: query,
         system: system,
+        utils: utils,
         __test__: {
             base64: base64
         }

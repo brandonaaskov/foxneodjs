@@ -1695,8 +1695,21 @@ define('Dispatcher',['underscoreloader'], function (_) {
             });
         };
 
-        var removeListener = function (eventName, callback) {
-            _listeners = _.without(_listeners, eventName);
+        var removeListener = function (eventName) {
+            window.console.log('removeListener for ' + eventName);
+            window.console.log('before: _listeners', _listeners);
+
+            var updated = [];
+
+            _.each(_listeners, function (listener) {
+                if (listener.name !== eventName)
+                {
+                    updated.push(listener);
+                }
+            });
+
+            _listeners = updated;
+            window.console.log('after: _listeners', _listeners);
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
@@ -1707,7 +1720,6 @@ define('Dispatcher',['underscoreloader'], function (_) {
 
             if (!dispatchOverWindow)
             {
-//                _.invoke(list, 'callback');
                 var listeners = _.where(listeners, {name: eventName});
                 _.each(_listeners, function (listener) {
                     listener.callback(event);
@@ -1719,10 +1731,30 @@ define('Dispatcher',['underscoreloader'], function (_) {
             }
         };
 
+        var getEventListeners = function (eventName) {
+
+            if (_.isUndefined(eventName))
+            {
+                return _listeners;
+            }
+
+            var found = [];
+
+            _.each(_listeners, function (listener) {
+                if (listener.name === eventName)
+                {
+                    found.push(listener);
+                }
+            });
+
+            return found;
+        };
+
         return {
             addEventListener: addListener,
-            removeEventListener: removeListener,
-            dispatch: dispatch
+            dispatch: dispatch,
+            getEventListeners: getEventListeners,
+            removeEventListener: removeListener
         };
     };
 });
@@ -2339,7 +2371,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.3.0: ';
+        var prefix = 'foxneod-0.4.0: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -3375,7 +3407,7 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
 
     var debug = new Debug('query'),
         _defaultConfig = {
-            feedURL: 'http://feed.theplatform.com/f/fox.com/videos',
+            feedURL: null,
             fields: [
                 'id',
                 'title',
@@ -3386,29 +3418,43 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         },
         _config = {};
 
-    var isFeedURL = function (url) {
-        if (_.isString(url) && _.isURL(url) && url.indexOf('feed.theplatform.com') !== -1)
+    function _makeRequest (requestURL) {
+        var deferred = new jquery.Deferred();
+        debug.log('_makeRequest', requestURL);
+
+        if (!_.isURL(requestURL))
         {
-            return true;
+            var errorResponse = {
+                type: 'error',
+                description: "You didn't supply a URL"
+            };
+
+            deferred.reject(errorResponse);
+        }
+        else
+        {
+            var jqxhr = jquery.get(requestURL)
+                .done(function (jsonString) {
+                    try {
+                        var json = JSON.parse(jsonString);
+                        deferred.resolve(json);
+                    }
+                    catch (error)
+                    {
+                        deferred.reject(error);
+                    }
+                })
+                .fail(function (error) {
+                    debug.log('failed', arguments);
+                    deferred.reject(JSON.parse(error));
+                })
+                .always(function () {
+                    debug.log('always logged', arguments);
+                });
         }
 
-        return false;
-    };
-
-    var isReleaseURL = function (url) {
-        if (_.isString(url) && _.isURL(url) && url.indexOf('link.theplatform.com') !== -1)
-        {
-            return true;
-        }
-
-        return false;
-    };
-
-    var isGuid = function (guid) {
-        var regex = /^\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?$/i;
-
-        return regex.test(guid);
-    };
+        return deferred;
+    }
 
     var getFeedDetails = function (feedURL, callback) { //callback is optional since we return a Promise
         var deferred = new jquery.Deferred();
@@ -3463,18 +3509,49 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
     };
 
     var getVideo = function (obj, callback) {
-        var video = {};
-        var deferred = new jquery.Deferred();
+        var video = {},
+            deferred = new jquery.Deferred(),
+            feedURL = _.removeQueryParams(obj) || _defaultConfig.feedURL,
+            errorResponse = {
+                type: 'error',
+                description: ""
+            };
 
-        if (!_.isDefined(obj) || _.isEmpty(obj) || !_.isArray(obj))
+        if (!_.isDefined(obj) || _.isEmpty(obj) || _.isArray(obj) && !feedURL)
         {
+            errorResponse.description = "You need to supply SOMETHING to getVideo()";
             deferred.reject(false);
         }
 
         if (isFeedURL(obj)) //feed url
         {
-            var feedURL = _.removeQueryParams(obj);
-            feedURL += '?form=json&range=1-1';
+            feedURL += '?form=json&range=1-1'; //we just want to grab the first video, so let's make the request lighter
+        }
+//        else if (isReleaseURL(obj)) //release url
+//        {
+//            var releaseURL = _.removeQueryParams(obj);
+//        }
+        else if (isGuid(obj)) //true guid
+        {
+            debug.log("byGuid=" + obj);
+            feedURL += "?form=json&range=1-1&byGuid=" + obj;
+        }
+        else //start making assumptions and trying stuff
+        {
+//            if (_.isFinite(obj)) //id
+//            {
+//                jquery.noop();
+//            }
+
+            feedURL += "?form=json&range=1-1&byGuid=" + obj; //try guid
+//            feedURL += "?form=json&range=1-1&byReleaseId=" + obj; //try release id
+//            feedURL += "?form=json&range=1-1&byReleaseGuid=" + obj; //try release guid
+//            feedURL += "?form=json&range=1-1&byPid=" + obj; //try pid
+        }
+
+        if (isFeedURL(feedURL))
+        {
+            debug.log("Making request for getVideo()", feedURL);
 
             _makeRequest(feedURL)
                 .done(function (response) {
@@ -3484,73 +3561,62 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
                     deferred.fail(response);
                 })
                 .always(function (response) {
+                    // if we've been given a callback, we should call it no matter what
                     if (_.isFunction(callback))
                     {
                         callback.apply(response);
                     }
                 });
         }
-        else if (isReleaseURL(obj)) //release url
+        else
         {
-            var releaseURL = _.removeQueryParams(obj);
-        }
-        else if (isGuid(obj)) //true guid
-        {
-            var guid = _.removeQueryParams(obj);
-        }
-        else if (_.isFinite(obj)) //id
-        {
-            jquery.noop();
-        }
-        else if (_.isString(obj)) //release, guid
-        {
-            jquery.noop();
-        }
-
-        //just throw this warning for developers so they can debug more easily
-        if (_.isEmpty(video))
-        {
-            debug.warn("getVideo() returned an empty object... so something went wrong along the way");
+            errorResponse.description = "If you'd like to get a video just from its GUID, please set a default feed to use first using setDefaultFeedURL()";
+            deferred.reject(errorResponse);
+            if (_.isFunction(callback))
+            {
+                callback.apply(errorResponse);
+            }
         }
 
         return deferred;
     };
 
-    function _makeRequest (requestURL) {
-        var deferred = new jquery.Deferred();
-        debug.log('_makeRequest', requestURL);
-
-        if (!_.isURL(requestURL))
+    var isFeedURL = function (url) {
+        if (_.isString(url) && _.isURL(url) && url.indexOf('feed.theplatform.com') !== -1)
         {
-            var errorResponse = {
-                type: 'error',
-                description: "You didn't supply a URL"
-            };
-
-            return deferred.reject(errorResponse);
+            return true;
         }
 
-        var jqxhr = jquery.get(requestURL)
-            .done(function (jsonString) {
-                try {
-                    var json = JSON.parse(jsonString);
-                    deferred.resolve(json);
-                }
-                catch (error)
-                {
-                    deferred.reject(error);
-                }
-            })
-            .fail(function (error) {
-                debug.log('failed', arguments);
-                deferred.reject(JSON.parse(error));
-            })
-            .always(function () {
-                debug.log('always logged', arguments);
-            });
+        return false;
+    };
 
-        return deferred;
-    }
+    var isGuid = function (guid) {
+        var regex = /^\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}?$/i;
+
+        return regex.test(guid);
+    };
+
+    var isReleaseURL = function (url) {
+        if (_.isString(url) && _.isURL(url) && url.indexOf('link.theplatform.com') !== -1)
+        {
+            return true;
+        }
+
+        return false;
+    };
+
+    var setDefaultFeedURL  = function (feedURL) {
+        if (!isFeedURL(feedURL))
+        {
+            throw new Error("The feed URL you provided to setDefaultFeedURL() is not a valid feed");
+        }
+        else
+        {
+            _defaultConfig.feedURL = _.removeQueryParams(feedURL);
+        }
+
+        return true;
+    };
 
 
 
@@ -3562,11 +3628,12 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
     }
 
     return {
-        getVideo: getVideo,
         getFeedDetails: getFeedDetails,
+        getVideo: getVideo,
         isFeedURL: isFeedURL,
+        isGuid: isGuid,
         isReleaseURL: isReleaseURL,
-        isGuid: isGuid
+        setDefaultFeedURL: setDefaultFeedURL
     };
 });
 /*global define, _ */
@@ -4153,7 +4220,7 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
         var matched = false;
 
         _.find(list, function (itemValue) {
-            debug.log(itemValue +' vs. '+ valueToMatch);
+//            debug.log(itemValue +' vs. '+ valueToMatch);
 
             if (_.isDefined(valueToMatch) && _.isDefined(itemValue) && _.isLooseEqual(valueToMatch, itemValue))
             {
@@ -4223,10 +4290,26 @@ define('system',['UAParser', 'Debug', 'underscoreloader'], function (UAParser, D
         }
     };
 
-    debug.log('(browser)', [browser.name, browser.version].join(' '));
-    debug.log('(device)', [device.vendor, device.model, device.type].join(' '));
-    debug.log('(engine)', [engine.name, engine.version].join(' '));
-    debug.log('(os)', [os.name, os.version].join(' '));
+    //no sense logging this stuff if the object is empty
+    if (_.has(browser, 'name'))
+    {
+        debug.log('(browser)', [browser.name, browser.version].join(' '));
+    }
+
+    if (_.has(device, 'name'))
+    {
+        debug.log('(device)', [device.vendor, device.model, device.type].join(' '));
+    }
+
+    if (_.has(engine, 'name'))
+    {
+        debug.log('(engine)', [engine.name, engine.version].join(' '));
+    }
+
+    if (_.has(os, 'name'))
+    {
+        debug.log('(os)', [os.name, os.version].join(' '));
+    }
 
     return system;
 });
@@ -4269,7 +4352,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-07 02:06:30';
+    var buildTimestamp = '2013-06-13 01:06:53';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4299,7 +4382,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-07 02:06:30)');
+        debug.log('ready (build date: 2013-06-13 01:06:53)');
 
         _messageUnsupportedUsers();
     };
@@ -4308,18 +4391,19 @@ define('foxneod',[
 
     // Public API
     return {
-        version: '0.3.0',
+        _init: init,
+        buildDate: '2013-06-13 01:06:53',
         packageName: 'foxneod',
-        buildDate: '2013-06-07 02:06:30',
-        init: init,
-        player: player,
-        query: query,
-        utils: utils,
-        Debug: Debug,
+        version: '0.4.0',
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
+        getEventListeners: dispatcher.getEventListeners,
         removeEventListener: dispatcher.removeEventListener,
+        Debug: Debug,
+        player: player,
+        query: query,
         system: system,
+        utils: utils,
         __test__: {
             base64: base64
         }
@@ -4350,7 +4434,7 @@ require([
             debug.log('Underscore version after noConflict is', underscore.VERSION);
 
             window['foxneod'] = window.$f = foxneod;
-            foxneod.init();
+            foxneod._init();
             dispatcher.dispatch('ready', {}, true);
             debug.log('foxneod assigned to window.FoxNEOD and window.$f');
         }

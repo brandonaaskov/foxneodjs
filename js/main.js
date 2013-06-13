@@ -23,7 +23,7 @@ require([
             debug.log('Underscore version after noConflict is', underscore.VERSION);
 
             window['@@packageName'] = window.$f = foxneod;
-            foxneod.init();
+            foxneod._init();
             dispatcher.dispatch('ready', {}, true);
             debug.log('foxneod assigned to window.FoxNEOD and window.$f');
         }
