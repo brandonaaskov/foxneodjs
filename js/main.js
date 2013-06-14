@@ -23,8 +23,6 @@ require([
                 window.jQuery = jquery;
             }
 
-            var test = foxneod.utils.addScriptTag('http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js');
-
             window._ = underscore;
             debug.log('jQuery version after noConflict is', jquery().jquery);
             debug.log('Underscore version after noConflict is', underscore.VERSION);

@@ -2148,32 +2148,29 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return text;
     };
 
-    var addScriptTag = function(url, data)
-    {
-        if (_.isURL(url))
+    var addToHead = function (tagName, attributes) {
+        if (_.isEmpty(tagName) || !_.isString(tagName))
         {
-            if (!_.isEmpty(data))
+            throw new Error("You have to provide a tag name when calling addToHead()");
+        }
+
+        if (_.isEmpty(attributes) || !_.isTrueObject(attributes))
+        {
+            throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
+        }
+
+        var elem = document.createElement(tagName);
+
+        _.each(attributes, function (value, key) {
+            key = key.toLowerCase().replace(/\W/g, '');
+
+            if (/^[a-z0-9-]+$/.test(key))
             {
-                if (_.isTrueObject(data))
-                {
-                   data = _.map(data, function(value, key){ return key +'='+ value; });
-                }
-
-                if (_.isArray(data))
-                {
-                    url = _.removeQueryParams(url) + '?' + data.join('&');
-                }
+                elem.setAttribute(key, value);
             }
+        });
 
-            var scriptElem = document.createElement('script');
-            scriptElem.setAttribute('src', url);
-            scriptElem.setAttribute('type','text/javascript');
-            document.getElementsByTagName('head')[0].appendChild(scriptElem);
-        }
-        else
-        {
-            throw new Error("You didn't supply a valid URL to utils.addScriptTag()");
-        }
+        document.getElementsByTagName('head')[0].appendChild(elem);
 
         return true;
     };
@@ -2375,7 +2372,7 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         removePixelSuffix: removePixelSuffix,
         stringToBoolean: stringToBoolean,
         booleanToString: booleanToString,
-        addScriptTag: addScriptTag,
+        addToHead: addToHead,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
@@ -2762,7 +2759,6 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, 
 
     function _enableExternalController() {
         //<meta name="tp:EnableExternalController" content="true" />
-
     }
 
     var getPlayerAttributes = function (element) {
@@ -4441,7 +4437,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-13 10:06:33';
+    var buildTimestamp = '2013-06-14 07:06:06';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4471,7 +4467,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-13 10:06:33)');
+        debug.log('ready (build date: 2013-06-14 07:06:06)');
 
         _messageUnsupportedUsers();
     };
@@ -4481,7 +4477,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-13 10:06:33',
+        buildDate: '2013-06-14 07:06:06',
         packageName: 'foxneod',
         version: '0.4.1',
         dispatch: dispatcher.dispatch,
@@ -4524,8 +4520,6 @@ require([
                 debug.log("jQuery didn't exist, so we're assigning it");
                 window.jQuery = jquery;
             }
-
-            var test = foxneod.utils.addScriptTag('http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js');
 
             window._ = underscore;
             debug.log('jQuery version after noConflict is', jquery().jquery);

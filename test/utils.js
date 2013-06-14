@@ -595,57 +595,90 @@ suite('utils', function () {
         });
     });
 
-    suite('addScriptTag()', function () {
+    suite('addToHead()', function () {
+        this.afterEach(function () {
+            jQuery('head meta[name="test"]').remove();
+        });
+
         test('Passing in nothing throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in null throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in undefined throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in an empty string throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in an empty object throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in a number throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in an anonymous function throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag();
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead();
+            }, "You have to provide a tag name when calling addToHead()");
         });
 
         test('Passing in a string, but not a URL throws an error', function () {
             assert.throws(function () {
-                $f.utils.addScriptTag('some string');
-            }, "You didn't supply a valid URL to utils.addScriptTag()");
+                $f.utils.addToHead('some string');
+            }, "You have to provide at least one attribute and it needs to be passed as an object");
         });
 
-        test('Passing in a valid URL returns true', function () {
-            assert.strictEqual($f.utils.addScriptTag('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'), true);
+        test('Passing in URL throws an error', function () {
+            assert.throws(function () {
+                $f.utils.addToHead('http://google.com');
+            }, "You have to provide at least one attribute and it needs to be passed as an object");
+        });
+
+        test('Passing in a valid string as the tag name but no attributes throws an error', function () {
+            assert.throws(function () {
+                $f.utils.addToHead('script');
+            }, "You have to provide at least one attribute and it needs to be passed as an object");
+        });
+
+        test('Passing in a valid string as the tag name but an empty object for attributes throws an error', function () {
+            assert.throws(function () {
+                $f.utils.addToHead('script', {});
+            }, "You have to provide at least one attribute and it needs to be passed as an object");
+        });
+
+        test('Passing in a valid string as the tag name but an empty object for attributes throws an error', function () {
+            assert.strictEqual($f.utils.addToHead('meta', {
+                name: 'test'
+            }), true);
+        });
+
+        test('Validates existence of added tag', function () {
+            $f.utils.addToHead('meta', {
+                name: 'test'
+            });
+
+            var $meta = jQuery('head meta[name="test"]');
+            assert.strictEqual($meta.length, 1);
         });
     });
 
