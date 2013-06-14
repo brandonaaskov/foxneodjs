@@ -10,6 +10,27 @@ The foxneod library is assigned to the window object as `foxneod` as well as `$f
 
 __Note__: Some aspects of the library make use of [Promises](http://wiki.commonjs.org/wiki/Promises/A). We're using jQuery's Deferred object for this, and you can read more about promises on jQuery's site or just about anywhere where people are dealing with asynchronous javascript :)
 
+### Table of Contents
+
+* [Core](#api-core)
+	* [buildDate](#foxneodbuilddate)
+	* [packageName](#foxneodpackagename)
+	* [version](#foxneodversion)
+	* [dispatch()](#foxneoddispatch)
+	* [addEventListener()](#foxneodaddeventlistener)
+	* [getEventListeners()](#foxneodgeteventlisteners)
+	* [hasEventListener()](#foxneodhaseventlistener)
+	* [removeEventListener()](#foxneodremoveeventlistener)
+* [Debug](#api-debug)
+	* [Debug()](#foxneoddebug)
+* [Query](#api-query)
+	* [getFeedDetails()](#foxneodquerygetfeeddetails)
+	* [getVideo()](#foxneodquerygetvideo)
+	* [isFeedURL()](#foxneodqueryisfeedurl)
+	* [isGuid()](#foxneodqueryisguid)
+	* [isReleaseURL()](#foxneodqueryisreleaseurl)
+	* [setDefaultFeedURL()](#foxneodquerysetdefaultfeedurl)
+
 ## API: Core
 The "core" module are really just the elements surfaced directly on `foxneod` such as the version, build date, etc.
 
@@ -88,6 +109,8 @@ foxneod.hasEventListener('test'); //true
 foxneod.removeEventListener('test');
 foxneod.hasEventListener('test'); //false
 ```
+
+## API: Debug
 
 ### foxneod.Debug()
 
