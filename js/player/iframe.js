@@ -6,6 +6,10 @@ define(['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
     var debug = new Debug('player/iframe');
     var playerIds = []; // stores the ids of the elements we find
 
+    function _enableExternalController() {
+        //<meta name="tp:EnableExternalController" content="true" />
+    }
+
     var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 

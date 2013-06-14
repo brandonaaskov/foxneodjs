@@ -2760,6 +2760,11 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, 
     var debug = new Debug('player/iframe');
     var playerIds = []; // stores the ids of the elements we find
 
+    function _enableExternalController() {
+        //<meta name="tp:EnableExternalController" content="true" />
+
+    }
+
     var getPlayerAttributes = function (element) {
         var playerAttributes = {};
 
@@ -4436,7 +4441,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-13 10:06:43';
+    var buildTimestamp = '2013-06-13 10:06:33';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4466,7 +4471,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-13 10:06:43)');
+        debug.log('ready (build date: 2013-06-13 10:06:33)');
 
         _messageUnsupportedUsers();
     };
@@ -4476,7 +4481,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-13 10:06:43',
+        buildDate: '2013-06-13 10:06:33',
         packageName: 'foxneod',
         version: '0.4.1',
         dispatch: dispatcher.dispatch,
