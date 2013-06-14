@@ -60,6 +60,16 @@ define(['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
 
 
     var injectIframe = function (element, attributes, iframeURL) {
+        var externalControllerAttributes = {
+            name: "tp:EnableExternalController",
+            content: "true"
+        };
+
+        if (!utils.tagInHead('meta', externalControllerAttributes))
+        {
+            utils.addToHead('meta', externalControllerAttributes);
+        }
+
         if (element && _.isObject(element))
         {
             var attributesString = utils.objectToPipeString(attributes);

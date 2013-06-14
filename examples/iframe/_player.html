@@ -7,7 +7,7 @@
     <script type="text/javascript">
         window.addEventListener('foxneod:ready', function () {
             (function initialize (window, undefined) {
-                var playerAttributes = FoxNEOD.utils.getQueryParams(window.location.href);
+                var playerAttributes = foxneod.utils.getQueryParams(window.location.href);
 
                 //set styles on the container
                 document.getElementById('container').setAttribute('style', 'width:'+ playerAttributes.width +'px; ' +

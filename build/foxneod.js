@@ -2468,7 +2468,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.4.1: ';
+        var prefix = 'foxneod-0.5.0: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -2834,6 +2834,16 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, 
 
 
     var injectIframe = function (element, attributes, iframeURL) {
+        var externalControllerAttributes = {
+            name: "tp:EnableExternalController",
+            content: "true"
+        };
+
+        if (!utils.tagInHead('meta', externalControllerAttributes))
+        {
+            utils.addToHead('meta', externalControllerAttributes);
+        }
+
         if (element && _.isObject(element))
         {
             var attributesString = utils.objectToPipeString(attributes);
@@ -4460,7 +4470,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-14 08:06:07';
+    var buildTimestamp = '2013-06-14 09:06:06';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4490,7 +4500,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-14 08:06:07)');
+        debug.log('ready (build date: 2013-06-14 09:06:06)');
 
         _messageUnsupportedUsers();
     };
@@ -4500,9 +4510,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-14 08:06:07',
+        buildDate: '2013-06-14 09:06:06',
         packageName: 'foxneod',
-        version: '0.4.1',
+        version: '0.5.0',
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
