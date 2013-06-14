@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
+define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher, _, jquery) {
     'use strict';
 
     var dispatcher = new Dispatcher();
@@ -369,6 +369,28 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return true;
     };
 
+    var tagInHead = function (tagName, attributes) {
+        if (_.isEmpty(tagName) || !_.isString(tagName))
+        {
+            throw new Error("You have to provide a tag name when calling tagInHead()");
+        }
+
+        if (_.isEmpty(attributes) || !_.isShallowObject(attributes))
+        {
+            throw new Error("You called tagInHead() with no attributes to match against");
+        }
+
+        var attrSelector = tagName;
+
+        _.map(attributes, function (value, key) {
+            attrSelector += '['+ key +'="'+ value +'"]';
+        });
+
+        var $tag = jquery('head ' + attrSelector);
+
+        return ($tag.length > 0) ? true : false;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -567,6 +589,7 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         stringToBoolean: stringToBoolean,
         booleanToString: booleanToString,
         addToHead: addToHead,
+        tagInHead: tagInHead,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,

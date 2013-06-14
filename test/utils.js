@@ -666,7 +666,7 @@ suite('utils', function () {
             }, "You have to provide at least one attribute and it needs to be passed as an object");
         });
 
-        test('Passing in a valid string as the tag name but an empty object for attributes throws an error', function () {
+        test('Passing in a valid string as the tag name and a valid attributes object returns true', function () {
             assert.strictEqual($f.utils.addToHead('meta', {
                 name: 'test'
             }), true);
@@ -679,6 +679,119 @@ suite('utils', function () {
 
             var $meta = jQuery('head meta[name="test"]');
             assert.strictEqual($meta.length, 1);
+        });
+    });
+
+    suite('tagInHead()', function () {
+        this.beforeEach(function () {
+            $f.utils.addToHead('meta', {
+                name: 'test'
+            });
+
+            $f.utils.addToHead('meta', {
+                name: 'complex',
+                extra: 'thing',
+                third: 'item'
+            });
+        });
+
+        this.afterEach(function () {
+            jQuery('head meta[name="test"]').remove();
+            jQuery('head meta[name="test"][extra="thing"][third="item"]').remove();
+        });
+
+        test('Passing in nothing throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test('Passing in null throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test('Passing in undefined throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test('Passing in an empty string throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test('Passing in an empty object throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test('Passing in a number throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test('Passing in an anonymous function throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead();
+            }, "You have to provide a tag name when calling tagInHead()");
+        });
+
+        test("Passing in a valid string but of a tag that doesn't exist returns false", function () {
+            assert.strictEqual($f.utils.tagInHead('some thing', {
+                name: 'complex',
+                extra: 'thing',
+                third: 'item'
+            }), false);
+        });
+
+        test('Passing in URL throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead('http://google.com');
+            }, "You called tagInHead() with no attributes to match against");
+        });
+
+        test('Passing in a valid string as the tag name but no attributes throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead('script');
+            }, "You called tagInHead() with no attributes to match against");
+        });
+
+        test('Passing in a valid string as the tag name but an empty object for attributes throws an error', function () {
+            assert.throws(function () {
+                $f.utils.tagInHead('script', {});
+            }, "You called tagInHead() with no attributes to match against");
+        });
+
+        test('Passing in a valid string as the tag name and a valid attributes object returns true', function () {
+            assert.strictEqual($f.utils.tagInHead('meta', {
+                name: 'test'
+            }), true);
+        });
+
+        test('Validates existence of added tag', function () {
+            $f.utils.addToHead('meta', {
+                name: 'test'
+            });
+
+            assert.strictEqual($f.utils.tagInHead('meta', {
+                name: 'test'
+            }), true);
+        });
+
+        test('Validates existence of added tag with multiple attributes', function () {
+            var tagInHead = $f.utils.tagInHead('meta', {
+                name: 'complex',
+                extra: 'thing',
+                third: 'item'
+            });
+
+            assert.strictEqual(tagInHead, true);
         });
     });
 

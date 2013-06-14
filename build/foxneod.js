@@ -1806,7 +1806,7 @@ define('Dispatcher',['underscoreloader'], function (_) {
 });
 /*global define, _ */
 
-define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
+define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher, _, jquery) {
     
 
     var dispatcher = new Dispatcher();
@@ -2175,6 +2175,28 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return true;
     };
 
+    var tagInHead = function (tagName, attributes) {
+        if (_.isEmpty(tagName) || !_.isString(tagName))
+        {
+            throw new Error("You have to provide a tag name when calling tagInHead()");
+        }
+
+        if (_.isEmpty(attributes) || !_.isShallowObject(attributes))
+        {
+            throw new Error("You called tagInHead() with no attributes to match against");
+        }
+
+        var attrSelector = tagName;
+
+        _.map(attributes, function (value, key) {
+            attrSelector += '['+ key +'="'+ value +'"]';
+        });
+
+        var $tag = jquery('head ' + attrSelector);
+
+        return ($tag.length > 0) ? true : false;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -2373,6 +2395,7 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         stringToBoolean: stringToBoolean,
         booleanToString: booleanToString,
         addToHead: addToHead,
+        tagInHead: tagInHead,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
@@ -4437,7 +4460,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-14 07:06:06';
+    var buildTimestamp = '2013-06-14 08:06:07';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4467,7 +4490,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-14 07:06:06)');
+        debug.log('ready (build date: 2013-06-14 08:06:07)');
 
         _messageUnsupportedUsers();
     };
@@ -4477,7 +4500,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-14 07:06:06',
+        buildDate: '2013-06-14 08:06:07',
         packageName: 'foxneod',
         version: '0.4.1',
         dispatch: dispatcher.dispatch,
