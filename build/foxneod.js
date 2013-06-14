@@ -2778,11 +2778,11 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
 });
 /*global define, _ */
 
-define('player/iframe',['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug, ovp) {
+define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _, Debug, Dispatcher) {
     
 
-    var debug = new Debug('player/iframe');
-    var playerIds = []; // stores the ids of the elements we find
+    var debug = new Debug('iframe'),
+        dispatcher = new Dispatcher();
 
     function _enableExternalController() {
         var attributes = {
@@ -2834,6 +2834,9 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'ovp'], function (
                         height: (_.has(lowercased, 'height')) ? lowercased.height : 360
                     };
 
+                    playerAttributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
+                    dispatcher.dispatch('playerAdded', playerAttributes.id);
+
                     playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
                     playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
                 }
@@ -2852,23 +2855,41 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'ovp'], function (
     var injectIframe = function (element, attributes, iframeURL) {
         _enableExternalController();
 
-        if (element && _.isObject(element))
+        if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
-            var attributesString = utils.objectToPipeString(attributes);
-            attributes = utils.lowerCasePropertyNames(attributes);
+            var query = document.querySelectorAll(element);
 
-            element.innerHTML = '<iframe ' +
-                'src="'+ iframeURL + '?' + attributesString + '"' +
-                'scrolling="no" ' +
-                'frameborder="0" ' +
-                'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+            if (!_.isDefined(query))
+            {
+                return false;
+            }
+
+            _.each(query, function (queryItem) {
+                injectIframe(queryItem, attributes, iframeURL);
+            });
         }
-        else
+        else if (!_.isElement(element))
         {
-            throw new Error('The injectIframe() method expected an element, and it expects it to be an ' +
-                'basic js object (not an array of elements).');
+            throw new Error("The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         }
+
+        if (!_.isShallowObject(attributes))
+        {
+            throw new Error("The second argument supplied to injectIframe() should be a basic, shallow object of key-value pairs to use for attributes");
+        }
+
+        var attributesString = utils.objectToPipeString(attributes);
+        attributes = utils.lowerCasePropertyNames(attributes);
+
+        element.innerHTML = '<iframe ' +
+            'id="'+ attributes.id +'"' +
+            'src="'+ iframeURL + '?' + attributesString + '"' +
+            'scrolling="no" ' +
+            'frameborder="0" ' +
+            'width="' + attributes.iframewidth + '"' +
+            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+
+        return true;
     };
 
     var injectIframePlayers = function (selector, iframeURL) {
@@ -2887,7 +2908,11 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'ovp'], function (
     return {
         getPlayerAttributes: getPlayerAttributes,
         injectIframe: injectIframe,
-        injectIframePlayers: injectIframePlayers
+        injectIframePlayers: injectIframePlayers,
+        addEventListener: dispatcher.addEventListener,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });
 /*global define, _ */
@@ -3427,7 +3452,8 @@ define('player',['require',
 
     var debug = new Debug('player'),
         _currentVideo = {},
-        _mostRecentAd = {};
+        _mostRecentAd = {},
+        _players = [];
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -3483,6 +3509,13 @@ define('player',['require',
                 }
             });
         });
+
+        iframe.addEventListener('playerAdded', function (playerId) {
+            if (_.isDefined(playerId))
+            {
+                _players.push(playerId);
+            }
+        });
     }
 
     //---------------------------------------------- init
@@ -3499,6 +3532,7 @@ define('player',['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
+        injectIframe: iframe.injectIframe,
         injectIframePlayers: iframe.injectIframePlayers,
         hide: ovp.hide,
         show: ovp.show,
@@ -4478,7 +4512,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-14 11:06:03';
+    var buildTimestamp = '2013-06-14 01:06:25';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4508,7 +4542,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-14 11:06:03)');
+        debug.log('ready (build date: 2013-06-14 01:06:25)');
 
         _messageUnsupportedUsers();
     };
@@ -4518,7 +4552,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-14 11:06:03',
+        buildDate: '2013-06-14 01:06:25',
         packageName: 'foxneod',
         version: '0.5.0',
         dispatch: dispatcher.dispatch,

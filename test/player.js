@@ -7,25 +7,24 @@ var assert = chai.assert,
     should = chai.should;
 
 suite('player', function () {
+    this.beforeEach(function () {
+        jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
+
+        // add multiple players
+        jQuery('#players')
+            .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/c8_9hFRvZiQB?mbr=true|siteSection=myFWSiteSection"></div>')
+            .append('<div class="player" data-player="autoplay=true|width=400|height=200|fb=true|releaseURL=http://link.theplatform.com/s/btn/tKi4ID3iI0Tm?mbr=true|siteSection=myFWSiteSection"></div>')
+            .append('<div class="player" data-player="autoplay=true|width=720|height=480|fb=true|releaseURL=http://link.theplatform.com/s/btn/jivltGVCLTXU?mbr=true|siteSection=myFWSiteSection"></div>')
+            .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/8rjdPiR1XR_3?mbr=true|siteSection=myFWSiteSection"></div>')
+            .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/4EfeflYQCTPm?mbr=true|siteSection=myFWSiteSection"></div>');
+    });
+
+    this.afterEach(function () {
+        jQuery('#player').empty();
+        jQuery('#players').empty();
+    });
+
     suite('getPlayerAttributes()', function () {
-
-        this.beforeEach(function () {
-            jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
-
-            // add multiple players
-            jQuery('#players')
-                .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/c8_9hFRvZiQB?mbr=true|siteSection=myFWSiteSection"></div>')
-                .append('<div class="player" data-player="autoplay=true|width=400|height=200|fb=true|releaseURL=http://link.theplatform.com/s/btn/tKi4ID3iI0Tm?mbr=true|siteSection=myFWSiteSection"></div>')
-                .append('<div class="player" data-player="autoplay=true|width=720|height=480|fb=true|releaseURL=http://link.theplatform.com/s/btn/jivltGVCLTXU?mbr=true|siteSection=myFWSiteSection"></div>')
-                .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/8rjdPiR1XR_3?mbr=true|siteSection=myFWSiteSection"></div>')
-                .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/4EfeflYQCTPm?mbr=true|siteSection=myFWSiteSection"></div>');
-        });
-
-        this.afterEach(function () {
-            jQuery('#player').empty();
-            jQuery('#players').empty();
-        });
-
         var expected = {
             autoplay: 'true',
             width: '640',
@@ -59,6 +58,79 @@ suite('player', function () {
         });
     });
 
+    suite('injectIframe()', function () {
+        test("Passing in nothing throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe();
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in undefined throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe(undefined);
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in null throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe(null);
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in an empty object throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe({});
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in an empty string throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe('');
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in a number throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe(25);
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in an empty array throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe([]);
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in an anonymous function throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe(function () {});
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in a jQuery object as the first argument throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe(jQuery('body'));
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        });
+
+        test("Passing in an invalid selector returns false", function () {
+            assert.strictEqual($f.player.injectIframe('nonexistent', { something: 'blah' }), false);
+        });
+
+        test("Passing in a valid ID selector with no attributes throws an error", function () {
+            assert.throws(function () {
+                $f.player.injectIframe('#playerID');
+            }, "The second argument supplied to injectIframe() should be a basic, shallow object of key-value pairs to use for attributes");
+        });
+
+        test("Passing in a valid ID selector (with attributes) returns true", function () {
+            assert.strictEqual($f.player.injectIframe('#playerID', { something: 'blah' }), true);
+        });
+
+        test("Passing in a valid class selector (with attributes) returns true", function () {
+            assert.strictEqual($f.player.injectIframe('.player', { something: 'blah' }), true);
+        });
+    });
 //            suite('seekTo', function () {
 //                test('Tries to seek before the OVP controller was available', function () {
 //                    assert.throws(function () {

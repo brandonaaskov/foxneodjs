@@ -1,10 +1,10 @@
 /*global define, _ */
 
-define(['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug, ovp) {
+define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _, Debug, Dispatcher) {
     'use strict';
 
-    var debug = new Debug('player/iframe');
-    var playerIds = []; // stores the ids of the elements we find
+    var debug = new Debug('iframe'),
+        dispatcher = new Dispatcher();
 
     function _enableExternalController() {
         var attributes = {
@@ -56,6 +56,9 @@ define(['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug,
                         height: (_.has(lowercased, 'height')) ? lowercased.height : 360
                     };
 
+                    playerAttributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
+                    dispatcher.dispatch('playerAdded', playerAttributes.id);
+
                     playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
                     playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
                 }
@@ -74,23 +77,41 @@ define(['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug,
     var injectIframe = function (element, attributes, iframeURL) {
         _enableExternalController();
 
-        if (element && _.isObject(element))
+        if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
-            var attributesString = utils.objectToPipeString(attributes);
-            attributes = utils.lowerCasePropertyNames(attributes);
+            var query = document.querySelectorAll(element);
 
-            element.innerHTML = '<iframe ' +
-                'src="'+ iframeURL + '?' + attributesString + '"' +
-                'scrolling="no" ' +
-                'frameborder="0" ' +
-                'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+            if (!_.isDefined(query))
+            {
+                return false;
+            }
+
+            _.each(query, function (queryItem) {
+                injectIframe(queryItem, attributes, iframeURL);
+            });
         }
-        else
+        else if (!_.isElement(element))
         {
-            throw new Error('The injectIframe() method expected an element, and it expects it to be an ' +
-                'basic js object (not an array of elements).');
+            throw new Error("The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         }
+
+        if (!_.isShallowObject(attributes))
+        {
+            throw new Error("The second argument supplied to injectIframe() should be a basic, shallow object of key-value pairs to use for attributes");
+        }
+
+        var attributesString = utils.objectToPipeString(attributes);
+        attributes = utils.lowerCasePropertyNames(attributes);
+
+        element.innerHTML = '<iframe ' +
+            'id="'+ attributes.id +'"' +
+            'src="'+ iframeURL + '?' + attributesString + '"' +
+            'scrolling="no" ' +
+            'frameborder="0" ' +
+            'width="' + attributes.iframewidth + '"' +
+            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+
+        return true;
     };
 
     var injectIframePlayers = function (selector, iframeURL) {
@@ -109,6 +130,10 @@ define(['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug,
     return {
         getPlayerAttributes: getPlayerAttributes,
         injectIframe: injectIframe,
-        injectIframePlayers: injectIframePlayers
+        injectIframePlayers: injectIframePlayers,
+        addEventListener: dispatcher.addEventListener,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });

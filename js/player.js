@@ -11,7 +11,8 @@ define(['require',
 
     var debug = new Debug('player'),
         _currentVideo = {},
-        _mostRecentAd = {};
+        _mostRecentAd = {},
+        _players = [];
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -67,6 +68,13 @@ define(['require',
                 }
             });
         });
+
+        iframe.addEventListener('playerAdded', function (playerId) {
+            if (_.isDefined(playerId))
+            {
+                _players.push(playerId);
+            }
+        });
     }
 
     //---------------------------------------------- init
@@ -83,6 +91,7 @@ define(['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
+        injectIframe: iframe.injectIframe,
         injectIframePlayers: iframe.injectIframePlayers,
         hide: ovp.hide,
         show: ovp.show,
