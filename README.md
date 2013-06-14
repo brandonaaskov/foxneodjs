@@ -73,12 +73,21 @@ This is a helpful way to see what event listeners are currently being used. If y
 If an event listener already exists for the event name that you pass in, it will return true. Otherwise it will return false.
 
 ```javascript
-
+foxneod.addEventListener('test', function () {});
+foxneod.hasEventListener('test'); //true
+foxneod.hasEventListener('somethingElse'); //false
 ```
 
 ### foxneod.removeEventListener()
 
 To remove an event listener, just pass in the name of the event that you want to remove. Ideally you'll have named them well in the first place (see **addEventListener()**), but please be careful to not remove event listeners that might be used by other parts of the code.
+
+```javascript
+foxneod.addEventListener('test', function () {});
+foxneod.hasEventListener('test'); //true
+foxneod.removeEventListener('test');
+foxneod.hasEventListener('test'); //false
+```
 
 ### foxneod.Debug()
 
