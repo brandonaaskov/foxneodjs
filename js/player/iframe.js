@@ -1,13 +1,25 @@
 /*global define, _ */
 
-define(['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
+define(['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug, ovp) {
     'use strict';
 
     var debug = new Debug('player/iframe');
     var playerIds = []; // stores the ids of the elements we find
 
     function _enableExternalController() {
-        //<meta name="tp:EnableExternalController" content="true" />
+        var attributes = {
+            name: "tp:EnableExternalController",
+            content: "true"
+        };
+
+        utils.addToHead('meta', attributes);
+
+        attributes = {
+            type: 'text/javascript',
+            src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
+        };
+
+        utils.addToHead('meta', attributes);
     }
 
     var getPlayerAttributes = function (element) {
@@ -60,15 +72,7 @@ define(['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
 
 
     var injectIframe = function (element, attributes, iframeURL) {
-        var externalControllerAttributes = {
-            name: "tp:EnableExternalController",
-            content: "true"
-        };
-
-        if (!utils.tagInHead('meta', externalControllerAttributes))
-        {
-            utils.addToHead('meta', externalControllerAttributes);
-        }
+        _enableExternalController();
 
         if (element && _.isObject(element))
         {
@@ -80,7 +84,7 @@ define(['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
                 'scrolling="no" ' +
                 'frameborder="0" ' +
                 'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '"></iframe>';
+                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
         }
         else
         {

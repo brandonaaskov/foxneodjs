@@ -353,18 +353,21 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
         }
 
-        var elem = document.createElement(tagName);
+        if (!tagInHead(tagName, attributes))
+        {
+            var elem = document.createElement(tagName);
 
-        _.each(attributes, function (value, key) {
-            key = key.toLowerCase().replace(/\W/g, '');
+            _.each(attributes, function (value, key) {
+                key = key.toLowerCase().replace(/\W/g, '');
 
-            if (/^[a-z0-9-]+$/.test(key))
-            {
-                elem.setAttribute(key, value);
-            }
-        });
+                if (/^[a-z0-9-]+$/.test(key))
+                {
+                    elem.setAttribute(key, value);
+                }
+            });
 
-        document.getElementsByTagName('head')[0].appendChild(elem);
+            document.getElementsByTagName('head')[0].appendChild(elem);
+        }
 
         return true;
     };

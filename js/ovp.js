@@ -10,7 +10,8 @@ define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'po
         debug = new Debug('ovp'),
         dispatcher = new Dispatcher(),
         ready = false,
-        selector = 'object[data^="http://player.foxfdm.com"]';
+        selector = 'object[data^="http://player.foxfdm.com"]',
+        version = '@@ovpVersion';
 
     var hide = function () {
         jquery(selector).each(function (index, element) {

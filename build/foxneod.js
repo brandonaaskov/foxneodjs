@@ -2159,18 +2159,21 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
             throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
         }
 
-        var elem = document.createElement(tagName);
+        if (!tagInHead(tagName, attributes))
+        {
+            var elem = document.createElement(tagName);
 
-        _.each(attributes, function (value, key) {
-            key = key.toLowerCase().replace(/\W/g, '');
+            _.each(attributes, function (value, key) {
+                key = key.toLowerCase().replace(/\W/g, '');
 
-            if (/^[a-z0-9-]+$/.test(key))
-            {
-                elem.setAttribute(key, value);
-            }
-        });
+                if (/^[a-z0-9-]+$/.test(key))
+                {
+                    elem.setAttribute(key, value);
+                }
+            });
 
-        document.getElementsByTagName('head')[0].appendChild(elem);
+            document.getElementsByTagName('head')[0].appendChild(elem);
+        }
 
         return true;
     };
@@ -2717,7 +2720,8 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
         debug = new Debug('ovp'),
         dispatcher = new Dispatcher(),
         ready = false,
-        selector = 'object[data^="http://player.foxfdm.com"]';
+        selector = 'object[data^="http://player.foxfdm.com"]',
+        version = '5.2.5';
 
     var hide = function () {
         jquery(selector).each(function (index, element) {
@@ -2774,14 +2778,26 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
 });
 /*global define, _ */
 
-define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, _, Debug) {
+define('player/iframe',['utils', 'underscoreloader', 'Debug', 'ovp'], function (utils, _, Debug, ovp) {
     
 
     var debug = new Debug('player/iframe');
     var playerIds = []; // stores the ids of the elements we find
 
     function _enableExternalController() {
-        //<meta name="tp:EnableExternalController" content="true" />
+        var attributes = {
+            name: "tp:EnableExternalController",
+            content: "true"
+        };
+
+        utils.addToHead('meta', attributes);
+
+        attributes = {
+            type: 'text/javascript',
+            src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
+        };
+
+        utils.addToHead('meta', attributes);
     }
 
     var getPlayerAttributes = function (element) {
@@ -2834,15 +2850,7 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, 
 
 
     var injectIframe = function (element, attributes, iframeURL) {
-        var externalControllerAttributes = {
-            name: "tp:EnableExternalController",
-            content: "true"
-        };
-
-        if (!utils.tagInHead('meta', externalControllerAttributes))
-        {
-            utils.addToHead('meta', externalControllerAttributes);
-        }
+        _enableExternalController();
 
         if (element && _.isObject(element))
         {
@@ -2854,7 +2862,7 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug'], function (utils, 
                 'scrolling="no" ' +
                 'frameborder="0" ' +
                 'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '"></iframe>';
+                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
         }
         else
         {
@@ -4470,7 +4478,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-14 09:06:06';
+    var buildTimestamp = '2013-06-14 11:06:03';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4500,7 +4508,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-14 09:06:06)');
+        debug.log('ready (build date: 2013-06-14 11:06:03)');
 
         _messageUnsupportedUsers();
     };
@@ -4510,7 +4518,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-14 09:06:06',
+        buildDate: '2013-06-14 11:06:03',
         packageName: 'foxneod',
         version: '0.5.0',
         dispatch: dispatcher.dispatch,
