@@ -17,7 +17,14 @@ require([
     (function () {
         if (underscore.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
         {
-            window.jQuery = jquery;
+            if (!window.jQuery || !window.$)
+            {
+                debug.log("jQuery didn't exist, so we're assigning it");
+                window.jQuery = jquery;
+            }
+
+            var test = foxneod.utils.addScriptTag('http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js');
+
             window._ = underscore;
             debug.log('jQuery version after noConflict is', jquery().jquery);
             debug.log('Underscore version after noConflict is', underscore.VERSION);

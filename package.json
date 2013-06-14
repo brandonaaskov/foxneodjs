@@ -1,7 +1,7 @@
 {
   "name": "foxneod",
   "debugMode": "none",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "ovpVersion": "1.4.525",
   "description": "A javascript library to leverage Fox's digital video players.",
   "private": true,

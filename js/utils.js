@@ -342,6 +342,36 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return text;
     };
 
+    var addScriptTag = function(url, data)
+    {
+        if (_.isURL(url))
+        {
+            if (!_.isEmpty(data))
+            {
+                if (_.isTrueObject(data))
+                {
+                   data = _.map(data, function(value, key){ return key +'='+ value; });
+                }
+
+                if (_.isArray(data))
+                {
+                    url = _.removeQueryParams(url) + '?' + data.join('&');
+                }
+            }
+
+            var scriptElem = document.createElement('script');
+            scriptElem.setAttribute('src', url);
+            scriptElem.setAttribute('type','text/javascript');
+            document.getElementsByTagName('head')[0].appendChild(scriptElem);
+        }
+        else
+        {
+            throw new Error("You didn't supply a valid URL to utils.addScriptTag()");
+        }
+
+        return true;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -539,6 +569,7 @@ define(['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         removePixelSuffix: removePixelSuffix,
         stringToBoolean: stringToBoolean,
         booleanToString: booleanToString,
+        addScriptTag: addScriptTag,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,

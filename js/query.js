@@ -119,6 +119,12 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         {
             errorResponse.description = "You need to supply SOMETHING to getVideo()";
             deferred.reject(false);
+
+            //DRY this up (it's used below too)
+            if (_.isFunction(callback))
+            {
+                callback(errorResponse);
+            }
         }
 
         if (isFeedURL(obj)) //feed url
@@ -168,11 +174,12 @@ define(['Debug', 'jqueryloader'], function (Debug, jquery) {
         }
         else
         {
-            errorResponse.description = "If you'd like to get a video just from its GUID, please set a default feed to use first using setDefaultFeedURL()";
+            errorResponse.description = "If you'd like to get a video just from its GUID, please set a default feed first using setDefaultFeedURL()";
             deferred.reject(errorResponse);
+
             if (_.isFunction(callback))
             {
-                callback.apply(errorResponse);
+                callback(errorResponse);
             }
         }
 

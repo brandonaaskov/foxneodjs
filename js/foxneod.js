@@ -58,6 +58,7 @@ define([
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
         Debug: Debug,
         player: player,
@@ -65,7 +66,8 @@ define([
         system: system,
         utils: utils,
         __test__: {
-            base64: base64
+            base64: base64,
+            removeAllEventListeners: dispatcher.removeAllEventListeners
         }
     };
 });

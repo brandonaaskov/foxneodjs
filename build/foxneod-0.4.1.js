@@ -1689,30 +1689,30 @@ define('Dispatcher',['underscoreloader'], function (_) {
         var _listeners = [];
 
         var addListener = function (eventName, callback) {
+            if (_.isEmpty(eventName) || !_.isString(eventName))
+            {
+                return false;
+            }
+
+            if (!_.isFunction(callback))
+            {
+                throw new Error("You can't create an event listener without supplying a callback function");
+            }
+
             _listeners.push({
                 name: eventName,
                 callback: callback
             });
-        };
 
-        var removeListener = function (eventName) {
-            window.console.log('removeListener for ' + eventName);
-            window.console.log('before: _listeners', _listeners);
-
-            var updated = [];
-
-            _.each(_listeners, function (listener) {
-                if (listener.name !== eventName)
-                {
-                    updated.push(listener);
-                }
-            });
-
-            _listeners = updated;
-            window.console.log('after: _listeners', _listeners);
+            return true;
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
+            if (_.isEmpty(eventName) || !_.isString(eventName))
+            {
+                throw new Error("You can't dispatch an event without supplying an event name (as a string)");
+            }
+
             var event = document.createEvent('Event');
             var name = 'foxneod:' + eventName;
             event.initEvent(name, true, true);
@@ -1729,6 +1729,8 @@ define('Dispatcher',['underscoreloader'], function (_) {
             {
                 window.dispatchEvent(event);
             }
+
+            return true;
         };
 
         var getEventListeners = function (eventName) {
@@ -1750,11 +1752,55 @@ define('Dispatcher',['underscoreloader'], function (_) {
             return found;
         };
 
+        var hasListener = function (eventName) {
+            var found = false;
+
+            if (!_.isEmpty(eventName) && _.isString(eventName))
+            {
+                _.each(_listeners, function (listener) {
+                    if (listener.name === eventName)
+                    {
+                        found = true;
+                    }
+                });
+            }
+
+            return found;
+        };
+
+        var removeListener = function (eventName) {
+            var updated = [],
+                removed = false;
+
+            _.each(_listeners, function (listener) {
+                if (listener.name !== eventName)
+                {
+                    updated.push(listener);
+                }
+                else
+                {
+                    removed = true;
+                }
+            });
+
+            _listeners = updated;
+
+            return removed;
+        };
+
+        var removeAllListeners = function () {
+            _listeners = [];
+
+            return _listeners;
+        };
+
         return {
             addEventListener: addListener,
             dispatch: dispatch,
             getEventListeners: getEventListeners,
-            removeEventListener: removeListener
+            hasEventListener: hasListener,
+            removeEventListener: removeListener,
+            removeAllEventListeners: removeAllListeners
         };
     };
 });
@@ -2102,6 +2148,36 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         return text;
     };
 
+    var addScriptTag = function(url, data)
+    {
+        if (_.isURL(url))
+        {
+            if (!_.isEmpty(data))
+            {
+                if (_.isTrueObject(data))
+                {
+                   data = _.map(data, function(value, key){ return key +'='+ value; });
+                }
+
+                if (_.isArray(data))
+                {
+                    url = _.removeQueryParams(url) + '?' + data.join('&');
+                }
+            }
+
+            var scriptElem = document.createElement('script');
+            scriptElem.setAttribute('src', url);
+            scriptElem.setAttribute('type','text/javascript');
+            document.getElementsByTagName('head')[0].appendChild(scriptElem);
+        }
+        else
+        {
+            throw new Error("You didn't supply a valid URL to utils.addScriptTag()");
+        }
+
+        return true;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -2299,6 +2375,7 @@ define('utils',['Dispatcher', 'underscoreloader'], function (Dispatcher, _) {
         removePixelSuffix: removePixelSuffix,
         stringToBoolean: stringToBoolean,
         booleanToString: booleanToString,
+        addScriptTag: addScriptTag,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
@@ -2371,7 +2448,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.4.0: ';
+        var prefix = 'foxneod-0.4.1: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -3521,6 +3598,12 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         {
             errorResponse.description = "You need to supply SOMETHING to getVideo()";
             deferred.reject(false);
+
+            //DRY this up (it's used below too)
+            if (_.isFunction(callback))
+            {
+                callback(errorResponse);
+            }
         }
 
         if (isFeedURL(obj)) //feed url
@@ -3570,11 +3653,12 @@ define('query',['Debug', 'jqueryloader'], function (Debug, jquery) {
         }
         else
         {
-            errorResponse.description = "If you'd like to get a video just from its GUID, please set a default feed to use first using setDefaultFeedURL()";
+            errorResponse.description = "If you'd like to get a video just from its GUID, please set a default feed first using setDefaultFeedURL()";
             deferred.reject(errorResponse);
+
             if (_.isFunction(callback))
             {
-                callback.apply(errorResponse);
+                callback(errorResponse);
             }
         }
 
@@ -4352,7 +4436,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-13 01:06:53';
+    var buildTimestamp = '2013-06-13 09:06:18';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4382,7 +4466,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-13 01:06:53)');
+        debug.log('ready (build date: 2013-06-13 09:06:18)');
 
         _messageUnsupportedUsers();
     };
@@ -4392,12 +4476,13 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-13 01:06:53',
+        buildDate: '2013-06-13 09:06:18',
         packageName: 'foxneod',
-        version: '0.4.0',
+        version: '0.4.1',
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
         Debug: Debug,
         player: player,
@@ -4405,7 +4490,8 @@ define('foxneod',[
         system: system,
         utils: utils,
         __test__: {
-            base64: base64
+            base64: base64,
+            removeAllEventListeners: dispatcher.removeAllEventListeners
         }
     };
 });
@@ -4428,7 +4514,14 @@ require([
     (function () {
         if (underscore.isUndefined(window['foxneod'])) //protects against the file being loaded multiple times
         {
-            window.jQuery = jquery;
+            if (!window.jQuery || !window.$)
+            {
+                debug.log("jQuery didn't exist, so we're assigning it");
+                window.jQuery = jquery;
+            }
+
+            var test = foxneod.utils.addScriptTag('http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js');
+
             window._ = underscore;
             debug.log('jQuery version after noConflict is', jquery().jquery);
             debug.log('Underscore version after noConflict is', underscore.VERSION);

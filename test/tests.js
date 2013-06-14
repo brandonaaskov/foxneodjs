@@ -8,6 +8,231 @@ var assert = chai.assert,
 
 suite('foxneod', function () {
 
+    suite('core', function () {
+        suite('addEventListener()', function () {
+            test("Neglecting to pass in a callback throws an error", function () {
+                assert.throws(function () {
+                    $f.addEventListener('noCallbackTest');
+                }, "You can't create an event listener without supplying a callback function");
+            });
+
+            test('Passing in nothing returns false', function () {
+                assert.strictEqual($f.addEventListener(), false);
+            });
+
+            test('Passing in null returns false', function () {
+                assert.strictEqual($f.addEventListener(null, jQuery.noop()), false);
+            });
+
+            test('Passing in undefined returns false', function () {
+                assert.strictEqual($f.addEventListener(undefined, jQuery.noop()), false);
+            });
+
+            test('Passing in an empty string returns false', function () {
+                assert.strictEqual($f.addEventListener('', jQuery.noop()), false);
+            });
+
+            test('Passing in an empty array returns false', function () {
+                assert.strictEqual($f.addEventListener([], jQuery.noop()), false);
+            });
+
+            test('Passing in an empty object returns false', function () {
+                assert.strictEqual($f.addEventListener({}, jQuery.noop()), false);
+            });
+
+            test('Passing in an anonymous function returns false', function () {
+                assert.strictEqual($f.addEventListener(function () {}), false);
+            });
+
+            test('Passing in a number returns false', function () {
+                assert.strictEqual($f.addEventListener(10, jQuery.noop()), false);
+            });
+
+            test("Passing in a valid string of an event that doesn't already exist returns true", function () {
+                $f.addEventListener('exists', function () {});
+                assert.strictEqual($f.hasEventListener('exists'), true);
+            });
+        });
+
+        suite('hasEventListener()', function () {
+            this.afterEach(function () {
+                $f.__test__.removeAllEventListeners();
+            });
+
+            test('Passing in nothing returns false', function () {
+                assert.strictEqual($f.hasEventListener(), false);
+            });
+
+            test('Passing in null returns false', function () {
+                assert.strictEqual($f.hasEventListener(null, jQuery.noop()), false);
+            });
+
+            test('Passing in undefined returns false', function () {
+                assert.strictEqual($f.hasEventListener(undefined, jQuery.noop()), false);
+            });
+
+            test('Passing in an empty string returns false', function () {
+                assert.strictEqual($f.hasEventListener('', jQuery.noop()), false);
+            });
+
+            test('Passing in an empty array returns false', function () {
+                assert.strictEqual($f.hasEventListener([], jQuery.noop()), false);
+            });
+
+            test('Passing in an empty object returns false', function () {
+                assert.strictEqual($f.hasEventListener({}, jQuery.noop()), false);
+            });
+
+            test('Passing in an anonymous function returns false', function () {
+                assert.strictEqual($f.hasEventListener(function () {}), false);
+            });
+
+            test("Passing in a valid string of an event that exists returns true", function () {
+                $f.addEventListener('exists', function () {});
+                assert.strictEqual($f.hasEventListener('exists'), true);
+            });
+        });
+
+        suite('dispatch()', function () {
+            this.afterEach(function () {
+                $f.__test__.removeAllEventListeners();
+            });
+
+            test('Passing in nothing throws an error', function () {
+                assert.throws(function () {
+                    $f.dispatch();
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in null returns false', function () {
+                assert.throws(function () {
+                    $f.dispatch(null);
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in undefined returns false', function () {
+                assert.throws(function () {
+                    $f.dispatch(undefined);
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in an empty string returns false', function () {
+                assert.throws(function () {
+                    $f.dispatch('');
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in an empty array returns false', function () {
+                assert.throws(function () {
+                    $f.dispatch([]);
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in an empty object returns false', function () {
+                assert.throws(function () {
+                    $f.dispatch({});
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in an anonymous function returns false', function () {
+                assert.throws(function () {
+                    $f.dispatch(function () {});
+                }, "You can't dispatch an event without supplying an event name (as a string)");
+            });
+
+            test('Passing in a valid string returns true', function () {
+                assert.strictEqual($f.dispatch('test'), true);
+            });
+
+            test('Dispatching over the window returns true', function () {
+                assert.strictEqual($f.dispatch('test', true), true);
+            });
+
+            test('Dispatching over foxneod works properly', function (done) {
+                $f.addEventListener('test', function (response) {
+                    done();
+                });
+
+                $f.dispatch('test');
+            });
+
+            test('Dispatching over foxneod with data works properly', function (done) {
+                $f.addEventListener('test', function (event) {
+                    if (event.data.test === 'working')
+                    {
+                        done();
+                    }
+                });
+
+                $f.dispatch('test', { test: 'working' });
+            });
+
+            test('Dispatching over the window object works properly', function (done) {
+                window.addEventListener('foxneod:test', function (response) {
+                    done();
+                });
+
+                $f.dispatch('test', {}, true);
+            });
+
+            test('Dispatching over the window object with data works properly', function (done) {
+                window.addEventListener('foxneod:test', function (event) {
+                    if (event.data.test === 'working')
+                    {
+                        done();
+                    }
+                });
+
+                $f.dispatch('test', { test: 'working' }, true);
+            });
+        });
+
+        suite('removeEventListener()', function () {
+            test('Passing in nothing returns false', function () {
+                assert.strictEqual($f.removeEventListener(), false);
+            });
+
+            test('Passing in null returns false', function () {
+                assert.strictEqual($f.removeEventListener(null), false);
+            });
+
+            test('Passing in undefined returns false', function () {
+                assert.strictEqual($f.removeEventListener(undefined), false);
+            });
+
+            test('Passing in an empty string returns false', function () {
+                assert.strictEqual($f.removeEventListener(''), false);
+            });
+
+            test('Passing in an empty array returns false', function () {
+                assert.strictEqual($f.removeEventListener([]), false);
+            });
+
+            test('Passing in an empty object returns false', function () {
+                assert.strictEqual($f.removeEventListener({}), false);
+            });
+
+            test('Passing in an anonymous function returns false', function () {
+                assert.strictEqual($f.removeEventListener(function () {}), false);
+            });
+
+            test('Passing in a number returns false', function () {
+                assert.strictEqual($f.removeEventListener(10), false);
+            });
+
+            test("Passing in a string of an event that doesn't exist returns false", function () {
+                assert.strictEqual($f.removeEventListener('doesnotexist'), false);
+            });
+
+            test("Passing in a string of an event that does exist returns true", function () {
+                $f.addEventListener('exists', function () {});
+
+                assert.strictEqual($f.removeEventListener('exists'), true);
+            });
+        });
+
+    });
+
     //------------------------------------------------------------------------------------- utils
     suite('utils', function () {
 
@@ -598,6 +823,60 @@ suite('foxneod', function () {
             });
         });
 
+        suite('addScriptTag()', function () {
+            test('Passing in nothing throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in null throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in undefined throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in an empty string throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in an empty object throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in a number throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in an anonymous function throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag();
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in a string, but not a URL throws an error', function () {
+                assert.throws(function () {
+                    $f.utils.addScriptTag('some string');
+                }, "You didn't supply a valid URL to utils.addScriptTag()");
+            });
+
+            test('Passing in a valid URL returns true', function () {
+                assert.strictEqual($f.utils.addScriptTag('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js'), true);
+            });
+        });
+
         suite('dispatchEvent()', function () {
             test('Event dispatches over the library core (with no data payload)', function (done) {
                 var eventName = 'test';
@@ -772,7 +1051,7 @@ suite('foxneod', function () {
     suite('player', function () {
         suite('getPlayerAttributes()', function () {
 
-            beforeEach(function () {
+            this.beforeEach(function () {
                 jQuery('#player').append('<div id="playerID" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection"></div>');
 
                 // add multiple players
@@ -784,7 +1063,7 @@ suite('foxneod', function () {
                     .append('<div class="player" data-player="autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/4EfeflYQCTPm?mbr=true|siteSection=myFWSiteSection"></div>');
             });
 
-            afterEach(function () {
+            this.afterEach(function () {
                 jQuery('#player').empty();
                 jQuery('#players').empty();
             });
@@ -1044,6 +1323,18 @@ suite('foxneod', function () {
             });
 
             test('Passing in a feed URL returns a video object', function (done) {
+                $f.query.getVideo('http://feed.theplatform.com/f/fox.com/videos', function (response) {
+                    done();
+                });
+            });
+
+            test('Passing in an invalid feed URL fires the callback', function (done) {
+                $f.query.getVideo('http://invalid.theplatform.com/f/fox.com/videos', function (response) {
+                    done();
+                });
+            });
+
+            test('Passing in a feed URL returns a video object to a callback', function (done) {
                 $f.query.getFeedDetails('http://feed.theplatform.com/f/fox.com/videos')
                     .done(function (json) {
                         if (_.isDefined(json) && _.isObject(json))

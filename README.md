@@ -27,7 +27,7 @@ This is a property that will tell you the name of the package, which is foxneod.
 
 ```javascript
 console.log(foxneod.packageName); //"foxneod"
-console.log($f.packageName); //"0.3.0"
+console.log($f.packageName); //"foxneod"
 ```
 
 ### foxneod.version
@@ -35,12 +35,12 @@ console.log($f.packageName); //"0.3.0"
 This is a property that will tell you the version of the library that you're working with.
 
 ```javascript
-console.log(foxneod.version	); //"2013-06-12 07:06:58"
+console.log(foxneod.version	); //"0.4.0"
 ```
 
 ### foxneod.dispatch()
 
-With this method you can dispatch events over the core module of the library. That just means that each event will be prefixed with "foxneod:" and then whatever event name you choose.
+With this method you can dispatch events over the core module of the library. Everything dispatches over `foxneod`, so you can listen for the events on it as well.
 
 ```javascript
 foxneod.addEventListener('test', function (event) {
@@ -50,7 +50,7 @@ foxneod.addEventListener('test', function (event) {
 foxneod.dispatch('test');
 ```
 
-The dispatch method takes an optional second parameter, which is a boolean to specify if you want to dispatch the event over the window or not. It defaults to false, but if you specify true, you just need to adjust the event listener as well.
+The dispatch method takes an optional second parameter, which is a boolean to specify if you want to dispatch the event over the window or not. It defaults to false, but if you specify true, you just need to adjust the event listener as well. When dispatching over the window, to namespace things properly we automatically prepend "foxneod:" to the name that you pass in. If you want to play it safe, you should namespace your event names with whatever you want just to prevent any potential collisions with other code on the page or in plugins.
 
 ```javascript
 window.addEventListener('foxneod:test', function (event) {
@@ -62,11 +62,19 @@ foxneod.dispatch('test', true);
 
 ### foxneod.addEventListener()
 
-If you really need a description of this then you probably shouldn't be here. See examples in **dispatch()** to see it in use. If you're going to use this, please make sure you're using it properly, preferably by name your events like "myns:test" so that it acts as a namespace and the events dispatched over the window would look like "foxneod:myns:test". It's a clean way to separate your code from anyone else's and prevent collisions. "myns" in this case would be whatever namespace you would use for all of your events.
+See examples in **dispatch()** to see it in use.
 
 ### foxneod.getEventListeners()
 
 This is a helpful way to see what event listeners are currently being used. If you want to see all of them, just pass in nothing and you'll get an array of all the event listeners.
+
+### foxneod.hasEventListener()
+
+If an event listener already exists for the event name that you pass in, it will return true. Otherwise it will return false.
+
+```javascript
+
+```
 
 ### foxneod.removeEventListener()
 
