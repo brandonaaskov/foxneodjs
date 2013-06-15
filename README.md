@@ -30,6 +30,19 @@ __Note__: Some aspects of the library make use of [Promises](http://wiki.commonj
 	* [isGuid()](#foxneodqueryisguid)
 	* [isReleaseURL()](#foxneodqueryisreleaseurl)
 	* [setDefaultFeedURL()](#foxneodquerysetdefaultfeedurl)
+* [Iframe](#api-iframe)
+    * [getPlayerAttributes()](#foxneodiframegetplayerattributes)
+    * [injectIframe()](#foxneodiframeinjectiframe)
+    * [injectIframePlayers()](#foxneodiframeinjectiframeplayers)
+
+
+    getPlayerAttributes: getPlayerAttributes,
+            injectIframe: injectIframe,
+            injectIframePlayers: injectIframePlayers,
+            addEventListener: dispatcher.addEventListener,
+            getEventListeners: dispatcher.getEventListeners,
+            hasEventListener: dispatcher.hasEventListener,
+            removeEventListener: dispatcher.removeEventListener
 
 ## API: Core
 The "core" module are really just the elements surfaced directly on `foxneod` such as the version, build date, etc.
@@ -226,6 +239,48 @@ This method is used in conjuction with `getVideo()`. By setting it, you can get 
 foxneod.query.setDefaultFeedURL('http://feed.theplatform.com/f/fox.com/myfeedid');
 ```
 
+## API: Player
+
+Working with thePlatform's iframe players means taking a couple more steps, but this module abstracts a lot of that for you. You specify what attributes you want to pass to the player by either defining an object and calling `injectIframe()` or by assigning a `data-player` attribute to your HTML element and then passing in a selector to that element.
+
+### foxneod.player.control()
+
+### foxneod.player.currentVideo
+
+### foxneod.player.setPlayerMessage()
+
+### foxneod.player.clearPlayerMessage()
+
+### foxneod.player.injectIframePlayer()
+
+### foxneod.player.hide()
+
+### foxneod.player.show()
+
+### foxneod.player.getCurrentVideo()
+
+### foxneod.player.getMostRecentAd()
+
+Returns the event object from the most recently played ad. 
+
+```javascript
+```
+
+### foxneod.player.seekTo()
+
+Seeks to the time provided (in seconds).
+
+```javascript
+foxneod.player.seekTo(10); //seeks to 10 seconds
+```
+
+### foxneod.player.play()
+
+Resumes playback if paused, does nothing otherwise.
+
+### foxneod.player.pause()
+
+Pauses playback if playing, does nothing otherwise.
 
 
 ## Debugging/Troubleshooting

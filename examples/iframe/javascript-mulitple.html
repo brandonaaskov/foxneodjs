@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta -->
+    <title>Multiple Javascript Style</title>
+    <!-- /Meta -->
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="http://player.foxfdm.com/shared/1.4.525/pdk/tpPdkController.js"></script>
+    <script type="text/javascript" src="../../build/foxneod.js"></script>
+    <script type="text/javascript" src="../js/player_qa.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('foxneod:ready', function () {
+            foxneod.player.injectIframePlayer('#player1', '_player.html', {
+                releaseURL: "http://link.theplatform.com/s/fox.com/Azphox7VPQIb?mbr=true"
+            });
+
+            foxneod.player.injectIframePlayer('#player2', '_player.html', {
+                releaseURL: "http://link.theplatform.com/s/fox.com/eX1V6P9jfXs0?mbr=true",
+                autoplay: false
+            });
+
+            foxneod.player.injectIframePlayer('#player3', '_player.html', {
+                releaseURL: "http://link.theplatform.com/s/fox.com/7g9ybV8F7ZUO?mbr=true",
+                autoplay: false
+            });
+        });
+    </script>
+    <!-- /Scripts -->
+
+    <!-- Styles -->
+    <style type="text/css">
+    </style>
+    <!-- /Styles -->
+</head>
+<body>
+    <ul>
+        <li id="player1"></li>
+        <li id="player2"></li>
+        <li id="player3"></li>
+    </ul>
+</body>
+</html>

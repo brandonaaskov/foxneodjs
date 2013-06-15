@@ -23,6 +23,10 @@
                 to: packageJSON.ovpVersion
             },
             {
+                from: '@@ovpAssetsFilePath',
+                to: packageJSON.ovpAssetsFilePath
+            },
+            {
                 from: '@@buildDate',
                 to: function () {
                     var buildDate = grunt.template.date(timestamp(), "yyyy-mm-dd hh:mm:ss");

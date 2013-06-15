@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>NEOD Player</title>
+    <meta name="tp:EnableExternalController" content="true" />
+    <script type="text/javascript" src="../../build/foxneod.js"></script>
     <script type="text/javascript" src="../js/player_qa.js"></script>
 
     <script type="text/javascript">
@@ -15,6 +17,12 @@
                 document.getElementById('player').setAttribute('style', 'width: 100%; height: 100%;');
 
                 var player = window.player = new FDM_Player('player', playerAttributes.width, playerAttributes.height);
+
+                /**
+                 * you can manually set player attributes here
+                 * e.g.
+                 * player.autoplay = false;
+                 */
 
                 for (var prop in playerAttributes)
                 {

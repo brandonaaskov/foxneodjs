@@ -54,6 +54,8 @@ define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'po
     // Public API
     return {
         addEventListener: dispatcher.addEventListener,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
         hide: hide,
         show: show,

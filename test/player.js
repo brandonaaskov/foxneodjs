@@ -29,6 +29,7 @@ suite('player', function () {
             autoplay: 'true',
             width: '640',
             height: '360',
+            id: "player1",
             iframeHeight: '360', //gets added by getPlayerAttributes if not already provided
             iframeWidth: '640', //gets added by getPlayerAttributes if not already provided
             fb: 'true',
@@ -61,74 +62,76 @@ suite('player', function () {
     suite('injectIframe()', function () {
         test("Passing in nothing throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe();
+                $f.player.injectIframePlayer();
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in undefined throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe(undefined);
+                $f.player.injectIframePlayer(undefined);
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in null throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe(null);
+                $f.player.injectIframePlayer(null);
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in an empty object throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe({});
+                $f.player.injectIframePlayer({});
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in an empty string throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe('');
+                $f.player.injectIframePlayer('');
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in a number throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe(25);
+                $f.player.injectIframePlayer(25);
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in an empty array throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe([]);
+                $f.player.injectIframePlayer([]);
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in an anonymous function throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe(function () {});
+                $f.player.injectIframePlayer(function () {});
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in a jQuery object as the first argument throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe(jQuery('body'));
+                $f.player.injectIframePlayer(jQuery('body'));
             }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
-        test("Passing in an invalid selector returns false", function () {
-            assert.strictEqual($f.player.injectIframe('nonexistent', { something: 'blah' }), false);
+        test("Passing in an invalid selector throws an error", function () {
+            assert.throw(function () {
+                $f.player.injectIframePlayer('nonexistent', 'page.html', { something: 'blah' });
+            }, "The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
         });
 
         test("Passing in a valid ID selector with no attributes throws an error", function () {
             assert.throws(function () {
-                $f.player.injectIframe('#playerID');
+                $f.player.injectIframePlayer('#playerID', 'page.html');
             }, "The second argument supplied to injectIframe() should be a basic, shallow object of key-value pairs to use for attributes");
         });
 
         test("Passing in a valid ID selector (with attributes) returns true", function () {
-            assert.strictEqual($f.player.injectIframe('#playerID', { something: 'blah' }), true);
+            assert.strictEqual($f.player.injectIframePlayer('#playerID', 'page.html', { something: 'blah' }), true);
         });
 
         test("Passing in a valid class selector (with attributes) returns true", function () {
-            assert.strictEqual($f.player.injectIframe('.player', { something: 'blah' }), true);
+            assert.strictEqual($f.player.injectIframePlayer('.player', 'page.html', { something: 'blah' }), true);
         });
     });
 //            suite('seekTo', function () {

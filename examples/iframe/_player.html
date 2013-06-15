@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>NEOD Player</title>
+    <meta name="tp:EnableExternalController" content="true" />
+
+    <script type="text/javascript" src="../../build/foxneod.js"></script>
     <script type="text/javascript" src="../js/player_qa.js"></script>
 
     <script type="text/javascript">
@@ -10,10 +13,19 @@
                 var playerAttributes = foxneod.utils.getQueryParams(window.location.href);
 
                 //set styles on the container
-                document.getElementById('container').setAttribute('style', 'width:'+ playerAttributes.width +'px; ' +
-                        'height:'+ playerAttributes.height +'px;');
+                document.getElementById('container')
+                        .setAttribute('style',
+                                'width:'+ playerAttributes.width +'px; ' +
+                                'height:'+ playerAttributes.height +'px;'
+                        );
 
                 var player = window.player = new FDM_Player('player', playerAttributes.width, playerAttributes.height);
+
+                /**
+                 * you can manually set player attributes here
+                 * e.g.
+                 * player.autoplay = false;
+                 */
 
                 for (var prop in playerAttributes)
                 {

@@ -2,15 +2,18 @@
 <html>
 <head>
     <!-- Meta -->
-    <title>Single Player</title>
+    <title>Javascript Style</title>
     <!-- /Meta -->
 
     <!-- Scripts -->
+    <script type="text/javascript" src="http://player.foxfdm.com/shared/1.4.525/pdk/tpPdkController.js"></script>
     <script type="text/javascript" src="../../build/foxneod.js"></script>
-    <script type="text/javascript" src="../js/player_qa.js"></script>
+
     <script type="text/javascript">
         window.addEventListener('foxneod:ready', function () {
-            foxneod.player.injectIframePlayers('#myPlayerID', '_player.html');
+            foxneod.player.injectIframePlayer('#myPlayerID', '_player.html', {
+                releaseURL: "http://link.theplatform.com/s/fox.com/pAKqKiP5a9s8?mbr=true"
+            });
         });
     </script>
     <!-- /Scripts -->
@@ -21,6 +24,6 @@
     <!-- /Styles -->
 </head>
 <body>
-        <div id="myPlayerID" data-player='autoplay=true|width=640|height=360|fb=true|releaseURL=http://link.theplatform.com/s/btn/yIzwkL89PBdK?mbr=true|siteSection=myFWSiteSection'></div>
+<div id="myPlayerID"></div>
 </body>
 </html>

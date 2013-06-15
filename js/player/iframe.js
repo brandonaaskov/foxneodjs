@@ -19,7 +19,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
         };
 
-        utils.addToHead('meta', attributes);
+        utils.addToHead('script', attributes);
     }
 
     var getPlayerAttributes = function (element) {
@@ -35,7 +35,6 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             }
 
             var allAttributes = element.attributes;
-
 
             for (var i = 0, n = allAttributes.length; i < n; i++)
             {
@@ -57,7 +56,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                     };
 
                     playerAttributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
-                    dispatcher.dispatch('playerAdded', playerAttributes.id);
+                    debug.log('playerAttributes.id', playerAttributes.id);
+                    dispatcher.dispatch('playerIdCreated', { playerId: playerAttributes.id });
 
                     playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
                     playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
@@ -74,25 +74,57 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
     };
 
 
-    var injectIframe = function (element, attributes, iframeURL) {
+    var injectIframePlayer = function (element, iframeURL, attributes) {
         _enableExternalController();
 
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
             var query = document.querySelectorAll(element);
 
-            if (!_.isDefined(query))
-            {
-                return false;
-            }
+            var atLeastOneElementFound = false;
 
-            _.each(query, function (queryItem) {
-                injectIframe(queryItem, attributes, iframeURL);
+            _.each(query, function (queryItem, index) {
+                if (_.isElement(queryItem))
+                {
+                    debug.log('element found', queryItem);
+                    if (_.isUndefined(attributes.id))
+                    {
+                        var defaultId = 'player' + index + '-' + _.random(0, 100000);
+                        attributes.id = queryItem.getAttribute('id') || defaultId;
+                        debug.log('default ID being applied', attributes.id);
+                    }
+
+                    atLeastOneElementFound = true;
+                    injectIframePlayer(queryItem, iframeURL, attributes);
+                }
+                else if (_.isString(queryItem) && !_.isEmpty(queryItem))
+                {
+                    injectIframePlayer(queryItem, iframeURL, attributes);
+                }
             });
+
+            if (!atLeastOneElementFound)
+            {
+                debug.warn("No elements were found, so we're going to force an error by calling this again with an empty array", query);
+                injectIframePlayer([], iframeURL, attributes);
+            }
+            else
+            {
+                // if we get here, it means that we found at least one element from our query above to create an
+                // iframe in and since that calls this function recursively, we want to shut down its original
+                // process by returning right here
+                return;
+            }
         }
-        else if (!_.isElement(element))
+
+        if (!_.isElement(element))
         {
             throw new Error("The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+        }
+
+        if (!_.isDefined(iframeURL) || !_.isString(iframeURL))
+        {
+            throw new Error("You didn't supply a valid iframe URL to use");
         }
 
         if (!_.isShallowObject(attributes))
@@ -111,26 +143,16 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             'width="' + attributes.iframewidth + '"' +
             'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
+        debug.log('dispatching created', element);
+        dispatcher.dispatch('created', { playerId: attributes.id });
+
         return true;
-    };
-
-    var injectIframePlayers = function (selector, iframeURL) {
-        var players = document.querySelectorAll(selector);
-
-        for (var i = 0, n = players.length; i < n; i++)
-        {
-            var player = players[i];
-            var attributes = getPlayerAttributes(player);
-
-            injectIframe(player, attributes, iframeURL);
-        }
     };
 
     // This API is only Public to player.js, so we should surface everything so we can unit test it
     return {
         getPlayerAttributes: getPlayerAttributes,
-        injectIframe: injectIframe,
-        injectIframePlayers: injectIframePlayers,
+        injectIframePlayer: injectIframePlayer,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
