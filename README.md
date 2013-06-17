@@ -245,13 +245,38 @@ Working with thePlatform's iframe players means taking a couple more steps, but 
 
 ### foxneod.player.control()
 
-### foxneod.player.currentVideo
+If you're using multiple iframe players on a page, use this method to control a specific player (or set of players). Since the only argument expected is a selector to find the iframe…[TODO]
 
 ### foxneod.player.setPlayerMessage()
 
+If you want to cover the player with a black overlay and a centered message and you want it to work in both Flash and HTML5, use this method.
+
+```javascript
+foxneod.player.setPlayerMessage({
+	message: "The message we want to display",
+	clearAfter: 10 //how long to leave up the message (in seconds). Use 0 to not set a timer.
+});
+
+```
+
 ### foxneod.player.clearPlayerMessage()
 
+If you've used setPlayerMessage() and want to remove it, just call this.
+
 ### foxneod.player.injectIframePlayer()
+
+This method takes three arguments (third is optional): the selector of where to inject the player, the URL to the page to display inside the iframe, and an (optional) object of attributes to be passed to the player. 
+
+##### data-player
+Instead of passing an object of attributes to the player, you can use the data-player attribute. 
+```html
+<div class="player" data-player="width=640|height=360|releaseURL=http://link.theplatform.com/s/fox.com/GyJn1LWj4pik?mbr=true|autoplay=true"></div>
+```
+
+Then, all you need to do is make sure that the selector that you pass into `injectIframePlayer()` points to HTML elements with data-player attributes like this. 
+```javascript
+foxneod.player.injectIframePlayer('.player', 'myIframePage.html');
+```
 
 ### foxneod.player.hide()
 

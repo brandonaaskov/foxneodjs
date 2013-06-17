@@ -136,7 +136,7 @@ define(['require',
 //        injectIframePlayers: iframe.injectIframePlayers,
         hide: ovp.hide,
         show: ovp.show,
-        currentVideo: _currentVideo,
+//        currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
 
