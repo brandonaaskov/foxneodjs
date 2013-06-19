@@ -30,19 +30,24 @@ __Note__: Some aspects of the library make use of [Promises](http://wiki.commonj
 	* [isGuid()](#foxneodqueryisguid)
 	* [isReleaseURL()](#foxneodqueryisreleaseurl)
 	* [setDefaultFeedURL()](#foxneodquerysetdefaultfeedurl)
-* [Iframe](#api-iframe)
-    * [getPlayerAttributes()](#foxneodiframegetplayerattributes)
-    * [injectIframe()](#foxneodiframeinjectiframe)
-    * [injectIframePlayers()](#foxneodiframeinjectiframeplayers)
+* [Player](#api-player)
+    * [getPlayerAttributes()](#foxneodplayergetplayerattributes)
+    * [injectIframePlayer()](#foxneodplayerinjectiframeplayer)
+    * [setPlayerMessage()](#foxneodplayersetplayermessage)
+    * [clearPlayerMessage()](#foxneodplayerclearplayermessage)
+    * [hide()](#foxneodplayerhide)
+    * [show()](#foxneodplayershow)
+    * [getCurrentVideo()](#foxneodplayergetcurrentvideo)
+    * [getMostRecentAd()](#foxneodplayergetmostrecentad)
+    * [control()](#foxneodplayercontrol)
+    * [seekTo()](#foxneodplayerseekto)
+    * [play()](#foxneodplayerplay)
+    * [pause()](#foxneodplayerpause)
+    * [addEventListener()](#foxneodplayeraddeventlistener)
+    * [getEventListeners()](#foxneodplayergeteventlisteners)
+    * [hasEventListener()](#foxneodplayerhaseventlistener)
+    * [removeEventListener()](#foxneodplayerremoveeventlistener)
 
-
-    getPlayerAttributes: getPlayerAttributes,
-            injectIframe: injectIframe,
-            injectIframePlayers: injectIframePlayers,
-            addEventListener: dispatcher.addEventListener,
-            getEventListeners: dispatcher.getEventListeners,
-            hasEventListener: dispatcher.hasEventListener,
-            removeEventListener: dispatcher.removeEventListener
 
 ## API: Core
 The "core" module are really just the elements surfaced directly on `foxneod` such as the version, build date, etc.
@@ -243,31 +248,35 @@ foxneod.query.setDefaultFeedURL('http://feed.theplatform.com/f/fox.com/myfeedid'
 
 Working with thePlatform's iframe players means taking a couple more steps, but this module abstracts a lot of that for you. You specify what attributes you want to pass to the player by either defining an object and calling `injectIframe()` or by assigning a `data-player` attribute to your HTML element and then passing in a selector to that element.
 
-### foxneod.player.control()
-
-If you're using multiple iframe players on a page, use this method to control a specific player (or set of players). Since the only argument expected is a selector to find the iframe…[TODO]
-
-### foxneod.player.setPlayerMessage()
-
-If you want to cover the player with a black overlay and a centered message and you want it to work in both Flash and HTML5, use this method.
-
-```javascript
-foxneod.player.setPlayerMessage({
-	message: "The message we want to display",
-	clearAfter: 10 //how long to leave up the message (in seconds). Use 0 to not set a timer.
-});
-
-```
-
 ### foxneod.player.clearPlayerMessage()
 
 If you've used setPlayerMessage() and want to remove it, just call this.
+```javascript
+
+foxneod.player.setPlayerMessage({
+	message: "The message we want to display"
+});
+
+foxneod.player.clearPlayerMessage(); //removes the message from the screen
+```
+
+### foxneod.player.control()
+
+If you're using multiple iframe players on a page, use this method to specify which player to control. This function essentially changes the `player` reference to be a specific player, so that calling commands on it like `play()` or `setPlayerMessage()` will only affect that player.
+
+```javascript
+foxneod.control('player1').pause();
+foxneod.control('player1').setPlayerMessage({
+	message: 'Only applies to player 1'
+});
+```
 
 ### foxneod.player.injectIframePlayer()
 
 This method takes three arguments (third is optional): the selector of where to inject the player, the URL to the page to display inside the iframe, and an (optional) object of attributes to be passed to the player. 
 
-##### data-player
+##### data-player attribute (aka the markup way)
+
 Instead of passing an object of attributes to the player, you can use the data-player attribute. 
 ```html
 <div class="player" data-player="width=640|height=360|releaseURL=http://link.theplatform.com/s/fox.com/GyJn1LWj4pik?mbr=true|autoplay=true"></div>
@@ -278,15 +287,58 @@ Then, all you need to do is make sure that the selector that you pass into `inje
 foxneod.player.injectIframePlayer('.player', 'myIframePage.html');
 ```
 
+##### the javascript way
+
+If you'd rather not define your attributes in markup, you can pass a standard object as the third parameter for what you want your attributes to be.
+
+```javascript
+foxneod.player.injectIframePlayer('#myPlayerHolder', 'page.html', {
+	releaseURL: "http://link.theplatform.com/s/fox.com/GyJn1LWj4pik?mbr=true",
+	autoplay: false
+});
+
+If you're already creating a player on the page by calling `new FDM_Player()`, then you can use the 
+```
+
+### foxneod.player.setPlayerMessage()
+
+If you want to cover the player with a black overlay and a centered message and you want it to work in both Flash and HTML5, use this method. The two available options right now are `message` and `clearAfter`. The `clearAfter` option is optional, and defaults to `0`, which just means that the message will stay on screen until `clearPlayerMessage()` is called. If you'd like the message to disappear after a certain period of time, just specify the number (in seconds) with the `clearAfter` option.
+
+```javascript
+foxneod.player.setPlayerMessage({
+	message: "The message we want to display",
+	clearAfter: 10 //how long to leave up the message (in seconds). Use 0 to not set a timer.
+});
+```
+
 ### foxneod.player.hide()
+
+Hides the player on the page by setting its CSS `display` property to `none`. 
+
+```javascript
+foxneod.player.hide();
+```
+
 
 ### foxneod.player.show()
 
+Shows a hidden player on the page by setting its CSS `display` property to its original value. 
+
+
+```javascript
+foxneod.player.show();
+```
+
 ### foxneod.player.getCurrentVideo()
+
+Returns the current video loaded into the player. Only available after `OnMediaLoadStart` fires.
+
+```javascript
+```
 
 ### foxneod.player.getMostRecentAd()
 
-Returns the event object from the most recently played ad. 
+Returns the event object from the most recently played ad. Only available after `OnMediaLoadStart` fires for ad playback.
 
 ```javascript
 ```
@@ -303,9 +355,18 @@ foxneod.player.seekTo(10); //seeks to 10 seconds
 
 Resumes playback if paused, does nothing otherwise.
 
+```javascript
+foxneod.player.play(); //if video is playing or not loaded, this does nothing
+```
+
 ### foxneod.player.pause()
 
 Pauses playback if playing, does nothing otherwise.
+
+```javascript
+foxneod.player.pause(); //if video is playing or not loaded, this does nothing
+```
+
 
 
 ## Debugging/Troubleshooting
