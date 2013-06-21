@@ -22,11 +22,20 @@ define([
         var title = "Unsupported Browser",
             message = '';
 
-        if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
+        if (system.isBrowser('ie', 7))
         {
-            message = "You're currently using Internet Explorer 10 in \"Compatibility\" mode, which has been " +
-                "known to freeze the video. Please switch your browser into \"Standards\" mode to get a better " +
-                "experience.";
+            if (system.isEngine('trident', 6))
+            {
+                message = "You're currently using Internet Explorer 10 in \"Compatibility\" mode, which has been " +
+                    "known to freeze the video. Please switch your browser into \"Standards\" mode to get a better " +
+                    "experience.";
+            }
+            else
+            {
+                message = "You're currently using Internet Explorer 7, which is an unsupported browser for video " +
+                    "playback. We recommend switching to a more modern browser or upgrading IE to get a better " +
+                    "experience.";
+            }
         }
 
         //show site modal

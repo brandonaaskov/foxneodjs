@@ -4,7 +4,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
     'use strict';
 
     var debug = new Debug('iframe'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        _playerIndex = 0;
 
     function _enableExternalController() {
         var attributes = {
@@ -20,6 +21,34 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         };
 
         utils.addToHead('script', attributes);
+    }
+
+    function _processPlayerAttributes(attributes)
+    {
+        if (!_.isTrueObject(attributes))
+        {
+            throw new Error("The attributes supplied to _processPlayerAttributes() should be an object");
+        }
+
+        /*
+         * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+         * not always the same as the height and width of the player.
+         */
+
+        var lowercased = utils.lowerCasePropertyNames(attributes);
+        var defaults = {
+            width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
+            height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+        };
+
+        attributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
+        debug.log('attributes.id', attributes.id);
+        dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
+
+        attributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
+        attributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+
+        return attributes;
     }
 
     var getPlayerAttributes = function (element) {
@@ -45,22 +74,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 {
                     playerAttributes = utils.pipeStringToObject(attr.nodeValue);
 
-                    /*
-                     * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
-                     * not always the same as the height and width of the player.
-                     */
-                    var lowercased = utils.lowerCasePropertyNames(playerAttributes);
-                    var defaults = {
-                        width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-                        height: (_.has(lowercased, 'height')) ? lowercased.height : 360
-                    };
-
-                    playerAttributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
-                    debug.log('playerAttributes.id', playerAttributes.id);
-                    dispatcher.dispatch('playerIdCreated', { playerId: playerAttributes.id });
-
-                    playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-                    playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+                    _processPlayerAttributes(playerAttributes);
                 }
             }
         }
@@ -119,17 +133,17 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
         if (!_.isElement(element))
         {
-            throw new Error("The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+            throw new Error("The first argument supplied to injectIframePlayer() should be an HTML element (not an array, or jQuery object) or a selector string");
         }
 
         if (!_.isDefined(iframeURL) || !_.isString(iframeURL))
         {
-            throw new Error("You didn't supply a valid iframe URL to use");
+            throw new Error("You didn't supply a valid iframe URL to use as the second argument to injectIframePlayer()");
         }
 
-        if (!_.isShallowObject(attributes))
+        if (!_.isTrueObject(attributes))
         {
-            throw new Error("The second argument supplied to injectIframe() should be a basic, shallow object of key-value pairs to use for attributes");
+            throw new Error("The third argument supplied to injectIframePlayer() should be a basic, shallow object of key-value pairs to use for attributes");
         }
 
         var attributesString = utils.objectToPipeString(attributes);

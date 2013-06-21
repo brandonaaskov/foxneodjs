@@ -2899,17 +2899,17 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
         if (!_.isElement(element))
         {
-            throw new Error("The first argument supplied to injectIframe() should be an HTML element (not an array, or jQuery object) or a selector string");
+            throw new Error("The first argument supplied to injectIframePlayer() should be an HTML element (not an array, or jQuery object) or a selector string");
         }
 
         if (!_.isDefined(iframeURL) || !_.isString(iframeURL))
         {
-            throw new Error("You didn't supply a valid iframe URL to use");
+            throw new Error("You didn't supply a valid iframe URL to use as the second argument to injectIframePlayer()");
         }
 
-        if (!_.isShallowObject(attributes))
+        if (!_.isTrueObject(attributes))
         {
-            throw new Error("The second argument supplied to injectIframe() should be a basic, shallow object of key-value pairs to use for attributes");
+            throw new Error("The third argument supplied to injectIframePlayer() should be a basic, shallow object of key-value pairs to use for attributes");
         }
 
         var attributesString = utils.objectToPipeString(attributes);
@@ -3601,7 +3601,7 @@ define('player',['require',
 //        injectIframePlayers: iframe.injectIframePlayers,
         hide: ovp.hide,
         show: ovp.show,
-        currentVideo: _currentVideo,
+//        currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
 
@@ -4584,7 +4584,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-14 11:06:53';
+    var buildTimestamp = '2013-06-17 06:06:48';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4614,7 +4614,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-14 11:06:53)');
+        debug.log('ready (build date: 2013-06-17 06:06:48)');
 
         _messageUnsupportedUsers();
     };
@@ -4624,7 +4624,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-14 11:06:53',
+        buildDate: '2013-06-17 06:06:48',
         packageName: 'foxneod',
         version: '0.5.0',
         dispatch: dispatcher.dispatch,
