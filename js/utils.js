@@ -394,6 +394,27 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return ($tag.length > 0) ? true : false;
     };
 
+    var override = function (startWith, overrideWith) {
+
+        if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
+        {
+            throw new Error("Both arguments supplied should be objects");
+        }
+
+        var cleaned = _.defaults(startWith, overrideWith);
+
+        _.each(startWith, function (value, key) {
+            _.each(overrideWith, function (overrideValue, overrideKey) {
+                if (key === overrideKey)
+                {
+                    cleaned[key] = overrideValue;
+                }
+            });
+        });
+
+        return cleaned;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -593,6 +614,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         booleanToString: booleanToString,
         addToHead: addToHead,
         tagInHead: tagInHead,
+        override: override,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,

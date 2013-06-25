@@ -2200,6 +2200,27 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         return ($tag.length > 0) ? true : false;
     };
 
+    var override = function (startWith, overrideWith) {
+
+        if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
+        {
+            throw new Error("Both arguments supplied should be objects");
+        }
+
+        var cleaned = _.defaults(startWith, overrideWith);
+
+        _.each(startWith, function (value, key) {
+            _.each(overrideWith, function (overrideValue, overrideKey) {
+                if (key === overrideKey)
+                {
+                    cleaned[key] = overrideValue;
+                }
+            });
+        });
+
+        return cleaned;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -2399,6 +2420,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         booleanToString: booleanToString,
         addToHead: addToHead,
         tagInHead: tagInHead,
+        override: override,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
@@ -2784,7 +2806,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
     
 
     var debug = new Debug('iframe'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        _playerIndex = 0;
 
     function _enableExternalController() {
         var attributes = {
@@ -2802,8 +2825,37 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
         utils.addToHead('script', attributes);
     }
 
+    function _processPlayerAttributes(attributes, declaredAttributes) {
+        attributes = attributes || {};
+
+        if (_.isDefined(declaredAttributes) && !_.isEmpty(attributes))
+        {
+            attributes = utils.override(declaredAttributes || {}, attributes);
+        }
+
+        /*
+         * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+         * not always the same as the height and width of the player.
+         */
+
+        var lowercased = utils.lowerCasePropertyNames(attributes);
+        var defaults = {
+            width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
+            height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+        };
+
+        attributes.id = 'js-player-' + _playerIndex++;
+        dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
+
+        attributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
+        attributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+
+        return attributes;
+    }
+
     var getPlayerAttributes = function (element) {
-        var playerAttributes = {};
+        var playerAttributes = {},
+            elementId;
 
         if (_.isDefined(element))
         {
@@ -2821,27 +2873,21 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
                 var attr = allAttributes[i],
                     attrName = attr.nodeName;
 
-                if (attrName.indexOf('data-player') !== -1)
+                if (attrName === 'data-player')
                 {
                     playerAttributes = utils.pipeStringToObject(attr.nodeValue);
-
-                    /*
-                     * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
-                     * not always the same as the height and width of the player.
-                     */
-                    var lowercased = utils.lowerCasePropertyNames(playerAttributes);
-                    var defaults = {
-                        width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-                        height: (_.has(lowercased, 'height')) ? lowercased.height : 360
-                    };
-
-                    playerAttributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
-                    debug.log('playerAttributes.id', playerAttributes.id);
-                    dispatcher.dispatch('playerIdCreated', { playerId: playerAttributes.id });
-
-                    playerAttributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-                    playerAttributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
                 }
+
+                if (attrName === 'id')
+                {
+                    elementId = attr.nodeValue;
+                }
+            }
+
+            //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
+            if (elementId)
+            {
+                playerAttributes.id = elementId;
             }
         }
         else
@@ -2855,11 +2901,15 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
 
     var injectIframePlayer = function (element, iframeURL, attributes) {
+        var elements = [];
+
         _enableExternalController();
 
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
             var query = document.querySelectorAll(element);
+
+            debug.log('We got a selector, here!', query);
 
             var atLeastOneElementFound = false;
 
@@ -2867,64 +2917,44 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
                 if (_.isElement(queryItem))
                 {
                     debug.log('element found', queryItem);
-                    if (_.isUndefined(attributes.id))
-                    {
-                        var defaultId = 'player' + index + '-' + _.random(0, 100000);
-                        attributes.id = queryItem.getAttribute('id') || defaultId;
-                        debug.log('default ID being applied', attributes.id);
-                    }
+                    var declaredAttributes = getPlayerAttributes(queryItem);
+                    attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
+
+                    elements.push({
+                        element: queryItem,
+                        attributes: attributes
+                    });
 
                     atLeastOneElementFound = true;
-                    injectIframePlayer(queryItem, iframeURL, attributes);
-                }
-                else if (_.isString(queryItem) && !_.isEmpty(queryItem))
-                {
-                    injectIframePlayer(queryItem, iframeURL, attributes);
                 }
             });
 
             if (!atLeastOneElementFound)
             {
-                debug.warn("No elements were found, so we're going to force an error by calling this again with an empty array", query);
-                injectIframePlayer([], iframeURL, attributes);
-            }
-            else
-            {
-                // if we get here, it means that we found at least one element from our query above to create an
-                // iframe in and since that calls this function recursively, we want to shut down its original
-                // process by returning right here
-                return;
+                throw new Error("No players could be created from the selector you provided");
             }
         }
-
-        if (!_.isElement(element))
-        {
-            throw new Error("The first argument supplied to injectIframePlayer() should be an HTML element (not an array, or jQuery object) or a selector string");
+        else {
+            throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
         }
 
-        if (!_.isDefined(iframeURL) || !_.isString(iframeURL))
-        {
-            throw new Error("You didn't supply a valid iframe URL to use as the second argument to injectIframePlayer()");
-        }
+        _.each(elements, function (playerToCreate) {
+            debug.log('iframe attributes', attributes);
 
-        if (!_.isTrueObject(attributes))
-        {
-            throw new Error("The third argument supplied to injectIframePlayer() should be a basic, shallow object of key-value pairs to use for attributes");
-        }
+            var attributesString = utils.objectToPipeString(playerToCreate.attributes);
+            attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
 
-        var attributesString = utils.objectToPipeString(attributes);
-        attributes = utils.lowerCasePropertyNames(attributes);
+            playerToCreate.element.innerHTML = '<iframe ' +
+                'id="'+ attributes.id +'"' +
+                'src="'+ iframeURL + '?' + attributesString + '"' +
+                'scrolling="no" ' +
+                'frameborder="0" ' +
+                'width="' + attributes.iframewidth + '"' +
+                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
-        element.innerHTML = '<iframe ' +
-            'id="'+ attributes.id +'"' +
-            'src="'+ iframeURL + '?' + attributesString + '"' +
-            'scrolling="no" ' +
-            'frameborder="0" ' +
-            'width="' + attributes.iframewidth + '"' +
-            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
-
-        debug.log('dispatching created', element);
-        dispatcher.dispatch('created', { playerId: attributes.id });
+            debug.log('dispatching created', playerToCreate.element);
+            dispatcher.dispatch('created', { playerId: attributes.id });
+        });
 
         return true;
     };
@@ -3598,10 +3628,8 @@ define('player',['require',
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
         injectIframePlayer: iframe.injectIframePlayer,
-//        injectIframePlayers: iframe.injectIframePlayers,
         hide: ovp.hide,
         show: ovp.show,
-//        currentVideo: _currentVideo,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
 
@@ -4584,7 +4612,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-17 06:06:48';
+    var buildTimestamp = '2013-06-25 04:06:34';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4594,11 +4622,20 @@ define('foxneod',[
         var title = "Unsupported Browser",
             message = '';
 
-        if (system.isBrowser('ie', 7) && system.isEngine('trident', 6))
+        if (system.isBrowser('ie', 7))
         {
-            message = "You're currently using Internet Explorer 10 in \"Compatibility\" mode, which has been " +
-                "known to freeze the video. Please switch your browser into \"Standards\" mode to get a better " +
-                "experience.";
+            if (system.isEngine('trident', 6))
+            {
+                message = "You're currently using Internet Explorer 10 in \"Compatibility\" mode, which has been " +
+                    "known to freeze the video. Please switch your browser into \"Standards\" mode to get a better " +
+                    "experience.";
+            }
+            else
+            {
+                message = "You're currently using Internet Explorer 7, which is an unsupported browser for video " +
+                    "playback. We recommend switching to a more modern browser or upgrading IE to get a better " +
+                    "experience.";
+            }
         }
 
         //show site modal
@@ -4614,7 +4651,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-17 06:06:48)');
+        debug.log('ready (build date: 2013-06-25 04:06:34)');
 
         _messageUnsupportedUsers();
     };
@@ -4624,7 +4661,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-17 06:06:48',
+        buildDate: '2013-06-25 04:06:34',
         packageName: 'foxneod',
         version: '0.5.0',
         dispatch: dispatcher.dispatch,

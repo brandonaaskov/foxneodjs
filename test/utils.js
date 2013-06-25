@@ -795,6 +795,149 @@ suite('utils', function () {
         });
     });
 
+    suite('override()', function () {
+        test('Passing in nothing throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override();
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in null throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override(null);
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in undefined throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override(undefined);
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in an empty string throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override('');
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in an empty array throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override([]);
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in an empty object throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override({});
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in an anonymous function throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override(function () {});
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Passing in two empty objects throws an error', function () {
+            assert.throws(function () {
+                $f.utils.override({}, {});
+            }, "Both arguments supplied should be objects");
+        });
+
+        test('Overriding a nested object works as expected', function () {
+            var startWith = {
+                id: 'test',
+                name: 'override test',
+                year: 2013,
+                movies: [
+                    {
+                        name: 'Man of Steel'
+                    },
+                    {
+                        name: 'World War Z'
+                    },
+                    {
+                        name: 'This is the End'
+                    }
+                ],
+                // there's really no point testing this big stupid object, because any
+                // top-level property matched will get overridden anyway
+                company: {
+                    name: 'Fox',
+                    groups: {
+                        neod: {
+                            employees: [
+                                'Casey Frith-Smith',
+                                'Ken Sitz',
+                                'Brandon Aaskov'
+                            ]
+                        }
+                    }
+                }
+            };
+
+            var overrideWith = {
+                name: 'override test',
+                year: 1999,
+                movies: [
+                    {
+                        name: 'The Matrix'
+                    },
+                    {
+                        name: 'American Beauty'
+                    },
+                    {
+                        name: 'Fight Club'
+                    }
+                ],
+                company: {
+                    name: 'Fox',
+                    groups: {
+                        neod: {
+                            employees: [
+                                'Casey Frith-Smith',
+                                'Cindy Tsai',
+                                'Michael Holzmiller'
+                            ]
+                        }
+                    }
+                }
+            };
+
+            var expected = {
+                id: 'test',
+                name: 'override test',
+                year: 1999,
+                movies: [
+                    {
+                        name: 'The Matrix'
+                    },
+                    {
+                        name: 'American Beauty'
+                    },
+                    {
+                        name: 'Fight Club'
+                    }
+                ],
+                company: {
+                    name: 'Fox',
+                    groups: {
+                        neod: {
+                            employees: [
+                                'Casey Frith-Smith',
+                                'Cindy Tsai',
+                                'Michael Holzmiller'
+                            ]
+                        }
+                    }
+                }
+            };
+
+            console.log('asdfasdf', $f.utils.override(startWith, overrideWith));
+            assert.deepEqual($f.utils.override(startWith, overrideWith), expected);
+        });
+    });
+
     suite('dispatchEvent()', function () {
         test('Event dispatches over the library core (with no data payload)', function (done) {
             var eventName = 'test';

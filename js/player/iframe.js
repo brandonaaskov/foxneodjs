@@ -23,11 +23,12 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         utils.addToHead('script', attributes);
     }
 
-    function _processPlayerAttributes(attributes)
-    {
-        if (!_.isTrueObject(attributes))
+    function _processPlayerAttributes(attributes, declaredAttributes) {
+        attributes = attributes || {};
+
+        if (_.isDefined(declaredAttributes) && !_.isEmpty(attributes))
         {
-            throw new Error("The attributes supplied to _processPlayerAttributes() should be an object");
+            attributes = utils.override(declaredAttributes || {}, attributes);
         }
 
         /*
@@ -41,8 +42,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             height: (_.has(lowercased, 'height')) ? lowercased.height : 360
         };
 
-        attributes.id = (_.has(lowercased, 'id')) ? lowercased.id : 'player' + i;
-        debug.log('attributes.id', attributes.id);
+        attributes.id = 'js-player-' + _playerIndex++;
         dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
         attributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
@@ -52,7 +52,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
     }
 
     var getPlayerAttributes = function (element) {
-        var playerAttributes = {};
+        var playerAttributes = {},
+            elementId;
 
         if (_.isDefined(element))
         {
@@ -70,12 +71,21 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 var attr = allAttributes[i],
                     attrName = attr.nodeName;
 
-                if (attrName.indexOf('data-player') !== -1)
+                if (attrName === 'data-player')
                 {
                     playerAttributes = utils.pipeStringToObject(attr.nodeValue);
-
-                    _processPlayerAttributes(playerAttributes);
                 }
+
+                if (attrName === 'id')
+                {
+                    elementId = attr.nodeValue;
+                }
+            }
+
+            //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
+            if (elementId)
+            {
+                playerAttributes.id = elementId;
             }
         }
         else
@@ -89,11 +99,15 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
 
     var injectIframePlayer = function (element, iframeURL, attributes) {
+        var elements = [];
+
         _enableExternalController();
 
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
             var query = document.querySelectorAll(element);
+
+            debug.log('We got a selector, here!', query);
 
             var atLeastOneElementFound = false;
 
@@ -101,64 +115,44 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 if (_.isElement(queryItem))
                 {
                     debug.log('element found', queryItem);
-                    if (_.isUndefined(attributes.id))
-                    {
-                        var defaultId = 'player' + index + '-' + _.random(0, 100000);
-                        attributes.id = queryItem.getAttribute('id') || defaultId;
-                        debug.log('default ID being applied', attributes.id);
-                    }
+                    var declaredAttributes = getPlayerAttributes(queryItem);
+                    attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
+
+                    elements.push({
+                        element: queryItem,
+                        attributes: attributes
+                    });
 
                     atLeastOneElementFound = true;
-                    injectIframePlayer(queryItem, iframeURL, attributes);
-                }
-                else if (_.isString(queryItem) && !_.isEmpty(queryItem))
-                {
-                    injectIframePlayer(queryItem, iframeURL, attributes);
                 }
             });
 
             if (!atLeastOneElementFound)
             {
-                debug.warn("No elements were found, so we're going to force an error by calling this again with an empty array", query);
-                injectIframePlayer([], iframeURL, attributes);
-            }
-            else
-            {
-                // if we get here, it means that we found at least one element from our query above to create an
-                // iframe in and since that calls this function recursively, we want to shut down its original
-                // process by returning right here
-                return;
+                throw new Error("No players could be created from the selector you provided");
             }
         }
-
-        if (!_.isElement(element))
-        {
-            throw new Error("The first argument supplied to injectIframePlayer() should be an HTML element (not an array, or jQuery object) or a selector string");
+        else {
+            throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
         }
 
-        if (!_.isDefined(iframeURL) || !_.isString(iframeURL))
-        {
-            throw new Error("You didn't supply a valid iframe URL to use as the second argument to injectIframePlayer()");
-        }
+        _.each(elements, function (playerToCreate) {
+            debug.log('iframe attributes', attributes);
 
-        if (!_.isTrueObject(attributes))
-        {
-            throw new Error("The third argument supplied to injectIframePlayer() should be a basic, shallow object of key-value pairs to use for attributes");
-        }
+            var attributesString = utils.objectToPipeString(playerToCreate.attributes);
+            attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
 
-        var attributesString = utils.objectToPipeString(attributes);
-        attributes = utils.lowerCasePropertyNames(attributes);
+            playerToCreate.element.innerHTML = '<iframe ' +
+                'id="'+ attributes.id +'"' +
+                'src="'+ iframeURL + '?' + attributesString + '"' +
+                'scrolling="no" ' +
+                'frameborder="0" ' +
+                'width="' + attributes.iframewidth + '"' +
+                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
-        element.innerHTML = '<iframe ' +
-            'id="'+ attributes.id +'"' +
-            'src="'+ iframeURL + '?' + attributesString + '"' +
-            'scrolling="no" ' +
-            'frameborder="0" ' +
-            'width="' + attributes.iframewidth + '"' +
-            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
-
-        debug.log('dispatching created', element);
-        dispatcher.dispatch('created', { playerId: attributes.id });
+            debug.log('dispatching created', playerToCreate.element);
+            dispatcher.dispatch('created', { playerId: attributes.id });
+        });
 
         return true;
     };
