@@ -22,7 +22,7 @@ var FDMtpHead		= document.getElementsByTagName('head')[0],
 	FDMtpPreferredRuntime	= document.createElement('meta');
 
 FDMtpBaseUrl.name		= 'tp:baseUrl';
-FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.525/pdk';
+FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.526/pdk';
 
 FDMtpPreferredFormat.name		= 'tp:preferredFormats';
 FDMtpPreferredFormat.content	= 'mpeg4,webm,ogg,flv';
@@ -67,31 +67,55 @@ function FDM_Player_kill() {
 }
 
 function FDM_Player(i,w,h,pst,pre) {
-	if(!this instanceof FDM_Player) {
-		return new FDM_Player(i, w, h, pst, pre);
-	}
+    this.id = i;
+    this.wd = w;
+    this.hd = h;
+ 
+    var self = this;
+    var b = document.getElementsByTagName('body')[0],
+        j = document.createElement('script'),
+        lf = function() {
+            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                self.init(pst,pre);
+            }
+        };
+ 
+    j.type='text/javascript';
+    j.src=FDM_Player_vars.host+'/shared/1.4.526/pdk/tpPdk.js';
+ 
+    j.onreadystatechange = lf;
+    j.onload = function() {
+        self.init(pst,pre);
+    };
+    b.appendChild(j);
+}
 
-	this.id = i;
-	this.wd = w;
-	this.hd = h;
-
-	var self = this;
-	var b = document.getElementsByTagName('body')[0],
-		j = document.createElement('script'),
-		lf = function() {
-			if (this.readyState == 'complete' || this.readyState == 'loaded') {
-				self.init(pst,pre);
-			}
-		};
-
-	j.type='text/javascript';
-	j.src=FDM_Player_vars.host+'/shared/1.4.525/pdk/tpPdk.js';
-
-	j.onreadystatechange = lf;
-	j.onload = function() {
-		self.init(pst,pre);
-	};
-	b.appendChild(j);
+function FDM_Player(i,w,h,pst,pre) {
+    if(!this instanceof FDM_Player) {
+        return new FDM_Player(i, w, h, pst, pre);
+    }
+ 
+    this.id = i;
+    this.wd = w;
+    this.hd = h;
+ 
+    var self = this;
+    var b = document.getElementsByTagName('body')[0],
+        j = document.createElement('script'),
+        lf = function() {
+            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                self.init(pst,pre);
+            }
+        };
+ 
+    j.type='text/javascript';
+    j.src=FDM_Player_vars.host+'/shared/1.4.526/pdk/tpPdk.js';
+ 
+    j.onreadystatechange = lf;
+    j.onload = function() {
+        self.init(pst,pre);
+    };
+    b.appendChild(j);
 }
 
 FDM_Player.prototype.addEventListener = function(evt,han) {
@@ -150,44 +174,52 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.allowFullScreen='true';
 		p.allowScriptAccess='always';
 		p.fp.wmode='opaque';
-		p.previewScrubbing='false';
+		p.previewScrubbing='true';
 
-		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/LayoutPlugin.swf';
+		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/LayoutPlugin.swf';
 		p.skinURL=FDM_Player_vars.host+'/fox/swf/skinFox.swf';
 		p.layoutUrl=FDM_Player_vars.host+'/fox/config/foxLayout.xml';
 
 		//-------------------------- Go Live
 		if(String(player.golive_show) == 'true') {
-			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/GoLivePlugIn.swf';
+			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/GoLivePlugIn.swf';
 		}
 
 		//-------------------------- Bumper
 		if(typeof player.introURL !== 'undefined' || typeof player.outroURL !== 'undefined') {
-			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Share
 		if(((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') || (typeof player.share_deeplinkfunc != 'undefined' && player.share_deeplinkfunc != '')) && String(player.share) != 'false') {
-					p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/SharePlugin.swf'+((typeof player.share_email != "undefined" && String(player.share_email) != 'false')?'|emailscript='+player.share_email:'')+'|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');
+			
+			var emailString = '';
+			
+			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink+'|shortener=www.fox.com/_app/urlhelper.php|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');	
 		}
 
 		//-------------------------- Closed Captioning
-		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/ClosedCaptionPlugin.swf';
+		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/ClosedCaptionPlugin.swf';
 
 		//-------------------------- End Card
 		if(String(player.endcard) != 'false') {
 
+			adPolicySuffix = "&params=policy%3D19938";
+
 			if(typeof player.endcard_playlist != "undefined" && player.endcard_playlist != null) {
-				player.endcard_playlist = player.endcard_playlist + ((player.endcard_playlist.indexOf('form=json') != -1) ? '' : (player.endcard_playlist.indexOf('?') != -1) ? '&form=json' : '?form=json');
+				player.endcard_playlist = player.endcard_playlist + ((player.endcard_playlist.indexOf('form=json') != -1) ? '' : (player.endcard_playlist.indexOf('?') != -1) ? '&form=json' : '?form=json') +
+					((player.endcard_playlist.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			if(typeof player.endcard_related != "undefined" && player.endcard_related != null) {
-				player.endcard_related = player.endcard_related + ((player.endcard_related.indexOf('form=json') != -1) ? '' : (player.endcard_related.indexOf('?') != -1) ? '&form=json' : '?form=json');
+				player.endcard_related = player.endcard_related + ((player.endcard_related.indexOf('form=json') != -1) ? '' : (player.endcard_related.indexOf('?') != -1) ? '&form=json' : '?form=json') +
+					((player.endcard_related.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			if(typeof player.endcard_editorial != "undefined" && player.endcard_editorial != null) {
-				player.endcard_editorial = player.endcard_editorial + ((player.endcard_editorial.indexOf('form=json') != -1) ? '' : (player.endcard_editorial.indexOf('?') != -1) ? '&form=json' : '?form=json');
+				player.endcard_editorial = player.endcard_editorial + ((player.endcard_editorial.indexOf('form=json') != -1) ? '' : (player.endcard_editorial.indexOf('?') != -1) ? '&form=json' : '?form=json') +
+					((player.endcard_editorial.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 			if(player.endcard_playlist)		{ p.pluginEndcard+='|playlist='+player.endcard_playlist; }
 			if(player.endcard_related)		{ p.pluginEndcard+='|related='+player.endcard_related; }
 			if(player.endcard_editorial)	{ p.pluginEndcard+='|editorial='+player.endcard_editorial; }
@@ -197,19 +229,15 @@ FDM_Player.prototype.init=function(pst,pre){
 		if(typeof player.plugins != "undefined") {
 			i_len = player.plugins.length;
 			for(i=0; i<i_len; i++) {
-//				if(player.plugins[i].name == 'TrueAnthem') {
-//					p.pluginShare='type=overlay|URL=http://c.trueanthem.com/fox/plugin/taSharePlugin.swf|subURL='+player.plugins[i].vars.url;
-//				}
-//				else 
 				if(player.plugins[i].name == 'BlueKai') {
-					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
+					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
 				}
 			}
 		}
 
 		//-------------------------- Watermark
 		if(String(player.watermark_show) == 'true') {
-			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/WatermarkPlugin.swf';
+			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/WatermarkPlugin.swf';
 			if(player.watermark_corner)		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(player.watermark_src)		{ p.pluginWatermark+='|src='+player.watermark_src; }
 			if(player.watermark_opacity)	{ p.pluginWatermark+='|opacity='+player.watermark_opacity; }
@@ -217,50 +245,57 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Play Overlay
 		if(String(player.play_overlay_show) == 'true') {
-			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/PlayOverlayPlugin.swf';
+			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/PlayOverlayPlugin.swf';
 			p.pluginPlayOverlay+='|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset;
 			p.pluginPlayOverlay+='|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 		}
-		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/foxUrlSigningPlugIn.swf';
-		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/authentication.swf|priority=3|cookie=authToken';
+		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/foxUrlSigningPlugIn.swf';
+		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.526/pdk/swf/authentication.swf|priority=3|cookie=authToken';
 
-		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/akamaiHD.swf|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.525|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
+		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.526/pdk/swf/akamaiHD.swf|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.526|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
 
 		//-------------------------- Analytics
-			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
-//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
+			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
 
-			p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
-		p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.525|additionalPropsMethodName=player.extraInfo';
+			p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
+			p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.526|additionalPropsMethodName=player.extraInfo';
 
-p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/swf/ggtp395.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
+	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/ggtp395.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
 
 
 
-			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.525|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
+			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.526|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
 	
 
-p.pluginNewFreewheel = 
-	'type=adcomponent|' + 
-	'url='+FDM_Player_vars.host+'/shared/1.4.525/pdk/swf/freewheel.swf|' + 
-	'pemURLsSeparator=~|' + 
-	'siteSectionId=' + player.siteSection + '|' + 
-	'isLive=false|' + 
-	'customVideoAssetIdField=brightcoveId|' + 
-	'pemURLs=' + 
-		'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' + 
-		'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' + 
-		'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf|' + 
-	'networkId=116450|' + 
-	'siteSectionNetworkId=116450|' + 
-	'keyValues=' + fdmAAMStuff() + '|' + 
-	'videoAssetNetworkId=116450|' + 
-	'priority=1|' + 
-	'externalCustomVisitor=fdmAAMID|' + 
-	'autoPlay=true|' + 
-	'adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.swf|' + 
-	'playerProfile=116450:FDM_Live|' + 
-	'serverUrl=http://1c6e2.v.fwmrm.net/';
+	p.pluginNewFreewheel = 
+		'type=adcomponent|' + 
+		'url='+FDM_Player_vars.host+'/shared/1.4.526/pdk/swf/freewheel.swf|' + 
+		'pemURLsSeparator=~|' + 
+		'siteSectionId=' + player.siteSection + '|' + 
+		'isLive=false|' + 
+		'customVideoAssetIdField=brightcoveId|' + 
+		'pemURLs=' + 
+			'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' + 
+			'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' + 
+			'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf|' + 
+		'networkId=116450|' + 
+		'siteSectionNetworkId=116450|' + 
+		'keyValues=' + fdmAAMStuff() + '|' + 
+		'videoAssetNetworkId=116450|' + 
+		'priority=1|' + 
+		'externalCustomVisitor=fdmAAMID|' + 
+		'autoPlay=true|' + 
+		'adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.swf|' + 
+		'playerProfile=116450:FDM_Live|' + 
+
+		'callback=FDM_Player_OnFreeWheelEvent|' +
+		'extensionName=AnalyticsExtension|' +
+		'extensionUrl=http://adm.fwmrm.net/p/fox_live/FoxAnalyticsExtension.swf|' +
+		'cb_profile=116450:FDM_Live|' +
+		'customIdField=brightcoveId|' +
+
+		'serverUrl=http://1c6e2.v.fwmrm.net/';
 
 
 
@@ -282,7 +317,7 @@ p.pluginNewFreewheel =
 			mycss.rel='stylesheet';
 			mycss.type='text/css';
 
-		mycss.href=FDM_Player_vars.host+'/shared/1.4.525/css/html5_main.css';
+		mycss.href=FDM_Player_vars.host+'/shared/1.4.526/css/html5_main.css';
 		FDMtpHead.appendChild(mycss);
 
 		p.autoPlay=false; // Always set to false, because if true, it causes wildly different experiences and on certain devices, issues.
@@ -310,16 +345,16 @@ p.pluginNewFreewheel =
 					break;
 			}
 		}
-		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
+		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 
 		//-------------------------- Bumper
 		if(typeof player.introURL != 'undefined' || typeof player.outroURL != 'undefined') {
-			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Watermark
 		if(typeof player.watermark_src != 'undefined' && player.watermark_src != '') {
-			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxWatermarkPlugin.js';
+			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxWatermarkPlugin.js';
 			if(typeof player.watermark_corner != 'undefined')		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(typeof player.watermark_src != 'undefined')		{ p.pluginWatermark+='|watermarkSrc='+player.watermark_src; }
 			if(typeof player.watermark_opacity != 'undefined')	{ p.pluginWatermark+='|watermarkOpacity='+player.watermark_opacity; }
@@ -327,35 +362,40 @@ p.pluginNewFreewheel =
 
 		//-------------------------- Share
 		if((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') && String(player.share) != 'false') {
-				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
+				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
 		}
 
 
 		//-------------------------- End Card
 		if(String(player.endcard) != 'false') {
 
+			adPolicySuffix = "&params=policy%3D19938";
+
 			if(typeof player.endcard_playlist != "undefined" && player.endcard_playlist != null) {
-				player.endcard_playlist = player.endcard_playlist + ((player.endcard_playlist.indexOf('form=json') != -1) ? '' : (player.endcard_playlist.indexOf('?') != -1) ? '&form=json' : '?form=json');
+				player.endcard_playlist = player.endcard_playlist + ((player.endcard_playlist.indexOf('form=json') != -1) ? '' : (player.endcard_playlist.indexOf('?') != -1) ? '&form=json' : '?form=json') +
+					((player.endcard_playlist.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			if(typeof player.endcard_related != "undefined" && player.endcard_related != null) {
-				player.endcard_related = player.endcard_related + ((player.endcard_related.indexOf('form=json') != -1) ? '' : (player.endcard_related.indexOf('?') != -1) ? '&form=json' : '?form=json');
+				player.endcard_related = player.endcard_related + ((player.endcard_related.indexOf('form=json') != -1) ? '' : (player.endcard_related.indexOf('?') != -1) ? '&form=json' : '?form=json') +
+					((player.endcard_related.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			if(typeof player.endcard_editorial != "undefined" && player.endcard_editorial != null) {
-				player.endcard_editorial = player.endcard_editorial + ((player.endcard_editorial.indexOf('form=json') != -1) ? '' : (player.endcard_editorial.indexOf('?') != -1) ? '&form=json' : '?form=json');
+				player.endcard_editorial = player.endcard_editorial + ((player.endcard_editorial.indexOf('form=json') != -1) ? '' : (player.endcard_editorial.indexOf('?') != -1) ? '&form=json' : '?form=json') +
+					((player.endcard_editorial.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
 				'|upNextDisplay=' + (( player.endcard_playlist && player.endcard_playlist != '' ) ? 'true' : 'false') +
 				((player.endcard_playlist && player.endcard_playlist != '') ? '|playlist=' + player.endcard_playlist : '') +
 				((player.endcard_related && player.endcard_related != '') ? '|related=' + player.endcard_related : '') +
 				((player.endcard_editorial && player.endcard_editorial != '') ? '|editorial=' + player.endcard_editorial : '');
 		}
 
-		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.525/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
+		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.526/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-			p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/OmniturePlugin.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
-		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.525/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+				p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 
 	p.pluginFreewheel='type=advertising|URL=http://adm.fwmrm.net/p/fox_live/ThePlatformPDKPlugin.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
 
@@ -407,17 +447,20 @@ p.pluginNewFreewheel =
 
 		$pdk.controller.addEventListener("OnMediaLoadStart", this.onMediaLoadStart);
 		$pdk.controller.addEventListener("OnMediaStart", this.onMediaStart);
-		$pdk.controller.addEventListener("OnMediaError", this.onMediaError);
+		//$pdk.controller.addEventListener("OnPlayerLoaded",this.onPlayerLoaded);
 
 // CFS (3/5/2013): for audience insights
 		if(typeof mboxTrack != "undefined") {
 
-			$pdk.controller.addEventListener("OnMediaStart", function(e){
-				aamtt.isAd = e.data.baseClip.isAd;
-				if(aamtt.isAd == false && e.data.clipIndex === 0) {
-					aamtt.form = (e.data.baseClip.contentCustomData.fullEpisode == "true") ? "lf" : "sf";
-					aamtt.twentyfive = aamtt.seventyfive = aamtt.complete = false; // reset quartiles
-					mboxTrack(aamtt.form+"_video_start");
+			$pdk.controller.addEventListener("OnMediaStart", function (event) {
+				if (event)
+				{
+					aamtt.isAd = event.data.baseClip.isAd;
+					if(aamtt.isAd == false && event.data.clipIndex === 0) {
+						aamtt.form = (event.data.baseClip.contentCustomData.fullEpisode == "true") ? "lf" : "sf";
+						aamtt.twentyfive = aamtt.seventyfive = aamtt.complete = false; // reset quartiles
+						mboxTrack(aamtt.form+"_video_start");
+					}
 				}
 			});
 
@@ -446,19 +489,19 @@ p.pluginNewFreewheel =
 		}
 	}
 	//FoxNEOD communication stuff
-	if (window.$f && window.$f && window.$f.hasOwnProperty('dispatch'))
-    {
-		var debug = new $f.Debug('page');
-		debug.log('$f already existed, dispatching playerReady');
-        window.$f.dispatch('playerReady', {}, true);
-    }
-    else
-    {
-        window.addEventListener('foxneod:ready', function (event) {
-            var debug = new $f.Debug('page');
-            debug.log('Page now knows that the library is ready.');
-        });
-    }	
+	// if (window.$f && window.$f && window.$f.hasOwnProperty('dispatch'))
+ //    {
+	// 	var debug = new $f.Debug('page');
+	// 	debug.log('$f already existed, dispatching playerReady');
+ //        window.$f.dispatch('playerReady', {}, true);
+ //    }
+ //    else
+ //    {
+ //        window.addEventListener('foxneod:ready', function (event) {
+ //            var debug = new $f.Debug('page');
+ //            debug.log('Page now knows that the library is ready.');
+ //        });
+ //    }	
 }
 
 FDM_Player.prototype.fdmOmnitureUniqueId = function() {
@@ -472,79 +515,103 @@ FDM_Player.prototype.fdmOmnitureUniqueId = function() {
 /* =====================================
  *  Handlers
  * ================================== */
-FDM_Player.prototype.onMediaError=function(e) {
-	if(e && typeof s_analytics !== undefined) {
-		errMsg = (typeof e.message !== undefined)?e.message:'unknown';
+// FDM_Player.prototype.onPlayerLoaded=function(e){
+// 
+//     var b = document.getElementsByTagName('body')[0],
+//         j = document.createElement('script');
+// 
+//     j.type='text/javascript';
+//     j.src=FDM_Player_vars.host+'/shared/1.4.526/js/OmniturePlugin.js';
+// 
+//     b.appendChild(j);
+// 
+//     /**Omniture specific configuration for both Flash/JS**/
+//     FDM_Player_vars.omniConfig  = {
+//         playerId        :"foxcom-1.4.526",
+//         visitorNamespace:"foxentertainment",
+//         host            :"a.fox.com",
+//         frequency       :"60",
+//         entitled        :"public",  //values: public or entitled
+//         auth            :"true",
+//         mvpd            :"mvpd value", //value of prop/eVar is the MVDP name of the user.
+//         network         :"fox",
+//         additionalProps : {//list additional props/vars here
+//             'prop99'    :'propsicles',
+//             'evar99'    :'propsicles'
+//         }   
+//     }
+// }
 
-		$pdk.controller.dispatchEvent('OnConvivaCustomEvent', {
-			name : 'MediaError',
-			attributes : {
-				errorType		: errMsg,
-				playerType		: ((FDM_Player_vars.isIOS)?'HTML5':'Flash'),
-				currentMedia	: ((e.data.baseClip.title)?e.data.baseClip.title:e.data.chapter.title),
-				uid				: ((typeof s_analytics != "undefined")?s_analytics.c_r('s_vi'):'noIdAvailable')
-			}
-		});
-		s_analytics.events = 'event91';
-		s_analytics.prop74 = s_analytics.eVar74 = errMsg;
-		s_analytics.tl();
-		s_analytics.events = s_analytics.prop74 = '';
-	}
-}
-
-FDM_Player.prototype.onMediaLoadStart = function(e) {
-	if (e.data.baseClip.isAd === true) return;
+FDM_Player.prototype.onMediaLoadStart = function(event) {
 	try {
-		if (e.data.baseClip.contentCustomData) {
-			if(e.data.baseClip.contentCustomData.exception == "GeoLocationBlocked") {
-				$pdk.controller.resetPlayer();
-				$pdk.controller.setPlayerMessage("The video you are attempting to watch is only available to viewers within the US, US territories, and military bases.", 35000);
-			} else if(e.data.baseClip.contentCustomData.exception == "AdobePassTokenExpired") {
-				$pdk.controller.resetPlayer();
-				$pdk.controller.setPlayerMessage("Your token/session has expired. Please refresh the page to continue watching.", 35000);
-			} else if(e.data.baseClip.contentCustomData.licensedMusic == "true"){
-                if(navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-                	$f.player.setPlayerMessage({
-                		message:'Sorry, the video you selected is not available for viewing on this device.',
-                		resetPlayer: true
-                	});
-            	}
-            }  	
+		if (event)
+		{
+			if (event.data.baseClip.isAd === true) return;
+
+			if (event.data.baseClip.contentCustomData) {
+				if(event.data.baseClip.contentCustomData.exception == "GeoLocationBlocked") {
+					$pdk.controller.resetPlayer();
+					$pdk.controller.setPlayerMessage("The video you are attempting to watch is only available to viewers within the US, US territories, and military bases.", 35000);
+				} else if(event.data.baseClip.contentCustomData.exception == "AdobePassTokenExpired") {
+					$pdk.controller.resetPlayer();
+					$pdk.controller.setPlayerMessage("Your token/session has expired. Please refresh the page to continue watching.", 35000);
+				} else if(event.data.baseClip.contentCustomData.licensedMusic == "true"){
+	                if(navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+	                	$f.player.setPlayerMessage({
+	                		message:'Sorry, the video you selected is not available for viewing on this device.',
+	                		resetPlayer: true
+	                	});
+	            	}
+	            }  	
+			}
 		}
 	} catch(err) {
 		console.log(err);
 	}
 }
 
-FDM_Player.prototype.onMediaStart = function(e) {
+FDM_Player.prototype.onMediaStart = function(event) {
 	try {
-		var clipObj = e.data,
-			title;
+		if (event)
+		{
+			var clipObj = event.data,
+				title;
 
-		if (typeof(clipObj.chapter) != "undefined" && typeof(clipObj.baseClip) != "undefined") {
-			title = (clipObj.baseClip.title)
-						? clipObj.baseClip.title
-						: clipObj.chapter.title;
-		} else if (typeof(clipObj.baseClip) != "undefined") {
-			title = clipObj.baseClip.title;
-		} else {
-			title = 'Not Available';
-		}
+			if (typeof(clipObj.chapter) != "undefined" && typeof(clipObj.baseClip) != "undefined") 
+			{
+				title = (clipObj.baseClip.title) ? clipObj.baseClip.title : clipObj.chapter.title;
+			} 
+			else if (typeof(clipObj.baseClip) != "undefined") 
+			{
+				title = clipObj.baseClip.title;
+			} 
+			else 
+			{
+				title = 'Not Available';
+			}
 
-		// Standard PDK events are fired for ads too!
-		if (clipObj.baseClip.isAd) {
-			//wipeBrandedCanvas();
-		} else {
-			if (clipObj.baseClip.contentCustomData) {
-				if (clipObj.baseClip.contentCustomData.fullEpisode && FDM_Player_vars.isIOS) {
-					$pdk.controller.resetPlayer();
+			// Standard PDK events are fired for ads too!
+			if (clipObj.baseClip.isAd) 
+			{
+				//wipeBrandedCanvas();
+			} 
+			else 
+			{
+				if (clipObj.baseClip.contentCustomData) 
+				{
+					if (clipObj.baseClip.contentCustomData.fullEpisode && FDM_Player_vars.isIOS) 
+					{
+						$pdk.controller.resetPlayer();
+					}
 				}
 			}
-		}
 
-		// Remove native HTML5 controls
-		if(FDM_Player_vars.isIOS)
-			$pdk.jQuery("video").attr("controls", false);
+			// Remove native HTML5 controls
+			if(FDM_Player_vars.isIOS)
+			{
+				$pdk.jQuery("video").attr("controls", false);
+			}
+		}
 
 	} catch(err) {
 		console.log(err);
@@ -669,3 +736,9 @@ function readCookie(name) {
 	}
 	return null;
 }
+
+
+//---------------------------------------------------------------------------------------------------------- FoxNEOD
+
+//-------------------------------------------------------------------------------------------------------------- /FoxNEOD
+

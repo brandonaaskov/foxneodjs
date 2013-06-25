@@ -262,11 +262,11 @@ foxneod.player.clearPlayerMessage(); //removes the message from the screen
 
 ### foxneod.player.control()
 
-If you're using multiple iframe players on a page, use this method to specify which player to control. This function essentially changes the `player` reference to be a specific player, so that calling commands on it like `play()` or `setPlayerMessage()` will only affect that player.
+If you're using multiple iframe players on a page, use this method to specify which player to control by passing in a selector for it. This function essentially changes the `player` reference to be a specific player, so that calling commands on it like `play()` or `setPlayerMessage()` will only affect that player.
 
 ```javascript
-foxneod.control('player1').pause();
-foxneod.control('player1').setPlayerMessage({
+foxneod.control('#player1').pause();
+foxneod.control('#player1').setPlayerMessage({
 	message: 'Only applies to player 1'
 });
 ```
@@ -296,9 +296,10 @@ foxneod.player.injectIframePlayer('#myPlayerHolder', 'page.html', {
 	releaseURL: "http://link.theplatform.com/s/fox.com/GyJn1LWj4pik?mbr=true",
 	autoplay: false
 });
+```
 
 If you're already creating a player on the page by calling `new FDM_Player()`, then you can use the 
-```
+
 
 ### foxneod.player.setPlayerMessage()
 

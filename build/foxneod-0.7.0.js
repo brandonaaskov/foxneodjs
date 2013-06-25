@@ -2493,7 +2493,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.5.0: ';
+        var prefix = 'foxneod-0.7.0: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -2743,7 +2743,7 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
         dispatcher = new Dispatcher(),
         ready = false,
         selector = 'object[data^="http://player.foxfdm.com"]',
-        version = '5.2.5';
+        version = '5.2.6';
 
     var hide = function () {
         jquery(selector).each(function (index, element) {
@@ -2819,7 +2819,7 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
         attributes = {
             type: 'text/javascript',
-            src: 'http://player.foxfdm.com/shared/1.4.525/' + 'pdk/tpPdkController.js'
+            src: 'http://player.foxfdm.com/shared/1.4.526/' + 'pdk/tpPdkController.js'
         };
 
         utils.addToHead('script', attributes);
@@ -2987,6 +2987,10 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
     var debug = new Debug('playback'),
         _controller; //TODO: refactor how this is set and used
 
+    var _setController = function (controller) {
+        _controller = controller;
+    };
+
     /**
      * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
      * will return false
@@ -3002,7 +3006,7 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
                 {
                     var seekTime = Math.round(timeInSeconds * 1000);
                     debug.log("Seeking to (in seconds)...", seekTime/1000);
-                    _controller().seekToPosition(seekTime);
+                    _controller.seekToPosition(seekTime);
                 }
                 else
                 {
@@ -3024,16 +3028,16 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
     };
 
     var play = function () {
-        return _controller().pause(false);
+        return _controller.pause(false);
     };
 
     var pause = function () {
-        return _controller().pause(true);
+        return _controller.pause(true);
     };
 
     //public api
     return {
-        _controller: _controller,
+        _setController: _setController,
         seekTo: seekTo,
         play: play,
         pause: pause
@@ -3549,25 +3553,10 @@ define('player',['require',
         return _mostRecentAd;
     };
 
-    var getVideo = function (keyToMatch, valueToMatch) {
-        if (_.isUndefined(keyToMatch))
-        {
-            debug.error("The key you supplied to getVideo() was undefined.");
-        }
-
-        //if feed, load first video in feed
-
-        //if release, load release
-
-        //if release list, load... something?
-
-        //if guid, load guid from feed
-    };
-
     var control = function (playerIdSelector) {
         var controllerToUse = getController(playerIdSelector);
         debug.log('setting controller', controllerToUse);
-        playback._controller =  controllerToUse;
+        playback._setController(controllerToUse);
 
         return playback;
     };
@@ -4633,7 +4622,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-25 10:06:02';
+    var buildTimestamp = '2013-06-25 12:06:11';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4672,7 +4661,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-25 10:06:02)');
+        debug.log('ready (build date: 2013-06-25 12:06:11)');
 
         _messageUnsupportedUsers();
     };
@@ -4682,9 +4671,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-25 10:06:02',
+        buildDate: '2013-06-25 12:06:11',
         packageName: 'foxneod',
-        version: '0.5.0',
+        version: '0.7.0',
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,

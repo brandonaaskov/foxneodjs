@@ -45,7 +45,7 @@ define(['require',
     var control = function (playerIdSelector) {
         var controllerToUse = getController(playerIdSelector);
         debug.log('setting controller', controllerToUse);
-        playback._controller =  controllerToUse;
+        playback._setController(controllerToUse);
 
         return playback;
     };
