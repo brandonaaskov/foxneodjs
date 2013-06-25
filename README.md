@@ -298,7 +298,22 @@ foxneod.player.injectIframePlayer('#myPlayerHolder', 'page.html', {
 });
 ```
 
-If you're already creating a player on the page by calling `new FDM_Player()`, then you can use the 
+If you're already creating a player on the page by calling `new FDM_Player()`, then you can use the property names and values, but you can drop the `player.` bit. For example:
+
+```javascript
+//before
+var player = new FDM_Player("player", 640, 360);
+player.autoplay = true;
+player.share_email = 'false';
+player.releaseURL = 'http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true';
+
+//after
+foxneod.player.injectIframePlayer('#player', 'page.html', {
+	autoplay: true,
+	share_email: 'false',
+	releaseURL: 'http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true'
+});
+```
 
 
 ### foxneod.player.setPlayerMessage()
