@@ -26,9 +26,17 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
     function _processPlayerAttributes(attributes, declaredAttributes) {
         attributes = attributes || {};
 
-        if (_.isDefined(declaredAttributes) && !_.isEmpty(attributes))
+        if (_.isDefined(declaredAttributes))
         {
-            attributes = utils.override(declaredAttributes || {}, attributes);
+            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
+            {
+                attributes = utils.override(declaredAttributes || {}, attributes);
+            }
+            else
+            {
+                attributes = declaredAttributes;
+            }
+
         }
 
         /*
@@ -36,17 +44,16 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
          * not always the same as the height and width of the player.
          */
 
-        var lowercased = utils.lowerCasePropertyNames(attributes);
         var defaults = {
-            width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-            height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+            width: (_.has(attributes, 'width')) ? attributes.width : 640,
+            height: (_.has(attributes, 'height')) ? attributes.height : 360
         };
 
-        attributes.id = 'js-player-' + _playerIndex++;
+        attributes.id = attributes.id || 'js-player-' + _playerIndex++;
         dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
-        attributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-        attributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+        attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
+        attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
 
         return attributes;
     }
@@ -116,6 +123,9 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 {
                     debug.log('element found', queryItem);
                     var declaredAttributes = getPlayerAttributes(queryItem);
+
+                    debug.log('declaredAttributes', declaredAttributes);
+
                     attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
 
                     elements.push({

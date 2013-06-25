@@ -7,8 +7,9 @@ define(['require',
     'modal',
     'Debug',
     'jqueryloader',
+    'underscoreloader',
     'Dispatcher'
-], function (require, ovp, iframe, playback, modal, Debug, jquery, Dispatcher) {
+], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -56,7 +57,15 @@ define(['require',
         //if guid, load guid from feed
     };
 
-    var getController = function (selector) {
+    var control = function (playerIdSelector) {
+        var controllerToUse = getController(playerIdSelector);
+        debug.log('setting controller', controllerToUse);
+        playback._controller =  controllerToUse;
+
+        return playback;
+    };
+
+    var getController = _.memoize(function (selector) {
         var elements = jquery(selector);
 
         for (var j = 0, len = elements.length; j < len; j++)
@@ -81,7 +90,7 @@ define(['require',
 
         debug.log('returning false');
         return false;
-    };
+    });
 
     function init () {
         debug.log('init');
@@ -113,7 +122,7 @@ define(['require',
                 controller: ovp.pdk.bind(event.data.playerId)
             });
 
-            debug.log('player created');
+            debug.log('player created', event.data.playerId);
             dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
         });
     }
@@ -139,7 +148,7 @@ define(['require',
         getMostRecentAd: getMostRecentAd,
 
         //control methods
-        control: getController,
+        control: control,
         seekTo: playback.seekTo,
         play: playback.play,
         pause: playback.pause,

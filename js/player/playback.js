@@ -3,7 +3,8 @@
 define(['Debug', 'ovp'], function (Debug, ovp) {
     'use strict';
 
-    var debug = new Debug('playback');
+    var debug = new Debug('playback'),
+        _controller; //TODO: refactor how this is set and used
 
     /**
      * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
@@ -20,7 +21,7 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
                 {
                     var seekTime = Math.round(timeInSeconds * 1000);
                     debug.log("Seeking to (in seconds)...", seekTime/1000);
-                    ovp.controller().seekToPosition(seekTime);
+                    _controller().seekToPosition(seekTime);
                 }
                 else
                 {
@@ -42,15 +43,16 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
     };
 
     var play = function () {
-        return ovp.controller().pause(false);
+        return _controller().pause(false);
     };
 
     var pause = function () {
-        return ovp.controller().pause(true);
+        return _controller().pause(true);
     };
 
     //public api
     return {
+        _controller: _controller,
         seekTo: seekTo,
         play: play,
         pause: pause

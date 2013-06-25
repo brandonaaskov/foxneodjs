@@ -2828,9 +2828,17 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
     function _processPlayerAttributes(attributes, declaredAttributes) {
         attributes = attributes || {};
 
-        if (_.isDefined(declaredAttributes) && !_.isEmpty(attributes))
+        if (_.isDefined(declaredAttributes))
         {
-            attributes = utils.override(declaredAttributes || {}, attributes);
+            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
+            {
+                attributes = utils.override(declaredAttributes || {}, attributes);
+            }
+            else
+            {
+                attributes = declaredAttributes;
+            }
+
         }
 
         /*
@@ -2838,17 +2846,16 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
          * not always the same as the height and width of the player.
          */
 
-        var lowercased = utils.lowerCasePropertyNames(attributes);
         var defaults = {
-            width: (_.has(lowercased, 'width')) ? lowercased.width : 640,
-            height: (_.has(lowercased, 'height')) ? lowercased.height : 360
+            width: (_.has(attributes, 'width')) ? attributes.width : 640,
+            height: (_.has(attributes, 'height')) ? attributes.height : 360
         };
 
-        attributes.id = 'js-player-' + _playerIndex++;
+        attributes.id = attributes.id || 'js-player-' + _playerIndex++;
         dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
-        attributes.iframeHeight = (_.has(lowercased, 'iframeheight')) ? lowercased.iframeheight : defaults.height;
-        attributes.iframeWidth = (_.has(lowercased, 'iframewidth')) ? lowercased.iframewidth : defaults.width;
+        attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
+        attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
 
         return attributes;
     }
@@ -2918,6 +2925,9 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
                 {
                     debug.log('element found', queryItem);
                     var declaredAttributes = getPlayerAttributes(queryItem);
+
+                    debug.log('declaredAttributes', declaredAttributes);
+
                     attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
 
                     elements.push({
@@ -2974,7 +2984,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
     
 
-    var debug = new Debug('playback');
+    var debug = new Debug('playback'),
+        _controller; //TODO: refactor how this is set and used
 
     /**
      * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
@@ -2991,7 +3002,7 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
                 {
                     var seekTime = Math.round(timeInSeconds * 1000);
                     debug.log("Seeking to (in seconds)...", seekTime/1000);
-                    ovp.controller().seekToPosition(seekTime);
+                    _controller().seekToPosition(seekTime);
                 }
                 else
                 {
@@ -3013,15 +3024,16 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
     };
 
     var play = function () {
-        return ovp.controller().pause(false);
+        return _controller().pause(false);
     };
 
     var pause = function () {
-        return ovp.controller().pause(true);
+        return _controller().pause(true);
     };
 
     //public api
     return {
+        _controller: _controller,
         seekTo: seekTo,
         play: play,
         pause: pause
@@ -3502,8 +3514,9 @@ define('player',['require',
     'modal',
     'Debug',
     'jqueryloader',
+    'underscoreloader',
     'Dispatcher'
-], function (require, ovp, iframe, playback, modal, Debug, jquery, Dispatcher) {
+], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher) {
     
 
     var debug = new Debug('player'),
@@ -3551,7 +3564,15 @@ define('player',['require',
         //if guid, load guid from feed
     };
 
-    var getController = function (selector) {
+    var control = function (playerIdSelector) {
+        var controllerToUse = getController(playerIdSelector);
+        debug.log('setting controller', controllerToUse);
+        playback._controller =  controllerToUse;
+
+        return playback;
+    };
+
+    var getController = _.memoize(function (selector) {
         var elements = jquery(selector);
 
         for (var j = 0, len = elements.length; j < len; j++)
@@ -3576,7 +3597,7 @@ define('player',['require',
 
         debug.log('returning false');
         return false;
-    };
+    });
 
     function init () {
         debug.log('init');
@@ -3608,7 +3629,7 @@ define('player',['require',
                 controller: ovp.pdk.bind(event.data.playerId)
             });
 
-            debug.log('player created');
+            debug.log('player created', event.data.playerId);
             dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
         });
     }
@@ -3634,7 +3655,7 @@ define('player',['require',
         getMostRecentAd: getMostRecentAd,
 
         //control methods
-        control: getController,
+        control: control,
         seekTo: playback.seekTo,
         play: playback.play,
         pause: playback.pause,
@@ -4612,7 +4633,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-25 04:06:34';
+    var buildTimestamp = '2013-06-25 10:06:02';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4651,7 +4672,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-25 04:06:34)');
+        debug.log('ready (build date: 2013-06-25 10:06:02)');
 
         _messageUnsupportedUsers();
     };
@@ -4661,7 +4682,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-25 04:06:34',
+        buildDate: '2013-06-25 10:06:02',
         packageName: 'foxneod',
         version: '0.5.0',
         dispatch: dispatcher.dispatch,
