@@ -42,21 +42,6 @@ define(['require',
         return _mostRecentAd;
     };
 
-    var getVideo = function (keyToMatch, valueToMatch) {
-        if (_.isUndefined(keyToMatch))
-        {
-            debug.error("The key you supplied to getVideo() was undefined.");
-        }
-
-        //if feed, load first video in feed
-
-        //if release, load release
-
-        //if release list, load... something?
-
-        //if guid, load guid from feed
-    };
-
     var control = function (playerIdSelector) {
         var controllerToUse = getController(playerIdSelector);
         debug.log('setting controller', controllerToUse);
