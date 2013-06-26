@@ -4647,7 +4647,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-25 06:06:07';
+    var buildTimestamp = '2013-06-26 10:06:50';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4686,7 +4686,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-25 06:06:07)');
+        debug.log('ready (build date: 2013-06-26 10:06:50)');
 
         _messageUnsupportedUsers();
     };
@@ -4696,7 +4696,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-25 06:06:07',
+        buildDate: '2013-06-26 10:06:50',
         packageName: 'foxneod',
         version: '0.7.0',
         dispatch: dispatcher.dispatch,
