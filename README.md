@@ -33,6 +33,7 @@ __Note__: Some aspects of the library make use of [Promises](http://wiki.commonj
 * [Player](#api-player)
     * [getPlayerAttributes()](#foxneodplayergetplayerattributes)
     * [injectIframePlayer()](#foxneodplayerinjectiframeplayer)
+    * [getController()](#foxneodplayergetcontroller)
     * [setPlayerMessage()](#foxneodplayersetplayermessage)
     * [clearPlayerMessage()](#foxneodplayerclearplayermessage)
     * [hide()](#foxneodplayerhide)
