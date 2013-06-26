@@ -397,3 +397,12 @@ foxneod.player.pause(); //if video is playing or not loaded, this does nothing
 
 ## Debugging/Troubleshooting
 Each module that has a debugger configured for it can have it exposed in the console for the browser, but by default those debug messages aren't logged. To enable them for the entire project, pass in `debug=all` as a query param to the page. If you'd like to isolate one of the modules (e.g. `core`) and ignore other debug messages, just specify `debug=core`. You can view multiple modules' debug statements at once without having to view everything by passing in a comma separated list: `http://mydomain.com/?debug=core,player,system`
+
+
+## Setting Up Locally
+
+If you want to set up the project on your local machine, make sure you first have Node and npm installed. Then, from the command line just get to the directory where the project is and `npm install` (you might need `sudo` depending on your privileges). That will install the project's dependencies.
+
+### Building
+
+To run a development build (no minification), simply run `grunt` from the command line at the root of the project. If you want to do a production build, run `grunt prod`. If you're in development mode and don't want to have to build over and over, running `grunt watch` will watch for changes to the javascript files and automatically build as necessary, so you can just refresh the page and get the latest.
