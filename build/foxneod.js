@@ -2818,16 +2818,22 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             content: "true"
         };
 
-        utils.addToHead('meta', attributes);
+        if (!utils.tagInHead('script', attributes))
+        {
+            utils.addToHead('meta', attributes);
+        }
 
         attributes = {
             type: 'text/javascript',
             src: 'http://player.foxfdm.com/shared/1.4.526/' + 'pdk/tpPdkController.js'
         };
 
-        utils.addToHead('script', attributes);
+        if (!utils.tagInHead('script', attributes))
+        {
+            utils.addToHead('script', attributes);
+        }
 
-        window.console.log('external controller added');
+        debug.log('external controller added');
     }
 
     function _processPlayerAttributes(attributes, declaredAttributes) {
@@ -2915,8 +2921,6 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
     var injectIframePlayer = function (element, iframeURL, attributes) {
         var elements = [];
 
-        _enableExternalController();
-
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
             var query = document.querySelectorAll(element),
@@ -2967,6 +2971,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             debug.log('dispatching htmlInjected', playerToCreate.element);
             dispatcher.dispatch('htmlInjected', { playerId: attributes.id });
         });
+
+        _enableExternalController();
 
         return true;
     };
@@ -4641,7 +4647,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-25 05:06:44';
+    var buildTimestamp = '2013-06-25 06:06:07';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4680,7 +4686,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-25 05:06:44)');
+        debug.log('ready (build date: 2013-06-25 06:06:07)');
 
         _messageUnsupportedUsers();
     };
@@ -4690,7 +4696,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-25 05:06:44',
+        buildDate: '2013-06-25 06:06:07',
         packageName: 'foxneod',
         version: '0.7.0',
         dispatch: dispatcher.dispatch,

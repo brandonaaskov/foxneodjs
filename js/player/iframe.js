@@ -13,16 +13,22 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             content: "true"
         };
 
-        utils.addToHead('meta', attributes);
+        if (!utils.tagInHead('script', attributes))
+        {
+            utils.addToHead('meta', attributes);
+        }
 
         attributes = {
             type: 'text/javascript',
             src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
         };
 
-        utils.addToHead('script', attributes);
+        if (!utils.tagInHead('script', attributes))
+        {
+            utils.addToHead('script', attributes);
+        }
 
-        window.console.log('external controller added');
+        debug.log('external controller added');
     }
 
     function _processPlayerAttributes(attributes, declaredAttributes) {
@@ -110,8 +116,6 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
     var injectIframePlayer = function (element, iframeURL, attributes) {
         var elements = [];
 
-        _enableExternalController();
-
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
             var query = document.querySelectorAll(element),
@@ -162,6 +166,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             debug.log('dispatching htmlInjected', playerToCreate.element);
             dispatcher.dispatch('htmlInjected', { playerId: attributes.id });
         });
+
+        _enableExternalController();
 
         return true;
     };
