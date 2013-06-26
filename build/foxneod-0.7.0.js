@@ -2772,9 +2772,9 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
 
     function constructor () {
         pdkwatcher.done(function (pdk) {
-            ready = true;
             _pdk = pdk;
             debug.log('PDK is now available inside of ovp.js', pdk);
+            ready = true;
             dispatcher.dispatch('ready', pdk);
         });
     }
@@ -2785,6 +2785,9 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
 
     // Public API
     return {
+        isReady: function () {
+            return ready;
+        },
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
@@ -2823,6 +2826,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
         };
 
         utils.addToHead('script', attributes);
+
+        window.console.log('external controller added');
     }
 
     function _processPlayerAttributes(attributes, declaredAttributes) {
@@ -2914,11 +2919,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
-            var query = document.querySelectorAll(element);
-
-            debug.log('We got a selector, here!', query);
-
-            var atLeastOneElementFound = false;
+            var query = document.querySelectorAll(element),
+                atLeastOneElementFound = false;
 
             _.each(query, function (queryItem, index) {
                 if (_.isElement(queryItem))
@@ -2962,8 +2964,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
                 'width="' + attributes.iframewidth + '"' +
                 'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
-            debug.log('dispatching created', playerToCreate.element);
-            dispatcher.dispatch('created', { playerId: attributes.id });
+            debug.log('dispatching htmlInjected', playerToCreate.element);
+            dispatcher.dispatch('htmlInjected', { playerId: attributes.id });
         });
 
         return true;
@@ -3527,8 +3529,7 @@ define('player',['require',
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-        _playerIds = [],
-        _players = [];
+        _players = {};
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -3561,36 +3562,51 @@ define('player',['require',
         return playback;
     };
 
-    var getController = _.memoize(function (selector) {
-        var elements = jquery(selector);
+    var getController = function (selector) {
+        var elements = jquery(selector),
+            controllerToUse = null;
 
-        for (var j = 0, len = elements.length; j < len; j++)
-        {
-            var element = elements[j];
-
+        _.each(elements, function (element) {
             var id = jquery(element).attr('id');
 
             if (!_.isUndefined(id))
             {
-                for (var i = 0, length = _players.length; i < length; i++)
-                {
-                    var player = _players[i];
-                    if (player.id === id)
+                _.each(_players, function (controller, playerId) {
+
+                    if (playerId === id)
                     {
-                        debug.log('returning controller', player.controller().controller);
-                        return player.controller().controller;
+                        controllerToUse = controller;
                     }
-                }
+                });
             }
+        });
+
+        if (controllerToUse)
+        {
+            return controllerToUse().controller;
         }
 
         debug.log('returning false');
         return false;
-    });
+    };
 
     function init () {
         debug.log('init');
+
         ovp.addEventListener('ready', function () {
+            debug.log('ovp ready: binding players...', _players);
+
+            _.each(_players, function (controller, id, list) {
+                if (!controller) //check for unbound
+                {
+                    _players[id] = ovp.pdk.bind(id);
+                    debug.log('binding player', id);
+                    dispatcher.dispatch('playerCreated', { playerId: id });
+                }
+            });
+
+            debug.log('all players bound', _players);
+
             ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
                 if (!event.data.baseClip.isAd)
                 {
@@ -3605,21 +3621,23 @@ define('player',['require',
             });
         });
 
-        iframe.addEventListener('playerIdCreated', function (event) {
-            if (_.isDefined(event.data.playerId))
+        iframe.addEventListener('htmlInjected', function (event) {
+            var controller = null;
+
+            if (ovp.isReady())
             {
-                _playerIds.push(event.data.playerId);
+                controller = ovp.pdk.bind(event.data.playerId);
+                debug.log('htmlInjected fired: binding player', event.data.playerId);
+                dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
             }
-        });
 
-        iframe.addEventListener('created', function (event) {
-            _players.push({
+            var player = {
                 id: event.data.playerId,
-                controller: ovp.pdk.bind(event.data.playerId)
-            });
+                controller: controller
+            };
 
-            debug.log('player created', event.data.playerId);
-            dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
+            _players[event.data.playerId] = controller;
+            debug.log('adding player to _players', player);
         });
     }
 
@@ -3645,6 +3663,7 @@ define('player',['require',
 
         //control methods
         control: control,
+        getController: getController,
         seekTo: playback.seekTo,
         play: playback.play,
         pause: playback.pause,
@@ -4622,7 +4641,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-25 12:06:11';
+    var buildTimestamp = '2013-06-25 04:06:21';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4661,7 +4680,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-25 12:06:11)');
+        debug.log('ready (build date: 2013-06-25 04:06:21)');
 
         _messageUnsupportedUsers();
     };
@@ -4671,7 +4690,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-25 12:06:11',
+        buildDate: '2013-06-25 04:06:21',
         packageName: 'foxneod',
         version: '0.7.0',
         dispatch: dispatcher.dispatch,

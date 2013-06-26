@@ -315,6 +315,15 @@ foxneod.player.injectIframePlayer('#player', 'page.html', {
 });
 ```
 
+### foxneod.player.getController()
+
+Maybe you want access to the lower level so you can interact with the PDK directly, or maybe you just want to debug your appliaction. If either of those sounds like you, you can use this to get the controller associated with a player on the page. Just pass in the selector of the player, and if a controller is associated with it, it will be returned.
+
+```javascript
+foxneod.player.getController('#myPlayerID').addEventListener('OnMediaStart', function (event) {
+	//do stuff
+});
+```
 
 ### foxneod.player.setPlayerMessage()
 

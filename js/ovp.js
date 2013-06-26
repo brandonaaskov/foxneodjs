@@ -40,9 +40,9 @@ define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'po
 
     function constructor () {
         pdkwatcher.done(function (pdk) {
-            ready = true;
             _pdk = pdk;
             debug.log('PDK is now available inside of ovp.js', pdk);
+            ready = true;
             dispatcher.dispatch('ready', pdk);
         });
     }
@@ -53,6 +53,9 @@ define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'po
 
     // Public API
     return {
+        isReady: function () {
+            return ready;
+        },
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,

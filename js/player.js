@@ -16,8 +16,7 @@ define(['require',
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-        _playerIds = [],
-        _players = [];
+        _players = {};
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -50,36 +49,51 @@ define(['require',
         return playback;
     };
 
-    var getController = _.memoize(function (selector) {
-        var elements = jquery(selector);
+    var getController = function (selector) {
+        var elements = jquery(selector),
+            controllerToUse = null;
 
-        for (var j = 0, len = elements.length; j < len; j++)
-        {
-            var element = elements[j];
-
+        _.each(elements, function (element) {
             var id = jquery(element).attr('id');
 
             if (!_.isUndefined(id))
             {
-                for (var i = 0, length = _players.length; i < length; i++)
-                {
-                    var player = _players[i];
-                    if (player.id === id)
+                _.each(_players, function (controller, playerId) {
+
+                    if (playerId === id)
                     {
-                        debug.log('returning controller', player.controller().controller);
-                        return player.controller().controller;
+                        controllerToUse = controller;
                     }
-                }
+                });
             }
+        });
+
+        if (controllerToUse)
+        {
+            return controllerToUse().controller;
         }
 
         debug.log('returning false');
         return false;
-    });
+    };
 
     function init () {
         debug.log('init');
+
         ovp.addEventListener('ready', function () {
+            debug.log('ovp ready: binding players...', _players);
+
+            _.each(_players, function (controller, id, list) {
+                if (!controller) //check for unbound
+                {
+                    _players[id] = ovp.pdk.bind(id);
+                    debug.log('binding player', id);
+                    dispatcher.dispatch('playerCreated', { playerId: id });
+                }
+            });
+
+            debug.log('all players bound', _players);
+
             ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
                 if (!event.data.baseClip.isAd)
                 {
@@ -94,21 +108,23 @@ define(['require',
             });
         });
 
-        iframe.addEventListener('playerIdCreated', function (event) {
-            if (_.isDefined(event.data.playerId))
+        iframe.addEventListener('htmlInjected', function (event) {
+            var controller = null;
+
+            if (ovp.isReady())
             {
-                _playerIds.push(event.data.playerId);
+                controller = ovp.pdk.bind(event.data.playerId);
+                debug.log('htmlInjected fired: binding player', event.data.playerId);
+                dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
             }
-        });
 
-        iframe.addEventListener('created', function (event) {
-            _players.push({
+            var player = {
                 id: event.data.playerId,
-                controller: ovp.pdk.bind(event.data.playerId)
-            });
+                controller: controller
+            };
 
-            debug.log('player created', event.data.playerId);
-            dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
+            _players[event.data.playerId] = controller;
+            debug.log('adding player to _players', player);
         });
     }
 
@@ -134,6 +150,7 @@ define(['require',
 
         //control methods
         control: control,
+        getController: getController,
         seekTo: playback.seekTo,
         play: playback.play,
         pause: playback.pause,

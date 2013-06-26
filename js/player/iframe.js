@@ -21,6 +21,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         };
 
         utils.addToHead('script', attributes);
+
+        window.console.log('external controller added');
     }
 
     function _processPlayerAttributes(attributes, declaredAttributes) {
@@ -112,11 +114,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
         if (_.isString(element) && !_.isEmpty(element)) //we got a selector
         {
-            var query = document.querySelectorAll(element);
-
-            debug.log('We got a selector, here!', query);
-
-            var atLeastOneElementFound = false;
+            var query = document.querySelectorAll(element),
+                atLeastOneElementFound = false;
 
             _.each(query, function (queryItem, index) {
                 if (_.isElement(queryItem))
@@ -160,8 +159,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 'width="' + attributes.iframewidth + '"' +
                 'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
-            debug.log('dispatching created', playerToCreate.element);
-            dispatcher.dispatch('created', { playerId: attributes.id });
+            debug.log('dispatching htmlInjected', playerToCreate.element);
+            dispatcher.dispatch('htmlInjected', { playerId: attributes.id });
         });
 
         return true;
