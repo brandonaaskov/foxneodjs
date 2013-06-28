@@ -424,10 +424,13 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         var queryParamsObject = {}; //this is what we're storing and returning
         url = url || urlString;
 
-        if (url.indexOf('?') !== -1)
+        var urlSplit = url.split(/\?(.+)?/)[1];
+
+        if (_.isString(urlSplit) && !_.isEmpty(urlSplit))
         {
-            var urlSplit = url.split('?');
-            var queryParams = urlSplit[1].split('&');
+            var queryParams = decodeURIComponent(urlSplit).split('&');
+
+            queryParamsObject = arrayToObject(queryParams);
 
             /**
              * final data will look like so:
@@ -440,48 +443,52 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
                      * }
              */
 
-            if (urlSplit[1].indexOf('|') !== -1)
-            {
-                for (var i = 0, n = queryParams.length; i < n; i++)
-                {
-                    var queryParam = queryParams[i];
-                    var firstEqIndex = queryParam.indexOf('=');
-                    if (firstEqIndex !== -1)
-                    {
-                        var keyValuePairsString = queryParam;
-                        var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
-                        queryParamsObject[collectionKey] = {};
-                        var keyValuePairsArray = keyValuePairsString.split('|');
-
-                        for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
-                        {
-                            var keyValuePair = keyValuePairsArray[j].split('=');
-                            var key = keyValuePair[0];
-                            var value = keyValuePair[1];
-
-                            if (urlSplit[1].indexOf('&') !== -1)
-                            {
-                                keyValuePairsString = queryParam.substr(firstEqIndex+1);
-                                //if we have an ampersand, it's not just a basic pipe string, so we need to make a
-                                // more complex object
-                                queryParamsObject[collectionKey][key] = value;
-                            }
-                            else
-                            {
-                                //just a pipe string, no other key-value pairs so we can make a basic object
-                                queryParamsObject[key] = value;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                queryParamsObject = arrayToObject(queryParams);
-            }
+            //this is for query params that would be separated by a |
+//            for (var i = 0, n = queryParams.length; i < n; i++)
+//            {
+//                var queryParam = queryParams[i];
+//                var firstEqIndex = queryParam.indexOf('=');
+//                if (firstEqIndex !== -1)
+//                {
+//                    window.console.log('2');
+//                    var keyValuePairsString = queryParam;
+//                    var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
+//                    queryParamsObject[collectionKey] = {};
+//                    var keyValuePairsArray = keyValuePairsString.split('|');
+//
+//                    for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
+//                    {
+//                        window.console.log('3');
+//                        var keyValuePair = keyValuePairsArray[j].split('=');
+//                        var key = keyValuePair[0];
+//                        var value = keyValuePair[1];
+//
+//                        if (urlSplit[1].indexOf('&') !== -1)
+//                        {
+//                            window.console.log('4');
+//                            keyValuePairsString = queryParam.substr(firstEqIndex+1);
+//                            //if we have an ampersand, it's not just a basic pipe string, so we need to make a
+//                            // more complex object
+//                            queryParamsObject[collectionKey][key] = value;
+//                        }
+//                        else
+//                        {
+//                            window.console.log('5');
+//                            //just a pipe string, no other key-value pairs so we can make a basic object
+//                            queryParamsObject[key] = value;
+//                        }
+//                    }
+//                }
+//            }
         }
-
-        return queryParamsObject;
+//
+        if (!_.isEmpty(queryParamsObject))
+        {
+//            window.console.log('queryParamsObject', queryParamsObject);
+            return queryParamsObject;
+        }
+//
+        return false;
     };
 
     var removeQueryParams = function (url) {
@@ -570,6 +577,31 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
     var getURL = function () {
         return urlString;
     };
+
+    var objectToQueryString = function (object) {
+        if (!_.isTrueObject(object) || _.isEmpty(object))
+        {
+            throw new Error("The single argument you should be providing should be an object");
+        }
+
+        var keyValuePairs = [];
+
+        _.each(object, function (value, key) {
+            if (_.isTrueObject(value) && !_.isEmpty(value))
+            {
+                keyValuePairs.push(key + '=' + objectToQueryString(value)); //recursion
+            }
+
+            if (_.isArray(value) && !_.isEmpty(value))
+            {
+                keyValuePairs.push(key + '=' + value.join('&'));
+            }
+
+            keyValuePairs.push(key + '=' + value);
+        });
+
+        return (!_.isEmpty(keyValuePairs)) ? keyValuePairs.join('&') : false;
+    };
     //---------------------------------------------- /url stuff
 
 
@@ -591,6 +623,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             getQueryParams: getQueryParams,
             removeQueryParams: removeQueryParams,
             paramExists: paramExists,
+            objectToQueryString: objectToQueryString,
             isDefined: isDefined,
             isLooseEqual: isLooseEqual,
             isShallowObject: isShallowObject,
@@ -619,6 +652,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
         paramExists: paramExists,
+        objectToQueryString: objectToQueryString,
         isDefined: isDefined,
         isLooseEqual: isLooseEqual,
         isShallowObject: isShallowObject,

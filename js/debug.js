@@ -116,7 +116,6 @@ define(['utils', 'underscoreloader'], function (utils, _) {
 
         // Surfaced for testing purposes
         var test = {
-            getDebugModes: getDebugModes,
             getLastUsedOptions: function () {
                 window.console.log('getLastUsedOptions', lastUsedOptions);
                 return lastUsedOptions;
@@ -128,6 +127,7 @@ define(['utils', 'underscoreloader'], function (utils, _) {
 
         // Public API
         return {
+            getDebugModes: getDebugModes,
             log: log,
             warn: warn,
             error: error,

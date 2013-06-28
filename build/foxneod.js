@@ -2230,10 +2230,13 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         var queryParamsObject = {}; //this is what we're storing and returning
         url = url || urlString;
 
-        if (url.indexOf('?') !== -1)
+        var urlSplit = url.split(/\?(.+)?/)[1];
+
+        if (_.isString(urlSplit) && !_.isEmpty(urlSplit))
         {
-            var urlSplit = url.split('?');
-            var queryParams = urlSplit[1].split('&');
+            var queryParams = decodeURIComponent(urlSplit).split('&');
+
+            queryParamsObject = arrayToObject(queryParams);
 
             /**
              * final data will look like so:
@@ -2246,48 +2249,52 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
                      * }
              */
 
-            if (urlSplit[1].indexOf('|') !== -1)
-            {
-                for (var i = 0, n = queryParams.length; i < n; i++)
-                {
-                    var queryParam = queryParams[i];
-                    var firstEqIndex = queryParam.indexOf('=');
-                    if (firstEqIndex !== -1)
-                    {
-                        var keyValuePairsString = queryParam;
-                        var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
-                        queryParamsObject[collectionKey] = {};
-                        var keyValuePairsArray = keyValuePairsString.split('|');
-
-                        for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
-                        {
-                            var keyValuePair = keyValuePairsArray[j].split('=');
-                            var key = keyValuePair[0];
-                            var value = keyValuePair[1];
-
-                            if (urlSplit[1].indexOf('&') !== -1)
-                            {
-                                keyValuePairsString = queryParam.substr(firstEqIndex+1);
-                                //if we have an ampersand, it's not just a basic pipe string, so we need to make a
-                                // more complex object
-                                queryParamsObject[collectionKey][key] = value;
-                            }
-                            else
-                            {
-                                //just a pipe string, no other key-value pairs so we can make a basic object
-                                queryParamsObject[key] = value;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                queryParamsObject = arrayToObject(queryParams);
-            }
+            //this is for query params that would be separated by a |
+//            for (var i = 0, n = queryParams.length; i < n; i++)
+//            {
+//                var queryParam = queryParams[i];
+//                var firstEqIndex = queryParam.indexOf('=');
+//                if (firstEqIndex !== -1)
+//                {
+//                    window.console.log('2');
+//                    var keyValuePairsString = queryParam;
+//                    var collectionKey = queryParam.substr(0, firstEqIndex); //equates to playerParams in the example above
+//                    queryParamsObject[collectionKey] = {};
+//                    var keyValuePairsArray = keyValuePairsString.split('|');
+//
+//                    for (var j = 0, kvpLength = keyValuePairsArray.length; j < kvpLength; j++)
+//                    {
+//                        window.console.log('3');
+//                        var keyValuePair = keyValuePairsArray[j].split('=');
+//                        var key = keyValuePair[0];
+//                        var value = keyValuePair[1];
+//
+//                        if (urlSplit[1].indexOf('&') !== -1)
+//                        {
+//                            window.console.log('4');
+//                            keyValuePairsString = queryParam.substr(firstEqIndex+1);
+//                            //if we have an ampersand, it's not just a basic pipe string, so we need to make a
+//                            // more complex object
+//                            queryParamsObject[collectionKey][key] = value;
+//                        }
+//                        else
+//                        {
+//                            window.console.log('5');
+//                            //just a pipe string, no other key-value pairs so we can make a basic object
+//                            queryParamsObject[key] = value;
+//                        }
+//                    }
+//                }
+//            }
         }
-
-        return queryParamsObject;
+//
+        if (!_.isEmpty(queryParamsObject))
+        {
+//            window.console.log('queryParamsObject', queryParamsObject);
+            return queryParamsObject;
+        }
+//
+        return false;
     };
 
     var removeQueryParams = function (url) {
@@ -2376,6 +2383,31 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
     var getURL = function () {
         return urlString;
     };
+
+    var objectToQueryString = function (object) {
+        if (!_.isTrueObject(object) || _.isEmpty(object))
+        {
+            throw new Error("The single argument you should be providing should be an object");
+        }
+
+        var keyValuePairs = [];
+
+        _.each(object, function (value, key) {
+            if (_.isTrueObject(value) && !_.isEmpty(value))
+            {
+                keyValuePairs.push(key + '=' + objectToQueryString(value)); //recursion
+            }
+
+            if (_.isArray(value) && !_.isEmpty(value))
+            {
+                keyValuePairs.push(key + '=' + value.join('&'));
+            }
+
+            keyValuePairs.push(key + '=' + value);
+        });
+
+        return (!_.isEmpty(keyValuePairs)) ? keyValuePairs.join('&') : false;
+    };
     //---------------------------------------------- /url stuff
 
 
@@ -2397,6 +2429,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
             getQueryParams: getQueryParams,
             removeQueryParams: removeQueryParams,
             paramExists: paramExists,
+            objectToQueryString: objectToQueryString,
             isDefined: isDefined,
             isLooseEqual: isLooseEqual,
             isShallowObject: isShallowObject,
@@ -2425,6 +2458,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
         paramExists: paramExists,
+        objectToQueryString: objectToQueryString,
         isDefined: isDefined,
         isLooseEqual: isLooseEqual,
         isShallowObject: isShallowObject,
@@ -2493,7 +2527,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.7.0: ';
+        var prefix = 'foxneod-0.7.1: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -2556,7 +2590,6 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
 
         // Surfaced for testing purposes
         var test = {
-            getDebugModes: getDebugModes,
             getLastUsedOptions: function () {
                 window.console.log('getLastUsedOptions', lastUsedOptions);
                 return lastUsedOptions;
@@ -2568,6 +2601,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
 
         // Public API
         return {
+            getDebugModes: getDebugModes,
             log: log,
             warn: warn,
             error: error,
@@ -2859,7 +2893,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
         var defaults = {
             width: (_.has(attributes, 'width')) ? attributes.width : 640,
-            height: (_.has(attributes, 'height')) ? attributes.height : 360
+            height: (_.has(attributes, 'height')) ? attributes.height : 360,
+            debug: utils.getParamValue('debug')
         };
 
         attributes.id = attributes.id || 'js-player-' + _playerIndex++;
@@ -2867,6 +2902,9 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
         attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
+        attributes.width = defaults.width || attributes.iframeWidth;
+        attributes.height = defaults.height || attributes.iframeHeight;
+        attributes.debug = attributes.debug || defaults.debug;
 
         return attributes;
     }
@@ -2955,9 +2993,9 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
         }
 
         _.each(elements, function (playerToCreate) {
-            debug.log('iframe attributes', attributes);
+            debug.log('iframe attributes', playerToCreate.attributes);
 
-            var attributesString = utils.objectToPipeString(playerToCreate.attributes);
+            var attributesString = utils.objectToQueryString(playerToCreate.attributes);
             attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
 
             playerToCreate.element.innerHTML = '<iframe ' +
@@ -4647,7 +4685,7 @@ define('foxneod',[
     'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
     
 
-    var buildTimestamp = '2013-06-26 10:06:50';
+    var buildTimestamp = '2013-06-27 05:06:01';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /private methods
@@ -4686,7 +4724,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-26 10:06:50)');
+        debug.log('ready (build date: 2013-06-27 05:06:01)');
 
         _messageUnsupportedUsers();
     };
@@ -4696,9 +4734,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-26 10:06:50',
+        buildDate: '2013-06-27 05:06:01',
         packageName: 'foxneod',
-        version: '0.7.0',
+        version: '0.7.1',
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,

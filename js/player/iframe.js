@@ -54,7 +54,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
         var defaults = {
             width: (_.has(attributes, 'width')) ? attributes.width : 640,
-            height: (_.has(attributes, 'height')) ? attributes.height : 360
+            height: (_.has(attributes, 'height')) ? attributes.height : 360,
+            debug: utils.getParamValue('debug')
         };
 
         attributes.id = attributes.id || 'js-player-' + _playerIndex++;
@@ -62,6 +63,9 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
         attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
+        attributes.width = defaults.width || attributes.iframeWidth;
+        attributes.height = defaults.height || attributes.iframeHeight;
+        attributes.debug = attributes.debug || defaults.debug;
 
         return attributes;
     }
@@ -150,9 +154,9 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         }
 
         _.each(elements, function (playerToCreate) {
-            debug.log('iframe attributes', attributes);
+            debug.log('iframe attributes', playerToCreate.attributes);
 
-            var attributesString = utils.objectToPipeString(playerToCreate.attributes);
+            var attributesString = utils.objectToQueryString(playerToCreate.attributes);
             attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
 
             playerToCreate.element.innerHTML = '<iframe ' +
