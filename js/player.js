@@ -8,15 +8,18 @@ define(['require',
     'Debug',
     'jqueryloader',
     'underscoreloader',
-    'Dispatcher'
-], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher) {
+    'Dispatcher',
+    'query'
+], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher, query) {
     'use strict';
 
     var debug = new Debug('player'),
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-        _players = {};
+        _players = {},
+        _currentPosition,
+        _promisesQueue = [];
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -77,23 +80,83 @@ define(['require',
         return false;
     };
 
+    var loadVideo = function (releaseURLOrId, callback) {
+        var deferred = jquery.Deferred();
+        _promisesQueue.push({
+            id: _.removeQueryParams(releaseURLOrId),
+            deferred: deferred
+        });
+
+        if (!query.isReleaseURL(releaseURLOrId))
+        {
+            deferred.reject();
+            throw new Error("The loadVideo() method expects one argument: a release URL");
+        }
+
+        //the 0 second timeout is to handle a bug in the PDK
+        //calling it directly alongside other methods causes it to do nothing
+        setTimeout(function () {
+            debug.log('calling loadReleaseURL()', releaseURLOrId);
+            ovp.controller().loadReleaseURL(releaseURLOrId, true); //loads release and replaces default
+        }, 0);
+
+        return deferred;
+    };
+
+    var getCurrentPosition = function () {
+        var details = {
+            position: null,
+            duration: null,
+            percentComplete: null
+        };
+
+        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition))
+        {
+            details.position = _currentPosition.currentTime;
+            details.duration = _currentPosition.duration;
+            details.percentComplete = _currentPosition.percentComplete;
+        }
+
+        return details;
+    };
+
+    var getPlayers = function () {
+        return _players;
+    };
+
     function init () {
         debug.log('init');
 
         ovp.addEventListener('ready', function () {
-            debug.log('ovp ready: binding players...', _players);
 
-            _.each(_players, function (controller, id, list) {
-                if (!controller) //check for unbound
-                {
-                    _players[id] = ovp.pdk.bind(id);
-                    debug.log('binding player', id);
-                    dispatcher.dispatch('playerCreated', { playerId: id });
-                }
-            });
+            //---------------------------------------- ovp initialize
+            if (_.isArray(_players) && !_.isEmpty(_players))
+            {
+                debug.log('ovp ready: binding players...', _players);
 
-            debug.log('all players bound', _players);
+                _.each(_players, function (controller, id, list) {
+                    if (!controller) //check for unbound
+                    {
+                        _players[id] = ovp.pdk.bind(id);
+                        debug.log('binding player', id);
+                        dispatcher.dispatch('playerCreated', { playerId: id });
+                    }
+                });
 
+                debug.log('all players bound', _players);
+                playback._setController(ovp.controller().controller);
+            }
+            else
+            {
+                //just one basic player on the page
+                debug.log('setting the controller for the single, basic player');
+                playback._setController(ovp.controller());
+            }
+            //---------------------------------------- /ovp initialize
+
+
+
+            //---------------------------------------- ovp event listeners
             ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
                 if (!event.data.baseClip.isAd)
                 {
@@ -106,7 +169,39 @@ define(['require',
                     debug.log("OnMediaLoadStart fired for an ad, and event.data was saved.", _mostRecentAd);
                 }
             });
+
+            ovp.controller().addEventListener('OnMediaPlaying', function (event) {
+                _currentPosition = event.data;
+            });
+
+            ovp.controller().addEventListener('OnLoadReleaseUrl', function (event) {
+                var release = event.data;
+                debug.log('OnLoadReleaseUrl:release', release);
+
+                var baseReleaseURL = _.removeQueryParams(release.url),
+                    matchedPromise;
+
+                _.each(_promisesQueue, function (item) {
+                    if (baseReleaseURL === item.id)
+                    {
+                        debug.log('matched promise', item);
+                        matchedPromise = item;
+                    }
+                });
+
+                //let's end the deferred object for this thing
+                if (matchedPromise)
+                {
+                    matchedPromise.deferred.resolve(release);
+                }
+                else
+                {
+                    matchedPromise.deferred.reject();
+                }
+            });
         });
+        //---------------------------------------- /ovp event listeners
+
 
         iframe.addEventListener('htmlInjected', function (event) {
             var controller = null;
@@ -147,6 +242,9 @@ define(['require',
         show: ovp.show,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
+        loadVideo: loadVideo,
+        getPosition: getCurrentPosition,
+        getPlayers: getPlayers,
 
         //control methods
         control: control,

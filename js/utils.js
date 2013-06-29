@@ -353,9 +353,15 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
         }
 
+        var deferred = jquery.Deferred();
+
         if (!tagInHead(tagName, attributes))
         {
             var elem = document.createElement(tagName);
+
+            elem.onload = function () {
+                deferred.resolve();
+            };
 
             _.each(attributes, function (value, key) {
                 key = key.toLowerCase().replace(/\W/g, '');
@@ -368,8 +374,12 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
 
             document.getElementsByTagName('head')[0].appendChild(elem);
         }
+        else
+        {
+            deferred.reject();
+        }
 
-        return true;
+        return deferred;
     };
 
     var tagInHead = function (tagName, attributes) {

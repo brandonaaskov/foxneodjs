@@ -133,6 +133,28 @@ suite('player', function () {
         });
     });
 
+    setPlayerMessage: setPlayerMessage,
+        clearPlayerMessage: clearPlayerMessage,
+        injectIframePlayer: iframe.injectIframePlayer,
+        hide: ovp.hide,
+        show: ovp.show,
+        getCurrentVideo: getCurrentVideo,
+        getMostRecentAd: getMostRecentAd,
+        loadVideo: loadVideo,
+        getPosition: getCurrentPosition,
+        getPlayers: getPlayers,
+
+        //control methods
+        control: control,
+        getController: getController,
+        seekTo: playback.seekTo,
+        play: playback.play,
+        pause: playback.pause,
+
+    suite('loadVideo', function () {});
+
+    suite('loadVideo', function () {});
+
     //The first argument supplied to injectIframePlayer() should be either a selector, or an HTML element
 //            suite('seekTo', function () {
 //                test('Tries to seek before the OVP controller was available', function () {

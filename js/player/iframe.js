@@ -116,7 +116,6 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         return playerAttributes;
     };
 
-
     var injectIframePlayer = function (element, iframeURL, attributes) {
         var elements = [];
 
