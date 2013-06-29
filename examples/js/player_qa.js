@@ -510,7 +510,11 @@ FDM_Player.prototype.onPlayerLoaded=function(e){
         entitled        :"public",  //values: public or entitled
         auth            :"true",
         mvpd            :null, //value of prop/eVar is the MVDP name of the user.
-        network         :"fox"
+        network         :"fox",
+		extraInfo		:(typeof player.extraInfo !=  "undefined")?player.extraInfo : null,
+		accountInfo		:{account:"foxcomprod",
+							trackingServer:"a.fox.com"
+							}
     }
 }
 
