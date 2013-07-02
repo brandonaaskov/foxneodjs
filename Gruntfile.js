@@ -127,6 +127,7 @@
                             almond: 'lib/almond/almond'
                             , jqueryloader: 'lib/jquery/jqueryloader'
                             , underscoreloader: 'lib/underscore/underscoreloader'
+                            , omnitureloader: 'lib/omniture/omnitureloader'
                             , modernizrloader: 'lib/modernizr/modernizrloader'
                         },
 
