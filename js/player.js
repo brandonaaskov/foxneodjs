@@ -129,10 +129,12 @@ define(['require',
 
         ovp.addEventListener('ready', function () {
 
+            debug.log('ovp ready', _players);
+
             //---------------------------------------- ovp initialize
-            if (_.isArray(_players) && !_.isEmpty(_players))
+            if (_.isTrueObject(_players) && !_.isEmpty(_players))
             {
-                debug.log('ovp ready: binding players...', _players);
+                debug.log('binding players...', _players);
 
                 _.each(_players, function (controller, id, list) {
                     if (!controller) //check for unbound
@@ -190,37 +192,34 @@ define(['require',
                 });
 
                 //let's end the deferred object for this thing
-                if (matchedPromise)
+                if (matchedPromise && _.has(matchedPromise, 'deferred'))
                 {
                     matchedPromise.deferred.resolve(release);
-                }
-                else
-                {
-                    matchedPromise.deferred.reject();
                 }
             });
         });
         //---------------------------------------- /ovp event listeners
 
 
+        //---------------------------------------- iframe event listeners
         iframe.addEventListener('htmlInjected', function (event) {
             var controller = null;
 
             if (ovp.isReady())
             {
+                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
                 controller = ovp.pdk.bind(event.data.playerId);
                 debug.log('htmlInjected fired: binding player', event.data.playerId);
                 dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
             }
 
-            var player = {
+            _players[event.data.playerId] = controller;
+            debug.log('adding player to _players', {
                 id: event.data.playerId,
                 controller: controller
-            };
-
-            _players[event.data.playerId] = controller;
-            debug.log('adding player to _players', player);
+            });
         });
+        //---------------------------------------- /iframe event listeners
     }
 
     //---------------------------------------------- init
