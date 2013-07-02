@@ -58,7 +58,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             debug: utils.getParamValue('debug')
         };
 
-        attributes.id = attributes.id || 'js-player-' + _playerIndex++;
+        attributes.hostPageId = attributes.id || null;
+        attributes.iframePlayerId = 'js-player-' + _playerIndex++;
         dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
@@ -134,12 +135,15 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
                     attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
 
-                    elements.push({
-                        element: queryItem,
-                        attributes: attributes
-                    });
+                    if (!_.isEmpty(attributes))
+                    {
+                        elements.push({
+                            element: queryItem,
+                            attributes: attributes
+                        });
 
-                    atLeastOneElementFound = true;
+                        atLeastOneElementFound = true;
+                    }
                 }
             });
 
@@ -159,7 +163,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
 
             playerToCreate.element.innerHTML = '<iframe ' +
-                'id="'+ attributes.id +'"' +
+                'id="'+ attributes.iframeplayerid +'"' +
                 'src="'+ iframeURL + '?' + attributesString + '"' +
                 'scrolling="no" ' +
                 'frameborder="0" ' +
@@ -167,7 +171,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
             debug.log('dispatching htmlInjected', playerToCreate.element);
-            dispatcher.dispatch('htmlInjected', { playerId: attributes.id });
+            dispatcher.dispatch('htmlInjected', { playerId: attributes.iframeplayerid });
         });
 
         _enableExternalController();
