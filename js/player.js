@@ -17,7 +17,7 @@ define(['require',
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-        _players = {},
+        _players = [],
         _currentPosition,
         _promisesQueue = [];
 
@@ -67,11 +67,11 @@ define(['require',
 
             if (!_.isUndefined(id))
             {
-                _.each(_players, function (controller, playerId) {
+                _.each(_players, function (player) {
 
-                    if (playerId === id)
+                    if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
                     {
-                        controllerToUse = controller;
+                        controllerToUse = player.controller;
                     }
                 });
             }
@@ -138,30 +138,23 @@ define(['require',
             debug.log('ovp ready', _players);
 
             //---------------------------------------- ovp initialize
-            if (_.isTrueObject(_players) && !_.isEmpty(_players))
+            if (_.isArray(_players) && !_.isEmpty(_players))
             {
                 debug.log('binding players...', _players);
 
-                _.each(_players, function (controller, id, list) {
-                    if (!controller) //check for unbound
+                _.each(_players, function (player) {
+                    if (!_.isUndefined(player.controller)) //check for unbound
                     {
-                        _players[id] = ovp.pdk.bind(id);
-                        debug.log('binding player', id);
-                        dispatcher.dispatch('playerCreated', { playerId: id });
+                        player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+                        debug.log('binding player', player.attributes.iframePlayerId);
+                        dispatcher.dispatch('playerCreated', player.attributes);
                     }
                 });
 
                 debug.log('all players bound', _players);
                 playback._setController(ovp.controller().controller);
             }
-            else
-            {
-                //just one basic player on the page
-                debug.log('setting the controller for the single, basic player');
-                playback._setController(ovp.controller());
-            }
             //---------------------------------------- /ovp initialize
-
 
 
             //---------------------------------------- ovp event listeners
@@ -209,21 +202,25 @@ define(['require',
 
         //---------------------------------------- iframe event listeners
         iframe.addEventListener('htmlInjected', function (event) {
-            var controller = null;
+            debug.log('htmlInjected fired', event);
+
+            var player = {
+                controller: null,
+                attributes: event.data.attributes,
+                element: event.data.element
+            };
 
             if (ovp.isReady())
             {
                 //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-                controller = ovp.pdk.bind(event.data.playerId);
-                debug.log('htmlInjected fired: binding player', event.data.playerId);
-                dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
+                player.controller = ovp.pdk.bind(event.data.attributes.iframePlayerId);
+                debug.log('binding player', event.data.attributes);
+                dispatcher.dispatch('playerCreated', event.data.attributes);
             }
 
-            _players[event.data.playerId] = controller;
-            debug.log('adding player to _players', {
-                id: event.data.playerId,
-                controller: controller
-            });
+            debug.log('adding player to _players', player);
+
+            _players.push(player);
         });
         //---------------------------------------- /iframe event listeners
     }
