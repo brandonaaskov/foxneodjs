@@ -3,10 +3,15 @@
 define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _, Debug, Dispatcher) {
     'use strict';
 
+    //-------------------------------------------------------------------------------- instance variables
     var debug = new Debug('iframe'),
         dispatcher = new Dispatcher(),
         _playerIndex = 0;
+    //-------------------------------------------------------------------------------- /instance variables
 
+
+
+    //-------------------------------------------------------------------------------- private methods
     function _enableExternalController() {
         var attributes = {
             name: "tp:EnableExternalController",
@@ -57,9 +62,8 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             debug: utils.getParamValue('debug')
         };
 
-        attributes.hostPageId = attributes.id || null;
+        attributes.suppliedId = attributes.id || null;
         attributes.iframePlayerId = 'js-player-' + _playerIndex++;
-        dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
         attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
@@ -70,7 +74,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         return attributes;
     }
 
-    function _getIframeHTML (attributes) {
+    function _getIframeHTML (iframeURL, attributes) {
         var attributesString = utils.objectToQueryString(attributes);
         attributes = utils.lowerCasePropertyNames(attributes);
 
@@ -82,7 +86,11 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             'width="' + attributes.iframewidth + '"' +
             'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
     }
+    //-------------------------------------------------------------------------------- /private methods
 
+
+
+    //-------------------------------------------------------------------------------- public methods
     var getPlayerAttributes = function (element) {
         var playerAttributes = {},
             elementId;
@@ -168,19 +176,26 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
         }
 
+        debug.log("we're looping through these", elements);
+
         _.each(elements, function (playerToCreate) {
             debug.log('iframe attributes', playerToCreate.attributes);
 
-            playerToCreate.element.innerHTML = _getIframeHTML(playerToCreate.attributes);
+            playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
 
             debug.log('dispatching htmlInjected', playerToCreate.element);
-            dispatcher.dispatch('htmlInjected', { playerId: attributes.iframeplayerid });
+            dispatcher.dispatch('htmlInjected', {
+                attributes: playerToCreate.attributes,
+                element: playerToCreate.element
+            });
         });
 
         _enableExternalController();
 
         return true;
     };
+    //-------------------------------------------------------------------------------- public methods
+
 
     // This API is only Public to player.js, so we should surface everything so we can unit test it
     return {
