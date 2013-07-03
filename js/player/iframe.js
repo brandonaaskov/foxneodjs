@@ -44,7 +44,6 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             {
                 attributes = declaredAttributes;
             }
-
         }
 
         /*
@@ -69,6 +68,19 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         attributes.debug = attributes.debug || defaults.debug;
 
         return attributes;
+    }
+
+    function _getIframeHTML (attributes) {
+        var attributesString = utils.objectToQueryString(attributes);
+        attributes = utils.lowerCasePropertyNames(attributes);
+
+        return '<iframe ' +
+            'id="'+ attributes.iframeplayerid +'"' +
+            'src="'+ iframeURL + '?' + attributesString + '"' +
+            'scrolling="no" ' +
+            'frameborder="0" ' +
+            'width="' + attributes.iframewidth + '"' +
+            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
     }
 
     var getPlayerAttributes = function (element) {
@@ -159,16 +171,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         _.each(elements, function (playerToCreate) {
             debug.log('iframe attributes', playerToCreate.attributes);
 
-            var attributesString = utils.objectToQueryString(playerToCreate.attributes);
-            attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
-
-            playerToCreate.element.innerHTML = '<iframe ' +
-                'id="'+ attributes.iframeplayerid +'"' +
-                'src="'+ iframeURL + '?' + attributesString + '"' +
-                'scrolling="no" ' +
-                'frameborder="0" ' +
-                'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+            playerToCreate.element.innerHTML = _getIframeHTML(playerToCreate.attributes);
 
             debug.log('dispatching htmlInjected', playerToCreate.element);
             dispatcher.dispatch('htmlInjected', { playerId: attributes.iframeplayerid });

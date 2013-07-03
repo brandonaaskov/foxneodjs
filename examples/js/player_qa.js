@@ -229,10 +229,11 @@ FDM_Player.prototype.init=function(pst,pre){
 			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 //p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
 
-			p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
-			p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.526|additionalPropsMethodName=player.extraInfo';
+			//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
+			//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.526|additionalPropsMethodName=player.extraInfo';
 
 	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/swf/ggtp395.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
+
 
 
 
@@ -365,7 +366,7 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.526/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-				p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+				//p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
 		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.526/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 
 	p.pluginFreewheel='type=advertising|URL=http://adm.fwmrm.net/p/fox_live/ThePlatformPDKPlugin.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
@@ -422,7 +423,7 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		$pdk.controller.addEventListener("OnMediaLoadStart", this.onMediaLoadStart);
 		$pdk.controller.addEventListener("OnMediaStart", this.onMediaStart);
-		//$pdk.controller.addEventListener("OnPlayerLoaded",this.onPlayerLoaded);
+		$pdk.controller.addEventListener("OnPlayerLoaded",this.onPlayerLoaded);
 
 // CFS (3/5/2013): for audience insights
 		if(typeof mboxTrack != "undefined") {
@@ -500,6 +501,8 @@ FDM_Player.prototype.onPlayerLoaded=function(e){
     j.src=FDM_Player_vars.host+'/shared/1.4.526/js/OmniturePlugin.js';
 
     b.appendChild(j);
+
+    s_account = (window.hasOwnProperty('s_account')) ? window.s_account : 'foxcomprod';
 
     /**Omniture specific configuration for both Flash/JS**/
     FDM_Player_vars.omniConfig  = {
@@ -3242,7 +3245,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.7.2: ';
+        var prefix = 'foxneod-0.7.4: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -3612,7 +3615,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             debug: utils.getParamValue('debug')
         };
 
-        attributes.id = attributes.id || 'js-player-' + _playerIndex++;
+        attributes.hostPageId = attributes.id || null;
+        attributes.iframePlayerId = 'js-player-' + _playerIndex++;
         dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
@@ -3688,12 +3692,15 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
 
                     attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
 
-                    elements.push({
-                        element: queryItem,
-                        attributes: attributes
-                    });
+                    if (!_.isEmpty(attributes))
+                    {
+                        elements.push({
+                            element: queryItem,
+                            attributes: attributes
+                        });
 
-                    atLeastOneElementFound = true;
+                        atLeastOneElementFound = true;
+                    }
                 }
             });
 
@@ -3713,7 +3720,7 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
 
             playerToCreate.element.innerHTML = '<iframe ' +
-                'id="'+ attributes.id +'"' +
+                'id="'+ attributes.iframeplayerid +'"' +
                 'src="'+ iframeURL + '?' + attributesString + '"' +
                 'scrolling="no" ' +
                 'frameborder="0" ' +
@@ -3721,7 +3728,7 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
                 'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
 
             debug.log('dispatching htmlInjected', playerToCreate.element);
-            dispatcher.dispatch('htmlInjected', { playerId: attributes.id });
+            dispatcher.dispatch('htmlInjected', { playerId: attributes.iframeplayerid });
         });
 
         _enableExternalController();
@@ -4557,6 +4564,12 @@ define('player',['require',
 
     var control = function (playerIdSelector) {
         var controllerToUse = getController(playerIdSelector);
+
+        if (!_.isDefined(controllerToUse) || _.isEmpty(controllerToUse))
+        {
+            throw new Error("The selector you provided doesn't point to a player on the page");
+        }
+
         debug.log('setting controller', controllerToUse);
         playback._setController(controllerToUse);
 
@@ -4640,10 +4653,12 @@ define('player',['require',
 
         ovp.addEventListener('ready', function () {
 
+            debug.log('ovp ready', _players);
+
             //---------------------------------------- ovp initialize
-            if (_.isArray(_players) && !_.isEmpty(_players))
+            if (_.isTrueObject(_players) && !_.isEmpty(_players))
             {
-                debug.log('ovp ready: binding players...', _players);
+                debug.log('binding players...', _players);
 
                 _.each(_players, function (controller, id, list) {
                     if (!controller) //check for unbound
@@ -4701,37 +4716,34 @@ define('player',['require',
                 });
 
                 //let's end the deferred object for this thing
-                if (matchedPromise)
+                if (matchedPromise && _.has(matchedPromise, 'deferred'))
                 {
                     matchedPromise.deferred.resolve(release);
-                }
-                else
-                {
-                    matchedPromise.deferred.reject();
                 }
             });
         });
         //---------------------------------------- /ovp event listeners
 
 
+        //---------------------------------------- iframe event listeners
         iframe.addEventListener('htmlInjected', function (event) {
             var controller = null;
 
             if (ovp.isReady())
             {
+                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
                 controller = ovp.pdk.bind(event.data.playerId);
                 debug.log('htmlInjected fired: binding player', event.data.playerId);
                 dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
             }
 
-            var player = {
+            _players[event.data.playerId] = controller;
+            debug.log('adding player to _players', {
                 id: event.data.playerId,
                 controller: controller
-            };
-
-            _players[event.data.playerId] = controller;
-            debug.log('adding player to _players', player);
+            });
         });
+        //---------------------------------------- /iframe event listeners
     }
 
     //---------------------------------------------- init
@@ -5482,6 +5494,42 @@ define('base64',[], function () {
 });
 /*global define, _ */
 
+define('omnitureloader',['utils', 'Dispatcher', 'jqueryloader', 'underscoreloader'], function (utils, Dispatcher, jquery, _) {
+    
+
+    var dispatcher = new Dispatcher(),
+        deferred = jquery.Deferred();
+
+    var getOmnitureLibrary = function () {
+        var attributes = {
+            'src': 'http://player.foxfdm.com/shared/1.4.526/js/s_code.js'
+        };
+
+        if (!_.has(window, 's_analytics') && !utils.tagInHead('srcript', attributes))
+        {
+            utils.addToHead('script', attributes)
+                .done(function (response) {
+                    deferred.resolve('loaded');
+                })
+                .fail(function (error) {
+                    deferred.reject('error');
+                });
+        }
+        else
+        {
+            deferred.resolve(true);
+        }
+
+        return deferred;
+    };
+
+    //Public API
+    return {
+        getOmnitureLibrary: getOmnitureLibrary
+    };
+});
+/*global define, _ */
+
 define('foxneod',[
     'Dispatcher',
     'Debug',
@@ -5491,14 +5539,29 @@ define('foxneod',[
     'query',
     'system',
     'base64',
-    'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
+    'jqueryloader',
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery, omnitureloader) {
     
 
-    var buildTimestamp = '2013-06-28 06:06:28';
+    //-------------------------------------------------------------------------------- instance variables
+    var buildTimestamp = '2013-07-02 03:07:38';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
-    //-------------------------------------------------------------------------------- /private methods
+    //-------------------------------------------------------------------------------- /instance variables
 
+
+
+
+    //-------------------------------------------------------------------------------- public methods
+    var getOmnitureLibraryReady = function () {
+        return omnitureloader.getOmnitureLibrary();
+    };
+    //-------------------------------------------------------------------------------- /public methods
+
+
+
+
+    //-------------------------------------------------------------------------------- /private methods
 
     function _messageUnsupportedUsers () {
         var title = "Unsupported Browser",
@@ -5533,7 +5596,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-06-28 06:06:28)');
+        debug.log('ready (build date: 2013-07-02 03:07:38)');
 
         _messageUnsupportedUsers();
     };
@@ -5543,9 +5606,10 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-06-28 06:06:28',
+        buildDate: '2013-07-02 03:07:38',
         packageName: 'foxneod',
-        version: '0.7.2',
+        version: '0.7.4',
+        getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
@@ -5594,7 +5658,7 @@ require([
             window['foxneod'] = window.$f = foxneod;
             foxneod._init();
             dispatcher.dispatch('ready', {}, true);
-            debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+            debug.log('foxneod assigned to window.foxneod and window.$f');
         }
         else
         {

@@ -46,6 +46,12 @@ define(['require',
 
     var control = function (playerIdSelector) {
         var controllerToUse = getController(playerIdSelector);
+
+        if (!_.isDefined(controllerToUse) || _.isEmpty(controllerToUse))
+        {
+            throw new Error("The selector you provided doesn't point to a player on the page");
+        }
+
         debug.log('setting controller', controllerToUse);
         playback._setController(controllerToUse);
 

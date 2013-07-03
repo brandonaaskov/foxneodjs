@@ -9,14 +9,29 @@ define([
     'query',
     'system',
     'base64',
-    'jqueryloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery) {
+    'jqueryloader',
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery, omnitureloader) {
     'use strict';
 
+    //-------------------------------------------------------------------------------- instance variables
     var buildTimestamp = '@@buildDate';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
-    //-------------------------------------------------------------------------------- /private methods
+    //-------------------------------------------------------------------------------- /instance variables
 
+
+
+
+    //-------------------------------------------------------------------------------- public methods
+    var getOmnitureLibraryReady = function () {
+        return omnitureloader.getOmnitureLibrary();
+    };
+    //-------------------------------------------------------------------------------- /public methods
+
+
+
+
+    //-------------------------------------------------------------------------------- /private methods
 
     function _messageUnsupportedUsers () {
         var title = "Unsupported Browser",
@@ -64,6 +79,7 @@ define([
         buildDate: '@@buildDate',
         packageName: '@@packageName',
         version: '@@version',
+        getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,

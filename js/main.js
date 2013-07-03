@@ -30,7 +30,7 @@ require([
             window['@@packageName'] = window.$f = foxneod;
             foxneod._init();
             dispatcher.dispatch('ready', {}, true);
-            debug.log('foxneod assigned to window.FoxNEOD and window.$f');
+            debug.log('@@packageName assigned to window.@@packageName and window.$f');
         }
         else
         {

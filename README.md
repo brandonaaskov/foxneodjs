@@ -393,6 +393,17 @@ Pauses playback if playing, does nothing otherwise.
 foxneod.player.pause(); //if video is playing or not loaded, this does nothing
 ```
 
+### foxneod.player.loadVideo()
+
+This method takes in a release URL, and loads the video into the player but _doesn't_ start playing it back. This method returns a Promise object that has methods like `done()` and `fail()`. We use the jQuery Deferred object: read more [here](http://api.jquery.com/category/deferred-object/);
+
+```javascript
+foxneod.player.loadVideo('http://link.theplatform.com/s/fox.com/tpvXj0h_rZfu?mbr=true')
+	.done(function (response) {
+		console.log('response', response);
+	});
+```
+
 
 
 ## Debugging/Troubleshooting
