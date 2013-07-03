@@ -30,8 +30,20 @@ define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'po
     var getController = function () {
         if (ready)
         {
-            return _pdk.controller;
+            if (_.isFunction(_pdk.controller))
+            {
+                return _pdk.controller().controller;
+            }
+            else if (_.isTrueObject(_pdk.controller))
+            {
+                return _pdk.controller;
+            }
+            else
+            {
+                throw new Error("The controller couldn't be found on the PDK object");
+            }
         }
+
         else
         {
             throw new Error("The expected controller doesn't exist or wasn't available at the time this was called.");
