@@ -3514,8 +3514,20 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
     var getController = function () {
         if (ready)
         {
-            return _pdk.controller;
+            if (_.isFunction(_pdk.controller))
+            {
+                return _pdk.controller().controller;
+            }
+            else if (_.isTrueObject(_pdk.controller))
+            {
+                return _pdk.controller;
+            }
+            else
+            {
+                throw new Error("The controller couldn't be found on the PDK object");
+            }
         }
+
         else
         {
             throw new Error("The expected controller doesn't exist or wasn't available at the time this was called.");
@@ -3560,10 +3572,15 @@ define('ovp',['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils
 define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _, Debug, Dispatcher) {
     
 
+    //-------------------------------------------------------------------------------- instance variables
     var debug = new Debug('iframe'),
         dispatcher = new Dispatcher(),
         _playerIndex = 0;
+    //-------------------------------------------------------------------------------- /instance variables
 
+
+
+    //-------------------------------------------------------------------------------- private methods
     function _enableExternalController() {
         var attributes = {
             name: "tp:EnableExternalController",
@@ -3601,7 +3618,6 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             {
                 attributes = declaredAttributes;
             }
-
         }
 
         /*
@@ -3615,9 +3631,8 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             debug: utils.getParamValue('debug')
         };
 
-        attributes.hostPageId = attributes.id || null;
+        attributes.suppliedId = attributes.id || null;
         attributes.iframePlayerId = 'js-player-' + _playerIndex++;
-        dispatcher.dispatch('playerIdCreated', { playerId: attributes.id });
 
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
         attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
@@ -3628,6 +3643,23 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
         return attributes;
     }
 
+    function _getIframeHTML (iframeURL, attributes) {
+        var attributesString = utils.objectToQueryString(attributes);
+        attributes = utils.lowerCasePropertyNames(attributes);
+
+        return '<iframe ' +
+            'id="'+ attributes.iframeplayerid +'"' +
+            'src="'+ iframeURL + '?' + attributesString + '"' +
+            'scrolling="no" ' +
+            'frameborder="0" ' +
+            'width="' + attributes.iframewidth + '"' +
+            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+    }
+    //-------------------------------------------------------------------------------- /private methods
+
+
+
+    //-------------------------------------------------------------------------------- public methods
     var getPlayerAttributes = function (element) {
         var playerAttributes = {},
             elementId;
@@ -3713,28 +3745,26 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
             throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
         }
 
+        debug.log("we're looping through these", elements);
+
         _.each(elements, function (playerToCreate) {
             debug.log('iframe attributes', playerToCreate.attributes);
 
-            var attributesString = utils.objectToQueryString(playerToCreate.attributes);
-            attributes = utils.lowerCasePropertyNames(playerToCreate.attributes);
-
-            playerToCreate.element.innerHTML = '<iframe ' +
-                'id="'+ attributes.iframeplayerid +'"' +
-                'src="'+ iframeURL + '?' + attributesString + '"' +
-                'scrolling="no" ' +
-                'frameborder="0" ' +
-                'width="' + attributes.iframewidth + '"' +
-                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
+            playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
 
             debug.log('dispatching htmlInjected', playerToCreate.element);
-            dispatcher.dispatch('htmlInjected', { playerId: attributes.iframeplayerid });
+            dispatcher.dispatch('htmlInjected', {
+                attributes: playerToCreate.attributes,
+                element: playerToCreate.element
+            });
         });
 
         _enableExternalController();
 
         return true;
     };
+    //-------------------------------------------------------------------------------- public methods
+
 
     // This API is only Public to player.js, so we should surface everything so we can unit test it
     return {
@@ -4535,7 +4565,7 @@ define('player',['require',
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-        _players = {},
+        _players = [],
         _currentPosition,
         _promisesQueue = [];
 
@@ -4585,11 +4615,11 @@ define('player',['require',
 
             if (!_.isUndefined(id))
             {
-                _.each(_players, function (controller, playerId) {
+                _.each(_players, function (player) {
 
-                    if (playerId === id)
+                    if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
                     {
-                        controllerToUse = controller;
+                        controllerToUse = player.controller;
                     }
                 });
             }
@@ -4656,30 +4686,23 @@ define('player',['require',
             debug.log('ovp ready', _players);
 
             //---------------------------------------- ovp initialize
-            if (_.isTrueObject(_players) && !_.isEmpty(_players))
+            if (_.isArray(_players) && !_.isEmpty(_players))
             {
                 debug.log('binding players...', _players);
 
-                _.each(_players, function (controller, id, list) {
-                    if (!controller) //check for unbound
+                _.each(_players, function (player) {
+                    if (!_.isUndefined(player.controller)) //check for unbound
                     {
-                        _players[id] = ovp.pdk.bind(id);
-                        debug.log('binding player', id);
-                        dispatcher.dispatch('playerCreated', { playerId: id });
+                        player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+                        debug.log('binding player', player.attributes.iframePlayerId);
+                        dispatcher.dispatch('playerCreated', player.attributes);
                     }
                 });
 
                 debug.log('all players bound', _players);
                 playback._setController(ovp.controller().controller);
             }
-            else
-            {
-                //just one basic player on the page
-                debug.log('setting the controller for the single, basic player');
-                playback._setController(ovp.controller());
-            }
             //---------------------------------------- /ovp initialize
-
 
 
             //---------------------------------------- ovp event listeners
@@ -4727,21 +4750,25 @@ define('player',['require',
 
         //---------------------------------------- iframe event listeners
         iframe.addEventListener('htmlInjected', function (event) {
-            var controller = null;
+            debug.log('htmlInjected fired', event);
+
+            var player = {
+                controller: null,
+                attributes: event.data.attributes,
+                element: event.data.element
+            };
 
             if (ovp.isReady())
             {
                 //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-                controller = ovp.pdk.bind(event.data.playerId);
-                debug.log('htmlInjected fired: binding player', event.data.playerId);
-                dispatcher.dispatch('playerCreated', { playerId: event.data.playerId });
+                player.controller = ovp.pdk.bind(event.data.attributes.iframePlayerId);
+                debug.log('binding player', event.data.attributes);
+                dispatcher.dispatch('playerCreated', event.data.attributes);
             }
 
-            _players[event.data.playerId] = controller;
-            debug.log('adding player to _players', {
-                id: event.data.playerId,
-                controller: controller
-            });
+            debug.log('adding player to _players', player);
+
+            _players.push(player);
         });
         //---------------------------------------- /iframe event listeners
     }
@@ -5544,7 +5571,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-02 03:07:38';
+    var buildTimestamp = '2013-07-03 04:07:13';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -5596,7 +5623,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-02 03:07:38)');
+        debug.log('ready (build date: 2013-07-03 04:07:13)');
 
         _messageUnsupportedUsers();
     };
@@ -5606,7 +5633,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-02 03:07:38',
+        buildDate: '2013-07-03 04:07:13',
         packageName: 'foxneod',
         version: '0.7.4',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
