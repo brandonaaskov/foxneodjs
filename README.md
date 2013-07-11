@@ -271,6 +271,7 @@ foxneod.control('#player1').setPlayerMessage({
 	message: 'Only applies to player 1'
 });
 ```
+__Note__: You can pass in either the selector to original element you used, or the selector to the iframe itself. 
 
 ### foxneod.player.injectIframePlayer()
 
