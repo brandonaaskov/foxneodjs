@@ -2435,6 +2435,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
             removePixelSuffix: removePixelSuffix,
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
+            override: override,
             getParamValue: getParamValue,
             getQueryParams: getQueryParams,
             removeQueryParams: removeQueryParams,
@@ -2537,7 +2538,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.7.4: ';
+        var prefix = 'foxneod-0.8.0: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -3966,6 +3967,24 @@ define('player',['require',
         return details;
     };
 
+    var createPlayer = function (selector, config) {
+        //validate selector argument
+        if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector))
+        {
+            throw new Error("The first argument supplied to create() should be a selector string");
+        }
+
+        debug.log('config', config);
+
+        //validate config argument
+        if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config)))
+        {
+            throw new Error("The second argument supplied to create() should be either a network acronym or a non-empty object");
+        }
+
+        return config;
+    };
+
     var getPlayers = function () {
         return _players;
     };
@@ -4086,6 +4105,7 @@ define('player',['require',
         getMostRecentAd: getMostRecentAd,
         loadVideo: loadVideo,
         getPosition: getCurrentPosition,
+        create: createPlayer,
         getPlayers: getPlayers,
 
         //control methods
@@ -4863,7 +4883,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-03 04:07:13';
+    var buildTimestamp = '2013-07-12 10:07:51';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -4915,7 +4935,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-03 04:07:13)');
+        debug.log('ready (build date: 2013-07-12 10:07:51)');
 
         _messageUnsupportedUsers();
     };
@@ -4925,9 +4945,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-03 04:07:13',
+        buildDate: '2013-07-12 10:07:51',
         packageName: 'foxneod',
-        version: '0.7.4',
+        version: '0.8.0',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
