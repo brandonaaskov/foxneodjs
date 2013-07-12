@@ -126,6 +126,24 @@ define(['require',
         return details;
     };
 
+    var createPlayer = function (selector, config) {
+        //validate selector argument
+        if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector))
+        {
+            throw new Error("The first argument supplied to create() should be a selector string");
+        }
+
+        debug.log('config', config);
+
+        //validate config argument
+        if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config)))
+        {
+            throw new Error("The second argument supplied to create() should be either a network acronym or a non-empty object");
+        }
+
+        return config;
+    };
+
     var getPlayers = function () {
         return _players;
     };
@@ -246,6 +264,7 @@ define(['require',
         getMostRecentAd: getMostRecentAd,
         loadVideo: loadVideo,
         getPosition: getCurrentPosition,
+        create: createPlayer,
         getPlayers: getPlayers,
 
         //control methods
