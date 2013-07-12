@@ -404,7 +404,8 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return ($tag.length > 0) ? true : false;
     };
 
-    var override = function (startWith, overrideWith) {
+    var override = function (startWith, overrideWith, overlay) {
+        var overlay = overlay || false;
 
         if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
         {
@@ -414,13 +415,32 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         var cleaned = _.defaults(startWith, overrideWith);
 
         _.each(startWith, function (value, key) {
-            _.each(overrideWith, function (overrideValue, overrideKey) {
-                if (key === overrideKey)
+            _.each(overrideWith, function (overrideItemValue, overrideItemKey) {
+                if (key === overrideItemKey)
                 {
+//                    if (overlay && (_.isTrueObject(overrideItemValue) || _.isArray(overrideItemValue)) && !_.isEmpty(overrideItemValue))
+//                    {
+//                        if (_.isArray(overrideItemValue))
+//                        {
+//                            _.each(overrideItemValue, function (arrayItem) {
+//                                if (_.isEqual(ov, arrayItem))
+//                                {
+//
+//                                }
+//                            });
+//                        }
+//                    }
+
+                    //whether the overlay flag is true or not, it would behave the same way here
                     cleaned[key] = overrideValue;
                 }
             });
         });
+
+        /**
+         * when overlay is true, it should crawl through each key of the overrideWith object and check for a match
+         * when one is found, the new value is applied
+         */
 
         return cleaned;
     };
