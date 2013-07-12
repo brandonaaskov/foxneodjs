@@ -126,6 +126,14 @@ define(['require',
         return details;
     };
 
+    /**
+     * Creates a player in the page at the given selector.
+     *
+     * @param selector {String} Selector string to the HTML element where the player should get created
+     * @param config {String|Object} String that points to a default configuration or an object providing
+     * the config to use
+     * @returns {Object} Returns the final config object
+     */
     var createPlayer = function (selector, config) {
         //validate selector argument
         if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector))
@@ -144,6 +152,12 @@ define(['require',
         return config;
     };
 
+    /**
+     * Get an array of all the current players being used
+     *
+     * @returns {Array} Returns an array of players that have been asked to be created, whether
+     * they've been created or not yet
+     */
     var getPlayers = function () {
         return _players;
     };
