@@ -278,10 +278,9 @@ define(['require',
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
                         debug.log('binding player', player.attributes.iframePlayerId);
-                        setTimeout(function () {
-                            jquery('#' + player.attributes.iframePlayerId).trigger('onload');
-                            player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
-                        }, 2000);
+
+                        player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+                        jquery('#' + player.attributes.iframePlayerId).trigger('onload');
 
                         dispatcher.dispatch('playerCreated', player.attributes);
                     }
