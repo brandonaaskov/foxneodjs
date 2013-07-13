@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define, FDM_Player */
 
 define(['require',
     'ovp',
@@ -9,8 +9,9 @@ define(['require',
     'jqueryloader',
     'underscoreloader',
     'Dispatcher',
-    'query'
-], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher, query) {
+    'query',
+    'utils'
+], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -19,7 +20,76 @@ define(['require',
         _mostRecentAd = {},
         _players = [],
         _currentPosition,
-        _promisesQueue = [];
+        _promisesQueue = [],
+        _playerIndex = 0;
+
+    function _enableExternalController (enableScriptTag, enableMetaTag) {
+        var attributes = {
+            name: "tp:EnableExternalController",
+            content: "true"
+        };
+
+        if (!utils.tagInHead('script', attributes) && enableMetaTag)
+        {
+            utils.addToHead('meta', attributes);
+        }
+        else
+        {
+            debug.log('Page already has external controller meta tag');
+        }
+
+        attributes = {
+            type: 'text/javascript',
+            src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
+        };
+
+        if (!utils.tagInHead('script', attributes) && enableScriptTag)
+        {
+            utils.addToHead('script', attributes);
+        }
+        else
+        {
+            debug.log('Page already has external controller script tag');
+        }
+
+        debug.log('external controller added');
+    }
+
+    function _processAttributes(selector, attributes, declaredAttributes) {
+        attributes = attributes || {};
+
+        if (_.isDefined(declaredAttributes))
+        {
+            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
+            {
+                attributes = utils.override(declaredAttributes || {}, attributes);
+            }
+            else
+            {
+                attributes = declaredAttributes;
+            }
+        }
+
+        /*
+         * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
+         * not always the same as the height and width of the player.
+         */
+
+        var defaults = {
+            width: (_.has(attributes, 'width')) ? attributes.width : 640,
+            height: (_.has(attributes, 'height')) ? attributes.height : 360,
+            suppliedId: (_.has(attributes, 'suppliedId')) ? attributes.suppliedId : jquery(selector).attr('id'),
+            debug: utils.getParamValue('debug')
+        };
+
+        attributes.width = defaults.width;
+        attributes.height = defaults.height;
+        attributes.playerIndex = _playerIndex++;
+        attributes.debug = attributes.debug || defaults.debug;
+        attributes.suppliedId = defaults.suppliedId;
+
+        return attributes;
+    }
 
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
@@ -141,12 +211,41 @@ define(['require',
             throw new Error("The first argument supplied to create() should be a selector string");
         }
 
-        debug.log('config', config);
-
         //validate config argument
         if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config)))
         {
             throw new Error("The second argument supplied to create() should be either a network acronym or a non-empty object");
+        }
+
+        try {
+            var player = window.player = {},
+                pdkDebug = _.find(debug.getDebugModes(), function (debugMode) {
+                    if (_.isEqual(debugMode, 'pdk'))
+                    {
+                        return true;
+                    }
+                });
+
+            config = _processAttributes(selector, config);
+
+            window['player'] = new FDM_Player('player', config.width, config.height);
+            player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
+
+            _.each(config, function (prop, key) {
+                player[prop] = config[prop];
+
+                if (_.isEqual(key, 'iframePlayerId'))
+                {
+                    _enableExternalController('meta'); //adds controller to iframe page
+                }
+            });
+
+            debug.log('PDK logLevel', player.logLevel);
+            debug.log('creating player with config', config);
+            //TODO: fix the coupling so that you can pass a selector to FDM_Player (or just finally replace the thing)
+        }
+        catch (error) {
+            throw new Error(error);
         }
 
         return config;
@@ -179,6 +278,11 @@ define(['require',
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
                         debug.log('binding player', player.attributes.iframePlayerId);
+                        setTimeout(function () {
+                            jquery('#' + player.attributes.iframePlayerId).trigger('onload');
+                            player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+                        }, 2000);
+
                         dispatcher.dispatch('playerCreated', player.attributes);
                     }
                 });
@@ -187,49 +291,7 @@ define(['require',
                 playback._setController(ovp.controller().controller);
             }
             //---------------------------------------- /ovp initialize
-
-
-            //---------------------------------------- ovp event listeners
-            ovp.controller().addEventListener('OnMediaLoadStart', function (event) {
-                if (!event.data.baseClip.isAd)
-                {
-                    _currentVideo = event.data;
-                    debug.log("OnMediaLoadStart fired for content, and event.data was saved.", _currentVideo);
-                }
-                else
-                {
-                    _mostRecentAd = event.data;
-                    debug.log("OnMediaLoadStart fired for an ad, and event.data was saved.", _mostRecentAd);
-                }
-            });
-
-            ovp.controller().addEventListener('OnMediaPlaying', function (event) {
-                _currentPosition = event.data;
-            });
-
-            ovp.controller().addEventListener('OnLoadReleaseUrl', function (event) {
-                var release = event.data;
-                debug.log('OnLoadReleaseUrl:release', release);
-
-                var baseReleaseURL = _.removeQueryParams(release.url),
-                    matchedPromise;
-
-                _.each(_promisesQueue, function (item) {
-                    if (baseReleaseURL === item.id)
-                    {
-                        debug.log('matched promise', item);
-                        matchedPromise = item;
-                    }
-                });
-
-                //let's end the deferred object for this thing
-                if (matchedPromise && _.has(matchedPromise, 'deferred'))
-                {
-                    matchedPromise.deferred.resolve(release);
-                }
-            });
         });
-        //---------------------------------------- /ovp event listeners
 
 
         //---------------------------------------- iframe event listeners
@@ -263,6 +325,14 @@ define(['require',
     })();
     //---------------------------------------------- /init
 
+    //---------------------------------------------- iframe facçade
+    var injectIframePlayer = function (selector, iframeURL, attributes) {
+        attributes = _processAttributes(selector, attributes);
+        _enableExternalController('script');
+        iframe.injectIframePlayer(selector, iframeURL, attributes);
+    };
+    //---------------------------------------------- /iframe facçade
+
     /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
      * entry point
@@ -271,7 +341,7 @@ define(['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayer: iframe.injectIframePlayer,
+        injectIframePlayer: injectIframePlayer,
         hide: ovp.hide,
         show: ovp.show,
         getCurrentVideo: getCurrentVideo,

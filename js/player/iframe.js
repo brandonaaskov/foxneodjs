@@ -5,71 +5,30 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
 
     //-------------------------------------------------------------------------------- instance variables
     var debug = new Debug('iframe'),
-        dispatcher = new Dispatcher(),
-        _playerIndex = 0;
+        dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
 
 
 
     //-------------------------------------------------------------------------------- private methods
-    function _enableExternalController() {
-        var attributes = {
-            name: "tp:EnableExternalController",
-            content: "true"
-        };
-
-        if (!utils.tagInHead('script', attributes))
+    /**
+     * Adds some attributes on top of the ones created at the player.js level.
+     *
+     * @param attributes
+     * @param declaredAttributes
+     * @returns {*}
+     * @private
+     */
+    function _processAttributes(selector, attributes, declaredAttributes) {
+        if (_.isUndefined(attributes) || _.isEmpty(attributes))
         {
-            utils.addToHead('meta', attributes);
+            throw new Error("_processIframeAttributes expects a populated attributes object. Please contact the " +
+                "Fox NEOD team.");
         }
 
-        attributes = {
-            type: 'text/javascript',
-            src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
-        };
-
-        if (!utils.tagInHead('script', attributes))
-        {
-            utils.addToHead('script', attributes);
-        }
-
-        debug.log('external controller added');
-    }
-
-    function _processPlayerAttributes(attributes, declaredAttributes) {
-        attributes = attributes || {};
-
-        if (_.isDefined(declaredAttributes))
-        {
-            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
-            {
-                attributes = utils.override(declaredAttributes || {}, attributes);
-            }
-            else
-            {
-                attributes = declaredAttributes;
-            }
-        }
-
-        /*
-         * All of this just makes sure that we get a proper height/width to set on the iframe itself, which is
-         * not always the same as the height and width of the player.
-         */
-
-        var defaults = {
-            width: (_.has(attributes, 'width')) ? attributes.width : 640,
-            height: (_.has(attributes, 'height')) ? attributes.height : 360,
-            debug: utils.getParamValue('debug')
-        };
-
-        attributes.suppliedId = attributes.id || null;
-        attributes.iframePlayerId = 'js-player-' + _playerIndex++;
-
-        attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : defaults.height;
-        attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : defaults.width;
-        attributes.width = defaults.width || attributes.iframeWidth;
-        attributes.height = defaults.height || attributes.iframeHeight;
-        attributes.debug = attributes.debug || defaults.debug;
+        attributes.iframePlayerId = 'js-player-' + attributes.playerIndex;
+        attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : attributes.height;
+        attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : attributes.width;
 
         return attributes;
     }
@@ -137,23 +96,23 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         return playerAttributes;
     };
 
-    var injectIframePlayer = function (element, iframeURL, attributes) {
+    var injectIframePlayer = function (selector, iframeURL, attributes) {
         var elements = [];
 
-        if (_.isString(element) && !_.isEmpty(element)) //we got a selector
+        if (_.isString(selector) && !_.isEmpty(selector)) //we got a selector
         {
-            var query = document.querySelectorAll(element),
+            var query = document.querySelectorAll(selector),
                 atLeastOneElementFound = false;
 
             _.each(query, function (queryItem, index) {
                 if (_.isElement(queryItem))
                 {
                     debug.log('element found', queryItem);
-                    var declaredAttributes = getPlayerAttributes(queryItem);
 
+                    var declaredAttributes = getPlayerAttributes(queryItem);
                     debug.log('declaredAttributes', declaredAttributes);
 
-                    attributes = _processPlayerAttributes(attributes || {}, declaredAttributes);
+                    attributes = _processAttributes(selector, attributes, declaredAttributes);
 
                     if (!_.isEmpty(attributes))
                     {
@@ -176,7 +135,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
             throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
         }
 
-        debug.log("we're looping through these", elements);
+        debug.log("We're going to try and create these", elements);
 
         _.each(elements, function (playerToCreate) {
             debug.log('iframe attributes', playerToCreate.attributes);
@@ -189,8 +148,6 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 element: playerToCreate.element
             });
         });
-
-        _enableExternalController();
 
         return true;
     };
