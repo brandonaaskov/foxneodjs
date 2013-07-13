@@ -228,7 +228,8 @@ define(['require',
 
             config = _processAttributes(selector, config);
 
-            window['player'] = new FDM_Player('player', config.width, config.height);
+            window['player'] = config;
+            var fdmPlayer = new FDM_Player('player', config.width, config.height);
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
             _.each(config, function (prop, key) {
