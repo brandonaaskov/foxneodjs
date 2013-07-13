@@ -288,7 +288,9 @@ define(['require',
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
 
+                        //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
                         try {
+                            //just proving a point that this doesn't work
                             document.getElementById(player.attributes.iframePlayerId).onload();
                         }
                         catch (error) {
