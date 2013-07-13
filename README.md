@@ -40,6 +40,7 @@ __Note__: Some aspects of the library make use of [Promises](http://wiki.commonj
     * [show()](#foxneodplayershow)
     * [getCurrentVideo()](#foxneodplayergetcurrentvideo)
     * [getMostRecentAd()](#foxneodplayergetmostrecentad)
+    * [getPosition()](#foxneodplayergetposition)
     * [control()](#foxneodplayercontrol)
     * [seekTo()](#foxneodplayerseekto)
     * [play()](#foxneodplayerplay)
@@ -271,7 +272,7 @@ foxneod.control('#player1').setPlayerMessage({
 	message: 'Only applies to player 1'
 });
 ```
-__Note__: You can pass in either the selector to original element you used, or the selector to the iframe itself. 
+_Note_: You can pass in either the selector to 
 
 ### foxneod.player.injectIframePlayer()
 
@@ -368,6 +369,24 @@ Returns the current video loaded into the player. Only available after `OnMediaL
 Returns the event object from the most recently played ad. Only available after `OnMediaLoadStart` fires for ad playback.
 
 ```javascript
+```
+
+### foxneod.player.getPosition()
+
+Returns an object of details about the current video.
+
+```javascript
+var positionInfo = foxneod.player.getPosition(); 
+console.log('position info', positionInfo);
+
+/* this is what position info will look like
+{
+    position: null,
+    duration: null,
+    percentComplete: null
+}
+*/
+
 ```
 
 ### foxneod.player.seekTo()
