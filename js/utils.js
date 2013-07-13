@@ -409,7 +409,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
 
         if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
         {
-            throw new Error("Both arguments supplied should be objects");
+            throw new Error("Both arguments supplied should be non-empty objects");
         }
 
         var cleaned = _.defaults(startWith, overrideWith);
