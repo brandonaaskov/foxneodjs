@@ -278,9 +278,6 @@ define(['require',
                     if (!_.isUndefined(player.controller)) //check for unbound
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
-                        debug.log('binding player', player.attributes.iframePlayerId);
-
-                        player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
                         jquery('#' + player.attributes.iframePlayerId).trigger('onload');
 
                         dispatcher.dispatch('playerCreated', player.attributes);
