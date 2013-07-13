@@ -26,6 +26,18 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                 "Fox NEOD team.");
         }
 
+        if (_.isDefined(declaredAttributes))
+        {
+            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
+            {
+                attributes = utils.override(declaredAttributes || {}, attributes);
+            }
+            else
+            {
+                attributes = declaredAttributes;
+            }
+        }
+
         attributes.iframePlayerId = 'js-player-' + attributes.playerIndex;
         attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : attributes.height;
         attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : attributes.width;
