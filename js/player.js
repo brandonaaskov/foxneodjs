@@ -33,6 +33,7 @@ define(['require',
         if (!utils.tagInHead('script', attributes) && enableMetaTag)
         {
             utils.addToHead('meta', attributes);
+            debug.log('external controller (meta tag) added');
         }
         else
         {
@@ -47,13 +48,12 @@ define(['require',
         if (!utils.tagInHead('script', attributes) && enableScriptTag)
         {
             utils.addToHead('script', attributes);
+            debug.log('external controller (script tag) added');
         }
         else
         {
             debug.log('Page already has external controller script tag');
         }
-
-        debug.log('external controller enabled');
     }
 
     function _processAttributes(selector, suppliedAttributes, declaredAttributes) {
@@ -122,11 +122,6 @@ define(['require',
     var control = function (playerIdSelector) {
         var controllerToUse = getController(playerIdSelector);
 
-        if (!_.isDefined(controllerToUse) || _.isEmpty(controllerToUse))
-        {
-            throw new Error("The selector you provided doesn't point to a player on the page");
-        }
-
         debug.log('setting controller', controllerToUse);
         playback._setController(controllerToUse);
 
@@ -142,7 +137,8 @@ define(['require',
 
             if (!_.isUndefined(id))
             {
-                _.each(_players, function (player) {
+                 _.each(_players, function (player) {
+                    debug.log("searching for player controller...");
                     if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
                     {
                         controllerToUse = player.controller;
@@ -151,9 +147,14 @@ define(['require',
             }
         });
 
-        if (controllerToUse)
+        if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
         {
+            debug.log('controller to use', controllerToUse);
             return controllerToUse().controller;
+        }
+        else
+        {
+            debug.warn("The selector you provided doesn't point to a player on the page");
         }
 
         debug.log('getController() returning false');
@@ -331,10 +332,12 @@ define(['require',
 
             if (ovp.isReady())
             {
+                var attributes = event.data.attributes;
+
                 //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-                player.controller = ovp.pdk.bind(event.data.attributes.iframePlayerId);
-                debug.log('binding player', event.data.attributes);
-                dispatcher.dispatch('playerCreated', event.data.attributes);
+                player.controller = ovp.pdk.bind(attributes.iframePlayerId);
+                debug.log('binding player', attributes);
+                dispatcher.dispatch('playerCreated', attributes);
             }
 
             debug.log('adding player to _players', player);
