@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define */
 
 define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher, _, jquery) {
     'use strict';
@@ -405,7 +405,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
     };
 
     var override = function (startWith, overrideWith, overlay) {
-        var overlay = overlay || false;
+        overlay = overlay || false;
 
         if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
         {
@@ -432,7 +432,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
 //                    }
 
                     //whether the overlay flag is true or not, it would behave the same way here
-                    cleaned[key] = overrideValue;
+                    cleaned[key] = overrideItemValue;
                 }
             });
         });
