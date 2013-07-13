@@ -1,4 +1,4 @@
-/*global define, _, console */
+/*global define */
 
 /**
  * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
@@ -27,6 +27,9 @@
  */
 define(['utils', 'underscoreloader'], function (utils, _) {
     'use strict';
+
+    var console = window.console,
+        _debugModes = [];
 
     return function (moduleName) {
         //-------------------------------------- validation
@@ -94,30 +97,43 @@ define(['utils', 'underscoreloader'], function (utils, _) {
         var _log = function (logLevel, options) {
             var debugModes = getDebugModes();
 
-            for (var i = 0, n = debugModes.length; i < n; i++)
-            {
-                var mode = debugModes[i].toLowerCase();
+            _.each(getDebugModes(), function (mode) {
+                mode = mode.toLowerCase();
 
-                if (mode === category.toLowerCase() || mode === 'all')
+                if (_.isEqual(mode, category.toLocaleLowerCase()) || _.isEqual(mode, 'all'))
                 {
                     console[logLevel](prefix + category + ': ' + options.message, options.data || '');
-//                    console.log('lastUsedOptions set');
                     lastUsedOptions = _.clone(options);
                 }
-            }
+            });
         };
 
         var getDebugModes = function () {
-            var queryParam = utils.getParamValue('debug');
-            var debugModes = (queryParam && _.isString(queryParam)) ? queryParam.split(',') : ['@@debugMode'];
-
-            return debugModes;
+            return _debugModes;
         };
+
+        (function init () {
+            var queryParam = utils.getParamValue('debug');
+
+            var splitThatShit = function (queryParams) {
+                return queryParam.split(',');
+            };
+
+            var lowerCaseThatShit = function (params) {
+                return _.each(params, function (param) {
+                    param.toLowerCase();
+                });
+            };
+
+            var processQueryParams = _.compose(splitThatShit, lowerCaseThatShit);
+
+            _debugModes = (queryParam && _.isString(queryParam)) ? processQueryParams() : ['@@debugMode'];
+        })();
 
         // Surfaced for testing purposes
         var test = {
             getLastUsedOptions: function () {
-                window.console.log('getLastUsedOptions', lastUsedOptions);
+                console.log('getLastUsedOptions', lastUsedOptions);
                 return lastUsedOptions;
             },
             getCategory: function () {
