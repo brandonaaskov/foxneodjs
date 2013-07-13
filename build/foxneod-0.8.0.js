@@ -6896,7 +6896,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
 
         if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
         {
-            throw new Error("Both arguments supplied should be objects");
+            throw new Error("Both arguments supplied should be non-empty objects");
         }
 
         var cleaned = _.defaults(startWith, overrideWith);
@@ -8558,6 +8558,7 @@ define('player',['require',
         _promisesQueue = [],
         _playerIndex = 0;
 
+    //---------------------------------------------- private methods
     function _enableExternalController (enableScriptTag, enableMetaTag) {
         var attributes = {
             name: "tp:EnableExternalController",
@@ -8625,7 +8626,11 @@ define('player',['require',
 
         return attributes;
     }
+    //---------------------------------------------- /private methods
 
+
+
+    //---------------------------------------------- public methods
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
         {
@@ -8796,13 +8801,17 @@ define('player',['require',
     var getPlayers = function () {
         return _players;
     };
+    //---------------------------------------------- /public methods
 
-    function init () {
+
+
+    //---------------------------------------------- init
+    (function init () {
         debug.log('init');
 
         ovp.addEventListener('ready', function () {
 
-            debug.log('ovp ready', _players);
+            debug.log('ovp ready');
 
             //---------------------------------------- ovp initialize
             if (_.isArray(_players) && !_.isEmpty(_players))
@@ -8813,7 +8822,14 @@ define('player',['require',
                     if (!_.isUndefined(player.controller)) //check for unbound
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
-                        jquery('#' + player.attributes.iframePlayerId).trigger('onload');
+
+                        try {
+                            document.getElementById(player.attributes.iframePlayerId).onload();
+                        }
+                        catch (error) {
+                            jquery('#' + player.attributes.iframePlayerId).trigger('onload');
+                            debug.warn("Calling onload() using getElementById() failed", error);
+                        }
 
                         dispatcher.dispatch('playerCreated', player.attributes);
                     }
@@ -8849,21 +8865,20 @@ define('player',['require',
             _players.push(player);
         });
         //---------------------------------------- /iframe event listeners
-    }
-
-    //---------------------------------------------- init
-    (function () {
-        init();
     })();
     //---------------------------------------------- /init
+
+
 
     //---------------------------------------------- iframe facçade
     var injectIframePlayer = function (selector, iframeURL, attributes) {
         attributes = _processAttributes(selector, attributes);
         _enableExternalController('script');
-        iframe.injectIframePlayer(selector, iframeURL, attributes);
+        return iframe.injectIframePlayer(selector, iframeURL, attributes);
     };
     //---------------------------------------------- /iframe facçade
+
+
 
     /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
@@ -9658,7 +9673,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-12 10:07:48';
+    var buildTimestamp = '2013-07-13 01:07:49';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -9710,7 +9725,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-12 10:07:48)');
+        debug.log('ready (build date: 2013-07-13 01:07:49)');
 
         _messageUnsupportedUsers();
     };
@@ -9720,7 +9735,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-12 10:07:48',
+        buildDate: '2013-07-13 01:07:49',
         packageName: 'foxneod',
         version: '0.8.0',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
