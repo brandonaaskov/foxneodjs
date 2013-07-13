@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define */
 
 define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) {
     'use strict';
