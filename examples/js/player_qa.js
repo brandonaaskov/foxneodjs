@@ -8223,7 +8223,7 @@ define('ovp',[
         dispatcher = new Dispatcher(),
         ready = false,
         selector = 'object[data^="http://player.foxfdm.com"]',
-        version = '5.2.6';
+        version = '5.2.7';
 
     var hide = function () {
         jquery(selector).each(function (index, element) {
@@ -8265,8 +8265,9 @@ define('ovp',[
     function constructor () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
-            debug.log('PDK is now available inside of ovp.js', pdk);
             ready = true;
+
+            debug.log('PDK is now available inside of ovp.js', pdk);
             dispatcher.dispatch('ready', pdk);
         });
     }
@@ -8297,12 +8298,13 @@ define('ovp',[
 });
 /*global define, _ */
 
-define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _, Debug, Dispatcher) {
+define('player/iframe',['require', 'utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (require, utils, _, Debug, Dispatcher) {
     
 
     //-------------------------------------------------------------------------------- instance variables
     var debug = new Debug('iframe'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        _playerAttributes = {}; //these get passed down from player.js
     //-------------------------------------------------------------------------------- /instance variables
 
 
@@ -8319,7 +8321,7 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
     function _processAttributes(selector, attributes, declaredAttributes) {
         if (_.isUndefined(attributes) || _.isEmpty(attributes))
         {
-            throw new Error("_processIframeAttributes expects a populated attributes object. Please contact the " +
+            throw new Error("_processAttributes expects a populated attributes object. Please contact the " +
                 "Fox NEOD team.");
         }
 
@@ -8405,8 +8407,11 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
         return playerAttributes;
     };
 
-    var injectIframePlayer = function (selector, iframeURL, attributes) {
+    var injectIframePlayer = function (selector, iframeURL, suppliedAttributes) {
+        var player = require('player');
+
         var elements = [];
+        _playerAttributes = suppliedAttributes;
 
         if (_.isString(selector) && !_.isEmpty(selector)) //we got a selector
         {
@@ -8421,7 +8426,14 @@ define('player/iframe',['utils', 'underscoreloader', 'Debug', 'Dispatcher'], fun
                     var declaredAttributes = getPlayerAttributes(queryItem);
                     debug.log('declaredAttributes', declaredAttributes);
 
-                    attributes = _processAttributes(selector, attributes, declaredAttributes);
+                    var attributes = _.compose(
+                        function (basicProcessedAttributes) {
+                            return _processAttributes(selector, basicProcessedAttributes, declaredAttributes);
+                        },
+                        function () {
+                            return player._processAttributes(selector, suppliedAttributes, declaredAttributes);
+                        }
+                    )();
 
                     if (!_.isEmpty(attributes))
                     {
@@ -9286,7 +9298,7 @@ define('player',['require',
 
         attributes = {
             type: 'text/javascript',
-            src: 'http://player.foxfdm.com/shared/1.4.526/' + 'pdk/tpPdkController.js'
+            src: 'http://player.foxfdm.com/shared/1.4.527/' + 'pdk/tpPdkController.js'
         };
 
         if (!utils.tagInHead('script', attributes) && enableScriptTag)
@@ -9298,11 +9310,11 @@ define('player',['require',
             debug.log('Page already has external controller script tag');
         }
 
-        debug.log('external controller added');
+        debug.log('external controller enabled');
     }
 
-    function _processAttributes(selector, attributes, declaredAttributes) {
-        attributes = attributes || {};
+    function _processAttributes(selector, suppliedAttributes, declaredAttributes) {
+        var attributes = suppliedAttributes || {};
 
         if (_.isDefined(declaredAttributes))
         {
@@ -9388,7 +9400,6 @@ define('player',['require',
             if (!_.isUndefined(id))
             {
                 _.each(_players, function (player) {
-
                     if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
                     {
                         controllerToUse = player.controller;
@@ -9402,7 +9413,7 @@ define('player',['require',
             return controllerToUse().controller;
         }
 
-        debug.log('returning false');
+        debug.log('getController() returning false');
         return false;
     };
 
@@ -9533,12 +9544,25 @@ define('player',['require',
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
 
+                        //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
                         try {
+                            //just proving a point that this doesn't work
                             document.getElementById(player.attributes.iframePlayerId).onload();
                         }
                         catch (error) {
-                            jquery('#' + player.attributes.iframePlayerId).trigger('onload');
-                            debug.warn("Calling onload() using getElementById() failed", error);
+                            //error details in diatribe form
+                            debug.warn("Calling onload() using getElementById("+ player.attributes.iframePlayerId +") failed...");
+                            debug.log("... and just to clarify, that element is there...", document.getElementById(player.attributes.iframePlayerId));
+                            debug.log("... and the error is...");
+                            window.console.dir(error);
+
+                            //jquery saves the day!
+                            debug.log("... but don't worry, jQuery saves the day!");
+                            var iframeSelector = '#' + player.attributes.iframePlayerId;
+                            jquery(iframeSelector).bind('onload', function () {
+                                debug.log('$('+ iframeSelector +').onload(fired!)', arguments);
+                            });
+                            jquery(iframeSelector).trigger('onload');
                         }
 
                         dispatcher.dispatch('playerCreated', player.attributes);
@@ -9580,16 +9604,6 @@ define('player',['require',
 
 
 
-    //---------------------------------------------- iframe facçade
-    var injectIframePlayer = function (selector, iframeURL, attributes) {
-        attributes = _processAttributes(selector, attributes);
-        _enableExternalController('script');
-        return iframe.injectIframePlayer(selector, iframeURL, attributes);
-    };
-    //---------------------------------------------- /iframe facçade
-
-
-
     /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
      * entry point
@@ -9598,7 +9612,7 @@ define('player',['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayer: injectIframePlayer,
+        injectIframePlayer: iframe.injectIframePlayer,
         hide: ovp.hide,
         show: ovp.show,
         getCurrentVideo: getCurrentVideo,
@@ -9622,6 +9636,7 @@ define('player',['require',
         removeEventListener: dispatcher.removeEventListener,
 
         //testing-only api (still public, but please DO NOT USE unless unit testing)
+        _processAttributes: _processAttributes,
         __test__: {
             ovp: ovp,
             getPlayerAttributes: iframe.getPlayerAttributes,
@@ -10383,7 +10398,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-13 01:07:49';
+    var buildTimestamp = '2013-07-13 04:07:11';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -10435,7 +10450,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-13 01:07:49)');
+        debug.log('ready (build date: 2013-07-13 04:07:11)');
 
         _messageUnsupportedUsers();
     };
@@ -10445,7 +10460,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-13 01:07:49',
+        buildDate: '2013-07-13 04:07:11',
         packageName: 'foxneod',
         version: '0.8.0',
         getOmnitureLibraryReady: getOmnitureLibraryReady,

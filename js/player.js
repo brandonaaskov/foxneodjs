@@ -53,11 +53,11 @@ define(['require',
             debug.log('Page already has external controller script tag');
         }
 
-        debug.log('external controller added');
+        debug.log('external controller enabled');
     }
 
-    function _processAttributes(selector, attributes, declaredAttributes) {
-        attributes = attributes || {};
+    function _processAttributes(selector, suppliedAttributes, declaredAttributes) {
+        var attributes = suppliedAttributes || {};
 
         if (_.isDefined(declaredAttributes))
         {
@@ -143,7 +143,6 @@ define(['require',
             if (!_.isUndefined(id))
             {
                 _.each(_players, function (player) {
-
                     if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
                     {
                         controllerToUse = player.controller;
@@ -157,7 +156,7 @@ define(['require',
             return controllerToUse().controller;
         }
 
-        debug.log('returning false');
+        debug.log('getController() returning false');
         return false;
     };
 
@@ -294,8 +293,19 @@ define(['require',
                             document.getElementById(player.attributes.iframePlayerId).onload();
                         }
                         catch (error) {
-                            jquery('#' + player.attributes.iframePlayerId).trigger('onload');
-                            debug.warn("Calling onload() using getElementById() failed", error);
+                            //error details in diatribe form
+                            debug.warn("Calling onload() using getElementById("+ player.attributes.iframePlayerId +") failed...");
+                            debug.log("... and just to clarify, that element is there...", document.getElementById(player.attributes.iframePlayerId));
+                            debug.log("... and the error is...");
+                            window.console.dir(error);
+
+                            //jquery saves the day!
+                            debug.log("... but don't worry, jQuery saves the day!");
+                            var iframeSelector = '#' + player.attributes.iframePlayerId;
+                            jquery(iframeSelector).bind('onload', function () {
+                                debug.log('$('+ iframeSelector +').onload(fired!)', arguments);
+                            });
+                            jquery(iframeSelector).trigger('onload');
                         }
 
                         dispatcher.dispatch('playerCreated', player.attributes);
@@ -337,16 +347,6 @@ define(['require',
 
 
 
-    //---------------------------------------------- iframe facçade
-    var injectIframePlayer = function (selector, iframeURL, attributes) {
-        attributes = _processAttributes(selector, attributes);
-        _enableExternalController('script');
-        return iframe.injectIframePlayer(selector, iframeURL, attributes);
-    };
-    //---------------------------------------------- /iframe facçade
-
-
-
     /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
      * entry point
@@ -355,7 +355,7 @@ define(['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayer: injectIframePlayer,
+        injectIframePlayer: iframe.injectIframePlayer,
         hide: ovp.hide,
         show: ovp.show,
         getCurrentVideo: getCurrentVideo,
@@ -379,6 +379,7 @@ define(['require',
         removeEventListener: dispatcher.removeEventListener,
 
         //testing-only api (still public, but please DO NOT USE unless unit testing)
+        _processAttributes: _processAttributes,
         __test__: {
             ovp: ovp,
             getPlayerAttributes: iframe.getPlayerAttributes,

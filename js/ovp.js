@@ -61,8 +61,9 @@ define([
     function constructor () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
-            debug.log('PDK is now available inside of ovp.js', pdk);
             ready = true;
+
+            debug.log('PDK is now available inside of ovp.js', pdk);
             dispatcher.dispatch('ready', pdk);
         });
     }

@@ -1,11 +1,12 @@
 /*global define, _ */
 
-define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _, Debug, Dispatcher) {
+define(['require', 'utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (require, utils, _, Debug, Dispatcher) {
     'use strict';
 
     //-------------------------------------------------------------------------------- instance variables
     var debug = new Debug('iframe'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        _playerAttributes = {}; //these get passed down from player.js
     //-------------------------------------------------------------------------------- /instance variables
 
 
@@ -22,7 +23,7 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
     function _processAttributes(selector, attributes, declaredAttributes) {
         if (_.isUndefined(attributes) || _.isEmpty(attributes))
         {
-            throw new Error("_processIframeAttributes expects a populated attributes object. Please contact the " +
+            throw new Error("_processAttributes expects a populated attributes object. Please contact the " +
                 "Fox NEOD team.");
         }
 
@@ -108,8 +109,11 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
         return playerAttributes;
     };
 
-    var injectIframePlayer = function (selector, iframeURL, attributes) {
+    var injectIframePlayer = function (selector, iframeURL, suppliedAttributes) {
+        var player = require('player');
+
         var elements = [];
+        _playerAttributes = suppliedAttributes;
 
         if (_.isString(selector) && !_.isEmpty(selector)) //we got a selector
         {
@@ -124,7 +128,14 @@ define(['utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (utils, _,
                     var declaredAttributes = getPlayerAttributes(queryItem);
                     debug.log('declaredAttributes', declaredAttributes);
 
-                    attributes = _processAttributes(selector, attributes, declaredAttributes);
+                    var attributes = _.compose(
+                        function (basicProcessedAttributes) {
+                            return _processAttributes(selector, basicProcessedAttributes, declaredAttributes);
+                        },
+                        function () {
+                            return player._processAttributes(selector, suppliedAttributes, declaredAttributes);
+                        }
+                    )();
 
                     if (!_.isEmpty(attributes))
                     {
