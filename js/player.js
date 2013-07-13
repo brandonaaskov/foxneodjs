@@ -278,7 +278,14 @@ define(['require',
                     if (!_.isUndefined(player.controller)) //check for unbound
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
-                        jquery('#' + player.attributes.iframePlayerId).trigger('onload');
+
+                        try {
+                            document.getElementById(player.attributes.iframePlayerId).onload();
+                        }
+                        catch (error) {
+                            jquery('#' + player.attributes.iframePlayerId).trigger('onload');
+                            debug.warn("Calling onload() using getElementById() failed", error);
+                        }
 
                         dispatcher.dispatch('playerCreated', player.attributes);
                     }
