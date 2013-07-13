@@ -8813,9 +8813,6 @@ define('player',['require',
                     if (!_.isUndefined(player.controller)) //check for unbound
                     {
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
-                        debug.log('binding player', player.attributes.iframePlayerId);
-
-                        player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
                         jquery('#' + player.attributes.iframePlayerId).trigger('onload');
 
                         dispatcher.dispatch('playerCreated', player.attributes);
@@ -9661,7 +9658,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-12 10:07:14';
+    var buildTimestamp = '2013-07-12 10:07:48';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -9713,7 +9710,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-12 10:07:14)');
+        debug.log('ready (build date: 2013-07-12 10:07:48)');
 
         _messageUnsupportedUsers();
     };
@@ -9723,7 +9720,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-12 10:07:14',
+        buildDate: '2013-07-12 10:07:48',
         packageName: 'foxneod',
         version: '0.8.0',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
