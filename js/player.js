@@ -2,7 +2,7 @@
 
 define(['require',
     'ovp',
-    'player/iframe',
+    'player/Iframe',
     'player/playback',
     'modal',
     'Debug',
@@ -11,7 +11,7 @@ define(['require',
     'Dispatcher',
     'query',
     'utils'
-], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
+], function (require, ovp, Iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -243,6 +243,8 @@ define(['require',
                 if (_.isEqual(key, 'iframePlayerId'))
                 {
                     _enableExternalController('meta'); //adds controller to iframe page
+                    debug.log('iframeReady dispatching');
+                    dispatcher.dispatch('iframeReady', config, true);
                 }
             });
 
@@ -266,6 +268,106 @@ define(['require',
     var getPlayers = function () {
         return _players;
     };
+
+    /**
+     * Get's any declarative player attributes (data-player).
+     *
+     * @param element The element to check for a data-player attribute
+     * @returns {{}}
+     */
+    var getPlayerAttributes = function (selector) {
+        var playerAttributes = {},
+            elementId;
+
+        var element = document.querySelectorAll(selector);
+
+        //if there are multiple elements from the selector, just use the first one we found
+        if (_.isObject(element))
+        {
+            element = element[0];
+        }
+
+        if (_.isDefined(element))
+        {
+            if (!_.isElement(element))
+            {
+                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
+                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on jQuery where we don't have to.");
+            }
+
+            var allAttributes = element.attributes;
+
+            for (var i = 0, n = allAttributes.length; i < n; i++)
+            {
+                var attr = allAttributes[i],
+                    attrName = attr.nodeName;
+
+                if (attrName === 'data-player')
+                {
+                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+                }
+
+                if (attrName === 'id')
+                {
+                    elementId = attr.nodeValue;
+                }
+            }
+
+            //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
+            if (elementId)
+            {
+                playerAttributes.id = elementId;
+            }
+        }
+        else
+        {
+            debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
+                "undefined. Thought you should know since it's probably giving you a headache by now :)");
+        }
+
+        return playerAttributes;
+    };
+
+    /**
+     *
+     * @param selector
+     * @param iframeURL
+     * @param suppliedAttributes
+     */
+    var injectIframePlayer = function (selector, iframeURL, suppliedAttributes) {
+        var declaredAttributes = getPlayerAttributes(selector);
+        debug.log('declaredAttributes', declaredAttributes);
+
+        var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
+        var iframePlayer = new Iframe(selector, iframeURL, attributes);
+
+        iframePlayer.addEventListener('htmlInjected', function (event) {
+            debug.log('htmlInjected fired', event);
+
+            var player = {
+                controller: null,
+                attributes: event.data.attributes,
+                element: event.data.element
+            };
+
+            if (ovp.isReady())
+            {
+                var attributes = event.data.attributes;
+
+                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
+                player.controller = ovp.pdk.bind(attributes.iframePlayerId);
+                debug.log('binding player', attributes);
+                dispatcher.dispatch('playerCreated', attributes);
+            }
+
+            debug.log('adding player to _players', player);
+
+            _players.push(player);
+        });
+
+        iframePlayer.create();
+    };
     //---------------------------------------------- /public methods
 
 
@@ -286,10 +388,12 @@ define(['require',
                 _.each(_players, function (player) {
                     if (!_.isUndefined(player.controller)) //check for unbound
                     {
+                        debug.log('binding controller...');
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
 
                         //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
                         try {
+                            debug.log('calling ('+player.attributes.iframePlayerId+').onload');
                             //just proving a point that this doesn't work
                             document.getElementById(player.attributes.iframePlayerId).onload();
                         }
@@ -318,33 +422,6 @@ define(['require',
             }
             //---------------------------------------- /ovp initialize
         });
-
-
-        //---------------------------------------- iframe event listeners
-        iframe.addEventListener('htmlInjected', function (event) {
-            debug.log('htmlInjected fired', event);
-
-            var player = {
-                controller: null,
-                attributes: event.data.attributes,
-                element: event.data.element
-            };
-
-            if (ovp.isReady())
-            {
-                var attributes = event.data.attributes;
-
-                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-                player.controller = ovp.pdk.bind(attributes.iframePlayerId);
-                debug.log('binding player', attributes);
-                dispatcher.dispatch('playerCreated', attributes);
-            }
-
-            debug.log('adding player to _players', player);
-
-            _players.push(player);
-        });
-        //---------------------------------------- /iframe event listeners
     })();
     //---------------------------------------------- /init
 
@@ -358,7 +435,8 @@ define(['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayer: iframe.injectIframePlayer,
+        createIframe: injectIframePlayer,
+        injectIframePlayer: injectIframePlayer, //old alias (will deprecate eventually)
         hide: ovp.hide,
         show: ovp.show,
         getCurrentVideo: getCurrentVideo,
@@ -382,11 +460,9 @@ define(['require',
         removeEventListener: dispatcher.removeEventListener,
 
         //testing-only api (still public, but please DO NOT USE unless unit testing)
-        _processAttributes: _processAttributes,
         __test__: {
-            ovp: ovp,
-            getPlayerAttributes: iframe.getPlayerAttributes,
-            injectIframe: iframe.injectIframe
+            _processAttributes: _processAttributes,
+            ovp: ovp
         }
     };
 });
