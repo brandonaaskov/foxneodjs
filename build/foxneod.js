@@ -7242,7 +7242,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.8.0: ';
+        var prefix = 'foxneod-0.8.1: ';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -7588,191 +7588,133 @@ define('ovp',[
 });
 /*global define, _ */
 
-define('player/iframe',['require', 'utils', 'underscoreloader', 'Debug', 'Dispatcher'], function (require, utils, _, Debug, Dispatcher) {
+define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], function (utils, _, jquery, Debug, Dispatcher) {
     
 
-    //-------------------------------------------------------------------------------- instance variables
-    var debug = new Debug('iframe'),
-        dispatcher = new Dispatcher(),
-        _playerAttributes = {}; //these get passed down from player.js
-    //-------------------------------------------------------------------------------- /instance variables
+    return function (selector, iframeURL, suppliedAttributes) {
+        //-------------------------------------------------------------------------------- instance variables
+        var debug = new Debug('iframe'),
+            dispatcher = new Dispatcher(),
+            _playerAttributes = {}; //these get passed down from player.js
+        //-------------------------------------------------------------------------------- /instance variables
 
 
 
-    //-------------------------------------------------------------------------------- private methods
-    /**
-     * Adds some attributes on top of the ones created at the player.js level.
-     *
-     * @param attributes
-     * @param declaredAttributes
-     * @returns {*}
-     * @private
-     */
-    function _processAttributes(selector, attributes, declaredAttributes) {
-        if (_.isUndefined(attributes) || _.isEmpty(attributes))
-        {
-            throw new Error("_processAttributes expects a populated attributes object. Please contact the " +
-                "Fox NEOD team.");
+        //-------------------------------------------------------------------------------- private methods
+        /**
+         * Adds some attributes on top of the ones created at the player.js level.
+         *
+         * @param attributes
+         * @param declaredAttributes
+         * @returns {*}
+         * @private
+         */
+        function _processAttributes(selector, attributes) {
+            if (_.isUndefined(attributes) || _.isEmpty(attributes))
+            {
+                throw new Error("_processAttributes expects a populated attributes object. Please contact the " +
+                    "Fox NEOD team.");
+            }
+
+            attributes.iframePlayerId = 'js-player-' + attributes.playerIndex;
+            attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : attributes.height;
+            attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : attributes.width;
+
+            return attributes;
         }
 
-        if (_.isDefined(declaredAttributes))
-        {
-            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
-            {
-                attributes = utils.override(declaredAttributes || {}, attributes);
-            }
-            else
-            {
-                attributes = declaredAttributes;
-            }
+        function _getIframeHTML (iframeURL, attributes) {
+            var attributesString = utils.objectToQueryString(attributes);
+            attributes = utils.lowerCasePropertyNames(attributes);
+
+            return '<iframe ' +
+                'id="'+ attributes.iframeplayerid +'"' +
+                'src="'+ iframeURL + '?' + attributesString + '"' +
+                'scrolling="no" ' +
+                'frameborder="0" ' +
+                'width="' + attributes.iframewidth + '"' +
+                'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
         }
-
-        attributes.iframePlayerId = 'js-player-' + attributes.playerIndex;
-        attributes.iframeHeight = (_.has(attributes, 'iframeheight')) ? attributes.iframeheight : attributes.height;
-        attributes.iframeWidth = (_.has(attributes, 'iframewidth')) ? attributes.iframewidth : attributes.width;
-
-        return attributes;
-    }
-
-    function _getIframeHTML (iframeURL, attributes) {
-        var attributesString = utils.objectToQueryString(attributes);
-        attributes = utils.lowerCasePropertyNames(attributes);
-
-        return '<iframe ' +
-            'id="'+ attributes.iframeplayerid +'"' +
-            'src="'+ iframeURL + '?' + attributesString + '"' +
-            'scrolling="no" ' +
-            'frameborder="0" ' +
-            'width="' + attributes.iframewidth + '"' +
-            'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
-    }
-    //-------------------------------------------------------------------------------- /private methods
+        //-------------------------------------------------------------------------------- /private methods
 
 
 
-    //-------------------------------------------------------------------------------- public methods
-    var getPlayerAttributes = function (element) {
-        var playerAttributes = {},
-            elementId;
+        //-------------------------------------------------------------------------------- public methods
+        var create = function () {
+            var elements = [];
+            _playerAttributes = suppliedAttributes;
 
-        if (_.isDefined(element))
-        {
-            if (!_.isElement(element))
+            if (_.isString(selector) && !_.isEmpty(selector)) //we got a selector
             {
-                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
-                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
-                    "the element that you need. We try to not to depend on jQuery where we don't have to.");
-            }
+                var query = document.querySelectorAll(selector),
+                    atLeastOneElementFound = false;
 
-            var allAttributes = element.attributes;
-
-            for (var i = 0, n = allAttributes.length; i < n; i++)
-            {
-                var attr = allAttributes[i],
-                    attrName = attr.nodeName;
-
-                if (attrName === 'data-player')
-                {
-                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
-                }
-
-                if (attrName === 'id')
-                {
-                    elementId = attr.nodeValue;
-                }
-            }
-
-            //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
-            if (elementId)
-            {
-                playerAttributes.id = elementId;
-            }
-        }
-        else
-        {
-            debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
-                "undefined. Thought you should know since it's probably giving you a headache by now :)");
-        }
-
-        return playerAttributes;
-    };
-
-    var injectIframePlayer = function (selector, iframeURL, suppliedAttributes) {
-        var player = require('player');
-
-        var elements = [];
-        _playerAttributes = suppliedAttributes;
-
-        if (_.isString(selector) && !_.isEmpty(selector)) //we got a selector
-        {
-            var query = document.querySelectorAll(selector),
-                atLeastOneElementFound = false;
-
-            _.each(query, function (queryItem, index) {
-                if (_.isElement(queryItem))
-                {
-                    debug.log('element found', queryItem);
-
-                    var declaredAttributes = getPlayerAttributes(queryItem);
-                    debug.log('declaredAttributes', declaredAttributes);
-
-                    var attributes = _.compose(
-                        function (basicProcessedAttributes) {
-                            return _processAttributes(selector, basicProcessedAttributes, declaredAttributes);
-                        },
-                        function () {
-                            return player._processAttributes(selector, suppliedAttributes, declaredAttributes);
-                        }
-                    )();
-
-                    if (!_.isEmpty(attributes))
+                _.each(query, function (queryItem, index) {
+                    if (_.isElement(queryItem))
                     {
-                        elements.push({
-                            element: queryItem,
-                            attributes: attributes
-                        });
+                        debug.log('element found', queryItem);
 
-                        atLeastOneElementFound = true;
+                        var attributes = _processAttributes(selector, suppliedAttributes);
+
+                        if (!_.isEmpty(attributes))
+                        {
+                            elements.push({
+                                element: queryItem,
+                                attributes: attributes
+                            });
+
+                            atLeastOneElementFound = true;
+                        }
                     }
+                });
+
+                if (!atLeastOneElementFound)
+                {
+                    throw new Error("No players could be created from the selector you provided");
                 }
-            });
-
-            if (!atLeastOneElementFound)
-            {
-                throw new Error("No players could be created from the selector you provided");
             }
-        }
-        else {
-            throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
-        }
+            else {
+                throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
+            }
 
-        debug.log("We're going to try and create these", elements);
+            debug.log("We're going to try and create these", elements);
 
-        _.each(elements, function (playerToCreate) {
-            debug.log('iframe attributes', playerToCreate.attributes);
+            _.each(elements, function (playerToCreate) {
+                debug.log('iframe attributes', playerToCreate.attributes);
 
-            playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
+                playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
 
-            debug.log('dispatching htmlInjected', playerToCreate.element);
-            dispatcher.dispatch('htmlInjected', {
-                attributes: playerToCreate.attributes,
-                element: playerToCreate.element
+                debug.log('dispatching htmlInjected', playerToCreate.element);
+                dispatcher.dispatch('htmlInjected', {
+                    attributes: playerToCreate.attributes,
+                    element: playerToCreate.element
+                });
             });
-        });
 
-        return true;
-    };
-    //-------------------------------------------------------------------------------- public methods
+            return true;
+        };
+        //-------------------------------------------------------------------------------- public methods
 
 
-    // This API is only Public to player.js, so we should surface everything so we can unit test it
-    return {
-        getPlayerAttributes: getPlayerAttributes,
-        injectIframePlayer: injectIframePlayer,
-        addEventListener: dispatcher.addEventListener,
-        getEventListeners: dispatcher.getEventListeners,
-        hasEventListener: dispatcher.hasEventListener,
-        removeEventListener: dispatcher.removeEventListener
+        //-------------------------------------------------------------------------------- init
+        (function () {
+            debug.log('init');
+
+            window.addEventListener('foxneod:iframeReady', function (event) {
+                debug.log("iframeReady event fired", event);
+            });
+        })();
+        //-------------------------------------------------------------------------------- /init
+
+
+        // This API is only Public to player.js, so we should surface everything so we can unit test it
+        return {
+            create: create,
+            addEventListener: dispatcher.addEventListener,
+            getEventListeners: dispatcher.getEventListeners,
+            hasEventListener: dispatcher.hasEventListener,
+            removeEventListener: dispatcher.removeEventListener
+        };
     };
 });
 /*global define, _ */
@@ -8549,7 +8491,7 @@ define('query',['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function 
 
 define('player',['require',
     'ovp',
-    'player/iframe',
+    'player/Iframe',
     'player/playback',
     'modal',
     'Debug',
@@ -8558,7 +8500,7 @@ define('player',['require',
     'Dispatcher',
     'query',
     'utils'
-], function (require, ovp, iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
+], function (require, ovp, Iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
     
 
     var debug = new Debug('player'),
@@ -8790,6 +8732,8 @@ define('player',['require',
                 if (_.isEqual(key, 'iframePlayerId'))
                 {
                     _enableExternalController('meta'); //adds controller to iframe page
+                    debug.log('iframeReady dispatching');
+                    dispatcher.dispatch('iframeReady', config, true);
                 }
             });
 
@@ -8813,6 +8757,106 @@ define('player',['require',
     var getPlayers = function () {
         return _players;
     };
+
+    /**
+     * Get's any declarative player attributes (data-player).
+     *
+     * @param element The element to check for a data-player attribute
+     * @returns {{}}
+     */
+    var getPlayerAttributes = function (selector) {
+        var playerAttributes = {},
+            elementId;
+
+        var element = document.querySelectorAll(selector);
+
+        //if there are multiple elements from the selector, just use the first one we found
+        if (_.isObject(element))
+        {
+            element = element[0];
+        }
+
+        if (_.isDefined(element))
+        {
+            if (!_.isElement(element))
+            {
+                throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
+                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on jQuery where we don't have to.");
+            }
+
+            var allAttributes = element.attributes;
+
+            for (var i = 0, n = allAttributes.length; i < n; i++)
+            {
+                var attr = allAttributes[i],
+                    attrName = attr.nodeName;
+
+                if (attrName === 'data-player')
+                {
+                    playerAttributes = utils.pipeStringToObject(attr.nodeValue);
+                }
+
+                if (attrName === 'id')
+                {
+                    elementId = attr.nodeValue;
+                }
+            }
+
+            //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
+            if (elementId)
+            {
+                playerAttributes.id = elementId;
+            }
+        }
+        else
+        {
+            debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
+                "undefined. Thought you should know since it's probably giving you a headache by now :)");
+        }
+
+        return playerAttributes;
+    };
+
+    /**
+     *
+     * @param selector
+     * @param iframeURL
+     * @param suppliedAttributes
+     */
+    var injectIframePlayer = function (selector, iframeURL, suppliedAttributes) {
+        var declaredAttributes = getPlayerAttributes(selector);
+        debug.log('declaredAttributes', declaredAttributes);
+
+        var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
+        var iframePlayer = new Iframe(selector, iframeURL, attributes);
+
+        iframePlayer.addEventListener('htmlInjected', function (event) {
+            debug.log('htmlInjected fired', event);
+
+            var player = {
+                controller: null,
+                attributes: event.data.attributes,
+                element: event.data.element
+            };
+
+            if (ovp.isReady())
+            {
+                var attributes = event.data.attributes;
+
+                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
+                player.controller = ovp.pdk.bind(attributes.iframePlayerId);
+                debug.log('binding player', attributes);
+                dispatcher.dispatch('playerCreated', attributes);
+            }
+
+            debug.log('adding player to _players', player);
+
+            _players.push(player);
+        });
+
+        iframePlayer.create();
+    };
     //---------------------------------------------- /public methods
 
 
@@ -8833,10 +8877,12 @@ define('player',['require',
                 _.each(_players, function (player) {
                     if (!_.isUndefined(player.controller)) //check for unbound
                     {
+                        debug.log('binding controller...');
                         player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
 
                         //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
                         try {
+                            debug.log('calling ('+player.attributes.iframePlayerId+').onload');
                             //just proving a point that this doesn't work
                             document.getElementById(player.attributes.iframePlayerId).onload();
                         }
@@ -8865,33 +8911,6 @@ define('player',['require',
             }
             //---------------------------------------- /ovp initialize
         });
-
-
-        //---------------------------------------- iframe event listeners
-        iframe.addEventListener('htmlInjected', function (event) {
-            debug.log('htmlInjected fired', event);
-
-            var player = {
-                controller: null,
-                attributes: event.data.attributes,
-                element: event.data.element
-            };
-
-            if (ovp.isReady())
-            {
-                var attributes = event.data.attributes;
-
-                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-                player.controller = ovp.pdk.bind(attributes.iframePlayerId);
-                debug.log('binding player', attributes);
-                dispatcher.dispatch('playerCreated', attributes);
-            }
-
-            debug.log('adding player to _players', player);
-
-            _players.push(player);
-        });
-        //---------------------------------------- /iframe event listeners
     })();
     //---------------------------------------------- /init
 
@@ -8905,7 +8924,8 @@ define('player',['require',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayer: iframe.injectIframePlayer,
+        createIframe: injectIframePlayer,
+        injectIframePlayer: injectIframePlayer, //old alias (will deprecate eventually)
         hide: ovp.hide,
         show: ovp.show,
         getCurrentVideo: getCurrentVideo,
@@ -8929,11 +8949,9 @@ define('player',['require',
         removeEventListener: dispatcher.removeEventListener,
 
         //testing-only api (still public, but please DO NOT USE unless unit testing)
-        _processAttributes: _processAttributes,
         __test__: {
-            ovp: ovp,
-            getPlayerAttributes: iframe.getPlayerAttributes,
-            injectIframe: iframe.injectIframe
+            _processAttributes: _processAttributes,
+            ovp: ovp
         }
     };
 });
@@ -9691,7 +9709,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-13 04:07:16';
+    var buildTimestamp = '2013-07-15 11:07:05';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -9743,7 +9761,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-13 04:07:16)');
+        debug.log('ready (build date: 2013-07-15 11:07:05)');
 
         _messageUnsupportedUsers();
     };
@@ -9753,9 +9771,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-13 04:07:16',
+        buildDate: '2013-07-15 11:07:05',
         packageName: 'foxneod',
-        version: '0.8.0',
+        version: '0.8.1',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
