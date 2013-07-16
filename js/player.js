@@ -1,7 +1,6 @@
 /*global define, FDM_Player */
 
-define(['require',
-    'ovp',
+define(['ovp',
     'player/Iframe',
     'player/playback',
     'modal',
@@ -11,13 +10,14 @@ define(['require',
     'Dispatcher',
     'query',
     'utils'
-], function (require, ovp, Iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
+], function (ovp, Iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
     'use strict';
 
     var debug = new Debug('player'),
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
+        _unboundPlayers = [], //players wait in this queue for OVP to be ready
         _players = [],
         _currentPosition,
         _promisesQueue = [],
@@ -56,7 +56,7 @@ define(['require',
         }
     }
 
-    function _processAttributes(selector, suppliedAttributes, declaredAttributes) {
+    function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
         var attributes = suppliedAttributes || {};
 
         if (_.isDefined(declaredAttributes))
@@ -90,6 +90,84 @@ define(['require',
         attributes.suppliedId = defaults.suppliedId;
 
         return attributes;
+    }
+
+    function _getUnboundPlayers () {
+        return _unboundPlayers;
+    }
+
+    function _bindRemainingPlayers () {
+        var unboundPlayers = _getUnboundPlayers();
+
+        debug.log('_bindRemainingPlayers', unboundPlayers);
+
+        //---------------------------------------- ovp initialize
+        if (_.isArray(unboundPlayers) && !_.isEmpty(unboundPlayers))
+        {
+            debug.log('binding players...', unboundPlayers);
+
+            _.each(unboundPlayers, function (player) {
+                if (!_.isUndefined(player.controller)) //check for unbound
+                {
+                    debug.log('binding controller...');
+                    player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+
+                    //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
+                    try {
+                        debug.log('calling ('+player.attributes.iframePlayerId+').onload');
+                        //just proving a point that this doesn't work
+                        document.getElementById(player.attributes.iframePlayerId).onload();
+                    }
+                    catch (error) {
+                        //error details in diatribe form
+                        debug.warn("Calling onload() using getElementById("+ player.attributes.iframePlayerId +") failed...");
+                        debug.log("... and just to clarify, that element is there...", document.getElementById(player.attributes.iframePlayerId));
+                        debug.log("... and the error is...");
+                        window.console.dir(error);
+
+                        //jquery saves the day!
+                        debug.log("... but don't worry, jQuery saves the day!");
+                        var iframeSelector = '#' + player.attributes.iframePlayerId;
+                        jquery(iframeSelector).bind('onload', function () {
+                            debug.log('$('+ iframeSelector +').onload(fired!)', arguments);
+                        });
+                        jquery(iframeSelector).trigger('onload');
+                    }
+
+                    dispatcher.dispatch('playerCreated', player.attributes);
+                }
+            });
+
+            debug.log('all unbound players are now bound', _players);
+            playback._setController(ovp.controller().controller);
+    }
+    }
+
+    /**
+     * Right now since we're still using the FDM_Wrapper, the _bindPlayer() method is really only used for iframe players
+     *
+     * @param player
+     * @private
+     */
+    function _bindPlayer(player)
+    {
+        if (ovp.isReady())
+        {
+            var attributes = player.attributes;
+
+            //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
+            player.controller = ovp.pdk.bind(attributes.iframePlayerId);
+            debug.log('adding player to _players', player);
+            _players.push(player);
+
+            debug.log('binding player', attributes);
+            dispatcher.dispatch('playerCreated', attributes);
+        }
+        else
+        {
+            _unboundPlayers.push(player);
+            debug.log('adding unbound player to list', _unboundPlayers);
+        }
     }
     //---------------------------------------------- /private methods
 
@@ -243,8 +321,6 @@ define(['require',
                 if (_.isEqual(key, 'iframePlayerId'))
                 {
                     _enableExternalController('meta'); //adds controller to iframe page
-                    debug.log('iframeReady dispatching');
-                    dispatcher.dispatch('iframeReady', config, true);
                 }
             });
 
@@ -344,26 +420,12 @@ define(['require',
 
         iframePlayer.addEventListener('htmlInjected', function (event) {
             debug.log('htmlInjected fired', event);
+        });
 
-            var player = {
-                controller: null,
-                attributes: event.data.attributes,
-                element: event.data.element
-            };
+        iframePlayer.addEventListener('ready', function (event) {
+            debug.log('iframePlayer ready...gonna call _bindPlayer()', event);
 
-            if (ovp.isReady())
-            {
-                var attributes = event.data.attributes;
-
-                //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-                player.controller = ovp.pdk.bind(attributes.iframePlayerId);
-                debug.log('binding player', attributes);
-                dispatcher.dispatch('playerCreated', attributes);
-            }
-
-            debug.log('adding player to _players', player);
-
-            _players.push(player);
+            _bindPlayer(event.data);
         });
 
         iframePlayer.create();
@@ -374,54 +436,21 @@ define(['require',
 
     //---------------------------------------------- init
     (function init () {
-        debug.log('init');
+        debug.log('start init', _unboundPlayers);
 
-        ovp.addEventListener('ready', function () {
-
+        if (ovp.isReady())
+        {
             debug.log('ovp ready');
+            _bindRemainingPlayers();
+        }
+        else
+        {
 
-            //---------------------------------------- ovp initialize
-            if (_.isArray(_players) && !_.isEmpty(_players))
-            {
-                debug.log('binding players...', _players);
-
-                _.each(_players, function (player) {
-                    if (!_.isUndefined(player.controller)) //check for unbound
-                    {
-                        debug.log('binding controller...');
-                        player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
-
-                        //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
-                        try {
-                            debug.log('calling ('+player.attributes.iframePlayerId+').onload');
-                            //just proving a point that this doesn't work
-                            document.getElementById(player.attributes.iframePlayerId).onload();
-                        }
-                        catch (error) {
-                            //error details in diatribe form
-                            debug.warn("Calling onload() using getElementById("+ player.attributes.iframePlayerId +") failed...");
-                            debug.log("... and just to clarify, that element is there...", document.getElementById(player.attributes.iframePlayerId));
-                            debug.log("... and the error is...");
-                            window.console.dir(error);
-
-                            //jquery saves the day!
-                            debug.log("... but don't worry, jQuery saves the day!");
-                            var iframeSelector = '#' + player.attributes.iframePlayerId;
-                            jquery(iframeSelector).bind('onload', function () {
-                                debug.log('$('+ iframeSelector +').onload(fired!)', arguments);
-                            });
-                            jquery(iframeSelector).trigger('onload');
-                        }
-
-                        dispatcher.dispatch('playerCreated', player.attributes);
-                    }
-                });
-
-                debug.log('all players bound', _players);
-                playback._setController(ovp.controller().controller);
-            }
-            //---------------------------------------- /ovp initialize
-        });
+            ovp.addEventListener('ready', function () {
+                debug.log('ovp ready (from event listener)');
+                _bindRemainingPlayers();
+            });
+        }
     })();
     //---------------------------------------------- /init
 

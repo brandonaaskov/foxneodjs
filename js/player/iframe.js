@@ -71,6 +71,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
                         if (!_.isEmpty(attributes))
                         {
                             elements.push({
+                                controller: null,
                                 element: queryItem,
                                 attributes: attributes
                             });
@@ -94,6 +95,10 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _.each(elements, function (playerToCreate) {
                 debug.log('iframe attributes', playerToCreate.attributes);
 
+                playerToCreate.element.addEventListener('onload', function (event) {
+                    debug.warn('dispatching onload');
+                });
+
                 playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
 
                 debug.log('dispatching htmlInjected', playerToCreate.element);
@@ -110,11 +115,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
 
         //-------------------------------------------------------------------------------- init
         (function () {
-            debug.log('init');
-
-            window.addEventListener('@@packageName:iframeReady', function (event) {
-                debug.log("iframeReady event fired", event);
-            });
+            //no initialization at the moment
         })();
         //-------------------------------------------------------------------------------- /init
 
