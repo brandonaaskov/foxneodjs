@@ -56,7 +56,7 @@ define(['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = '@@packageName-@@version: ';
+        var prefix = '@@packageName-@@version:';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -102,7 +102,7 @@ define(['utils', 'underscoreloader'], function (utils, _) {
 
                 if (_.isEqual(mode, category.toLocaleLowerCase()) || _.isEqual(mode, 'all'))
                 {
-                    console[logLevel](prefix + category + ': ' + options.message, options.data || '');
+                    console[logLevel](prefix + ': ' + category + ': ' + options.message, options.data || '');
                     lastUsedOptions = _.clone(options);
                 }
             });
