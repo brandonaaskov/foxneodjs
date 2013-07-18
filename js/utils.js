@@ -445,6 +445,28 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return cleaned;
     };
 
+    var trim = function (text)
+    {
+        if (!_.isString(text) || _.isEmpty(text))
+        {
+            throw new Error("Whatever you passed to trim() was either not a string or was an empty string", text);
+        }
+
+        //if there's a leading space, slice it and try again
+        if (text.charAt(0) === ' ')
+        {
+            text = trim(text.slice(1));
+        }
+
+        //if there's a trailing space, slice it and try again
+        if (text.charAt(text.length-1) === ' ')
+        {
+            text = trim(text.slice(0, -1));
+        }
+
+        return text;
+    };
+
 
 
     //---------------------------------------------- url stuff
@@ -650,6 +672,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
             override: override,
+            trim: trim,
             getParamValue: getParamValue,
             getQueryParams: getQueryParams,
             removeQueryParams: removeQueryParams,
@@ -679,6 +702,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         addToHead: addToHead,
         tagInHead: tagInHead,
         override: override,
+        trim: trim,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
