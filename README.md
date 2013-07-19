@@ -1,4 +1,4 @@
-# foxneod.js
+# foxneodjs
 
 ### Overview
 The `foxneod` javascript library is a globally referenced object that contains all aspects of the Fox digital video player within. It can be referenced globally through `foxneod` or `$f`. You can see more in the examples below.
@@ -12,6 +12,9 @@ Most questions you'll have about code can be found in the files as code comments
 * [Style Guide](https://github.com/foxneod/foxneod.js/wiki/%22Style-Guide%22)
 * [Setting Up Locally](#settinguplocally)
 * [Building](#building)
+* [thePlatform's PDK Device Support Matrix](http://gunslngr.com/QLpL)
+* [thePlatform's PDK Event Reference](http://gunslngr.com/QKQ8)
+* [thePlatform's PDK Method Reference](http://gunslngr.com/QLY5)
 
 
 ## Setting Up Locally
