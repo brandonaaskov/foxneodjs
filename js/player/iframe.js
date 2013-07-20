@@ -121,7 +121,10 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _playerToCreate.iframe = jquery(_playerToCreate.element).find('iframe')[0];
 
             document.getElementById(_playerToCreate.attributes.iframePlayerId).onload = function (event) {
-                _onLoad(event);
+                if (!_onloadFired)
+                {
+                    _onLoad(event);
+                }
             };
 
             debug.log('#1) html injected', _playerToCreate);

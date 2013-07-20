@@ -98,8 +98,10 @@ define(['ovp',
         _.each(unboundPlayers, function (player, index) {
             if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
             {
-                debug.log('#5) binding player', player);
+                debug.log('#5) sending player to _bindPlayer()', player);
                 _bindPlayer(player);
+                debug.log('manually dispatching onload for the iframe', player);
+                document.getElementById(player.attributes.iframePlayerId).onload();
                 playback._setController(player.controller);
             }
         });

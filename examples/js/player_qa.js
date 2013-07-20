@@ -8465,7 +8465,10 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
             _playerToCreate.iframe = jquery(_playerToCreate.element).find('iframe')[0];
 
             document.getElementById(_playerToCreate.attributes.iframePlayerId).onload = function (event) {
-                _onLoad(event);
+                if (!_onloadFired)
+                {
+                    _onLoad(event);
+                }
             };
 
             debug.log('#1) html injected', _playerToCreate);
@@ -9393,8 +9396,10 @@ define('player',['ovp',
         _.each(unboundPlayers, function (player, index) {
             if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
             {
-                debug.log('#5) binding player', player);
+                debug.log('#5) sending player to _bindPlayer()', player);
                 _bindPlayer(player);
+                debug.log('manually dispatching onload for the iframe', player);
+                document.getElementById(player.attributes.iframePlayerId).onload();
                 playback._setController(player.controller);
             }
         });
@@ -10689,7 +10694,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-19 05:07:18';
+    var buildTimestamp = '2013-07-19 05:07:49';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -10741,7 +10746,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-19 05:07:18)');
+        debug.log('ready (build date: 2013-07-19 05:07:49)');
 
         _messageUnsupportedUsers();
     };
@@ -10751,7 +10756,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-19 05:07:18',
+        buildDate: '2013-07-19 05:07:49',
         packageName: 'foxneod',
         version: '0.8.3',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
