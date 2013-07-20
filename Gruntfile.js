@@ -203,13 +203,8 @@
 
 
             shell : {
-                // scp build/ to a remote host
-                golive: {
-                    command : 'scp -r build staging@staging.saluteyourshorts.net:httpdocs/foxneod/'
-                },
-
                 phpbuild: {
-                    command: "cd ../fng_player_platform/branches/tRS1/ && node build fx btn fox deportes"
+                    command: "cd ../fox-video-player-v1/ && node build qa fx btn fox deportes"
                 }
             },
 

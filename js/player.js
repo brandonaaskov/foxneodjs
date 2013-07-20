@@ -21,39 +21,28 @@ define(['ovp',
         _players = [],
         _currentPosition,
         _promisesQueue = [],
-        _playerIndex = 0;
+        _playerIndex = 0,
+        _initTimestamp;
 
     //---------------------------------------------- private methods
-    function _enableExternalController (enableScriptTag, enableMetaTag) {
+    function _addExternalControllerMetaTag () {
         var attributes = {
             name: "tp:EnableExternalController",
             content: "true"
         };
 
-        if (!utils.tagInHead('script', attributes) && enableMetaTag)
-        {
-            utils.addToHead('meta', attributes);
-            debug.log('external controller (meta tag) added');
-        }
-        else
-        {
-            debug.log('Page already has external controller meta tag');
-        }
+        //returns a Promise
+        return utils.addToHead('meta', attributes);
+    }
 
-        attributes = {
+    function _addExternalControllerScriptTag () {
+        var attributes = {
             type: 'text/javascript',
             src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
         };
 
-        if (!utils.tagInHead('script', attributes) && enableScriptTag)
-        {
-            utils.addToHead('script', attributes);
-            debug.log('external controller (script tag) added');
-        }
-        else
-        {
-            debug.log('Page already has external controller script tag');
-        }
+        //returns a Promise
+        return utils.addToHead('script', attributes);
     }
 
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
@@ -99,48 +88,24 @@ define(['ovp',
     function _bindRemainingPlayers () {
         var unboundPlayers = _getUnboundPlayers();
 
-        debug.log('_bindRemainingPlayers', unboundPlayers);
-
-        //---------------------------------------- ovp initialize
-        if (_.isArray(unboundPlayers) && !_.isEmpty(unboundPlayers))
+        if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
         {
-            debug.log('binding players...', unboundPlayers);
+            return false;
+        }
 
-            _.each(unboundPlayers, function (player) {
-                if (!_.isUndefined(player.controller)) //check for unbound
-                {
-                    debug.log('binding controller...');
-                    player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+        debug.log('_bindRemainingPlayers', unboundPlayers);
+        //---------------------------------------- ovp initialize
+        _.each(unboundPlayers, function (player, index) {
+            if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
+            {
+                debug.log('#5) binding player', player);
+                _bindPlayer(player);
+                playback._setController(player.controller);
+            }
+        });
 
-                    //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
-                    try {
-                        debug.log('calling ('+player.attributes.iframePlayerId+').onload');
-                        //just proving a point that this doesn't work
-                        document.getElementById(player.attributes.iframePlayerId).onload();
-                    }
-                    catch (error) {
-                        //error details in diatribe form
-                        debug.warn("Calling onload() using getElementById("+ player.attributes.iframePlayerId +") failed...");
-                        debug.log("... and just to clarify, that element is there...", document.getElementById(player.attributes.iframePlayerId));
-                        debug.log("... and the error is...");
-                        window.console.dir(error);
-
-                        //jquery saves the day!
-                        debug.log("... but don't worry, jQuery saves the day!");
-                        var iframeSelector = '#' + player.attributes.iframePlayerId;
-                        jquery(iframeSelector).bind('onload', function () {
-                            debug.log('$('+ iframeSelector +').onload(fired!)', arguments);
-                        });
-                        jquery(iframeSelector).trigger('onload');
-                    }
-
-                    dispatcher.dispatch('playerCreated', player.attributes);
-                }
-            });
-
-            debug.log('all unbound players are now bound', _players);
-            playback._setController(ovp.controller().controller);
-    }
+        var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
+        debug.log(logMessage, _unboundPlayers);
     }
 
     /**
@@ -151,23 +116,30 @@ define(['ovp',
      */
     function _bindPlayer(player)
     {
+        var deferred = new jquery.Deferred();
+
         if (ovp.isReady())
         {
             var attributes = player.attributes;
 
+            debug.log('#6) binding player', player);
             //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
             player.controller = ovp.pdk.bind(attributes.iframePlayerId);
-            debug.log('adding player to _players', player);
             _players.push(player);
+            _unboundPlayers.splice(player.attributes.playerIndex, 1);
 
-            debug.log('binding player', attributes);
-            dispatcher.dispatch('playerCreated', attributes);
+            debug.log('#7) players array updated', _players);
+            dispatcher.dispatch('playerCreated', player);
         }
         else
         {
             _unboundPlayers.push(player);
             debug.log('adding unbound player to list', _unboundPlayers);
         }
+
+        deferred.resolve(player);
+
+        return deferred;
     }
     //---------------------------------------------- /private methods
 
@@ -315,14 +287,17 @@ define(['ovp',
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
-            _.each(config, function (prop, key) {
-                player[prop] = config[prop];
-
-                if (_.isEqual(key, 'iframePlayerId'))
-                {
-                    _enableExternalController('meta'); //adds controller to iframe page
-                }
-            });
+            //This requires postMessage to work properly - leaving off for now
+//            _.each(config, function (prop, key) {
+//                if (_.isEqual(key, 'iframePlayerId'))
+//                {
+//                    _addExternalControllerMetaTag().done(function (event) {
+//                        debug.log('external controller meta tag added');
+//                    });
+//
+//                    var player = getPlayerByAttribute(key, prop);
+//                }
+//            });
 
             debug.log('PDK logLevel', player.logLevel);
             debug.log('creating player with config', config);
@@ -343,6 +318,40 @@ define(['ovp',
      */
     var getPlayers = function () {
         return _players;
+    };
+
+    var getPlayerByAttribute = function (key, value) {
+        if (_.isUndefined(key) || _.isUndefined(value))
+        {
+            throw new Error("getPlayerByAttribute() expects two arguments: a key and a value");
+        }
+
+        if (!_.isString(key) || _.isEmpty(key))
+        {
+            throw new Error("The first argument for getPlayerByAttribute() should be a non-empty string");
+        }
+
+        if ((!_.isString(value) && !_.isNumber(value)) || _.isEmpty(value))
+        {
+            throw new Error("The second argument for getPlayerByAttribute() should be a non-empty string or a number");
+        }
+
+        var players = (!_.isEmpty(_players)) ? _players : _unboundPlayers;
+
+        if (_.isEmpty(players)) //this could be _unboundPlayers, and it could be empty
+        {
+
+            _.each(players, function (player) {
+                _.each(player, function (playerValue, playerKey) {
+                    if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase())
+                    {
+                        return player;
+                    }
+                });
+            });
+        }
+
+        return false;
     };
 
     /**
@@ -416,19 +425,17 @@ define(['ovp',
         debug.log('declaredAttributes', declaredAttributes);
 
         var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
-        var iframePlayer = new Iframe(selector, iframeURL, attributes);
+        var iframe = new Iframe(selector, iframeURL, attributes);
 
-        iframePlayer.addEventListener('htmlInjected', function (event) {
-            debug.log('htmlInjected fired', event);
-        });
-
-        iframePlayer.addEventListener('ready', function (event) {
-            debug.log('iframePlayer ready...gonna call _bindPlayer()', event);
-
-            _bindPlayer(event.data);
-        });
-
-        iframePlayer.create();
+        var iframePlayer =
+        iframe.create()
+            .then(function (player) {
+                iframePlayer = player;
+                return _addExternalControllerScriptTag();
+            })
+            .then(function () {
+                _bindPlayer(iframePlayer);
+            });
     };
     //---------------------------------------------- /public methods
 
@@ -436,20 +443,12 @@ define(['ovp',
 
     //---------------------------------------------- init
     (function init () {
-        debug.log('start init', _unboundPlayers);
-
         if (ovp.isReady())
         {
-            debug.log('ovp ready');
             _bindRemainingPlayers();
         }
-        else
         {
-
-            ovp.addEventListener('ready', function () {
-                debug.log('ovp ready (from event listener)');
-                _bindRemainingPlayers();
-            });
+            ovp.addEventListener('ready', _bindRemainingPlayers);
         }
     })();
     //---------------------------------------------- /init

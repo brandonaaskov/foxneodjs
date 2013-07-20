@@ -342,11 +342,20 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return text;
     };
 
+    /**
+     * Adds a tag to the head of the page by specifying the tag name to use and an object of any
+     * attributes you want to use.
+     * @param tagName Name of the tag. E.g. 'script', 'meta', 'style'
+     * @param attributes Object of attributes to use (e.g. { src: '//domain.com/js/script.js' })
+     * @returns {jQuery Deferred}
+     */
     var addToHead = function (tagName, attributes) {
         if (_.isEmpty(tagName) || !_.isString(tagName))
         {
             throw new Error("You have to provide a tag name when calling addToHead()");
         }
+
+        tagName = tagName.toLowerCase(); //lowercasing
 
         if (_.isEmpty(attributes) || !_.isTrueObject(attributes))
         {
@@ -359,10 +368,6 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         {
             var elem = document.createElement(tagName);
 
-            elem.onload = function () {
-                deferred.resolve();
-            };
-
             _.each(attributes, function (value, key) {
                 key = key.toLowerCase().replace(/\W/g, '');
 
@@ -372,11 +377,28 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
                 }
             });
 
-            document.getElementsByTagName('head')[0].appendChild(elem);
+            if (tagName === 'style' || tagName === 'script')
+            {
+                elem.onload = function () {
+                    deferred.resolve();
+                };
+                document.getElementsByTagName('head')[0].appendChild(elem);
+            }
+            else
+            {
+                document.getElementsByTagName('head')[0].appendChild(elem);
+                deferred.resolve(elem);
+            }
         }
         else
         {
-            deferred.reject();
+            //we should probably let people know if the tag was already there since that might be a sign of
+            //another problem
+//            debug.warn("You called addToHead(), but the tag already existed in the head", {
+//                tagName: tagName,
+//                attributes: attributes
+//            });
+            deferred.resolve(); //the tag is already there, so resolve right away
         }
 
         return deferred;

@@ -22,7 +22,7 @@ var FDMtpHead		= document.getElementsByTagName('head')[0],
 	FDMtpPreferredRuntime	= document.createElement('meta');
 
 FDMtpBaseUrl.name		= 'tp:baseUrl';
-FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.527/pdk';
+FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.522/pdk';
 
 FDMtpPreferredFormat.name		= 'tp:preferredFormats';
 FDMtpPreferredFormat.content	= 'mpeg4,webm,ogg,flv';
@@ -82,7 +82,7 @@ function FDM_Player(i,w,h,pst,pre) {
         };
  
     j.type='text/javascript';
-    j.src=FDM_Player_vars.host+'/shared/1.4.527/pdk/tpPdk.js';
+    j.src=FDM_Player_vars.host+'/shared/1.4.522/pdk/tpPdk.js';
  
     j.onreadystatechange = lf;
     j.onload = function() {
@@ -150,18 +150,18 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.fp.wmode='opaque';
 		p.previewScrubbing='true';
 
-		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/LayoutPlugin.swf';
+		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/LayoutPlugin.swf';
 		p.skinURL=FDM_Player_vars.host+'/fox/swf/skinFox.swf';
 		p.layoutUrl=FDM_Player_vars.host+'/fox/config/foxLayout.xml';
 
 		//-------------------------- Go Live
 		if(String(player.golive_show) == 'true') {
-			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/GoLivePlugIn.swf';
+			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/GoLivePlugIn.swf';
 		}
 
 		//-------------------------- Bumper
 		if(typeof player.introURL !== 'undefined' || typeof player.outroURL !== 'undefined') {
-			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Share
@@ -169,11 +169,11 @@ FDM_Player.prototype.init=function(pst,pre){
 			
 			var emailString = '';
 			
-			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink+'|shortener=www.fox.com/_app/urlhelper.php|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');	
+			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink+'|shortener=www.fox.com/_app/urlhelper.php|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');	
 		}
 
 		//-------------------------- Closed Captioning
-		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/ClosedCaptionPlugin.swf';
+		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/ClosedCaptionPlugin.swf';
 
 		//-------------------------- End Card
 		if(String(player.endcard) != 'false') {
@@ -192,7 +192,7 @@ FDM_Player.prototype.init=function(pst,pre){
 					((player.endcard_editorial.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 			if(player.endcard_playlist)		{ p.pluginEndcard+='|playlist='+player.endcard_playlist; }
 			if(player.endcard_related)		{ p.pluginEndcard+='|related='+player.endcard_related; }
 			if(player.endcard_editorial)	{ p.pluginEndcard+='|editorial='+player.endcard_editorial; }
@@ -203,14 +203,14 @@ FDM_Player.prototype.init=function(pst,pre){
 			i_len = player.plugins.length;
 			for(i=0; i<i_len; i++) {
 				if(player.plugins[i].name == 'BlueKai') {
-					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
+					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
 				}
 			}
 		}
 
 		//-------------------------- Watermark
 		if(String(player.watermark_show) == 'true') {
-			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/WatermarkPlugin.swf';
+			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/WatermarkPlugin.swf';
 			if(player.watermark_corner)		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(player.watermark_src)		{ p.pluginWatermark+='|src='+player.watermark_src; }
 			if(player.watermark_opacity)	{ p.pluginWatermark+='|opacity='+player.watermark_opacity; }
@@ -218,35 +218,35 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Play Overlay
 		if(String(player.play_overlay_show) == 'true') {
-			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/PlayOverlayPlugin.swf';
+			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/PlayOverlayPlugin.swf';
 			p.pluginPlayOverlay+='|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset;
 			p.pluginPlayOverlay+='|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 		}
-		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxUrlSigningPlugIn.swf';
-		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/authentication.swf|priority=3|cookie=authToken';
+		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/foxUrlSigningPlugIn.swf';
+		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/authentication.swf|priority=3|cookie=authToken';
 
-		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/akamaiHD.swf|analyticsKeys=show,season,episode,fullEpisode|analyticsValueFields=showcode,season,episode,fullEpisode|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.527|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
+		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/akamaiHD.swf|analyticsKeys=show,season,episode,fullEpisode|analyticsValueFields=showcode,season,episode,fullEpisode|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.522|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
 
 		//-------------------------- Analytics
-			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
-//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
+			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
 
-			//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
-			//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.527|additionalPropsMethodName=player.extraInfo';
+			//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
+			//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.522|additionalPropsMethodName=player.extraInfo';
 
-	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/ggtp396.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
+	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/swf/ggtp396.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
 
 
 		p.pluginChartbeat ='type=tracking|URL=http://static.chartbeat.com/swf/ChartbeatPDK.swf|acctId=8971|appId=video@foxnews.com|priority=1';
 
 
 
-			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.527|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
+			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.522|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
 	
 
 	p.pluginNewFreewheel = 
 		'type=adcomponent|' + 
-		'url='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/freewheel.swf|' + 
+		'url='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/freewheel.swf|' + 
 		'pemURLsSeparator=~|' + 
 		'siteSectionId=' + player.siteSection + '|' + 
 		'isLive=false|' + 
@@ -294,7 +294,7 @@ FDM_Player.prototype.init=function(pst,pre){
 			mycss.rel='stylesheet';
 			mycss.type='text/css';
 
-		mycss.href=FDM_Player_vars.host+'/shared/1.4.527/css/html5_main.css';
+		mycss.href=FDM_Player_vars.host+'/shared/1.4.522/css/html5_main.css';
 		FDMtpHead.appendChild(mycss);
 
 		p.autoPlay=false; // Always set to false, because if true, it causes wildly different experiences and on certain devices, issues.
@@ -322,16 +322,16 @@ FDM_Player.prototype.init=function(pst,pre){
 					break;
 			}
 		}
-		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
+		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 
 		//-------------------------- Bumper
 		if(typeof player.introURL != 'undefined' || typeof player.outroURL != 'undefined') {
-			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Watermark
 		if(typeof player.watermark_src != 'undefined' && player.watermark_src != '') {
-			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxWatermarkPlugin.js';
+			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxWatermarkPlugin.js';
 			if(typeof player.watermark_corner != 'undefined')		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(typeof player.watermark_src != 'undefined')		{ p.pluginWatermark+='|watermarkSrc='+player.watermark_src; }
 			if(typeof player.watermark_opacity != 'undefined')	{ p.pluginWatermark+='|watermarkOpacity='+player.watermark_opacity; }
@@ -339,7 +339,7 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Share
 		if((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') && String(player.share) != 'false') {
-				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
+				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
 		}
 
 
@@ -360,18 +360,18 @@ FDM_Player.prototype.init=function(pst,pre){
 					((player.endcard_editorial.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
 				'|upNextDisplay=' + (( player.endcard_playlist && player.endcard_playlist != '' ) ? 'true' : 'false') +
 				((player.endcard_playlist && player.endcard_playlist != '') ? '|playlist=' + player.endcard_playlist : '') +
 				((player.endcard_related && player.endcard_related != '') ? '|related=' + player.endcard_related : '') +
 				((player.endcard_editorial && player.endcard_editorial != '') ? '|editorial=' + player.endcard_editorial : '');
 		}
 
-		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
+		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.522/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-				//p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
-		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+				//p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.522/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 
 	p.pluginFreewheel='type=advertising|URL=http://adm.fwmrm.net/p/fox_live/ThePlatformPDKPlugin.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
 
@@ -501,14 +501,14 @@ FDM_Player.prototype.onPlayerLoaded=function(e){
         j = document.createElement('script');
 
     j.type='text/javascript';
-    j.src=FDM_Player_vars.host+'/shared/1.4.527/js/OmniturePlugin.js';
+    j.src=FDM_Player_vars.host+'/shared/1.4.522/js/OmniturePlugin.js';
 
     b.appendChild(j);
 
     
     /**Omniture specific configuration for both Flash/JS**/
     FDM_Player_vars.omniConfig  = {
-        playerId        :"foxcom-1.4.527",
+        playerId        :"foxcom-1.4.522",
         visitorNamespace:"foxentertainment",
         host            :"a.fox.com",
         frequency       :"60",
@@ -7539,11 +7539,20 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         return text;
     };
 
+    /**
+     * Adds a tag to the head of the page by specifying the tag name to use and an object of any
+     * attributes you want to use.
+     * @param tagName Name of the tag. E.g. 'script', 'meta', 'style'
+     * @param attributes Object of attributes to use (e.g. { src: '//domain.com/js/script.js' })
+     * @returns {jQuery Deferred}
+     */
     var addToHead = function (tagName, attributes) {
         if (_.isEmpty(tagName) || !_.isString(tagName))
         {
             throw new Error("You have to provide a tag name when calling addToHead()");
         }
+
+        tagName = tagName.toLowerCase(); //lowercasing
 
         if (_.isEmpty(attributes) || !_.isTrueObject(attributes))
         {
@@ -7556,10 +7565,6 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         {
             var elem = document.createElement(tagName);
 
-            elem.onload = function () {
-                deferred.resolve();
-            };
-
             _.each(attributes, function (value, key) {
                 key = key.toLowerCase().replace(/\W/g, '');
 
@@ -7569,11 +7574,28 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
                 }
             });
 
-            document.getElementsByTagName('head')[0].appendChild(elem);
+            if (tagName === 'style' || tagName === 'script')
+            {
+                elem.onload = function () {
+                    deferred.resolve();
+                };
+                document.getElementsByTagName('head')[0].appendChild(elem);
+            }
+            else
+            {
+                document.getElementsByTagName('head')[0].appendChild(elem);
+                deferred.resolve(elem);
+            }
         }
         else
         {
-            deferred.reject();
+            //we should probably let people know if the tag was already there since that might be a sign of
+            //another problem
+//            debug.warn("You called addToHead(), but the tag already existed in the head", {
+//                tagName: tagName,
+//                attributes: attributes
+//            });
+            deferred.resolve(); //the tag is already there, so resolve right away
         }
 
         return deferred;
@@ -7640,6 +7662,28 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
          */
 
         return cleaned;
+    };
+
+    var trim = function (text)
+    {
+        if (!_.isString(text) || _.isEmpty(text))
+        {
+            throw new Error("Whatever you passed to trim() was either not a string or was an empty string", text);
+        }
+
+        //if there's a leading space, slice it and try again
+        if (text.charAt(0) === ' ')
+        {
+            text = trim(text.slice(1));
+        }
+
+        //if there's a trailing space, slice it and try again
+        if (text.charAt(text.length-1) === ' ')
+        {
+            text = trim(text.slice(0, -1));
+        }
+
+        return text;
     };
 
 
@@ -7847,6 +7891,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
             override: override,
+            trim: trim,
             getParamValue: getParamValue,
             getQueryParams: getQueryParams,
             removeQueryParams: removeQueryParams,
@@ -7876,6 +7921,7 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         addToHead: addToHead,
         tagInHead: tagInHead,
         override: override,
+        trim: trim,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,
@@ -7952,7 +7998,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.8.1:';
+        var prefix = 'foxneod-0.8.3:';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -8305,7 +8351,12 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
         //-------------------------------------------------------------------------------- instance variables
         var debug = new Debug('iframe'),
             dispatcher = new Dispatcher(),
-            _playerAttributes = {}; //these get passed down from player.js
+            _playerAttributes = {}, //these get passed down from player.js
+            _processedAttributes = {},
+            _playerToCreate,
+            _deferred = new jquery.Deferred(),
+            _onloadFired = false,
+            _metaTagExists = false;
         //-------------------------------------------------------------------------------- /instance variables
 
 
@@ -8345,6 +8396,30 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
                 'width="' + attributes.iframewidth + '"' +
                 'height="'+ attributes.iframeheight + '" webkitallowfullscreen mozallowfullscreen msallowfullscreen allowfullscreen></iframe>';
         }
+
+        function _onLoad (event) {
+            debug.log('#2) onload fired');
+            _onloadFired = true;
+            _updateDeferred();
+        }
+
+        function _onMetaTagExists () {
+//            debug.log('_onMetaTagExists fired');
+//            _metaTagExists = true;
+//            _updateDeferred();
+        }
+
+        function _updateDeferred () {
+
+//            if (_metaTagExists && _onloadFired)
+            debug.log('#3) meta tag exists');
+            //TODO: this assumes the meta tag in the iframe page, which we obviously can't actually guarantee
+            if (_onloadFired)
+            {
+                debug.log('resolving the iframe', _playerToCreate);
+                _deferred.resolve(_playerToCreate);
+            }
+        }
         //-------------------------------------------------------------------------------- /private methods
 
 
@@ -8354,59 +8429,78 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
             var elements = [];
             _playerAttributes = suppliedAttributes;
 
-            if (_.isString(selector) && !_.isEmpty(selector)) //we got a selector
+            if (!_.isString(selector) || _.isEmpty(selector))
             {
-                var query = document.querySelectorAll(selector),
-                    atLeastOneElementFound = false;
+                _deferred.reject("The first argument supplied to create() should be a selector");
+            }
 
-                _.each(query, function (queryItem, index) {
-                    if (_.isElement(queryItem))
-                    {
-                        debug.log('element found', queryItem);
+            var query = document.querySelectorAll(selector),
+                atLeastOneElementFound = false;
 
-                        var attributes = _processAttributes(selector, suppliedAttributes);
-
-                        if (!_.isEmpty(attributes))
-                        {
-                            elements.push({
-                                controller: null,
-                                element: queryItem,
-                                attributes: attributes
-                            });
-
-                            atLeastOneElementFound = true;
-                        }
-                    }
-                });
-
-                if (!atLeastOneElementFound)
+            _.each(query, function (queryItem, index) {
+                if (_.isElement(queryItem))
                 {
-                    throw new Error("No players could be created from the selector you provided");
+                    debug.log('element found', queryItem);
+                    _processedAttributes = _processAttributes(selector, suppliedAttributes);
+
+                    if (!_.isEmpty(_processedAttributes))
+                    {
+                        elements.push({
+                            controller: null,
+                            element: queryItem,
+                            attributes: _processedAttributes
+                        });
+                    }
                 }
-            }
-            else {
-                throw new Error("The first argument supplied to injectIframePlayer() should be a selector");
-            }
-
-            debug.log("We're going to try and create these", elements);
-
-            _.each(elements, function (playerToCreate) {
-                debug.log('iframe attributes', playerToCreate.attributes);
-
-                playerToCreate.element.addEventListener('onload', function (event) {
-                    debug.warn('dispatching onload');
-                });
-
-                playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
-
-                debug.log('dispatching htmlInjected', playerToCreate.element);
-                dispatcher.dispatch('htmlInjected', {
-                    attributes: playerToCreate.attributes,
-                    element: playerToCreate.element
-                });
             });
 
-            return true;
+            if (_.isEmpty(elements))
+            {
+                _deferred.reject("No players could be created from the selector you provided");
+            }
+
+            _playerToCreate = elements[0];
+
+            _playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, _playerToCreate.attributes);
+            _playerToCreate.iframe = jquery(_playerToCreate.element).find('iframe')[0];
+
+            document.getElementById(_playerToCreate.attributes.iframePlayerId).onload = function (event) {
+                _onLoad(event);
+            };
+
+            debug.log('#1) html injected', _playerToCreate);
+
+            return getReady();
+
+
+            /**
+             * The code below is meant to handle multiple elements from the selector above. The problem is, it's hard
+             * to do event-based stuff for multiple iframe's, and since this is a single instance per player, it
+             * honestly should be managed at the player level anyway. For now, we'll default to the first element,
+             * but I want to leave this code in here in case we need to revisit someday. Use or delete by: 10/19/13
+             */
+//            debug.log("We're going to try and create these", elements);
+//
+//            _.each(elements, function (playerToCreate) {
+//                debug.log('iframe attributes', playerToCreate.attributes);
+//
+//                jquery(playerToCreate.element).bind('onload', _onLoad);
+//                jquery(playerToCreate.element).bind('foxneod:metaTagExists', _onMetaTagExists);
+//
+//                playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
+//
+//                debug.log('dispatching htmlInjected', playerToCreate.element);
+//                dispatcher.dispatch('htmlInjected', {
+//                    attributes: playerToCreate.attributes,
+//                    element: playerToCreate.element
+//                });
+//            });
+//
+//            return true;
+        };
+
+        var getReady = function () {
+            return _deferred;
         };
         //-------------------------------------------------------------------------------- public methods
 
@@ -8421,6 +8515,7 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
         // This API is only Public to player.js, so we should surface everything so we can unit test it
         return {
             create: create,
+            getReady: getReady,
             addEventListener: dispatcher.addEventListener,
             getEventListeners: dispatcher.getEventListeners,
             hasEventListener: dispatcher.hasEventListener,
@@ -9221,39 +9316,28 @@ define('player',['ovp',
         _players = [],
         _currentPosition,
         _promisesQueue = [],
-        _playerIndex = 0;
+        _playerIndex = 0,
+        _initTimestamp;
 
     //---------------------------------------------- private methods
-    function _enableExternalController (enableScriptTag, enableMetaTag) {
+    function _addExternalControllerMetaTag () {
         var attributes = {
             name: "tp:EnableExternalController",
             content: "true"
         };
 
-        if (!utils.tagInHead('script', attributes) && enableMetaTag)
-        {
-            utils.addToHead('meta', attributes);
-            debug.log('external controller (meta tag) added');
-        }
-        else
-        {
-            debug.log('Page already has external controller meta tag');
-        }
+        //returns a Promise
+        return utils.addToHead('meta', attributes);
+    }
 
-        attributes = {
+    function _addExternalControllerScriptTag () {
+        var attributes = {
             type: 'text/javascript',
             src: 'http://player.foxfdm.com/shared/1.4.527/' + 'pdk/tpPdkController.js'
         };
 
-        if (!utils.tagInHead('script', attributes) && enableScriptTag)
-        {
-            utils.addToHead('script', attributes);
-            debug.log('external controller (script tag) added');
-        }
-        else
-        {
-            debug.log('Page already has external controller script tag');
-        }
+        //returns a Promise
+        return utils.addToHead('script', attributes);
     }
 
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
@@ -9299,48 +9383,24 @@ define('player',['ovp',
     function _bindRemainingPlayers () {
         var unboundPlayers = _getUnboundPlayers();
 
-        debug.log('_bindRemainingPlayers', unboundPlayers);
-
-        //---------------------------------------- ovp initialize
-        if (_.isArray(unboundPlayers) && !_.isEmpty(unboundPlayers))
+        if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
         {
-            debug.log('binding players...', unboundPlayers);
+            return false;
+        }
 
-            _.each(unboundPlayers, function (player) {
-                if (!_.isUndefined(player.controller)) //check for unbound
-                {
-                    debug.log('binding controller...');
-                    player.controller = ovp.pdk.bind(player.attributes.iframePlayerId);
+        debug.log('_bindRemainingPlayers', unboundPlayers);
+        //---------------------------------------- ovp initialize
+        _.each(unboundPlayers, function (player, index) {
+            if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
+            {
+                debug.log('#5) binding player', player);
+                _bindPlayer(player);
+                playback._setController(player.controller);
+            }
+        });
 
-                    //TODO: remove the try catch (it's just temporary while getting support from thePlatform)
-                    try {
-                        debug.log('calling ('+player.attributes.iframePlayerId+').onload');
-                        //just proving a point that this doesn't work
-                        document.getElementById(player.attributes.iframePlayerId).onload();
-                    }
-                    catch (error) {
-                        //error details in diatribe form
-                        debug.warn("Calling onload() using getElementById("+ player.attributes.iframePlayerId +") failed...");
-                        debug.log("... and just to clarify, that element is there...", document.getElementById(player.attributes.iframePlayerId));
-                        debug.log("... and the error is...");
-                        window.console.dir(error);
-
-                        //jquery saves the day!
-                        debug.log("... but don't worry, jQuery saves the day!");
-                        var iframeSelector = '#' + player.attributes.iframePlayerId;
-                        jquery(iframeSelector).bind('onload', function () {
-                            debug.log('$('+ iframeSelector +').onload(fired!)', arguments);
-                        });
-                        jquery(iframeSelector).trigger('onload');
-                    }
-
-                    dispatcher.dispatch('playerCreated', player.attributes);
-                }
-            });
-
-            debug.log('all unbound players are now bound', _players);
-            playback._setController(ovp.controller().controller);
-    }
+        var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
+        debug.log(logMessage, _unboundPlayers);
     }
 
     /**
@@ -9351,23 +9411,30 @@ define('player',['ovp',
      */
     function _bindPlayer(player)
     {
+        var deferred = new jquery.Deferred();
+
         if (ovp.isReady())
         {
             var attributes = player.attributes;
 
+            debug.log('#6) binding player', player);
             //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
             player.controller = ovp.pdk.bind(attributes.iframePlayerId);
-            debug.log('adding player to _players', player);
             _players.push(player);
+            _unboundPlayers.splice(player.attributes.playerIndex, 1);
 
-            debug.log('binding player', attributes);
-            dispatcher.dispatch('playerCreated', attributes);
+            debug.log('#7) players array updated', _players);
+            dispatcher.dispatch('playerCreated', player);
         }
         else
         {
             _unboundPlayers.push(player);
             debug.log('adding unbound player to list', _unboundPlayers);
         }
+
+        deferred.resolve(player);
+
+        return deferred;
     }
     //---------------------------------------------- /private methods
 
@@ -9515,14 +9582,17 @@ define('player',['ovp',
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
-            _.each(config, function (prop, key) {
-                player[prop] = config[prop];
-
-                if (_.isEqual(key, 'iframePlayerId'))
-                {
-                    _enableExternalController('meta'); //adds controller to iframe page
-                }
-            });
+            //This requires postMessage to work properly - leaving off for now
+//            _.each(config, function (prop, key) {
+//                if (_.isEqual(key, 'iframePlayerId'))
+//                {
+//                    _addExternalControllerMetaTag().done(function (event) {
+//                        debug.log('external controller meta tag added');
+//                    });
+//
+//                    var player = getPlayerByAttribute(key, prop);
+//                }
+//            });
 
             debug.log('PDK logLevel', player.logLevel);
             debug.log('creating player with config', config);
@@ -9543,6 +9613,40 @@ define('player',['ovp',
      */
     var getPlayers = function () {
         return _players;
+    };
+
+    var getPlayerByAttribute = function (key, value) {
+        if (_.isUndefined(key) || _.isUndefined(value))
+        {
+            throw new Error("getPlayerByAttribute() expects two arguments: a key and a value");
+        }
+
+        if (!_.isString(key) || _.isEmpty(key))
+        {
+            throw new Error("The first argument for getPlayerByAttribute() should be a non-empty string");
+        }
+
+        if ((!_.isString(value) && !_.isNumber(value)) || _.isEmpty(value))
+        {
+            throw new Error("The second argument for getPlayerByAttribute() should be a non-empty string or a number");
+        }
+
+        var players = (!_.isEmpty(_players)) ? _players : _unboundPlayers;
+
+        if (_.isEmpty(players)) //this could be _unboundPlayers, and it could be empty
+        {
+
+            _.each(players, function (player) {
+                _.each(player, function (playerValue, playerKey) {
+                    if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase())
+                    {
+                        return player;
+                    }
+                });
+            });
+        }
+
+        return false;
     };
 
     /**
@@ -9616,19 +9720,17 @@ define('player',['ovp',
         debug.log('declaredAttributes', declaredAttributes);
 
         var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
-        var iframePlayer = new Iframe(selector, iframeURL, attributes);
+        var iframe = new Iframe(selector, iframeURL, attributes);
 
-        iframePlayer.addEventListener('htmlInjected', function (event) {
-            debug.log('htmlInjected fired', event);
-        });
-
-        iframePlayer.addEventListener('ready', function (event) {
-            debug.log('iframePlayer ready...gonna call _bindPlayer()', event);
-
-            _bindPlayer(event.data);
-        });
-
-        iframePlayer.create();
+        var iframePlayer =
+        iframe.create()
+            .then(function (player) {
+                iframePlayer = player;
+                return _addExternalControllerScriptTag();
+            })
+            .then(function () {
+                _bindPlayer(iframePlayer);
+            });
     };
     //---------------------------------------------- /public methods
 
@@ -9636,20 +9738,12 @@ define('player',['ovp',
 
     //---------------------------------------------- init
     (function init () {
-        debug.log('start init', _unboundPlayers);
-
         if (ovp.isReady())
         {
-            debug.log('ovp ready');
             _bindRemainingPlayers();
         }
-        else
         {
-
-            ovp.addEventListener('ready', function () {
-                debug.log('ovp ready (from event listener)');
-                _bindRemainingPlayers();
-            });
+            ovp.addEventListener('ready', _bindRemainingPlayers);
         }
     })();
     //---------------------------------------------- /init
@@ -10397,6 +10491,148 @@ define('base64',[], function () {
         base64ToJSON: base64ToJSON
     };
 });
+/*global define */
+
+define('cookies',[
+    'underscoreloader',
+    'Debug'
+], function (_, Debug) {
+    
+
+    var debug = new Debug('cookies');
+
+    /**
+     * Gets the cookie for this domain as an Object
+     * @returns {Object}
+     */
+    var getCookie = function () {
+        return _.arrayToObject(document.cookie.split(';'));
+    };
+
+    /**
+     * This is a way to grab the value for a given cookie.
+     * @param key Case-insensitive key to search for in the cookie
+     */
+    var grab = function (keyToFind, skipDecoding) {
+        if (!_.isString(keyToFind) || _.isEmpty(keyToFind))
+        {
+            throw new Error("The key you provided to cookies.grab() was either not a string or was empty", keyToFind);
+        }
+
+        var cookie = getCookie();
+        var foundValue =  _.find(cookie, function (value, key) {
+            //need to trim the cookie names since there are trailing/leading spaces sometimes
+            if (_.trim(key.toLowerCase()) === _.trim(keyToFind.toLowerCase()))
+            {
+                return value;
+            }
+        });
+
+        var cleanedValue = (!skipDecoding && foundValue) ? decodeURIComponent(foundValue) : foundValue;
+
+        return (cleanedValue) ? cleanedValue : false;
+    };
+
+    return {
+        getCookie: getCookie,
+        grab: grab
+    };
+});
+
+/*global define */
+
+define('mvpd',[
+    'underscoreloader',
+    'Debug',
+    'Dispatcher',
+    'cookies'
+], function (_, Debug, Dispatcher, cookies) {
+    
+
+    var debug = new Debug('mvpd'),
+        dispatcher = new Dispatcher();
+
+    var getFreewheelKeyValues = function () {
+        var cookie = cookies.grab('aam_freewheel');
+        var keyValues = (_.isString(cookie) && !_.isEmpty(cookie)) ? cookie : '';
+
+        return keyValues;
+    };
+
+    return {
+        getFreewheelKeyValues: getFreewheelKeyValues
+    };
+});
+
+/*global define */
+
+define('analytics/audience-manager',[
+    'underscoreloader',
+    'Debug',
+    'cookies'
+], function (_, Debug, cookies) {
+    
+
+    var _freewheelKeyValues = cookies.grab('aam_freewheel'),
+        debug = new Debug('audience manager');
+
+    var getUserId = function () {
+        return cookies.grab('aam_uuid');
+    };
+
+    return {
+        getUserId: getUserId
+    };
+});
+/*global define */
+
+define('analytics/akamai-media-analytics',[
+    'underscoreloader',
+    'Debug',
+    'cookies'
+], function (_, Debug, cookies) {
+    
+
+    var debug = new Debug('akamai media analytics');
+
+    var getUserId = function () {
+        return cookies.grab('Akamai_AnalyticsMetrics_clientId');
+    };
+
+    return {
+        getUserId: getUserId
+    };
+});
+/*global define */
+
+define('analytics',[
+    'underscoreloader',
+    'Debug',
+    'analytics/audience-manager',
+    'analytics/akamai-media-analytics'
+], function (_, Debug, audienceManager, ama) {
+    
+
+    var debug = new Debug('analytics');
+
+    var getAkamaiMediaAnalytics = function () {
+        return {
+            userId: ama.getUserId()
+        };
+    };
+
+    var getAudienceManager = function () {
+        return {
+            userId: audienceManager.getUserId()
+        };
+    };
+
+    return {
+        getAkamaiMediaAnalytics: getAkamaiMediaAnalytics,
+        getAudienceManager: getAudienceManager
+    };
+});
+
 /*global define, _ */
 
 define('omnitureloader',['utils', 'Dispatcher', 'jqueryloader', 'underscoreloader'], function (utils, Dispatcher, jquery, _) {
@@ -10433,7 +10669,7 @@ define('omnitureloader',['utils', 'Dispatcher', 'jqueryloader', 'underscoreloade
         getOmnitureLibrary: getOmnitureLibrary
     };
 });
-/*global define, _ */
+/*global define */
 
 define('foxneod',[
     'Dispatcher',
@@ -10444,12 +10680,16 @@ define('foxneod',[
     'query',
     'system',
     'base64',
+    'cookies',
+    'mvpd',
+    'analytics',
+    'underscoreloader',
     'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery, omnitureloader) {
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-15 04:07:49';
+    var buildTimestamp = '2013-07-19 05:07:18';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -10501,7 +10741,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-15 04:07:49)');
+        debug.log('ready (build date: 2013-07-19 05:07:18)');
 
         _messageUnsupportedUsers();
     };
@@ -10511,16 +10751,19 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-15 04:07:49',
+        buildDate: '2013-07-19 05:07:18',
         packageName: 'foxneod',
-        version: '0.8.1',
+        version: '0.8.3',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
+        analytics: analytics,
+        cookies: cookies,
         Debug: Debug,
+        mvpd: mvpd,
         player: player,
         query: query,
         system: system,

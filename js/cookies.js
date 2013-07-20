@@ -35,7 +35,7 @@ define([
             }
         });
 
-        var cleanedValue = (!skipDecoding) ? decodeURIComponent(foundValue) : foundValue;
+        var cleanedValue = (!skipDecoding && foundValue) ? decodeURIComponent(foundValue) : foundValue;
 
         return (cleanedValue) ? cleanedValue : false;
     };
