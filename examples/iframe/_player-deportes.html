@@ -3,37 +3,14 @@
 <head>
     <title>NEOD Player</title>
 
+    <meta name="tp:EnableExternalController" content="true">
     <script type="text/javascript" src="http://player.foxfdm.com/deportes/deportes_player_qa.js"></script>
 
     <script type="text/javascript">
         window.addEventListener('foxneod:ready', function () {
+            window.console.log("about to create this iframe player ------------------------------------------------");
             var playerAttributes = foxneod.utils.getQueryParams(window.location.href);
-
-            console.log('playerAttributes', playerAttributes);
-
-            if (playerAttributes)
-            {
-                //set styles on the container
-                document.getElementById('container').setAttribute('style',
-                    'width:'+ playerAttributes.width +'px; ' +
-                    'height:'+ playerAttributes.height +'px;'
-                );
-
-                var player = window.player = {};
-
-                for (var prop in playerAttributes)
-                {
-                    player[prop] = playerAttributes[prop];
-                }
-
-                /**
-                 * you can manually set player attributes here
-                 * e.g.
-                 * player.autoplay = false;
-                 */
-
-                player = new FDM_Player('player', playerAttributes.width, playerAttributes.height);
-            }
+            foxneod.player.create('#player', playerAttributes);
         });
     </script>
 
