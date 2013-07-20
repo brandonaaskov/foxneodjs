@@ -1,6 +1,6 @@
-/*global define, _ */
+/*global define */
 
-define(['Debug', 'jqueryloader'], function (Debug, jquery) {
+define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, _, Debug, jquery) {
     'use strict';
 
     var debug = new Debug('query'),

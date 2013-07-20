@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define */
 
 define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher, _, jquery) {
     'use strict';
@@ -342,11 +342,20 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return text;
     };
 
+    /**
+     * Adds a tag to the head of the page by specifying the tag name to use and an object of any
+     * attributes you want to use.
+     * @param tagName Name of the tag. E.g. 'script', 'meta', 'style'
+     * @param attributes Object of attributes to use (e.g. { src: '//domain.com/js/script.js' })
+     * @returns {jQuery Deferred}
+     */
     var addToHead = function (tagName, attributes) {
         if (_.isEmpty(tagName) || !_.isString(tagName))
         {
             throw new Error("You have to provide a tag name when calling addToHead()");
         }
+
+        tagName = tagName.toLowerCase(); //lowercasing
 
         if (_.isEmpty(attributes) || !_.isTrueObject(attributes))
         {
@@ -359,10 +368,6 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         {
             var elem = document.createElement(tagName);
 
-            elem.onload = function () {
-                deferred.resolve();
-            };
-
             _.each(attributes, function (value, key) {
                 key = key.toLowerCase().replace(/\W/g, '');
 
@@ -372,11 +377,28 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
                 }
             });
 
-            document.getElementsByTagName('head')[0].appendChild(elem);
+            if (tagName === 'style' || tagName === 'script')
+            {
+                elem.onload = function () {
+                    deferred.resolve();
+                };
+                document.getElementsByTagName('head')[0].appendChild(elem);
+            }
+            else
+            {
+                document.getElementsByTagName('head')[0].appendChild(elem);
+                deferred.resolve(elem);
+            }
         }
         else
         {
-            deferred.reject();
+            //we should probably let people know if the tag was already there since that might be a sign of
+            //another problem
+//            debug.warn("You called addToHead(), but the tag already existed in the head", {
+//                tagName: tagName,
+//                attributes: attributes
+//            });
+            deferred.resolve(); //the tag is already there, so resolve right away
         }
 
         return deferred;
@@ -404,25 +426,67 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return ($tag.length > 0) ? true : false;
     };
 
-    var override = function (startWith, overrideWith) {
+    var override = function (startWith, overrideWith, overlay) {
+        overlay = overlay || false;
 
         if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
         {
-            throw new Error("Both arguments supplied should be objects");
+            throw new Error("Both arguments supplied should be non-empty objects");
         }
 
         var cleaned = _.defaults(startWith, overrideWith);
 
         _.each(startWith, function (value, key) {
-            _.each(overrideWith, function (overrideValue, overrideKey) {
-                if (key === overrideKey)
+            _.each(overrideWith, function (overrideItemValue, overrideItemKey) {
+                if (key === overrideItemKey)
                 {
-                    cleaned[key] = overrideValue;
+//                    if (overlay && (_.isTrueObject(overrideItemValue) || _.isArray(overrideItemValue)) && !_.isEmpty(overrideItemValue))
+//                    {
+//                        if (_.isArray(overrideItemValue))
+//                        {
+//                            _.each(overrideItemValue, function (arrayItem) {
+//                                if (_.isEqual(ov, arrayItem))
+//                                {
+//
+//                                }
+//                            });
+//                        }
+//                    }
+
+                    //whether the overlay flag is true or not, it would behave the same way here
+                    cleaned[key] = overrideItemValue;
                 }
             });
         });
 
+        /**
+         * when overlay is true, it should crawl through each key of the overrideWith object and check for a match
+         * when one is found, the new value is applied
+         */
+
         return cleaned;
+    };
+
+    var trim = function (text)
+    {
+        if (!_.isString(text) || _.isEmpty(text))
+        {
+            throw new Error("Whatever you passed to trim() was either not a string or was an empty string", text);
+        }
+
+        //if there's a leading space, slice it and try again
+        if (text.charAt(0) === ' ')
+        {
+            text = trim(text.slice(1));
+        }
+
+        //if there's a trailing space, slice it and try again
+        if (text.charAt(text.length-1) === ' ')
+        {
+            text = trim(text.slice(0, -1));
+        }
+
+        return text;
     };
 
 
@@ -629,6 +693,8 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             removePixelSuffix: removePixelSuffix,
             stringToBoolean: stringToBoolean,
             booleanToString: booleanToString,
+            override: override,
+            trim: trim,
             getParamValue: getParamValue,
             getQueryParams: getQueryParams,
             removeQueryParams: removeQueryParams,
@@ -658,6 +724,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         addToHead: addToHead,
         tagInHead: tagInHead,
         override: override,
+        trim: trim,
         getParamValue: getParamValue,
         getQueryParams: getQueryParams,
         removeQueryParams: removeQueryParams,

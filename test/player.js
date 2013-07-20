@@ -133,25 +133,148 @@ suite('player', function () {
         });
     });
 
-    setPlayerMessage: setPlayerMessage,
-        clearPlayerMessage: clearPlayerMessage,
-        injectIframePlayer: iframe.injectIframePlayer,
-        hide: ovp.hide,
-        show: ovp.show,
-        getCurrentVideo: getCurrentVideo,
-        getMostRecentAd: getMostRecentAd,
-        loadVideo: loadVideo,
-        getPosition: getCurrentPosition,
-        getPlayers: getPlayers,
+    suite('create(selector, config)', function () {
+        test("Passing in nothing throws an error", function () {
+            assert.throws(function () {
+                $f.player.create();
+            }, "The first argument supplied to create() should be a selector string");
+        });
 
-        //control methods
-        control: control,
-        getController: getController,
-        seekTo: playback.seekTo,
-        play: playback.play,
-        pause: playback.pause,
+        test("Passing in null throws an error", function () {
+            assert.throws(function () {
+                $f.player.create(null);
+            }, "The first argument supplied to create() should be a selector string");
+        });
 
-    suite('loadVideo', function () {});
+        test("Passing in an empty string throws an error", function () {
+            assert.throws(function () {
+                $f.player.create('');
+            }, "The first argument supplied to create() should be a selector string");
+        });
+
+        test("Passing in an array throws an error", function () {
+            assert.throws(function () {
+                $f.player.create([]);
+            }, "The first argument supplied to create() should be a selector string");
+        });
+
+        test("Passing in an object throws an error", function () {
+            assert.throws(function () {
+                $f.player.create({});
+            }, "The first argument supplied to create() should be a selector string");
+        });
+
+        test("Passing in an anonymous function throws an error", function () {
+            assert.throws(function () {
+                $f.player.create(function () {});
+            }, "The first argument supplied to create() should be a selector string");
+        });
+
+        test("Passing in an empty string for the second argument throws an error", function () {
+            assert.throws(function () {
+                $f.player.create('#player', '');
+            }, "The second argument supplied to create() should be either a network acronym or a non-empty object");
+        });
+
+        test("Passing in an array for the second argument throws an error", function () {
+            assert.throws(function () {
+                $f.player.create('#player', []);
+            }, "The second argument supplied to create() should be either a network acronym or a non-empty object");
+        });
+
+        test("Passing in an empty object for the second argument throws an error", function () {
+            assert.throws(function () {
+                $f.player.create('#player', {});
+            }, "The second argument supplied to create() should be either a network acronym or a non-empty object");
+        });
+
+        test("Passing in a valid object for the second argument returns the config object", function () {
+            var expected = {
+                shortname: 'btn',
+                name: 'Big Ten Networks'
+            };
+
+            assert.strictEqual($f.player.create('#player', expected), expected);
+        });
+
+        test("Passing in a valid object using overlay for the second argument returns the config object", function () {
+            var expected = {
+                shortname: 'ngc',
+                name: 'National Geographic Channel',
+                plugins: [{
+                    name: 'freewheel',
+                    type: 'advertising',
+                    siteSectionId: null,
+                    files: 'http://player.foxneodigital.com/swf/freewheel.swf'
+                }, {
+                    name: 'adobe analytics',
+                    type: 'analytics',
+                    reportSuite: 'overridetest',
+                    trackingServer: 'a.fox.com',
+                    files: [
+                        'http://player.foxneodigital.com/swf/adobe-analytics.swf',
+                        'http://player.foxneodigital.com/swf/adobe-analytics-media.swf']
+                }, {
+                    name: 'google analytics',
+                    type: 'analytics',
+                    accountId: 'UA-123456-78',
+                    files: 'http://player.foxneodigital.com/swf/google-analytics.swf'
+                }, {
+                    name: 'chartbeat',
+                    type: 'analytics',
+                    files: 'http://player.foxneodigital.com/swf/chartbeat.swf'
+                }, {
+                    name: 'end card',
+                    type: 'ui',
+                    files: [
+                        'http://player.foxneodigital.com/swf/end-card.swf',
+                        'http://player.foxneodigital.com/js/end-card.js']
+                }],
+                layout: [{
+                    name: 'default layout',
+                    type: 'layout',
+                    files: [
+                        'http://player.foxneodigital.com/fox/flash-layout.xml',
+                        'http://player.foxneodigital.com/fox/js-layout.json']
+                }, {
+                    name: 'live player layout',
+                    type: 'layout',
+                    files: 'http://player.foxneodigital.com/fox/live-layout.xml'
+                }, {
+                    name: 'default skin',
+                    type: 'skin',
+                    files: 'http://player.foxneodigital.com/fox/flash-skin.swf'
+                }],
+                colors: {}
+            };
+
+            assert.strictEqual($f.player.create('#player', {
+                overlay: true,
+                plugins: [{
+                    name: 'adobe analytics',
+                    reportSuite: 'overridetest'
+                }]
+            }), expected);
+        });
+    });
+
+//    setPlayerMessage: setPlayerMessage,
+//        clearPlayerMessage: clearPlayerMessage,
+//        injectIframePlayer: iframe.injectIframePlayer,
+//        hide: ovp.hide,
+//        show: ovp.show,
+//        getCurrentVideo: getCurrentVideo,
+//        getMostRecentAd: getMostRecentAd,
+//        loadVideo: loadVideo,
+//        getPosition: getCurrentPosition,
+//        getPlayers: getPlayers,
+//
+//        //control methods
+//        control: control,
+//        getController: getController,
+//        seekTo: playback.seekTo,
+//        play: playback.play,
+//        pause: playback.pause,
 
     suite('loadVideo', function () {});
 

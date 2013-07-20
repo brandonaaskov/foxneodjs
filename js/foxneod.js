@@ -1,4 +1,4 @@
-/*global define, _ */
+/*global define */
 
 define([
     'Dispatcher',
@@ -9,8 +9,12 @@ define([
     'query',
     'system',
     'base64',
+    'cookies',
+    'mvpd',
+    'analytics',
+    'underscoreloader',
     'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, jquery, omnitureloader) {
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
     'use strict';
 
     //-------------------------------------------------------------------------------- instance variables
@@ -85,7 +89,10 @@ define([
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
+        analytics: analytics,
+        cookies: cookies,
         Debug: Debug,
+        mvpd: mvpd,
         player: player,
         query: query,
         system: system,

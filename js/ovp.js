@@ -1,9 +1,17 @@
-/*global define, _ */
+/*global define */
 
 /**
  * Just provides a safe interface to grab the PDK without having to worry about loading it.
  */
-define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'polyfills'], function (Debug, Dispatcher, pdkwatcher, jquery, utils, polyfills) {
+define([
+    'Debug',
+    'Dispatcher',
+    'player/pdkwatcher',
+    'underscoreloader',
+    'jqueryloader',
+    'utils',
+    'polyfills'
+], function (Debug, Dispatcher, pdkwatcher, _, jquery, utils, polyfills) {
     'use strict';
 
     var _pdk,
@@ -53,8 +61,9 @@ define(['Debug', 'Dispatcher', 'player/pdkwatcher', 'jqueryloader', 'utils', 'po
     function constructor () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
-            debug.log('PDK is now available inside of ovp.js', pdk);
             ready = true;
+
+            debug.log('PDK is now available inside of ovp.js', pdk);
             dispatcher.dispatch('ready', pdk);
         });
     }
