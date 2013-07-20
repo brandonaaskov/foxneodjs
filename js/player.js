@@ -41,8 +41,13 @@ define(['ovp',
             src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
         };
 
+        var deferred = utils.addToHead('script', attributes);
+        deferred.done(function () {
+            debug.log('#4) external script controller added');
+        });
+
         //returns a Promise
-        return utils.addToHead('script', attributes);
+        return deferred;
     }
 
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {

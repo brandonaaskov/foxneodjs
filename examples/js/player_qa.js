@@ -7998,7 +7998,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.8.3:';
+        var prefix = 'foxneod-0.8.4:';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -9339,8 +9339,13 @@ define('player',['ovp',
             src: 'http://player.foxfdm.com/shared/1.4.527/' + 'pdk/tpPdkController.js'
         };
 
+        var deferred = utils.addToHead('script', attributes);
+        deferred.done(function () {
+            debug.log('#4) external script controller added');
+        });
+
         //returns a Promise
-        return utils.addToHead('script', attributes);
+        return deferred;
     }
 
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
@@ -10694,7 +10699,7 @@ define('foxneod',[
     
 
     //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-19 05:07:49';
+    var buildTimestamp = '2013-07-19 05:07:29';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     //-------------------------------------------------------------------------------- /instance variables
@@ -10746,7 +10751,7 @@ define('foxneod',[
 
     //-------------------------------------------------------------------------------- initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-19 05:07:49)');
+        debug.log('ready (build date: 2013-07-19 05:07:29)');
 
         _messageUnsupportedUsers();
     };
@@ -10756,9 +10761,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-19 05:07:49',
+        buildDate: '2013-07-19 05:07:29',
         packageName: 'foxneod',
-        version: '0.8.3',
+        version: '0.8.4',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
