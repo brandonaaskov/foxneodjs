@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:tp="player.theplatform.com" xml:lang="en" lang="en">
+<html>
 <head>
-    <meta name="tp:preferredFormats" content="mpeg4,webm,ogg,flv" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <meta http-equiv="Content-language" content="en" />
+    <title>Simplest Integration</title>
 
-    <title>PDK :: FX Reference Player</title>
+    <script type="text/javascript" src="../js/player_qa.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('foxneod:ready', function () {
+            foxneod.player.create('#player', {
+                releaseURL: "http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true"
+            })
+        });
+    </script>
+
     <style type="text/css">
-        body {
-            font:normal 12px/15px Arial,Helvetica,sans-serif;
-        }
         #main {
             overflow:auto;
             height:380px;
@@ -21,25 +24,12 @@
             float:left;
             margin-right:16px;
         }
-        #video-title {
-            display:block;
-            height:20px;
-            font-weight:bold;
-            font-size:16px;
-        }
-        .load-video {
-            display:block;
-            float:left;
-            width:145px;
-            height:80px;
-            background-repeat:no-repeat;
-            text-indent:-999px;
-            overflow:hidden;
-            margin-right:16px;
-            border:2px solid #000;
-        }
-        .playing {
-            border-color:#f00;
+
+        #adBlock {
+            position: relative;
+            top: 100px;
+            width: 300px;
+            height: 250px;
         }
     </style>
 </head>
@@ -62,25 +52,6 @@
     </div>
     <div id="pauseAd"></div>
 </div>
-
-<!-- Player below this point -->
-<script type="text/javascript" src="../js/player_qa.js"></script>
-<script type="text/javascript">
-    var createPlayer = function () {
-        var this_protocol = ((window.location.protocol == 'https:')?'https:':'http:');
-
-        var player = new FDM_Player("player", 640, 360);
-
-        player.autoplay = true;
-        player.endcard_playlist		= this_protocol+'//feed.theplatform.com/f/fxnetworks/yFnM2BtjUr9F?form=json';
-        player.releaseURL			= "http://link.theplatform.com/s/fox.com/tpvXj0h_rZfu?mbr=true";
-
-        player.addEventListener("OnMediaLoadStart",	player.onMediaLoadStart);
-        player.addEventListener("OnMediaPause",		function(e){if(e && e.data && e.data.userInitiated) {tpController.showFullScreen(false);}});
-    };
-
-    createPlayer();
-</script>
 
 </body>
 </html>
