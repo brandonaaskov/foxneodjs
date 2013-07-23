@@ -297,10 +297,10 @@ define(['ovp',
             _.each(config, function (prop, key) {
                 if (_.isEqual(key, 'iframePlayerId'))
                 {
-//                    This requires postMessage to work properly - leaving off for now
-//                    _addExternalControllerMetaTag().done(function (event) {
-//                        debug.log('external controller meta tag added');
-//                    });
+                    _addExternalControllerMetaTag().done(function (event) {
+                        debug.log('external controller meta tag added');
+                    });
+
                     _insideIframe = true;
                 }
             });
