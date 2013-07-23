@@ -22,7 +22,7 @@ define(['ovp',
         _currentPosition,
         _promisesQueue = [],
         _playerIndex = 0,
-        _initTimestamp;
+        _insideIframe = false;
 
     //---------------------------------------------- private methods
     function _addExternalControllerMetaTag () {
@@ -131,7 +131,7 @@ define(['ovp',
 
             debug.log('#6) binding player', player);
             //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-            player.controller = ovp.pdk.bind(attributes.iframePlayerId);
+            player.controller = ovp.pdk().bind(attributes.iframePlayerId);
             _players.push(player);
             _unboundPlayers.splice(player.attributes.playerIndex, 1);
 
@@ -294,17 +294,16 @@ define(['ovp',
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
-            //This requires postMessage to work properly - leaving off for now
-//            _.each(config, function (prop, key) {
-//                if (_.isEqual(key, 'iframePlayerId'))
-//                {
+            _.each(config, function (prop, key) {
+                if (_.isEqual(key, 'iframePlayerId'))
+                {
+//                    This requires postMessage to work properly - leaving off for now
 //                    _addExternalControllerMetaTag().done(function (event) {
 //                        debug.log('external controller meta tag added');
 //                    });
-//
-//                    var player = getPlayerByAttribute(key, prop);
-//                }
-//            });
+                    _insideIframe = true;
+                }
+            });
 
             debug.log('PDK logLevel', player.logLevel);
             debug.log('creating player with config', config);
@@ -438,7 +437,7 @@ define(['ovp',
         iframe.create()
             .then(function (player) {
                 iframePlayer = player;
-                return _addExternalControllerScriptTag();
+                return _addExternalControllerScriptTag(); //returns a Promise
             })
             .then(function () {
                 _bindPlayer(iframePlayer);

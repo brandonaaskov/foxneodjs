@@ -204,7 +204,7 @@
 
             shell : {
                 phpbuild: {
-                    command: "cd ../fox-video-player-v1/ && node build qa fx btn fox deportes"
+                    command: "cd ../legacy/ && node build qa fx btn fox deportes"
                 }
             },
 
