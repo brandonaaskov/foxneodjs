@@ -37,18 +37,19 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
         else
         {
             debug.warn("The time you provided was less than 0, so no seeking occurred.", timeInSeconds);
-            return false;
         }
 
-        return true;
+        return this;
     };
 
     var play = function () {
-        return _controller.pause(false);
+        _controller.pause(false);
+        return this;
     };
 
     var pause = function () {
-        return _controller.pause(true);
+        _controller.pause(true);
+        return this;
     };
 
     //public api
