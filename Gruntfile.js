@@ -64,7 +64,7 @@
                 options: {
                     jshintrc: '.jshintrc'
                 },
-                files: ['Gruntfile.js', 'js/*.js', 'js/player/**/*.js']
+                files: ['Gruntfile.js', 'js/*.js', 'js/analytics/**/*.js', 'js/ovp/**/*.js', 'js/player/**/*.js']
             },
 
             requirejs: {
