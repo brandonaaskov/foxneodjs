@@ -20,11 +20,12 @@ define(['ovp',
         _unboundPlayers = [], //players wait in this queue for OVP to be ready
         _players = [],
         _currentPosition,
+        _currentPlayer,
         _promisesQueue = [],
         _playerIndex = 0,
         _insideIframe = false;
 
-    //---------------------------------------------- private methods
+    //////////////////////////////////////////////// private methods...
     function _addExternalControllerMetaTag () {
         var attributes = {
             name: "tp:EnableExternalController",
@@ -90,19 +91,82 @@ define(['ovp',
         return _unboundPlayers;
     }
 
+    function _onLoadReleaseURL (event) {
+        debug.log('OnLoadReleaseURL fired', event);
+        _currentPlayer.controller.removeEventListener('OnLoadReleaseURL', _onLoadReleaseURL);
+
+        _.each(_promisesQueue, function (promiseDeets) {
+            debug.log('promiseDeets', promiseDeets);
+
+            debugger;
+            promiseDeets.deferred.resolve(event);
+
+            if (_.isFunction(promiseDeets.callback))
+            {
+                promiseDeets.callback(promiseDeets.deferred);
+            }
+        });
+    }
+
+    function _addEventListeners () {
+        dispatcher.addEventListener('videoStart', function (event) {
+            debug.log('start', event);
+        });
+
+        dispatcher.addEventListener('videoProgress', function (event) {
+            debug.log('progress', event);
+
+            if (!(event && event.data && _.isDefined(event.data.id) && _.isDefined(event.data.baseClip)))
+            {
+                return;
+            }
+
+            if (_currentVideo.id === event.data.id)
+            {
+                _currentVideo = event.data.baseClip;
+            }
+        });
+
+        dispatcher.addEventListener('videoEnd', function (event) {
+            debug.log('end');
+        });
+    }
+
+    function _attachEventListeners (player) {
+        var eventsMap = ovp.getEventsMap();
+
+        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
+            player.addEventListener(ovpEventName, function (event) {
+                debug.log(ovpEventName + ' fired - dispatching ' + normalizedEventName + ' internally');
+                dispatcher.dispatch(normalizedEventName, event);
+            });
+        });
+    }
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////  ovp initialize...
+    /**
+     * Once ovp is ready, we want to make sure that we bind each of the remaining players in our _unboundPlayers array
+     * @returns {Promise}
+     */
     function _bindRemainingPlayers () {
-        var unboundPlayers = _getUnboundPlayers();
+        var unboundPlayers = _getUnboundPlayers(),
+            deferred = new jquery.Deferred(),
+            _atLeastOneRemaining = false;
 
         if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
         {
-            return false;
+            deferred.reject("There were no players left to bind");
         }
 
         debug.log('_bindRemainingPlayers', unboundPlayers);
-        //---------------------------------------- ovp initialize
+
         _.each(unboundPlayers, function (player, index) {
             if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
             {
+                _atLeastOneRemaining = true;
                 debug.log('#5) sending player to _bindPlayer()', player);
                 _bindPlayer(player);
                 debug.log('manually dispatching onload for the iframe', player);
@@ -111,8 +175,19 @@ define(['ovp',
             }
         });
 
+        if (_atLeastOneRemaining)
+        {
+            deferred.resolve(_players);
+        }
+        else
+        {
+            deferred.reject("All remaining players already had controllers");
+        }
+
         var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
         debug.log(logMessage, _unboundPlayers);
+
+        return deferred;
     }
 
     /**
@@ -132,6 +207,7 @@ define(['ovp',
             debug.log('#6) binding player', player);
             //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
             player.controller = ovp.pdk().bind(attributes.iframePlayerId);
+            _attachEventListeners(player.controller);
             _players.push(player);
             _unboundPlayers.splice(player.attributes.playerIndex, 1);
 
@@ -144,15 +220,16 @@ define(['ovp',
             debug.log('adding unbound player to list', _unboundPlayers);
         }
 
+        _currentPlayer = player;
         deferred.resolve(player);
 
         return deferred;
     }
-    //---------------------------------------------- /private methods
+    ////////////////////////////////////////////////
 
 
 
-    //---------------------------------------------- public methods
+    //////////////////////////////////////////////// public methods...
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
         {
@@ -204,6 +281,12 @@ define(['ovp',
             }
         });
 
+        if (_.isUndefined(controllerToUse) && (_.isObject(_currentPlayer) && !_.isEmpty(_currentPlayer)))
+        {
+            debug.log("using the default player's controller");
+            controllerToUse = _currentPlayer.controller;
+        }
+
         if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
         {
             debug.log('controller to use', controllerToUse);
@@ -219,24 +302,37 @@ define(['ovp',
     };
 
     var loadVideo = function (releaseURLOrId, callback) {
-        var deferred = jquery.Deferred();
-        _promisesQueue.push({
-            id: _.removeQueryParams(releaseURLOrId),
-            deferred: deferred
-        });
+        //////////////////////////////////////////////// fail fast...
+        var deferred = new jquery.Deferred(),
+            errorMessage = '';
 
         if (!query.isReleaseURL(releaseURLOrId))
         {
-            deferred.reject();
-            throw new Error("The loadVideo() method expects one argument: a release URL");
+            errorMessage = "The loadVideo() method expects one argument: a release URL";
+            deferred.reject(errorMessage);
+            throw new Error(errorMessage);
         }
 
-        //the 0 second timeout is to handle a bug in the PDK
-        //calling it directly alongside other methods causes it to do nothing
-        setTimeout(function () {
-            debug.log('calling loadReleaseURL()', releaseURLOrId);
-            ovp.controller().loadReleaseURL(releaseURLOrId, true); //loads release and replaces default
-        }, 0);
+        if (_.isUndefined(_currentPlayer))
+        {
+            errorMessage = "There was no default player set to load the video into";
+            deferred.reject(errorMessage);
+            throw new Error(errorMessage);
+        }
+        ////////////////////////////////////////////////
+
+        _promisesQueue.push({
+            id: _.removeQueryParams(releaseURLOrId),
+            deferred: deferred,
+            callback: callback
+        });
+
+        //////////////////////////////////////////////// load...
+        _currentPlayer.controller.addEventListener('OnLoadReleaseUrl', _onLoadReleaseURL);
+
+        debug.log('calling loadReleaseURL()', releaseURLOrId);
+        _currentPlayer.controller.loadReleaseURL(releaseURLOrId, true);
+        ////////////////////////////////////////////////
 
         return deferred;
     };
@@ -443,24 +539,42 @@ define(['ovp',
                 _bindPlayer(iframePlayer);
             });
     };
-    //---------------------------------------------- /public methods
+
+    var hide = function () {
+        this.pause();
+        jquery(_currentPlayer.element).hide();
+
+        return true;
+    };
+
+    var show = function () {
+        jquery(_currentPlayer.element).show();
+
+        return true;
+    };
+    ////////////////////////////////////////////////
 
 
 
-    //---------------------------------------------- init
+    //////////////////////////////////////////////// init...
     (function init () {
         if (ovp.isReady())
         {
             _bindRemainingPlayers();
+            _addEventListeners();
         }
         {
-            ovp.addEventListener('ready', _bindRemainingPlayers);
+            ovp.addEventListener('ready', function () {
+                _bindRemainingPlayers();
+                _addEventListeners();
+            });
         }
     })();
-    //---------------------------------------------- /init
+    ////////////////////////////////////////////////
 
 
 
+    //////////////////////////////////////////////// public api...
     /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
      * entry point
@@ -471,8 +585,8 @@ define(['ovp',
         clearPlayerMessage: clearPlayerMessage,
         createIframe: injectIframePlayer,
         injectIframePlayer: injectIframePlayer, //old alias (will deprecate eventually)
-        hide: ovp.hide,
-        show: ovp.show,
+        hide: hide,
+        show: show,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
         loadVideo: loadVideo,
@@ -489,6 +603,7 @@ define(['ovp',
 
         //event listening
         addEventListener: dispatcher.addEventListener,
+        on: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
@@ -499,4 +614,5 @@ define(['ovp',
             ovp: ovp
         }
     };
+    ////////////////////////////////////////////////
 });
