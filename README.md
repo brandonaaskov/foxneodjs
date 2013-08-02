@@ -14,7 +14,7 @@ Most questions you'll have about code can be found in the files as code comments
 * [Building](#building)
 * [thePlatform's PDK Device Support Matrix](http://gunslngr.com/QLpL)
 * [thePlatform's PDK Event Reference](http://gunslngr.com/QKQ8)
-* [thePlatform's PDK Method Reference](http://gunslngr.com/QLY5)
+* [thePlatform's PDK Method Reference](http://gunslngr.com/QZqZ)
 
 
 ## Setting Up Locally
