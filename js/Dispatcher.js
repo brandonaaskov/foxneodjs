@@ -114,6 +114,7 @@ define(['underscoreloader'], function (_) {
 
         return {
             addEventListener: addListener,
+            on: addListener,
             dispatch: dispatch,
             getEventListeners: getEventListeners,
             hasEventListener: hasListener,
