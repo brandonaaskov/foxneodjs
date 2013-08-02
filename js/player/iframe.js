@@ -11,8 +11,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _processedAttributes = {},
             _playerToCreate,
             _deferred = new jquery.Deferred(),
-            _onloadFired = false,
-            _metaTagExists = false;
+            _onloadFired = false;
         //-------------------------------------------------------------------------------- /instance variables
 
 
@@ -130,32 +129,6 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             debug.log('#1) html injected', _playerToCreate);
 
             return getReady();
-
-
-            /**
-             * The code below is meant to handle multiple elements from the selector above. The problem is, it's hard
-             * to do event-based stuff for multiple iframe's, and since this is a single instance per player, it
-             * honestly should be managed at the player level anyway. For now, we'll default to the first element,
-             * but I want to leave this code in here in case we need to revisit someday. Use or delete by: 10/19/13
-             */
-//            debug.log("We're going to try and create these", elements);
-//
-//            _.each(elements, function (playerToCreate) {
-//                debug.log('iframe attributes', playerToCreate.attributes);
-//
-//                jquery(playerToCreate.element).bind('onload', _onLoad);
-//                jquery(playerToCreate.element).bind('foxneod:metaTagExists', _onMetaTagExists);
-//
-//                playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
-//
-//                debug.log('dispatching htmlInjected', playerToCreate.element);
-//                dispatcher.dispatch('htmlInjected', {
-//                    attributes: playerToCreate.attributes,
-//                    element: playerToCreate.element
-//                });
-//            });
-//
-//            return true;
         };
 
         var getReady = function () {
