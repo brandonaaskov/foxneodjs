@@ -1,5 +1,10 @@
 /*global define */
 
-define(['player/playback'], function (playback) {
-    'use strict';
+define([
+    'Debug',
+    'Dispatcher',
+    'underscoreloader',
+    'omnitureloader'
+], function (Debug, Dispatcher, _, adobeAnalytics) {
+    //omniture plugin code will go here
 });
