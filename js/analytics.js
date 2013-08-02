@@ -4,8 +4,9 @@ define([
     'underscoreloader',
     'Debug',
     'analytics/audience-manager',
-    'analytics/akamai-media-analytics'
-], function (_, Debug, audienceManager, ama) {
+    'analytics/akamai-media-analytics',
+    'analytics/omniture'
+], function (_, Debug, audienceManager, ama, omniture) {
     'use strict';
 
     var debug = new Debug('analytics');
@@ -22,6 +23,7 @@ define([
         };
     };
 
+    // Public API
     return {
         getAkamaiMediaAnalytics: getAkamaiMediaAnalytics,
         getAudienceManager: getAudienceManager

@@ -30,7 +30,6 @@ FDMtpPreferredFormat.content	= 'mpeg4,webm,ogg,flv';
 FDMtpPreferredRuntime.name		= 'tp:PreferredRuntimes';
 FDMtpPreferredRuntime.content	= 'flash,html5';
 
-
 FDMtpHead.appendChild(FDMtpBaseUrl);
 FDMtpHead.appendChild(FDMtpPreferredFormat);
 FDMtpHead.appendChild(FDMtpPreferredRuntime);
@@ -244,6 +243,7 @@ FDM_Player.prototype.init=function(pst,pre){
 			p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.522|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
 	
 
+
 	p.pluginNewFreewheel = 
 		'type=adcomponent|' + 
 		'url='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/freewheel.swf|' + 
@@ -273,9 +273,7 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		'serverUrl=http://1c6e2.v.fwmrm.net/';
 
-
-
-
+	
 
 
 		p.autoPlay=(typeof(player.autoplay)=="undefined" || player.autoplay)?true:false;
@@ -7187,6 +7185,7 @@ define('Dispatcher',['underscoreloader'], function (_) {
 
         return {
             addEventListener: addListener,
+            on: addListener,
             dispatch: dispatch,
             getEventListeners: getEventListeners,
             hasEventListener: hasListener,
@@ -7664,6 +7663,11 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
         return cleaned;
     };
 
+    /**
+     * Trims both leading and trailing whitespace off of a supplied string
+     * @param {String} text
+     * @returns {String} String with whitespace stripped from beginning and end of string
+     */
     var trim = function (text)
     {
         if (!_.isString(text) || _.isEmpty(text))
@@ -7998,7 +8002,7 @@ define('Debug',['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.8.4:';
+        var prefix = 'foxneod-0.8.5:';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -8228,6 +8232,47 @@ define('polyfills',['Debug', 'Dispatcher', 'underscoreloader'], function (Debug,
         removeEventListener: dispatcher.removeEventListener
     };
 });
+/*global define */
+
+define('ovp/theplatform',[
+    'underscoreloader',
+    'utils',
+    'Debug'
+], function (_, utils, Debug) {
+    
+
+    var debug = new Debug('ovp: theplatform'),
+        _eventsMap = {
+            videoLoad: 'OnLoadReleaseUrl',
+            videoBuffer: 'OnMediaBuffer',
+            videoEnd: 'OnMediaComplete',
+            videoChapterEnd: 'OnMediaEnd',
+            videoError: 'OnMediaError',
+            videoReady: 'OnMediaLoadStart',
+            videoPause: 'OnMediaPause',
+            videoPlay: 'OnMediaPlay',
+            videoProgress: 'OnMediaPlaying',
+            videoSeek: 'OnMediaSeek',
+            videoStart: 'OnMediaStart',
+            videoResume: 'OnMediaUnpause',
+            videoMute: 'OnMute',
+            playerLoad: 'OnPlayerLoaded'
+        };
+
+    //////////////////////////////////////////////// public functions...
+    var getEventsMap = function () {
+        return _eventsMap;
+    };
+    ////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////// public api
+    return {
+        getEventsMap: getEventsMap
+    };
+    ////////////////////////////////////////////////
+});
 /*global define, _ */
 
 define('player/pdkwatcher',['Debug', 'jqueryloader', 'underscoreloader'], function (Debug, jquery, _) {
@@ -8254,6 +8299,7 @@ define('player/pdkwatcher',['Debug', 'jqueryloader', 'underscoreloader'], functi
  * Just provides a safe interface to grab the PDK without having to worry about loading it.
  */
 define('ovp',[
+    'ovp/theplatform',
     'Debug',
     'Dispatcher',
     'player/pdkwatcher',
@@ -8261,30 +8307,16 @@ define('ovp',[
     'jqueryloader',
     'utils',
     'polyfills'
-], function (Debug, Dispatcher, pdkwatcher, _, jquery, utils, polyfills) {
+], function (thePlatform, Debug, Dispatcher, pdkwatcher, _, jquery, utils, polyfills) {
     
 
     var _pdk,
         debug = new Debug('ovp'),
         dispatcher = new Dispatcher(),
-        ready = false,
-        selector = 'object[data^="http://player.foxfdm.com"]',
-        version = '5.2.7';
+        ready = false;
 
-    var hide = function () {
-        jquery(selector).each(function (index, element) {
-            debug.log('hiding player element');
-            jquery(this).parent().hide();
-        });
-    };
 
-    var show = function () {
-        jquery(selector).each(function (index, element) {
-            debug.log('showing player element');
-            jquery(this).parent().show();
-        });
-    };
-
+    //////////////////////////////////////////////// public methods
     var getController = function () {
         if (ready)
         {
@@ -8308,6 +8340,26 @@ define('ovp',[
         }
     };
 
+    var getEventsMap = function () {
+        //since we only support one ovp right now, this is fine for the time being
+        return thePlatform.getEventsMap();
+    };
+
+    var mapEvents = function (player) {
+        var eventsMap = thePlatform.getEventsMap();
+
+        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
+            player.addEventListener(ovpEventName, function (event) {
+                dispatcher.dispatch(normalizedEventName, event);
+            });
+        });
+    };
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////// init
     function constructor () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
@@ -8321,26 +8373,31 @@ define('ovp',[
     (function () {
         constructor();
     })();
+    ////////////////////////////////////////////////
 
-    // Public API
+
+
+
+    //////////////////////////////////////////////// Public API
     return {
-        isReady: function () {
-            return ready;
-        },
+        version: '5.2.7',
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
-        hide: hide,
-        show: show,
-
+        isReady: function () {
+            return ready;
+        },
         controller: function () {
             return getController();
         },
         pdk: function () {
             return _pdk;
-        }
+        },
+        getEventsMap: getEventsMap,
+        mapEvents: mapEvents
     };
+    ////////////////////////////////////////////////
 });
 /*global define, _ */
 
@@ -8355,8 +8412,7 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
             _processedAttributes = {},
             _playerToCreate,
             _deferred = new jquery.Deferred(),
-            _onloadFired = false,
-            _metaTagExists = false;
+            _onloadFired = false;
         //-------------------------------------------------------------------------------- /instance variables
 
 
@@ -8474,32 +8530,6 @@ define('player/Iframe',['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'D
             debug.log('#1) html injected', _playerToCreate);
 
             return getReady();
-
-
-            /**
-             * The code below is meant to handle multiple elements from the selector above. The problem is, it's hard
-             * to do event-based stuff for multiple iframe's, and since this is a single instance per player, it
-             * honestly should be managed at the player level anyway. For now, we'll default to the first element,
-             * but I want to leave this code in here in case we need to revisit someday. Use or delete by: 10/19/13
-             */
-//            debug.log("We're going to try and create these", elements);
-//
-//            _.each(elements, function (playerToCreate) {
-//                debug.log('iframe attributes', playerToCreate.attributes);
-//
-//                jquery(playerToCreate.element).bind('onload', _onLoad);
-//                jquery(playerToCreate.element).bind('foxneod:metaTagExists', _onMetaTagExists);
-//
-//                playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, playerToCreate.attributes);
-//
-//                debug.log('dispatching htmlInjected', playerToCreate.element);
-//                dispatcher.dispatch('htmlInjected', {
-//                    attributes: playerToCreate.attributes,
-//                    element: playerToCreate.element
-//                });
-//            });
-//
-//            return true;
         };
 
         var getReady = function () {
@@ -8565,18 +8595,19 @@ define('player/playback',['Debug', 'ovp'], function (Debug, ovp) {
         else
         {
             debug.warn("The time you provided was less than 0, so no seeking occurred.", timeInSeconds);
-            return false;
         }
 
-        return true;
+        return this;
     };
 
     var play = function () {
-        return _controller.pause(false);
+        _controller.pause(false);
+        return this;
     };
 
     var pause = function () {
-        return _controller.pause(true);
+        _controller.pause(true);
+        return this;
     };
 
     //public api
@@ -9318,11 +9349,12 @@ define('player',['ovp',
         _unboundPlayers = [], //players wait in this queue for OVP to be ready
         _players = [],
         _currentPosition,
+        _currentPlayer,
         _promisesQueue = [],
         _playerIndex = 0,
-        _initTimestamp;
+        _insideIframe = false;
 
-    //---------------------------------------------- private methods
+    //////////////////////////////////////////////// private methods...
     function _addExternalControllerMetaTag () {
         var attributes = {
             name: "tp:EnableExternalController",
@@ -9388,19 +9420,82 @@ define('player',['ovp',
         return _unboundPlayers;
     }
 
+    function _onLoadReleaseURL (event) {
+        debug.log('OnLoadReleaseURL fired', event);
+        _currentPlayer.controller.removeEventListener('OnLoadReleaseURL', _onLoadReleaseURL);
+
+        _.each(_promisesQueue, function (promiseDeets) {
+            debug.log('promiseDeets', promiseDeets);
+
+            debugger;
+            promiseDeets.deferred.resolve(event);
+
+            if (_.isFunction(promiseDeets.callback))
+            {
+                promiseDeets.callback(promiseDeets.deferred);
+            }
+        });
+    }
+
+    function _addEventListeners () {
+        dispatcher.addEventListener('videoStart', function (event) {
+            debug.log('start', event);
+        });
+
+        dispatcher.addEventListener('videoProgress', function (event) {
+            debug.log('progress', event);
+
+            if (!(event && event.data && _.isDefined(event.data.id) && _.isDefined(event.data.baseClip)))
+            {
+                return;
+            }
+
+            if (_currentVideo.id === event.data.id)
+            {
+                _currentVideo = event.data.baseClip;
+            }
+        });
+
+        dispatcher.addEventListener('videoEnd', function (event) {
+            debug.log('end');
+        });
+    }
+
+    function _attachEventListeners (player) {
+        var eventsMap = ovp.getEventsMap();
+
+        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
+            player.addEventListener(ovpEventName, function (event) {
+                debug.log(ovpEventName + ' fired - dispatching ' + normalizedEventName + ' internally');
+                dispatcher.dispatch(normalizedEventName, event);
+            });
+        });
+    }
+    ////////////////////////////////////////////////
+
+
+
+    ////////////////////////////////////////////////  ovp initialize...
+    /**
+     * Once ovp is ready, we want to make sure that we bind each of the remaining players in our _unboundPlayers array
+     * @returns {Promise}
+     */
     function _bindRemainingPlayers () {
-        var unboundPlayers = _getUnboundPlayers();
+        var unboundPlayers = _getUnboundPlayers(),
+            deferred = new jquery.Deferred(),
+            _atLeastOneRemaining = false;
 
         if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
         {
-            return false;
+            deferred.reject("There were no players left to bind");
         }
 
         debug.log('_bindRemainingPlayers', unboundPlayers);
-        //---------------------------------------- ovp initialize
+
         _.each(unboundPlayers, function (player, index) {
             if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
             {
+                _atLeastOneRemaining = true;
                 debug.log('#5) sending player to _bindPlayer()', player);
                 _bindPlayer(player);
                 debug.log('manually dispatching onload for the iframe', player);
@@ -9409,8 +9504,19 @@ define('player',['ovp',
             }
         });
 
+        if (_atLeastOneRemaining)
+        {
+            deferred.resolve(_players);
+        }
+        else
+        {
+            deferred.reject("All remaining players already had controllers");
+        }
+
         var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
         debug.log(logMessage, _unboundPlayers);
+
+        return deferred;
     }
 
     /**
@@ -9429,7 +9535,8 @@ define('player',['ovp',
 
             debug.log('#6) binding player', player);
             //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-            player.controller = ovp.pdk.bind(attributes.iframePlayerId);
+            player.controller = ovp.pdk().bind(attributes.iframePlayerId);
+            _attachEventListeners(player.controller);
             _players.push(player);
             _unboundPlayers.splice(player.attributes.playerIndex, 1);
 
@@ -9442,15 +9549,16 @@ define('player',['ovp',
             debug.log('adding unbound player to list', _unboundPlayers);
         }
 
+        _currentPlayer = player;
         deferred.resolve(player);
 
         return deferred;
     }
-    //---------------------------------------------- /private methods
+    ////////////////////////////////////////////////
 
 
 
-    //---------------------------------------------- public methods
+    //////////////////////////////////////////////// public methods...
     var setPlayerMessage = function (options) {
         if (_.isObject(options))
         {
@@ -9502,6 +9610,12 @@ define('player',['ovp',
             }
         });
 
+        if (_.isUndefined(controllerToUse) && (_.isObject(_currentPlayer) && !_.isEmpty(_currentPlayer)))
+        {
+            debug.log("using the default player's controller");
+            controllerToUse = _currentPlayer.controller;
+        }
+
         if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
         {
             debug.log('controller to use', controllerToUse);
@@ -9517,24 +9631,37 @@ define('player',['ovp',
     };
 
     var loadVideo = function (releaseURLOrId, callback) {
-        var deferred = jquery.Deferred();
-        _promisesQueue.push({
-            id: _.removeQueryParams(releaseURLOrId),
-            deferred: deferred
-        });
+        //////////////////////////////////////////////// fail fast...
+        var deferred = new jquery.Deferred(),
+            errorMessage = '';
 
         if (!query.isReleaseURL(releaseURLOrId))
         {
-            deferred.reject();
-            throw new Error("The loadVideo() method expects one argument: a release URL");
+            errorMessage = "The loadVideo() method expects one argument: a release URL";
+            deferred.reject(errorMessage);
+            throw new Error(errorMessage);
         }
 
-        //the 0 second timeout is to handle a bug in the PDK
-        //calling it directly alongside other methods causes it to do nothing
-        setTimeout(function () {
-            debug.log('calling loadReleaseURL()', releaseURLOrId);
-            ovp.controller().loadReleaseURL(releaseURLOrId, true); //loads release and replaces default
-        }, 0);
+        if (_.isUndefined(_currentPlayer))
+        {
+            errorMessage = "There was no default player set to load the video into";
+            deferred.reject(errorMessage);
+            throw new Error(errorMessage);
+        }
+        ////////////////////////////////////////////////
+
+        _promisesQueue.push({
+            id: _.removeQueryParams(releaseURLOrId),
+            deferred: deferred,
+            callback: callback
+        });
+
+        //////////////////////////////////////////////// load...
+        _currentPlayer.controller.addEventListener('OnLoadReleaseUrl', _onLoadReleaseURL);
+
+        debug.log('calling loadReleaseURL()', releaseURLOrId);
+        _currentPlayer.controller.loadReleaseURL(releaseURLOrId, true);
+        ////////////////////////////////////////////////
 
         return deferred;
     };
@@ -9592,17 +9719,16 @@ define('player',['ovp',
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
-            //This requires postMessage to work properly - leaving off for now
-//            _.each(config, function (prop, key) {
-//                if (_.isEqual(key, 'iframePlayerId'))
-//                {
-//                    _addExternalControllerMetaTag().done(function (event) {
-//                        debug.log('external controller meta tag added');
-//                    });
-//
-//                    var player = getPlayerByAttribute(key, prop);
-//                }
-//            });
+            _.each(config, function (prop, key) {
+                if (_.isEqual(key, 'iframePlayerId'))
+                {
+                    _addExternalControllerMetaTag().done(function (event) {
+                        debug.log('external controller meta tag added');
+                    });
+
+                    _insideIframe = true;
+                }
+            });
 
             debug.log('PDK logLevel', player.logLevel);
             debug.log('creating player with config', config);
@@ -9736,30 +9862,48 @@ define('player',['ovp',
         iframe.create()
             .then(function (player) {
                 iframePlayer = player;
-                return _addExternalControllerScriptTag();
+                return _addExternalControllerScriptTag(); //returns a Promise
             })
             .then(function () {
                 _bindPlayer(iframePlayer);
             });
     };
-    //---------------------------------------------- /public methods
+
+    var hide = function () {
+        this.pause();
+        jquery(_currentPlayer.element).hide();
+
+        return true;
+    };
+
+    var show = function () {
+        jquery(_currentPlayer.element).show();
+
+        return true;
+    };
+    ////////////////////////////////////////////////
 
 
 
-    //---------------------------------------------- init
+    //////////////////////////////////////////////// init...
     (function init () {
         if (ovp.isReady())
         {
             _bindRemainingPlayers();
+            _addEventListeners();
         }
         {
-            ovp.addEventListener('ready', _bindRemainingPlayers);
+            ovp.addEventListener('ready', function () {
+                _bindRemainingPlayers();
+                _addEventListeners();
+            });
         }
     })();
-    //---------------------------------------------- /init
+    ////////////////////////////////////////////////
 
 
 
+    //////////////////////////////////////////////// public api...
     /**
      * Most of the player's functionality is broken off into submodules, but surfaced here through this one API
      * entry point
@@ -9770,8 +9914,8 @@ define('player',['ovp',
         clearPlayerMessage: clearPlayerMessage,
         createIframe: injectIframePlayer,
         injectIframePlayer: injectIframePlayer, //old alias (will deprecate eventually)
-        hide: ovp.hide,
-        show: ovp.show,
+        hide: hide,
+        show: show,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
         loadVideo: loadVideo,
@@ -9788,6 +9932,7 @@ define('player',['ovp',
 
         //event listening
         addEventListener: dispatcher.addEventListener,
+        on: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
@@ -9798,6 +9943,7 @@ define('player',['ovp',
             ovp: ovp
         }
     };
+    ////////////////////////////////////////////////
 });
 /*global define, _ */
 
@@ -10615,12 +10761,18 @@ define('analytics/akamai-media-analytics',[
 });
 /*global define */
 
+define('analytics/omniture',['player/playback'], function (playback) {
+    
+});
+/*global define */
+
 define('analytics',[
     'underscoreloader',
     'Debug',
     'analytics/audience-manager',
-    'analytics/akamai-media-analytics'
-], function (_, Debug, audienceManager, ama) {
+    'analytics/akamai-media-analytics',
+    'analytics/omniture'
+], function (_, Debug, audienceManager, ama, omniture) {
     
 
     var debug = new Debug('analytics');
@@ -10637,6 +10789,7 @@ define('analytics',[
         };
     };
 
+    // Public API
     return {
         getAkamaiMediaAnalytics: getAkamaiMediaAnalytics,
         getAudienceManager: getAudienceManager
@@ -10698,26 +10851,25 @@ define('foxneod',[
     'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
     
 
-    //-------------------------------------------------------------------------------- instance variables
-    var buildTimestamp = '2013-07-19 05:07:29';
+    //////////////////////////////////////////////// instance variables
+    var buildTimestamp = '2013-08-01 05:08:38';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
-    //-------------------------------------------------------------------------------- /instance variables
+    ////////////////////////////////////////////////
 
 
 
 
-    //-------------------------------------------------------------------------------- public methods
+    //////////////////////////////////////////////// public methods
     var getOmnitureLibraryReady = function () {
         return omnitureloader.getOmnitureLibrary();
     };
-    //-------------------------------------------------------------------------------- /public methods
+    ////////////////////////////////////////////////
 
 
 
 
-    //-------------------------------------------------------------------------------- /private methods
-
+    //////////////////////////////////////////////// private methods
     function _messageUnsupportedUsers () {
         var title = "Unsupported Browser",
             message = '';
@@ -10747,23 +10899,25 @@ define('foxneod',[
             window.VideoAuth.Modal.content.set($htmlFragment);
         }
     }
+    ////////////////////////////////////////////////
 
 
-    //-------------------------------------------------------------------------------- initialization
+
+    //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-07-19 05:07:29)');
+        debug.log('ready (build date: 2013-08-01 05:08:38)');
 
         _messageUnsupportedUsers();
     };
-    //-------------------------------------------------------------------------------- /initialization
+    ////////////////////////////////////////////////
 
 
     // Public API
     return {
         _init: init,
-        buildDate: '2013-07-19 05:07:29',
+        buildDate: '2013-08-01 05:08:38',
         packageName: 'foxneod',
-        version: '0.8.4',
+        version: '0.8.5',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
@@ -10817,7 +10971,7 @@ require([
 
 
             window['foxneod'] = window.$f = foxneod;
-            foxneod._init();
+            window['foxneod']._init();
             dispatcher.dispatch('ready', {}, true);
             debug.log('foxneod assigned to window.foxneod and window.$f');
         }

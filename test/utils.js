@@ -938,6 +938,12 @@ suite('utils', function () {
         });
     });
 
+    suite('trim()', function () {
+        assert.throws(function () {
+
+        }, "Whatever you passed to trim() was either not a string or was an empty string");
+    });
+
     suite('dispatchEvent()', function () {
         test('Event dispatches over the library core (with no data payload)', function (done) {
             var eventName = 'test';
