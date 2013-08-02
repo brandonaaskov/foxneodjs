@@ -4,6 +4,7 @@
  * Just provides a safe interface to grab the PDK without having to worry about loading it.
  */
 define([
+    'ovp/theplatform',
     'Debug',
     'Dispatcher',
     'player/pdkwatcher',
@@ -11,30 +12,16 @@ define([
     'jqueryloader',
     'utils',
     'polyfills'
-], function (Debug, Dispatcher, pdkwatcher, _, jquery, utils, polyfills) {
+], function (thePlatform, Debug, Dispatcher, pdkwatcher, _, jquery, utils, polyfills) {
     'use strict';
 
     var _pdk,
         debug = new Debug('ovp'),
         dispatcher = new Dispatcher(),
-        ready = false,
-        selector = 'object[data^="http://player.foxfdm.com"]',
-        version = '@@ovpVersion';
+        ready = false;
 
-    var hide = function () {
-        jquery(selector).each(function (index, element) {
-            debug.log('hiding player element');
-            jquery(this).parent().hide();
-        });
-    };
 
-    var show = function () {
-        jquery(selector).each(function (index, element) {
-            debug.log('showing player element');
-            jquery(this).parent().show();
-        });
-    };
-
+    //////////////////////////////////////////////// public methods
     var getController = function () {
         if (ready)
         {
@@ -58,6 +45,26 @@ define([
         }
     };
 
+    var getEventsMap = function () {
+        //since we only support one ovp right now, this is fine for the time being
+        return thePlatform.getEventsMap();
+    };
+
+    var mapEvents = function (player) {
+        var eventsMap = thePlatform.getEventsMap();
+
+        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
+            player.addEventListener(ovpEventName, function (event) {
+                dispatcher.dispatch(normalizedEventName, event);
+            });
+        });
+    };
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////// init
     function constructor () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
@@ -71,24 +78,29 @@ define([
     (function () {
         constructor();
     })();
+    ////////////////////////////////////////////////
 
-    // Public API
+
+
+
+    //////////////////////////////////////////////// Public API
     return {
-        isReady: function () {
-            return ready;
-        },
+        version: '@@ovpVersion',
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
-        hide: hide,
-        show: show,
-
+        isReady: function () {
+            return ready;
+        },
         controller: function () {
             return getController();
         },
         pdk: function () {
             return _pdk;
-        }
+        },
+        getEventsMap: getEventsMap,
+        mapEvents: mapEvents
     };
+    ////////////////////////////////////////////////
 });
