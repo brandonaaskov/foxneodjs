@@ -467,6 +467,11 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         return cleaned;
     };
 
+    /**
+     * Trims both leading and trailing whitespace off of a supplied string
+     * @param {String} text
+     * @returns {String} String with whitespace stripped from beginning and end of string
+     */
     var trim = function (text)
     {
         if (!_.isString(text) || _.isEmpty(text))

@@ -17,26 +17,25 @@ define([
     'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
     'use strict';
 
-    //-------------------------------------------------------------------------------- instance variables
+    //////////////////////////////////////////////// instance variables
     var buildTimestamp = '@@buildDate';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
-    //-------------------------------------------------------------------------------- /instance variables
+    ////////////////////////////////////////////////
 
 
 
 
-    //-------------------------------------------------------------------------------- public methods
+    //////////////////////////////////////////////// public methods
     var getOmnitureLibraryReady = function () {
         return omnitureloader.getOmnitureLibrary();
     };
-    //-------------------------------------------------------------------------------- /public methods
+    ////////////////////////////////////////////////
 
 
 
 
-    //-------------------------------------------------------------------------------- /private methods
-
+    //////////////////////////////////////////////// private methods
     function _messageUnsupportedUsers () {
         var title = "Unsupported Browser",
             message = '';
@@ -66,15 +65,17 @@ define([
             window.VideoAuth.Modal.content.set($htmlFragment);
         }
     }
+    ////////////////////////////////////////////////
 
 
-    //-------------------------------------------------------------------------------- initialization
+
+    //////////////////////////////////////////////// initialization
     var init = function () {
         debug.log('ready (build date: @@buildDate)');
 
         _messageUnsupportedUsers();
     };
-    //-------------------------------------------------------------------------------- /initialization
+    ////////////////////////////////////////////////
 
 
     // Public API
