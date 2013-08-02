@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Meta -->
+    <title>Dynamic Iframe Player</title>
+    <!-- /Meta -->
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="../js/player_qa.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('foxneod:ready', function () {
+            //we'll be hopefully removing the need for this event listener
+
+            jQuery('#load').click(function() {
+                foxneod.player.injectIframePlayer('#myPlayerID', '_player.html', {
+                    siteSection: 'my_fw_site_section',
+                    releaseURL: 'http://link.theplatform.com/s/fox.com/36FA4IJR_WKi?mbr=true',
+                    autoplay: false
+                });
+
+                log('player loaded');
+            });
+
+            jQuery('#update').click(function() {
+                foxneod.player.loadVideo('http://link.theplatform.com/s/fox.com/39E1BT0y1Ehk?mbr=true').done(function (event) {
+                    foxneod.debug('video loaded', event);
+                    window.log('video updated');
+                });
+            });
+
+            jQuery('#hide').click(function() {
+                foxneod.player.hide();
+                log('player hidden and paused');
+            });
+
+            jQuery('#show').click(function() {
+                foxneod.player.show();
+                log('player showing (still paused)');
+            });
+
+            jQuery('#play').click(function() {
+                foxneod.player.play();
+                log('player playing');
+            });
+
+            jQuery('#pause').click(function() {
+                foxneod.player.pause();
+                log('player paused');
+            });
+
+            jQuery('#seek').click(function() {
+                foxneod.player.seekTo(30);
+                log('player seeking to 30 seconds...');
+            });
+
+            jQuery('#seek').click(function() {
+                foxneod.player.seekTo(10);
+                log('player seeking to 10 seconds...');
+            });
+
+            jQuery('#position').click(function() {
+                var position = foxneod.player.getPosition();
+                log('player position', position);
+            });
+
+            jQuery('#duration').click(function() {
+                var position = foxneod.player.getPosition();
+                log('player duration', position);
+            });
+        });
+
+        function log (message, data) {
+            jQuery('#output').append(message + '<br>');
+            console.log(message, data);
+        }
+    </script>
+    <!-- /Scripts -->
+
+    <!-- Styles -->
+    <style type="text/css">
+        ul li {
+            cursor: pointer;
+        }
+
+        #output {
+            width: 600px;
+            height: 250px;
+            background-color: #f4f4f4;
+            border: 1px solid #f7f7f7;
+            font-family: 'Consolas', 'Menlo', 'Courier New', sans-serif;
+            font-size: 11px;
+        }
+    </style>
+    <!-- /Styles -->
+</head>
+<body>
+    <div id="myPlayerID"></div>
+
+    <ul>
+        <li id="load">load player</li>
+        <li id="update">update video</li>
+        <li id="hide">hide player</li>
+        <li id="show">show player</li>
+        <li id="play">play player</li>
+        <li id="pause">pause player</li>
+        <li id="seek">seek to 10 seconds</li>
+        <li id="position">get current position</li>
+        <li id="duration">get video duration</li>
+    </ul>
+
+    <div id="output"></div>
+</body>
+</html>
