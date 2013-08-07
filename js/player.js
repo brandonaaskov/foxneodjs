@@ -17,7 +17,7 @@ define(['ovp',
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-        _unboundPlayers = [], //players wait in this queue for OVP to be ready
+//        _unboundPlayers = [], //players wait in this queue for OVP to be ready
         _players = [],
         _currentPosition,
         _currentPlayer,
@@ -87,9 +87,9 @@ define(['ovp',
         return attributes;
     }
 
-    function _getUnboundPlayers () {
-        return _unboundPlayers;
-    }
+//    function _getUnboundPlayers () {
+//        return _unboundPlayers;
+//    }
 
     function _onLoadReleaseURL (event) {
         debug.log('OnLoadReleaseURL fired', event);
@@ -109,25 +109,27 @@ define(['ovp',
     }
 
     function _addEventListeners () {
-        dispatcher.addEventListener('videoStart', function (event) {
+        addEventListener('videoStart', function (event) {
             debug.log('start', event);
         });
 
-        dispatcher.addEventListener('videoProgress', function (event) {
-            debug.log('progress', event);
-
+        addEventListener('videoProgress', function (event) {
             if (!(event && event.data && _.isDefined(event.data.id) && _.isDefined(event.data.baseClip)))
             {
                 return;
             }
 
-            if (_currentVideo.id === event.data.id)
+            if (event.data.baseClip.isAd)
+            {
+                _mostRecentAd = event.data.baseClip;
+            }
+            else if (_currentVideo.id !== event.data.id)
             {
                 _currentVideo = event.data.baseClip;
             }
         });
 
-        dispatcher.addEventListener('videoEnd', function (event) {
+        addEventListener('videoEnd', function (event) {
             debug.log('end');
         });
     }
@@ -136,7 +138,9 @@ define(['ovp',
         var eventsMap = ovp.getEventsMap();
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-            player.addEventListener(ovpEventName, function (event) {
+            debug.log('adding ' + ovpEventName + ' and mapping to ' + normalizedEventName);
+
+            player.controller.addEventListener(ovpEventName, function (event) {
                 debug.log(ovpEventName + ' fired - dispatching ' + normalizedEventName + ' internally');
                 dispatcher.dispatch(normalizedEventName, event);
             });
@@ -151,44 +155,44 @@ define(['ovp',
      * Once ovp is ready, we want to make sure that we bind each of the remaining players in our _unboundPlayers array
      * @returns {Promise}
      */
-    function _bindRemainingPlayers () {
-        var unboundPlayers = _getUnboundPlayers(),
-            deferred = new jquery.Deferred(),
-            _atLeastOneRemaining = false;
-
-        if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
-        {
-            deferred.reject("There were no players left to bind");
-        }
-
-        debug.log('_bindRemainingPlayers', unboundPlayers);
-
-        _.each(unboundPlayers, function (player, index) {
-            if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
-            {
-                _atLeastOneRemaining = true;
-                debug.log('#5) sending player to _bindPlayer()', player);
-                _bindPlayer(player);
-                debug.log('manually dispatching onload for the iframe', player);
-                document.getElementById(player.attributes.iframePlayerId).onload();
-                playback._setController(player.controller);
-            }
-        });
-
-        if (_atLeastOneRemaining)
-        {
-            deferred.resolve(_players);
-        }
-        else
-        {
-            deferred.reject("All remaining players already had controllers");
-        }
-
-        var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
-        debug.log(logMessage, _unboundPlayers);
-
-        return deferred;
-    }
+//    function _bindRemainingPlayers () {
+//        var unboundPlayers = _getUnboundPlayers(),
+//            deferred = new jquery.Deferred(),
+//            _atLeastOneRemaining = false;
+//
+//        if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
+//        {
+//            deferred.reject("There were no players left to bind");
+//        }
+//
+//        debug.log('_bindRemainingPlayers', unboundPlayers);
+//
+//        _.each(unboundPlayers, function (player, index) {
+//            if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
+//            {
+//                _atLeastOneRemaining = true;
+//                debug.log('#5) sending player to _bindPlayer()', player);
+//                _bindPlayer(player);
+//                debug.log('manually dispatching onload for the iframe', player);
+//                document.getElementById(player.attributes.iframePlayerId).onload();
+//                playback._setController(player.controller);
+//            }
+//        });
+//
+//        if (_atLeastOneRemaining)
+//        {
+//            deferred.resolve(_players);
+//        }
+//        else
+//        {
+//            deferred.reject("All remaining players already had controllers");
+//        }
+//
+//        var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
+//        debug.log(logMessage, _unboundPlayers);
+//
+//        return deferred;
+//    }
 
     /**
      * Right now since we're still using the FDM_Wrapper, the _bindPlayer() method is really only used for iframe players
@@ -200,28 +204,22 @@ define(['ovp',
     {
         var deferred = new jquery.Deferred();
 
-        if (ovp.isReady())
-        {
+        ovp.ready().done(function () {
             var attributes = player.attributes;
 
-            debug.log('#6) binding player', player);
-            //if ovp is already good to go, we can bind now, otherwise we'll bind when ovp:ready fires
-            player.controller = ovp.pdk().bind(attributes.iframePlayerId);
-            _attachEventListeners(player.controller);
-            _players.push(player);
-            _unboundPlayers.splice(player.attributes.playerIndex, 1);
+            if(!_insideIframe)
+            {
+                player.controller = window.$pdk.bind(attributes.iframePlayerId);
+                _attachEventListeners(player);
+                _players.push(player);
 
-            debug.log('#7) players array updated', _players);
-            dispatcher.dispatch('playerCreated', player);
-        }
-        else
-        {
-            _unboundPlayers.push(player);
-            debug.log('adding unbound player to list', _unboundPlayers);
-        }
+                debug.log('#6) player bound and added to the stack', _players);
+                dispatcher.dispatch('playerCreated', player);
 
-        _currentPlayer = player;
-        deferred.resolve(player);
+                _currentPlayer = player;
+                deferred.resolve(player);
+            }
+        });
 
         return deferred;
     }
@@ -266,35 +264,47 @@ define(['ovp',
         var elements = jquery(selector),
             controllerToUse = null;
 
-        _.each(elements, function (element) {
-            var id = jquery(element).attr('id');
-
-            if (!_.isUndefined(id))
+        if (_.isUndefined(selector))
+        {
+            if (_.isUndefined(_currentPlayer.controller))
             {
-                 _.each(_players, function (player) {
-                    debug.log("searching for player controller...");
-                    if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
-                    {
-                        controllerToUse = player.controller;
-                    }
-                });
+                throw new Error("There was no default controller to return");
             }
-        });
 
-        if (_.isUndefined(controllerToUse) && (_.isObject(_currentPlayer) && !_.isEmpty(_currentPlayer)))
-        {
-            debug.log("using the default player's controller");
-            controllerToUse = _currentPlayer.controller;
-        }
-
-        if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
-        {
-            debug.log('controller to use', controllerToUse);
-            return controllerToUse().controller;
+            return _currentPlayer.controller;
         }
         else
         {
-            debug.warn("The selector you provided doesn't point to a player on the page");
+            _.each(elements, function (element) {
+                var id = jquery(element).attr('id');
+
+                if (!_.isUndefined(id))
+                {
+                    _.each(_players, function (player) {
+                        debug.log("searching for player controller...");
+                        if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
+                        {
+                            controllerToUse = player.controller;
+                        }
+                    });
+                }
+            });
+
+            if (_.isUndefined(controllerToUse) && (_.isObject(_currentPlayer) && !_.isEmpty(_currentPlayer)))
+            {
+                debug.log("using the default player's controller");
+                controllerToUse = _currentPlayer.controller;
+            }
+
+            if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
+            {
+                debug.log('controller to use', controllerToUse);
+                return controllerToUse().controller;
+            }
+            else
+            {
+                debug.warn("The selector you provided doesn't point to a player on the page");
+            }
         }
 
         debug.log('getController() returning false');
@@ -388,22 +398,40 @@ define(['ovp',
 
             window['player'] = config;
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
+
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
+            //we need to loop through the config to find out if we're inside the iframe or not
             _.each(config, function (prop, key) {
                 if (_.isEqual(key, 'iframePlayerId'))
                 {
+                    _insideIframe = true;
+
                     _addExternalControllerMetaTag().done(function (event) {
                         debug.log('external controller meta tag added');
                     });
-
-                    _insideIframe = true;
                 }
             });
 
             debug.log('PDK logLevel', player.logLevel);
             debug.log('creating player with config', config);
-            //TODO: fix the coupling so that you can pass a selector to FDM_Player (or just finally replace the thing)
+
+            if (_insideIframe)
+            {
+                setTimeout(function () {
+                    window.$pdk.controller.addEventListener('OnMediaLoadStart', function () {
+                        debugger;
+                    });
+
+                    _currentPlayer.controller.addEventListener('OnMediaLoadStart', function () {
+                        debugger;
+                    });
+
+                    ovp.pdk().controller.addEventListener('OnMediaLoadStart', function () {
+                        debugger;
+                    });
+                }, 3000);
+            }
         }
         catch (error) {
             throw new Error(error);
@@ -438,12 +466,9 @@ define(['ovp',
             throw new Error("The second argument for getPlayerByAttribute() should be a non-empty string or a number");
         }
 
-        var players = (!_.isEmpty(_players)) ? _players : _unboundPlayers;
-
-        if (_.isEmpty(players)) //this could be _unboundPlayers, and it could be empty
+        if (!_.isEmpty(_players))
         {
-
-            _.each(players, function (player) {
+            _.each(_players, function (player) {
                 _.each(player, function (playerValue, playerKey) {
                     if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase())
                     {
@@ -529,19 +554,21 @@ define(['ovp',
         var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
         var iframe = new Iframe(selector, iframeURL, attributes);
 
-        var iframePlayer =
-        iframe.create()
+        var iframePlayer = iframe.create()
             .then(function (player) {
                 iframePlayer = player;
                 return _addExternalControllerScriptTag(); //returns a Promise
             })
             .then(function () {
-                _bindPlayer(iframePlayer);
+                return _bindPlayer(iframePlayer);
+            })
+            .then(function (player) {
+                //interact with the player?
             });
     };
 
     var hide = function () {
-        this.pause();
+        playback.pause();
         jquery(_currentPlayer.element).hide();
 
         return true;
@@ -558,17 +585,18 @@ define(['ovp',
 
     //////////////////////////////////////////////// init...
     (function init () {
-        if (ovp.isReady())
-        {
-            _bindRemainingPlayers();
+        ovp.ready().done(function () {
+//            _bindRemainingPlayers();
             _addEventListeners();
-        }
-        {
-            ovp.addEventListener('ready', function () {
-                _bindRemainingPlayers();
-                _addEventListeners();
-            });
-        }
+        });
+
+        dispatcher.addEventListener('playerLoad', function () {
+            debugger;
+        });
+
+        dispatcher.addEventListener('videoReady', function () {
+            debugger;
+        });
     })();
     ////////////////////////////////////////////////
 

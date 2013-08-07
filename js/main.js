@@ -23,7 +23,8 @@ require([
                 debug.log("jQuery didn't exist, so we're assigning it");
                 window.jQuery = jquery;
             }
-            debug.log('jQuery version after noConflict is', jquery().jquery);
+            debug.log('jQuery (internal) version after noConflict is', jquery().jquery);
+            debug.log('jQuery (page) version after noConflict is', window.jQuery().jquery);
 
             //Underscore/LoDash
             window._ = _; //assigning our local _ (noConflict) to the global _

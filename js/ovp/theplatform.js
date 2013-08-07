@@ -17,7 +17,7 @@ define([
             videoReady: 'OnMediaLoadStart',
             videoPause: 'OnMediaPause',
             videoPlay: 'OnMediaPlay',
-            videoProgress: 'OnMediaPlaying',
+//            videoProgress: 'OnMediaPlaying',
             videoSeek: 'OnMediaSeek',
             videoStart: 'OnMediaStart',
             videoResume: 'OnMediaUnpause',

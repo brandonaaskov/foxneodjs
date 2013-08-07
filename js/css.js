@@ -155,7 +155,7 @@ define(['utils', 'Debug'], function (utils, Debug) {
         return styles;
     };
 
-    var updateStyles = function (selectorOrElement, style, value) {
+    var updateStyle = function (selectorOrElement, style, value) {
         var element = (!_.isString(arguments[0])) ? selectorOrElement : document.querySelector(selectorOrElement);
         var styles = element.getAttribute('style');
 //        debug.log('styles', styles);
@@ -175,6 +175,6 @@ define(['utils', 'Debug'], function (utils, Debug) {
     // Public API
     return {
         getStyles: getStyles,
-        updateStyles: updateStyles
+        updateStyle: updateStyle
     };
 });

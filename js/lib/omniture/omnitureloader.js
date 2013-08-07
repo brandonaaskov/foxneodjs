@@ -6,16 +6,16 @@ define(['utils', 'Dispatcher', 'jqueryloader', 'underscoreloader'], function (ut
     var dispatcher = new Dispatcher(),
         deferred = jquery.Deferred();
 
-    var getOmnitureLibrary = function () {
+    var getOmnitureLibrary = function (account) {
         var attributes = {
-            'src': 'http://player.foxfdm.com/shared/1.4.526/js/s_code.js'
+            src: '@@ovpAssetsFilePath/js/s_code.js?account=' + account
         };
 
-        if (!_.has(window, 's_analytics') && !utils.tagInHead('srcript', attributes))
+        if (!_.has(window, 's_analytics') && !utils.tagInHead('script', attributes))
         {
             utils.addToHead('script', attributes)
                 .done(function (response) {
-                    deferred.resolve('loaded');
+                    deferred.resolve('s_code.js loaded');
                 })
                 .fail(function (error) {
                     deferred.reject('error');

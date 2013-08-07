@@ -17,12 +17,17 @@ define(['underscoreloader'], function (_) {
                 throw new Error("You can't create an event listener without supplying a callback function");
             }
 
-            _listeners.push({
-                name: eventName,
-                callback: callback
-            });
+            if (hasListener(eventName, callback))
+            {
+                _listeners.push({
+                    name: eventName,
+                    callback: callback
+                });
 
-            return true;
+                return true;
+            }
+
+            return false;
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
@@ -70,15 +75,31 @@ define(['underscoreloader'], function (_) {
             return found;
         };
 
-        var hasListener = function (eventName) {
-            var found = false;
+        var hasListener = function (eventName, callback) {
+            var found = false,
+                checkCallbackToo = false;
 
             if (!_.isEmpty(eventName) && _.isString(eventName))
             {
+                if (!_.isUndefined(callback) && _.isFunction(callback))
+                {
+                    checkCallbackToo = true;
+                }
+
                 _.each(_listeners, function (listener) {
                     if (listener.name === eventName)
                     {
-                        found = true;
+                        if (checkCallbackToo)
+                        {
+                            if (listener.callback.toString() === callback.toString())
+                            {
+                                found = true;
+                            }
+                        }
+                        else
+                        {
+                            found = true;
+                        }
                     }
                 });
             }
@@ -86,12 +107,22 @@ define(['underscoreloader'], function (_) {
             return found;
         };
 
-        var removeListener = function (eventName) {
+        var removeListener = function (eventName, callback) {
+            if (_.isUndefined(eventName) || !_.isString(eventName))
+            {
+                throw new Error("The first argument supplied to removeEventListener() should be a string for the event name");
+            }
+
+            if (_.isUndefined(callback) || !_.isFunction(callback))
+            {
+                throw new Error("The second argument supplied to removeEventListener() should be a function for the callback that was used");
+            }
+
             var updated = [],
                 removed = false;
 
             _.each(_listeners, function (listener) {
-                if (listener.name !== eventName)
+                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString())
                 {
                     updated.push(listener);
                 }

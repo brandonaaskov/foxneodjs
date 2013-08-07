@@ -18,7 +18,6 @@ define([
     'use strict';
 
     //////////////////////////////////////////////// instance variables
-    var buildTimestamp = '@@buildDate';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     ////////////////////////////////////////////////
@@ -27,8 +26,8 @@ define([
 
 
     //////////////////////////////////////////////// public methods
-    var getOmnitureLibraryReady = function () {
-        return omnitureloader.getOmnitureLibrary();
+    var getOmnitureLibraryReady = function (account) {
+        return omnitureloader.getOmnitureLibrary(account);
     };
     ////////////////////////////////////////////////
 

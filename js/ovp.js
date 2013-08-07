@@ -18,13 +18,12 @@ define([
     var _pdk,
         debug = new Debug('ovp'),
         dispatcher = new Dispatcher(),
-        ready = false;
+        _readyDeferred = new jquery.Deferred();
 
 
     //////////////////////////////////////////////// public methods
     var getController = function () {
-        if (ready)
-        {
+        _readyDeferred.done(function () {
             if (_.isFunction(_pdk.controller))
             {
                 return _pdk.controller().controller;
@@ -37,12 +36,7 @@ define([
             {
                 throw new Error("The controller couldn't be found on the PDK object");
             }
-        }
-
-        else
-        {
-            throw new Error("The expected controller doesn't exist or wasn't available at the time this was called.");
-        }
+        });
     };
 
     var getEventsMap = function () {
@@ -50,14 +44,23 @@ define([
         return thePlatform.getEventsMap();
     };
 
+    var getReady = function () {
+        return _readyDeferred;
+    };
+
     var mapEvents = function (player) {
         var eventsMap = thePlatform.getEventsMap();
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
             player.addEventListener(ovpEventName, function (event) {
+                debug.log('dispatching...');
                 dispatcher.dispatch(normalizedEventName, event);
             });
         });
+    };
+
+    var getPDK = function () {
+        return _pdk;
     };
     ////////////////////////////////////////////////
 
@@ -65,18 +68,14 @@ define([
 
 
     //////////////////////////////////////////////// init
-    function constructor () {
+    (function () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
-            ready = true;
+            _readyDeferred.resolve();
 
             debug.log('PDK is now available inside of ovp.js', pdk);
             dispatcher.dispatch('ready', pdk);
         });
-    }
-
-    (function () {
-        constructor();
     })();
     ////////////////////////////////////////////////
 
@@ -90,15 +89,11 @@ define([
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
-        isReady: function () {
-            return ready;
-        },
+        ready: getReady,
         controller: function () {
             return getController();
         },
-        pdk: function () {
-            return _pdk;
-        },
+        pdk: getPDK,
         getEventsMap: getEventsMap,
         mapEvents: mapEvents
     };
