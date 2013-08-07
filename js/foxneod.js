@@ -99,6 +99,7 @@ define([
         system: system,
         utils: utils,
         __test__: {
+            jQuery: jquery,
             base64: base64,
             removeAllEventListeners: dispatcher.removeAllEventListeners
         }
