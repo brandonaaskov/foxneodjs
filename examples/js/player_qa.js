@@ -165,7 +165,7 @@ FDM_Player.prototype.init=function(pst,pre){
 		}
 
 		//-------------------------- Share
-		if(((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') || (typeof player.share_deeplinkfunc != 'undefined' && player.share_deeplinkfunc != '')) && String(player.share) != 'false') {
+		if ((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') || (!_.isUndefined(player.share_deeplinkfunc) && _.isFunction(player.share_deeplinkfunc)) && String(player.share) != 'false') {
 			
 			var emailString = '';
 			
