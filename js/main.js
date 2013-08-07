@@ -6,27 +6,27 @@ require([
     'underscoreloader',
     'Dispatcher',
     'Debug',
-    'foxneod'], function (almond, jquery, underscore, Dispatcher, Debug, foxneod) {
-    'use strict';
+    'foxneod'
+], function (almond, jquery, _, Dispatcher, Debug, foxneod) {
 
-    //This function is called once the DOM is ready, notice the value for 'domReady!' is the current document.
+    'use strict';
 
     var dispatcher = new Dispatcher(),
         debug = new Debug('core');
 
     (function () {
-        if (underscore.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
+        if (_.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
         {
-            if (!window.jQuery || !window.$)
+            if (_.isUndefined(window.jQuery))
             {
                 debug.log("jQuery didn't exist, so we're assigning it");
                 window.jQuery = jquery;
             }
 
-            window._ = underscore;
+            window._ = _;
             debug.log('jQuery (internal) version after noConflict is', jquery().jquery);
             debug.log('jQuery (page) version after noConflict is', window.jQuery().jquery);
-            debug.log('Underscore version after noConflict is', underscore.VERSION);
+            debug.log('Underscore version after noConflict is', _.VERSION);
 
             window['@@packageName'] = window.$f = foxneod;
             foxneod._init();
