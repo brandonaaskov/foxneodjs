@@ -1,7 +1,18 @@
 /*global define, _ */
 
-define(['lib/jquery/jquery-1.9.1.min'], function () {
+define(['lib/jquery/jquery-1.7.2.min'], function (jquery) {
     'use strict';
 
-    return jQuery.noConflict(true);
+    if (window.jQuery)
+    {
+        return jQuery.noConflict(true);
+    }
+    else if (jquery)
+    {
+        return jquery.noConflict(true);
+    }
+    else
+    {
+        throw new Error("jQuery couldn't be loaded");
+    }
 });

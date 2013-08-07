@@ -24,7 +24,8 @@ require([
             }
 
             window._ = underscore;
-            debug.log('jQuery version after noConflict is', jquery().jquery);
+            debug.log('jQuery (internal) version after noConflict is', jquery().jquery);
+            debug.log('jQuery (page) version after noConflict is', window.jQuery().jquery);
             debug.log('Underscore version after noConflict is', underscore.VERSION);
 
             window['@@packageName'] = window.$f = foxneod;
