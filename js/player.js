@@ -419,17 +419,34 @@ define(['ovp',
             if (_insideIframe)
             {
                 setTimeout(function () {
-                    window.$pdk.controller.addEventListener('OnMediaLoadStart', function () {
-                        debugger;
-                    });
+                    if (!_.isUndefined(window.$pdk.controller))
+                    {
+                        window.$pdk.controller.addEventListener('OnMediaLoadStart', function () {
+                            debugger;
+                        });
+                    }
+                    else
+                    {
+                        debug.warn('window.$pdk.controller was undefined');
+                    }
 
-                    _currentPlayer.controller.addEventListener('OnMediaLoadStart', function () {
-                        debugger;
-                    });
-
-                    ovp.pdk().controller.addEventListener('OnMediaLoadStart', function () {
-                        debugger;
-                    });
+                    if (!_.isUndefined(_currentPlayer))
+                    {
+                        if (!_.isUndefined(_currentPlayer.controller))
+                        {
+                            _currentPlayer.controller.addEventListener('OnMediaLoadStart', function () {
+                                debugger;
+                            });
+                        }
+                        else
+                        {
+                            debug.warn('_currentPlayer existed, but had no controller');
+                        }
+                    }
+                    else
+                    {
+                        debug.warn('_currentPlayer was undefined');
+                    }
                 }, 3000);
             }
         }
