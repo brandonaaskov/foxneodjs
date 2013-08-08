@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define(['lib/jquery/jquery-1.5.1.min'], function (jquery) {
+define(['lib/jquery/jquery-2.0.0.min'], function (jquery) {
     'use strict';
 
     if (jquery)
