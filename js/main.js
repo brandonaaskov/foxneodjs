@@ -16,15 +16,14 @@ require([
     (function () {
         if (_.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
         {
-            if (_.isUndefined(window.jQuery))
-            {
-                debug.log("jQuery didn't exist, so we're assigning it");
-                window.jQuery = jquery;
-            }
-
             window._ = _;
             debug.log('jQuery (internal) version after noConflict is', jquery().jquery);
-            debug.log('jQuery (page) version after noConflict is', window.jQuery().jquery);
+
+            if(window.jQuery)
+            {
+                debug.log('jQuery (page) version after noConflict is', window.jQuery().jquery);
+            }
+
             debug.log('Underscore version after noConflict is', _.VERSION);
 
             window['@@packageName'] = window.$f = foxneod;
