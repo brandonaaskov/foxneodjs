@@ -84,6 +84,7 @@ define([
         packageName: '@@packageName',
         version: '@@version',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
+        dispatcher: dispatcher,
         dispatch: dispatcher.dispatch,
         addEventListener: dispatcher.addEventListener,
         getEventListeners: dispatcher.getEventListeners,
@@ -97,6 +98,8 @@ define([
         query: query,
         system: system,
         utils: utils,
+        _: _,
+        jQuery: jquery,
         __test__: {
             jQuery: jquery,
             base64: base64,
