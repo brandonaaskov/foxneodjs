@@ -1,12 +1,18 @@
 /*global define, _ */
 
-define(['underscoreloader'], function (_) {
+define([
+    'underscoreloader',
+    'jqueryloader'
+], function (_, jquery) {
     'use strict';
 
     return function () {
-        var _listeners = [];
+        var _listeners = [],
+            _messages = [];
 
         var addListener = function (eventName, callback) {
+            var deferred = new jquery.Deferred();
+
             if (_.isEmpty(eventName) || !_.isString(eventName))
             {
                 return false;
@@ -21,13 +27,14 @@ define(['underscoreloader'], function (_) {
             {
                 _listeners.push({
                     name: eventName,
-                    callback: callback
+                    callback: callback,
+                    deferred: deferred
                 });
 
                 return true;
             }
 
-            return false;
+            return deferred;
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
@@ -45,6 +52,7 @@ define(['underscoreloader'], function (_) {
             {
                 var listeners = _.where(listeners, {name: eventName});
                 _.each(_listeners, function (listener) {
+                    listener.deferred.resolve(event);
                     listener.callback(event);
                 });
             }
@@ -143,6 +151,35 @@ define(['underscoreloader'], function (_) {
             return _listeners;
         };
 
+        var up = function (message, payload) {
+            window.parent.postMessage({
+                name: '@@packageName:' + message,
+                data: payload
+            }, '*');
+        };
+
+        var delivered = function (messageName) {
+            var deferred = new jquery.Deferred();
+
+            _.each(_messages, function (message) {
+                if ('@@packageName:' + messageName === message.eventName)
+                {
+                    deferred.resolve(message);
+                }
+            });
+
+            return deferred;
+        };
+
+        (function init () {
+            window.addEventListener('message', function (event) {
+                _messages.push({
+                    eventName: event.name,
+                    payload: event.data
+                });
+            });
+        })();
+
         return {
             addEventListener: addListener,
             on: addListener,
@@ -150,7 +187,9 @@ define(['underscoreloader'], function (_) {
             getEventListeners: getEventListeners,
             hasEventListener: hasListener,
             removeEventListener: removeListener,
-            removeAllEventListeners: removeAllListeners
+            removeAllEventListeners: removeAllListeners,
+            up: up,
+            delivered: delivered
         };
     };
 });
