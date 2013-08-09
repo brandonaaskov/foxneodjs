@@ -61,8 +61,11 @@ define([
 
         var eventsMap = thePlatform.getEventsMap();
 
+        debug.log('setting up listeners');
+
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
             controller.addEventListener(ovpEventName, function (event) {
+                debug.log('dispatching ovp event', ovpEventName);
                 dispatcher.dispatch(ovpEventName, event);
             });
         });
@@ -74,8 +77,13 @@ define([
         return _pdk;
     };
 
-    var cleanVideoData = function () {
+    var cleanVideoData = function (video) {
+        if (_.isUndefined(video))
+        {
+            throw new Error("The cleanVideoData() received undefined for its only argument");
+        }
 
+        return thePlatform.cleanVideoData(video);
     };
     ////////////////////////////////////////////////
 
@@ -100,7 +108,7 @@ define([
     //////////////////////////////////////////////// Public API
     return {
         version: '@@ovpVersion',
-        addEventListener: dispatcher.addEventListener,
+        on: dispatcher.on,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,

@@ -99,7 +99,6 @@ define(['ovp',
             {
                 player.controller = window.$pdk.bind(attributes.iframePlayerId);
                 ovp.mapEvents(player.controller);
-//                _attachEventListeners(player);
 
                 _players.push(player);
                 debug.log('player bound, listeners added, and added to the stack', _players);
@@ -295,10 +294,6 @@ define(['ovp',
                 if (_.isEqual(key, 'iframePlayerId'))
                 {
                     _insideIframe = true;
-
-//                    _addExternalControllerMetaTag().done(function (event) {
-//                        debug.log('external controller meta tag added');
-//                    });
                 }
             });
 
@@ -478,9 +473,10 @@ define(['ovp',
 
                     ///////////////////////// translate event name and dispatch
                     controller.addEventListener(ovpEventName, function (event) {
-                        debug.log('received: ' + ovpEventName);
-                        debug.log('dispatching: ' + normalizedEventName);
-                        dispatcher.dispatch(normalizedEventName, event);
+//                        debug.log('received: ' + ovpEventName, event.data);
+
+//                        var videoData = (normalizedEventName !== 'playerReady') ? ovp.cleanVideoData(event.data) : {};
+//                        debug.log('dispatching: ' + normalizedEventName, videoData);
                     });
                     /////////////////////////
                 });
@@ -523,17 +519,11 @@ define(['ovp',
         pause: playback.pause,
 
         //event listening
-        addEventListener: dispatcher.addEventListener,
-        on: dispatcher.addEventListener,
+        addEventListener: dispatcher.on,
+        on: dispatcher.on,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
-        removeEventListener: dispatcher.removeEventListener,
-
-        //testing-only api (still public, but please DO NOT USE unless unit testing)
-        __test__: {
-            _processAttributes: _processAttributes,
-            ovp: ovp
-        }
+        removeEventListener: dispatcher.removeEventListener
     };
     ////////////////////////////////////////////////
 });

@@ -11,8 +11,6 @@ define([
             _messages = [];
 
         var addListener = function (eventName, callback) {
-            var deferred = new jquery.Deferred();
-
             if (_.isEmpty(eventName) || !_.isString(eventName))
             {
                 return false;
@@ -23,18 +21,16 @@ define([
                 throw new Error("You can't create an event listener without supplying a callback function");
             }
 
-            if (hasListener(eventName, callback))
-            {
-                _listeners.push({
-                    name: eventName,
-                    callback: callback,
-                    deferred: deferred
-                });
+            var listener = {
+                name: eventName,
+                callback: callback,
+                deferred: new jquery.Deferred()
+            };
 
-                return true;
-            }
+            _listeners.push(listener);
+            window.console.log('listener added', listener);
 
-            return deferred;
+            return listener;
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
@@ -48,20 +44,27 @@ define([
             event.initEvent(name, true, true);
             event.data = data || {};
 
-            if (!dispatchOverWindow)
+            if (dispatchOverWindow)
             {
-                var listeners = _.where(listeners, {name: eventName});
-                _.each(_listeners, function (listener) {
-                    listener.deferred.resolve(event);
-                    listener.callback(event);
-                });
-            }
-            else
-            {
-                window.dispatchEvent(event);
+                return window.dispatchEvent(event);
             }
 
-            return true;
+            window.console.log('EVENT LISTENERS LENGTH: ' + _listeners.length);
+            window.console.log('getEventListeners LENGTH: ' + getEventListeners().length);
+
+            _.each(getEventListeners(), function (listener) {
+                window.console.log('comparison', [name, listener.name]);
+
+                if (name === listener.name)
+                {
+                    listener.deferred.resolve(event);
+                    listener.callback(event);
+
+                    return true;
+                }
+            });
+
+            return false;
         };
 
         var getEventListeners = function (eventName) {
@@ -181,7 +184,6 @@ define([
         })();
 
         return {
-            addEventListener: addListener,
             on: addListener,
             dispatch: dispatch,
             getEventListeners: getEventListeners,

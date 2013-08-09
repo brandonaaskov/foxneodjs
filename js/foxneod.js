@@ -11,10 +11,11 @@ define([
     'base64',
     'cookies',
     'mvpd',
+    'ovp',
     'analytics',
     'underscoreloader',
     'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, ovp, analytics, _, jquery, omnitureloader) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
@@ -86,7 +87,8 @@ define([
         getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatcher: dispatcher,
         dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.addEventListener,
+        on: dispatcher.on,
+        addEventListener: dispatcher.on,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
@@ -94,6 +96,7 @@ define([
         cookies: cookies,
         Debug: Debug,
         mvpd: mvpd,
+        ovp: ovp,
         player: player,
         query: query,
         system: system,
