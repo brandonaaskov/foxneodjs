@@ -53,21 +53,12 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
         }
 
         function _onLoad (event) {
-            debug.log('#2) onload fired');
+            debug.log('onload fired');
             _onloadFired = true;
             _updateDeferred();
         }
 
-        function _onMetaTagExists () {
-//            debug.log('_onMetaTagExists fired');
-//            _metaTagExists = true;
-//            _updateDeferred();
-        }
-
         function _updateDeferred () {
-
-//            if (_metaTagExists && _onloadFired)
-            debug.log('#3) meta tag exists');
             //TODO: this assumes the meta tag in the iframe page, which we obviously can't actually guarantee
             if (_onloadFired)
             {
@@ -126,7 +117,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
                 }
             };
 
-            debug.log('#1) html injected', _playerToCreate);
+            debug.log('html injected', _playerToCreate);
 
             return getReady();
         };
