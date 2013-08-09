@@ -1,8 +1,5 @@
 /*global define */
 
-/**
- * Just provides a safe interface to grab the PDK without having to worry about loading it.
- */
 define([
     'ovp/theplatform',
     'Debug',
@@ -23,20 +20,28 @@ define([
 
     //////////////////////////////////////////////// public methods
     var getController = function () {
+        var deferred = new jquery.Deferred();
+
         _readyDeferred.done(function () {
             if (_.isFunction(_pdk.controller))
             {
-                return _pdk.controller().controller;
+                deferred.resolve(_pdk.controller().controller);
             }
             else if (_.isTrueObject(_pdk.controller))
             {
-                return _pdk.controller;
+                deferred.resolve(_pdk.controller);
+            }
+            else if (!_.isUndefined(window.$pdk) && _.isTrueObject(window.$pdk))
+            {
+                deferred.resolve(window.$pdk.controller);
             }
             else
             {
-                throw new Error("The controller couldn't be found on the PDK object");
+                deferred.reject("The controller couldn't be found on the PDK object");
             }
         });
+
+        return deferred;
     };
 
     var getEventsMap = function () {
@@ -48,20 +53,29 @@ define([
         return _readyDeferred;
     };
 
-    var mapEvents = function (player) {
+    var mapEvents = function (controller) {
+        if (_.isUndefined(controller))
+        {
+            throw new Error("The controller supplied to mapEvents() was either undefined, empty, or not an object");
+        }
+
         var eventsMap = thePlatform.getEventsMap();
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-            getController().addEventListener(ovpEventName, function (event) {
-                debug.log('dispatching... ', [ovpEventName, normalizedEventName]);
-//                dispatcher.dispatch(normalizedEventName, event);
+            controller.addEventListener(ovpEventName, function (event) {
                 dispatcher.dispatch(ovpEventName, event);
             });
         });
+
+        return controller;
     };
 
     var getPDK = function () {
         return _pdk;
+    };
+
+    var cleanVideoData = function () {
+
     };
     ////////////////////////////////////////////////
 
@@ -72,7 +86,7 @@ define([
     (function () {
         pdkwatcher.done(function (pdk) {
             _pdk = pdk;
-            _readyDeferred.resolve();
+            _readyDeferred.resolve(pdk);
 
             debug.log('PDK is now available inside of ovp.js', pdk);
             dispatcher.dispatch('ready', pdk);
@@ -91,12 +105,11 @@ define([
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
         ready: getReady,
-        controller: function () {
-            return getController();
-        },
+        getController: getController,
         pdk: getPDK,
         getEventsMap: getEventsMap,
-        mapEvents: mapEvents
+        mapEvents: mapEvents,
+        cleanVideoData: cleanVideoData
     };
     ////////////////////////////////////////////////
 });

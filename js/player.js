@@ -17,7 +17,6 @@ define(['ovp',
         dispatcher = new Dispatcher(),
         _currentVideo = {},
         _mostRecentAd = {},
-//        _unboundPlayers = [], //players wait in this queue for OVP to be ready
         _players = [],
         _currentPosition,
         _currentPlayer,
@@ -26,31 +25,6 @@ define(['ovp',
         _insideIframe = false;
 
     //////////////////////////////////////////////// private methods...
-    function _addExternalControllerMetaTag () {
-        var attributes = {
-            name: "tp:EnableExternalController",
-            content: "true"
-        };
-
-        //returns a Promise
-        return utils.addToHead('meta', attributes);
-    }
-
-    function _addExternalControllerScriptTag () {
-        var attributes = {
-            type: 'text/javascript',
-            src: '@@ovpAssetsFilePath' + 'pdk/tpPdkController.js'
-        };
-
-        var deferred = utils.addToHead('script', attributes);
-        deferred.done(function () {
-            debug.log('#4) external script controller added');
-        });
-
-        //returns a Promise
-        return deferred;
-    }
-
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
         var attributes = suppliedAttributes || {};
 
@@ -87,10 +61,6 @@ define(['ovp',
         return attributes;
     }
 
-//    function _getUnboundPlayers () {
-//        return _unboundPlayers;
-//    }
-
     function _onLoadReleaseURL (event) {
         debug.log('OnLoadReleaseURL fired', event);
         _currentPlayer.controller.removeEventListener('OnLoadReleaseURL', _onLoadReleaseURL);
@@ -107,93 +77,11 @@ define(['ovp',
             }
         });
     }
-
-    function _addEventListeners () {
-        addEventListener('videoStart', function (event) {
-            debug.log('start', event);
-        });
-
-        addEventListener('videoProgress', function (event) {
-            if (!(event && event.data && _.isDefined(event.data.id) && _.isDefined(event.data.baseClip)))
-            {
-                return;
-            }
-
-            if (event.data.baseClip.isAd)
-            {
-                _mostRecentAd = event.data.baseClip;
-            }
-            else if (_currentVideo.id !== event.data.id)
-            {
-                _currentVideo = event.data.baseClip;
-            }
-        });
-
-        addEventListener('videoEnd', function (event) {
-            debug.log('end');
-        });
-    }
-
-    function _attachEventListeners (player) {
-        var eventsMap = ovp.getEventsMap();
-
-        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-            debug.log('adding ' + ovpEventName + ' and mapping to ' + normalizedEventName);
-
-            player.controller.addEventListener(ovpEventName, function (event) {
-                debug.log(ovpEventName + ' fired - dispatching ' + normalizedEventName + ' internally');
-                dispatcher.dispatch(normalizedEventName, event);
-            });
-        });
-    }
     ////////////////////////////////////////////////
 
 
 
     ////////////////////////////////////////////////  ovp initialize...
-    /**
-     * Once ovp is ready, we want to make sure that we bind each of the remaining players in our _unboundPlayers array
-     * @returns {Promise}
-     */
-//    function _bindRemainingPlayers () {
-//        var unboundPlayers = _getUnboundPlayers(),
-//            deferred = new jquery.Deferred(),
-//            _atLeastOneRemaining = false;
-//
-//        if (!_.isArray(unboundPlayers) || _.isEmpty(unboundPlayers))
-//        {
-//            deferred.reject("There were no players left to bind");
-//        }
-//
-//        debug.log('_bindRemainingPlayers', unboundPlayers);
-//
-//        _.each(unboundPlayers, function (player, index) {
-//            if (_.isUndefined(player.controller) || _.isEmpty(player.controller)) //check for unbound controllers
-//            {
-//                _atLeastOneRemaining = true;
-//                debug.log('#5) sending player to _bindPlayer()', player);
-//                _bindPlayer(player);
-//                debug.log('manually dispatching onload for the iframe', player);
-//                document.getElementById(player.attributes.iframePlayerId).onload();
-//                playback._setController(player.controller);
-//            }
-//        });
-//
-//        if (_atLeastOneRemaining)
-//        {
-//            deferred.resolve(_players);
-//        }
-//        else
-//        {
-//            deferred.reject("All remaining players already had controllers");
-//        }
-//
-//        var logMessage = (!_.isEmpty(_unboundPlayers)) ? 'not all players were able to be bound' : 'all unbound players are now bound';
-//        debug.log(logMessage, _unboundPlayers);
-//
-//        return deferred;
-//    }
-
     /**
      * Right now since we're still using the FDM_Wrapper, the _bindPlayer() method is really only used for iframe players
      *
@@ -210,10 +98,11 @@ define(['ovp',
             if(!_insideIframe)
             {
                 player.controller = window.$pdk.bind(attributes.iframePlayerId);
-                _attachEventListeners(player);
-                _players.push(player);
+                ovp.mapEvents(player.controller);
+//                _attachEventListeners(player);
 
-                debug.log('#6) player bound and added to the stack', _players);
+                _players.push(player);
+                debug.log('player bound, listeners added, and added to the stack', _players);
                 dispatcher.dispatch('playerCreated', player);
 
                 _currentPlayer = player;
@@ -407,48 +296,14 @@ define(['ovp',
                 {
                     _insideIframe = true;
 
-                    _addExternalControllerMetaTag().done(function (event) {
-                        debug.log('external controller meta tag added');
-                    });
+//                    _addExternalControllerMetaTag().done(function (event) {
+//                        debug.log('external controller meta tag added');
+//                    });
                 }
             });
 
             debug.log('PDK logLevel', player.logLevel);
             debug.log('creating player with config', config);
-
-            if (_insideIframe)
-            {
-                setTimeout(function () {
-                    if (!_.isUndefined(window.$pdk.controller))
-                    {
-                        window.$pdk.controller.addEventListener('OnMediaLoadStart', function () {
-                            debugger;
-                        });
-                    }
-                    else
-                    {
-                        debug.warn('window.$pdk.controller was undefined');
-                    }
-
-                    if (!_.isUndefined(_currentPlayer))
-                    {
-                        if (!_.isUndefined(_currentPlayer.controller))
-                        {
-                            _currentPlayer.controller.addEventListener('OnMediaLoadStart', function () {
-                                debugger;
-                            });
-                        }
-                        else
-                        {
-                            debug.warn('_currentPlayer existed, but had no controller');
-                        }
-                    }
-                    else
-                    {
-                        debug.warn('_currentPlayer was undefined');
-                    }
-                }, 3000);
-            }
         }
         catch (error) {
             throw new Error(error);
@@ -574,7 +429,7 @@ define(['ovp',
         var iframePlayer = iframe.create()
             .then(function (player) {
                 iframePlayer = player;
-                return _addExternalControllerScriptTag(); //returns a Promise
+                return; //returns a Promise
             })
             .then(function () {
                 return _bindPlayer(iframePlayer);
@@ -596,6 +451,10 @@ define(['ovp',
 
         return true;
     };
+
+    var isInsideIframe = function () {
+        return _insideIframe;
+    };
     ////////////////////////////////////////////////
 
 
@@ -603,16 +462,32 @@ define(['ovp',
     //////////////////////////////////////////////// init...
     (function init () {
         ovp.ready().done(function () {
-//            _bindRemainingPlayers();
-            _addEventListeners();
-        });
 
-        dispatcher.addEventListener('playerLoad', function () {
-            debugger;
-        });
+            ovp.getController().done(function (controller) {
+                if (!_insideIframe)
+                {
+                    return;
+                }
 
-        dispatcher.addEventListener('videoReady', function () {
-            debugger;
+                ovp.mapEvents(controller);
+
+                var eventsMap = ovp.getEventsMap();
+
+                _.each(eventsMap, function (ovpEventName, normalizedEventName) {
+                    debug.log('adding listener to controller', [ovpEventName, controller]);
+
+                    ///////////////////////// translate event name and dispatch
+                    controller.addEventListener(ovpEventName, function (event) {
+                        debug.log('received: ' + ovpEventName);
+                        debug.log('dispatching: ' + normalizedEventName);
+                        dispatcher.dispatch(normalizedEventName, event);
+                    });
+                    /////////////////////////
+                });
+            }).fail(function (error) {
+                throw new Error(error);
+            });
+
         });
     })();
     ////////////////////////////////////////////////
@@ -638,6 +513,7 @@ define(['ovp',
         getPosition: getCurrentPosition,
         create: createPlayer,
         getPlayers: getPlayers,
+        isInsideIframe: isInsideIframe,
 
         //control methods
         control: control,
