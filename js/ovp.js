@@ -52,9 +52,10 @@ define([
         var eventsMap = thePlatform.getEventsMap();
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-            player.addEventListener(ovpEventName, function (event) {
-                debug.log('dispatching...');
-                dispatcher.dispatch(normalizedEventName, event);
+            getController().addEventListener(ovpEventName, function (event) {
+                debug.log('dispatching... ', [ovpEventName, normalizedEventName]);
+//                dispatcher.dispatch(normalizedEventName, event);
+                dispatcher.dispatch(ovpEventName, event);
             });
         });
     };
