@@ -11,36 +11,146 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
     var defaults = {
         shortname: 'default',
         name: 'Default Player',
-        plugins: [],
-        layout: [{
-            name: 'default layout',
-            type: 'layout',
-            files: [
-                'http://player.foxneodigital.com/fox/flash-layout.xml',
-                'http://player.foxneodigital.com/fox/js-layout.json'
-            ]
-        }, {
-            name: 'live player layout',
-            type: 'layout',
-            files: 'http://player.foxneodigital.com/fox/live-layout.xml'
-        }, {
-            name: 'default skin',
-            type: 'skin',
-            files: 'http://player.foxneodigital.com/fox/flash-skin.swf'
-        }],
-        colors: {
+        plugins: {
+            layout: {
+                type: 'overlay',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/LayoutPlugin.swf'
+            },
+            closedCaption: {
+                type: 'overlay',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/ClosedCaptionPlugin.swf'
+            },
+            endCard: {
+                type: 'overlay',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/EndCardPlugIn.swf',
+                wait: 10
+            },
+            foxUrlSigning: {
+                type: 'signature',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/foxUrlSigningPlugIn.swf'
+            },
+            auth: {
+                type: 'auth',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/pdk/swf/authentication.swf',
+                priority: 3,
+                cookie: 'authToken'
+            },
+            akamai: {
+                type: 'format',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/pdk/swf/akamaiHD.swf',
+                analyticsKeys: ['show', 'season', 'episode', 'fullEpisode'],
+                analyticsValueFields: ['showcode', 'season', 'episode', 'fullEpisode'],
+                priority: 4,
+                hosts: '-f.akamaihd.net',
+                playerId: 'foxcom-1.4.522',
+                analyticsBeacon: 'http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml'
+            },
+            foxComScore: {
+                type: 'Tracking',
+                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/FoxComscorePlugIn.swf',
+                priority: 1,
+                c2: 3005183,
+                c4: 8000000,
+                c6Field: '{comscoreShowId}%7CS{season}E{episode}',
+                trackEachChapter: true
+            },
+            nielsen: {
+                type: 'Tracking',
+                'URL': 'http://player.foxfdm.com/shared/1.4.522/swf/ggtp396.swf',
+                clientid: 'us-800251',
+                vcid: 'c01',
+                sfCode: 'us',
+                category: 0,
+                prod: ['vc', 'iag'],
+                adUrlField: 'fw:adurl',
+                sid: 2500011627,
+                tfid: 1362,
+                adCategory: 'fw:category',
+                adSubCategory: 'fw:subcategory',
+                displayPrefix: 'Season',
+                displayFieldName: 'season'
+            },
+            chartBeat: {
+                type: 'tracking',
+                URL: 'http://static.chartbeat.com/swf/ChartbeatPDK.swf',
+                acctId: 8971,
+                appId: 'video@foxnews.com',
+                priority: 1
+            },
+            conviva: {
+                type: '',
+                priority: 1,
+                customerId: 'c3.FOX',
+                serviceUrl: 'http://livepass.conviva.com',
+                URL: 'http://livepassdl.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX',
+                cdnName: 'AKAMAI',
+                deviceType: 'PC',
+                playerName: 'foxcom-1.4.522',
+                metadataKeys: ['episode', 'fullEpisode', 'genre', 'repeat', 'season', 'showcode'],
+                'playerTag.series': '',
+                'playerTag.playerType': ''
+            },
+            newFreeWheel: {
+                type: 'adcomponent',
+                url: 'http://player.foxfdm.com/shared/1.4.522/pdk/swf/freewheel.swf',
+                pemURLsSeparator: '~',
+                siteSectionId: undefined,
+                isLive: false,
+                customVideoAssetIdField: 'brightcoveId',
+                pemURLs: 'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf',
+                networkId: 116450,
+                siteSectionNetworkId: 116450,
+                keyValues: '',
+                videoAssetNetworkId: 116450,
+                priority: 1,
+                externalCustomVisitor: 'fdmAAMID',
+                autoPlay: true,
+                adManagerUrl: 'http://adm.fwmrm.net/p/fox_live/AdManager.swf',
+                playerProfile: '116450:FDM_Live',
+                callback: 'FDM_Player_OnFreeWheelEvent',
+                extensionName: 'AnalyticsExtension',
+                extensionUrl: 'http://adm.fwmrm.net/p/fox_live/FoxAnalyticsExtension.swf',
+                cb_profile: '116450:FDM_Live',
+                customIdField: 'brightcoveId',
+                serverUrl: 'http://1c6e2.v.fwmrm.net/'
+            }
+        },
+        properties: {
+            supportedMedia: ['mpeg4', 'f4m', 'flv', 'm3u', 'ogg', 'webm', 'mpeg',
+                'qt', '3gpp', 'ism', 'wm', '3gpp2', 'aac', 'asx', 'avi', 'move',
+                'mp3'],
+            releaseUrlFormatResolution: false,
+            logLevel: 'none',
+            enableDynamicSubtitleFonts: true,
+            allowScriptAccess: 'always',
+            previewScrubbing: true,
+            autoplay: true,
+            releaseUrl: 'http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true&policy=19938',
+            width: 640,
+            height: 360
+        },
+        appearance: {
+            skinUrl: 'http://player.foxneodigital.com/fox/flash-skin.swf',
+            layoutUrl: 'http://player.foxfdm.com/fox/config/foxLayout.xml',
+            useBootLoader: true,
             backgroundColor: '#000000',
             controlBackgroundColor: '#000000',
             controlColor: '#FFFFFF',
-            controlHoverColor: '#00b4ff',
+            controlFrameColor: '#E0E0E0',
+            controlHoverColor: '#00B4FF',
             controlSelectedColor: '#000000',
-            disabledColor: '#000000',
-            'fp.bgcolor': '#000000',
-            frameColor: '#000000',
-            playProgressColor: '#00b4ff',
-            textColor: '#BEBEBE',
             loadProgressColor: '#BEBEBE',
-            controlHighlightColor: '#00b4ff'
+            pageBackgroundColor: '#131313',
+            playProgressColor: '#00B4FF',
+            scrubTrackColor: '#131313',
+            scrubberColor: '#F2F2F2',
+            scrubberFrameColor: '#F2F2F2',
+            textBackgroundColor: '#383838',
+            textColor: '#BEBEBE',
+            allowFullscreen: 'true',
+            disabledColor: '#000000',
+            controlHighlightColor: '#00B4FF',
+            useDefaultPlayOverlay: false
         }
     };
 
@@ -54,59 +164,77 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         name: {
             required: true
         },
-        plugins: {},
-        layout: {
+        plugins: {
             required: false,
-            defaults: defaults.layout
+            defaults: {
+                layout: defaults.plugins.layout,
+                closedCaption: defaults.plugins.closedCaption,
+                endCard: defaults.plugins.endCard
+            }
         },
-        colors: {
+        appearance: {
+            skinUrl: {
+                required: false
+            },
+            layoutUrl: {
+                required: false
+            },
+            useBootLoader: {
+                required: false
+            },
             backgroundColor: {
-                required: false,
-                defaults: defaults.colors.backgroundColor
+                required: false
             },
             controlBackgroundColor: {
-                required: false,
-                defaults: defaults.colors.controlBackgroundColor
+                required: false
             },
             controlColor: {
-                required: false,
-                defaults: defaults.colors.controlColor
+                required: false
+            },
+            controlFrameColor: {
+                required: false
             },
             controlHoverColor: {
-                required: false,
-                defaults: defaults.colors.controlHoverColor
+                required: false
             },
             controlSelectedColor: {
-                required: false,
-                defaults: defaults.colors.controlSelectedColor
-            },
-            disabledColor: {
-                required: false,
-                defaults: defaults.colors.disabledColor
-            },
-            'fp.bgcolor': {
-                required: false,
-                defaults: defaults.colors['fp.bgcolor']
-            },
-            frameColor: {
-                required: false,
-                defaults: defaults.colors.frameColor
-            },
-            playProgressColor: {
-                required: false,
-                defaults: defaults.colors.playProgressColor
-            },
-            textColor: {
-                required: false,
-                defaults: defaults.colors.textColor
+                required: false
             },
             loadProgressColor: {
-                required: false,
-                defaults: defaults.colors.loadProgressColor
+                required: false
+            },
+            pageBackgroundColor: {
+                required: false
+            },
+            playProgressColor: {
+                required: false
+            },
+            scrubTrackColor: {
+                required: false
+            },
+            scrubberColor: {
+                required: false
+            },
+            scrubberFrameColor: {
+                required: false
+            },
+            textBackgroundColor: {
+                required: false
+            },
+            textColor: {
+                required: false
+            },
+            allowFullscreen: {
+                required: false
+            },
+            disabledColor: {
+                required: false
             },
             controlHighlightColor: {
-                required: false,
-                defaults: defaults.colors.controlHighlightColor
+                required: false
+            },
+            useDefaultPlayOverlay: {
+                required: false
             }
         }
     };
@@ -115,8 +243,6 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         test: 'assets/config.json',
         ngc: '/config.json'
     };
-
-    var runtimeConfig = {};
 
     var validate = function(config, rules, defaultConfig, failOnError) {
         if (_.isUndefined(config)) {
@@ -138,8 +264,12 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
                     }
                     return;
                 }
-                if (rule.required === false) {
-                    config[key] = defaultConfig[key];
+                if (rule.required === false && rule.defaults) {
+                    if (rule.defaults) {
+                        config[key] = rule.defaults;
+                    } else {
+                        config[key] = defaultConfig[key];
+                    }
                     return;
                 }
                 config[key] = validate(currentSetting, rule, defaultConfig[key]);
@@ -193,7 +323,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         }
 
         if (args.length === 0) {
-            debug.warn('The default config was used because none was supplied.');
+            debug.warn('Configuration settings not provided - Using default config.');
             args = [configData];
         }
 
@@ -217,6 +347,10 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         setConfig.apply(this, args);
 
         return deferred.promise();
+    };
+
+    config.getConfig = function() {
+        return configData;
     };
 
     jquery(window).on('foxneod:ready', function() {
