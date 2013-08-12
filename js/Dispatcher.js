@@ -49,9 +49,6 @@ define([
                 return window.dispatchEvent(event);
             }
 
-            window.console.log('EVENT LISTENERS LENGTH: ' + _listeners.length);
-            window.console.log('getEventListeners LENGTH: ' + getEventListeners().length);
-
             _.each(getEventListeners(), function (listener) {
                 window.console.log('comparison', [name, listener.name]);
 
