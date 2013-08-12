@@ -6,7 +6,7 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
     var debug = new Debug('playback'),
         _controller; //TODO: refactor how this is set and used
 
-    var _setController = function (controller) {
+    var setController = function (controller) {
         _controller = controller;
     };
 
@@ -54,7 +54,7 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
 
     //public api
     return {
-        _setController: _setController,
+        setController: setController,
         seekTo: seekTo,
         play: play,
         pause: pause

@@ -19,7 +19,7 @@ define(['ovp',
         _mostRecentAd = {},
         _players = [],
         _currentPosition,
-        _currentPlayer,
+        _currentPlayer = {},//TODO replace with Player object/class/module
         _promisesQueue = [],
         _playerIndex = 0,
         _insideIframe = false;
@@ -68,7 +68,6 @@ define(['ovp',
         _.each(_promisesQueue, function (promiseDeets) {
             debug.log('promiseDeets', promiseDeets);
 
-            debugger;
             promiseDeets.deferred.resolve(event);
 
             if (_.isFunction(promiseDeets.callback))
@@ -76,6 +75,16 @@ define(['ovp',
                 promiseDeets.callback(promiseDeets.deferred);
             }
         });
+    }
+
+    function _setCurrentPlayer (player) {
+        if (_.isUndefined(player) || !_.isTrueObject(player) || _.isUndefined(player.controller) || _.isEmpty(player.controller))
+        {
+            throw new Error("_setCurrentPlayer() expects a valid player object (with a valid controller property)");
+        }
+
+        _currentPlayer = player;
+        playback.setController(player.controller);
     }
     ////////////////////////////////////////////////
 
@@ -104,7 +113,7 @@ define(['ovp',
                 debug.log('player bound, listeners added, and added to the stack', _players);
                 dispatcher.dispatch('playerCreated', player);
 
-                _currentPlayer = player;
+                _setCurrentPlayer(player);
                 deferred.resolve(player);
             }
         });
@@ -286,6 +295,11 @@ define(['ovp',
 
             window['player'] = config;
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
+
+            ovp.ready().done(function (pdk) {
+                _currentPlayer.controller = pdk.controller;
+                _setCurrentPlayer(_currentPlayer);
+            });
 
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
