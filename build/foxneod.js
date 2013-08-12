@@ -6666,9 +6666,10 @@ define('utils',['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dis
             return false;
         }
 
-        var urlRegex = /^(https?:\/\/)?(www)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
+        var urlRegex = /^(https?:\/\/)?(www)?([\da-z\.-]+)\.([a-z\.]{2,6})?(:[0-9]{1,5})?([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
+        var localRegex = /^(https?:\/\/)?(localhost|[\da-z\.-]+\.local)(:[\d]{1,5})?([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
 
-        return urlRegex.test(url);
+        return urlRegex.test(url) || localRegex.test(url);
     };
 
     /**
@@ -9249,10 +9250,13 @@ define('player',['ovp',
 });
 /*global define */
 
-define('Config',['underscoreloader', 'jqueryloader', 'Debug'], function(_, jquery, Debug) {
+define('config',['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquery, Debug, utils) {
     
 
     var debug = new Debug('config');
+
+    var timeoutDuration = 3000;
+    var configTimeout;
 
     var defaults = {
         shortname: 'default',
@@ -9289,6 +9293,8 @@ define('Config',['underscoreloader', 'jqueryloader', 'Debug'], function(_, jquer
             controlHighlightColor: '#00b4ff'
         }
     };
+
+    var configData = jquery.extend({}, defaults);
 
     var validationRules = {
         shortname: {
@@ -9356,31 +9362,37 @@ define('Config',['underscoreloader', 'jqueryloader', 'Debug'], function(_, jquer
     };
 
     var presets = {
+        test: 'assets/config.json',
         ngc: '/config.json'
     };
 
     var runtimeConfig = {};
 
-    var validate = function(config, rules, defaultRules) {
+    var validate = function(config, rules, defaultConfig, failOnError) {
         if (_.isUndefined(config)) {
-            return defaultRules;
+            return defaultConfig;
         }
 
         _.each(rules, function(rule, key) {
-            var setting = config[key];
-            if (_.isObject(setting)) {
-                config[key] = validate(setting, rule, defaultRules[key]);
+            var currentSetting = config[key];
+            if (_.isObject(currentSetting)) {
+                config[key] = validate(currentSetting, rule, defaultConfig[key]);
                 return;
             }
-            if (_.isUndefined(setting)) {
+            if (_.isUndefined(currentSetting)) {
                 if (rule.required === true) {
-                    throw new Error('Required configuration setting "' + key + '" is not provided.');
-                }
-                if (rule.required === false) {
-                    config[key] = defaultRules[key];
+                    var message = 'Required configuration setting "' + key + '" is not provided.';
+                    debug.warn(message);
+                    if (failOnError) {
+                        throw new Error(message);
+                    }
                     return;
                 }
-                config[key] = validate(setting, rule, defaultRules[key]);
+                if (rule.required === false) {
+                    config[key] = defaultConfig[key];
+                    return;
+                }
+                config[key] = validate(currentSetting, rule, defaultConfig[key]);
             }
         });
         return config;
@@ -9393,36 +9405,78 @@ define('Config',['underscoreloader', 'jqueryloader', 'Debug'], function(_, jquer
             return deferred.promise();
         }
 
-        debug.log('looking up config', overrides);
-        return jquery.ajax({
-            type: 'get',
-            url: presets[overrides] || overrides,
-            dataType: 'json'
-        });
-    };
-
-    var configure = function(config) {
-
-    };
-
-    return function(overrides) {
-        var deferred = jquery.Deferred();
-
-        if (_.isUndefined(overrides)) {
-            debug.warn('The default config was used because none was supplied');
-            overrides = defaults;
+        debug.log('looking up config "' + overrides + '"');
+        if (_.isString(overrides) && !utils.isURL(overrides)) {
+            if (_.isUndefined(presets[overrides])) {
+                var message = 'Bad network shortname lookup: ' + overrides;
+                debug.error(message);
+                return deferred.reject(message);
+            }
+            overrides = presets[overrides];
         }
-
-        lookup(overrides).done(function(config) {
-            configure(validate(config, validationRules, defaults));
-            debug.log('config', config);
-            deferred.resolve();
-        }).fail(function() {
-            deferred.reject.apply(deferred, Array.prototype.slice.call(arguments));
-        });
+        debug.log('lookup URL: "' + overrides + '"');
+        jquery.ajax({
+            type: 'get',
+            url: overrides,
+            dataType: 'json'
+        }).done(deferred.resolve).fail(deferred.reject);
 
         return deferred.promise();
     };
+
+    var configurePlayer = function(config) {
+
+    };
+
+    var reset = function() {
+        configData = jquery.extend({}, defaults);
+    };
+
+    var config = function() {
+        var args = Array.prototype.slice.call(arguments, 0);
+        var deferred = jquery.Deferred();
+
+        reset();
+
+        if (configTimeout) {
+            window.clearTimeout(configTimeout);
+        }
+
+        if (args.length === 0) {
+            debug.warn('The default config was used because none was supplied.');
+            args = [configData];
+        }
+
+        var firstArg = true;
+        var setConfig = function() {
+            var self = this;
+            var args = Array.prototype.slice.call(arguments, 0);
+            var data = args.shift();
+            lookup(data).done(function(data) {
+                configData = validate(data, validationRules, configData, firstArg);
+                firstArg = false;
+                if (args.length === 0) {
+                    return deferred.resolve(configData);
+                }
+                setConfig.apply(self, args);
+            }).fail(function() {
+                deferred.reject.apply(deferred, args);
+            });
+        };
+
+        setConfig.apply(this, args);
+
+        return deferred.promise();
+    };
+
+    jquery(window).on('foxneod:ready', function() {
+        configTimeout = window.setTimeout(function() {
+            debug.warn('config not set after ' + timeoutDuration + 'ms. Using default config.');
+            config();
+        }, timeoutDuration);
+    });
+
+    return config;
 });
 
 /*global define, _ */
@@ -10320,7 +10374,7 @@ define('foxneod',[
     'polyfills',
     'utils',
     'player',
-    'Config',
+    'config',
     'query',
     'system',
     'base64',
@@ -10329,11 +10383,11 @@ define('foxneod',[
     'analytics',
     'underscoreloader',
     'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, Config, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
     
 
     //////////////////////////////////////////////// instance variables
-    var buildTimestamp = '2013-08-08 06:08:22';
+    var buildTimestamp = '2013-08-12 02:08:08';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     ////////////////////////////////////////////////
@@ -10386,7 +10440,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-08 06:08:22)');
+        debug.log('ready (build date: 2013-08-12 02:08:08)');
 
         _messageUnsupportedUsers();
     };
@@ -10396,7 +10450,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-08 06:08:22',
+        buildDate: '2013-08-12 02:08:08',
         packageName: 'foxneod',
         version: '0.7.5',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
@@ -10410,7 +10464,7 @@ define('foxneod',[
         Debug: Debug,
         mvpd: mvpd,
         player: player,
-        Config: Config,
+        config: config,
         query: query,
         system: system,
         utils: utils,
