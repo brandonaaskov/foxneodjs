@@ -9548,7 +9548,7 @@ define('config',['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function
         jquery.ajax({
             type: 'get',
             url: overrides,
-            dataType: 'json'
+            dataType: 'jsonp'
         }).done(deferred.resolve).fail(deferred.reject);
 
         return deferred.promise();
@@ -10521,7 +10521,7 @@ define('foxneod',[
     
 
     //////////////////////////////////////////////// instance variables
-    var buildTimestamp = '2013-08-12 05:08:00';
+    var buildTimestamp = '2013-08-13 11:08:47';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     ////////////////////////////////////////////////
@@ -10574,7 +10574,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-12 05:08:00)');
+        debug.log('ready (build date: 2013-08-13 11:08:47)');
 
         _messageUnsupportedUsers();
     };
@@ -10584,7 +10584,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-12 05:08:00',
+        buildDate: '2013-08-13 11:08:47',
         packageName: 'foxneod',
         version: '0.7.5',
         getOmnitureLibraryReady: getOmnitureLibraryReady,
