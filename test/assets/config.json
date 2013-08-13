@@ -1,0 +1,35 @@
+{
+    "shortname": "test",
+    "name": "test player",
+    "plugins": [],
+    "layout": [{
+        "name": "test layout",
+        "type": "layout",
+        "files": [
+            "http://player.foxneodigital.com/fox/flash-layout.xml",
+            "http://player.foxneodigital.com/fox/js-layout.json"
+        ]
+    }, {
+        "name": "test live player layout",
+        "type": "layout",
+        "files": "http://player.foxneodigital.com/fox/live-layout.xml"
+    }, {
+        "name": "test skin",
+        "type": "skin",
+        "files": "http://player.foxneodigital.com/fox/flash-skin.swf"
+    }],
+    "colors": {
+        "backgroundColor": "#000000",
+        "controlBackgroundColor": "#000000",
+        "controlColor": "#FFFFFF",
+        "controlHoverColor": "#00b4ff",
+        "controlSelectedColor": "#000000",
+        "disabledColor": "#000000",
+        "fp.bgcolor": "#000000",
+        "frameColor": "#000000",
+        "playProgressColor": "#00b4ff",
+        "textColor": "#BEBEBE",
+        "loadProgressColor": "#BEBEBE",
+        "controlHighlightColor": "#00b4ff"
+    }
+}

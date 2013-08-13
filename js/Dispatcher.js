@@ -6,10 +6,10 @@ define([
 ], function (_, jquery) {
     'use strict';
 
-    return function () {
-        var _listeners = [],
-            _messages = [];
+    var _listeners = [],
+        _messages = [];
 
+    return function () {
         var addListener = function (eventName, callback) {
             if (_.isEmpty(eventName) || !_.isString(eventName))
             {
@@ -46,7 +46,14 @@ define([
 
             if (dispatchOverWindow)
             {
-                return window.dispatchEvent(event);
+                var listeners = _.where(_listeners, {name: eventName});
+                _.each(listeners, function (listener) {
+                    listener.callback(event);
+                });
+            }
+            else
+            {
+                window.dispatchEvent(event);
             }
 
             _.each(getEventListeners(), function (listener) {
@@ -187,6 +194,8 @@ define([
             hasEventListener: hasListener,
             removeEventListener: removeListener,
             removeAllEventListeners: removeAllListeners,
+
+            //postMessage methods
             up: up,
             delivered: delivered
         };

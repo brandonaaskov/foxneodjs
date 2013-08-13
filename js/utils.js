@@ -168,9 +168,10 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             return false;
         }
 
-        var urlRegex = /^(https?:\/\/)?(www)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
+        var urlRegex = /^(https?:\/\/)?(www)?([\da-z\.-]+)\.([a-z\.]{2,6})?(:[0-9]{1,5})?([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
+        var localRegex = /^(https?:\/\/)?(localhost|[\da-z\.-]+\.local)(:[\d]{1,5})?([\/\w \.-]*)*\/?[^?]+(?:\?([^&]+).*)?$/;
 
-        return urlRegex.test(url);
+        return urlRegex.test(url) || localRegex.test(url);
     };
 
     /**

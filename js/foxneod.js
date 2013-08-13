@@ -6,6 +6,7 @@ define([
     'polyfills',
     'utils',
     'player',
+    'config',
     'query',
     'system',
     'base64',
@@ -15,7 +16,7 @@ define([
     'analytics',
     'underscoreloader',
     'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, ovp, analytics, _, jquery, omnitureloader) {
+    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, cookies, mvpd, ovp, analytics, _, jquery, omnitureloader) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
@@ -98,6 +99,7 @@ define([
         mvpd: mvpd,
         ovp: ovp,
         player: player,
+        config: config,
         query: query,
         system: system,
         utils: utils,
