@@ -6376,9 +6376,9 @@ define('underscoreloader',['lib/underscore/lodash'], function () {
 define('Dispatcher',['underscoreloader'], function (_) {
     
 
-    return function () {
-        var _listeners = [];
+    var _listeners = [];
 
+    return function () {
         var addListener = function (eventName, callback) {
             if (_.isEmpty(eventName) || !_.isString(eventName))
             {
@@ -6411,8 +6411,8 @@ define('Dispatcher',['underscoreloader'], function (_) {
 
             if (!dispatchOverWindow)
             {
-                var listeners = _.where(listeners, {name: eventName});
-                _.each(_listeners, function (listener) {
+                var listeners = _.where(_listeners, {name: eventName});
+                _.each(listeners, function (listener) {
                     listener.callback(event);
                 });
             }
@@ -9548,7 +9548,7 @@ define('config',['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function
         jquery.ajax({
             type: 'get',
             url: overrides,
-            dataType: 'json'
+            dataType: 'jsonp'
         }).done(deferred.resolve).fail(deferred.reject);
 
         return deferred.promise();
@@ -10521,7 +10521,7 @@ define('foxneod',[
     
 
     //////////////////////////////////////////////// instance variables
-    var buildTimestamp = '2013-08-12 05:08:00';
+    var buildTimestamp = '2013-08-13 11:08:30';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     ////////////////////////////////////////////////
@@ -10574,7 +10574,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-12 05:08:00)');
+        debug.log('ready (build date: 2013-08-13 11:08:30)');
 
         _messageUnsupportedUsers();
     };
@@ -10584,7 +10584,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-12 05:08:00',
+        buildDate: '2013-08-13 11:08:30',
         packageName: 'foxneod',
         version: '0.7.5',
         getOmnitureLibraryReady: getOmnitureLibraryReady,

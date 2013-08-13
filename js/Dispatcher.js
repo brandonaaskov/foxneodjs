@@ -3,9 +3,9 @@
 define(['underscoreloader'], function (_) {
     'use strict';
 
-    return function () {
-        var _listeners = [];
+    var _listeners = [];
 
+    return function () {
         var addListener = function (eventName, callback) {
             if (_.isEmpty(eventName) || !_.isString(eventName))
             {
@@ -38,8 +38,8 @@ define(['underscoreloader'], function (_) {
 
             if (!dispatchOverWindow)
             {
-                var listeners = _.where(listeners, {name: eventName});
-                _.each(_listeners, function (listener) {
+                var listeners = _.where(_listeners, {name: eventName});
+                _.each(listeners, function (listener) {
                     listener.callback(event);
                 });
             }
