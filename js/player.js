@@ -61,22 +61,6 @@ define(['ovp',
         return attributes;
     }
 
-    function _onLoadReleaseURL (event) {
-        debug.log('OnLoadReleaseURL fired', event);
-        _currentPlayer.controller.removeEventListener('OnLoadReleaseURL', _onLoadReleaseURL);
-
-        _.each(_promisesQueue, function (promiseDeets) {
-            debug.log('promiseDeets', promiseDeets);
-
-            promiseDeets.deferred.resolve(event);
-
-            if (_.isFunction(promiseDeets.callback))
-            {
-                promiseDeets.callback(promiseDeets.deferred);
-            }
-        });
-    }
-
     function _setCurrentPlayer (player) {
         if (_.isUndefined(player) || !_.isTrueObject(player) || _.isUndefined(player.controller) || _.isEmpty(player.controller))
         {
@@ -235,10 +219,23 @@ define(['ovp',
         });
 
         //////////////////////////////////////////////// load...
-        _currentPlayer.controller.addEventListener('OnLoadReleaseUrl', _onLoadReleaseURL);
+        ovp.on('OnLoadReleaseUrl', function (event) {
+            debug.log('OnLoadReleaseURL fired', event);
+
+            _.each(_promisesQueue, function (promiseInfo) {
+                debug.log('promiseDeets', promiseInfo);
+
+                promiseInfo.deferred.resolve(event);
+
+                if (_.isFunction(promiseInfo.callback))
+                {
+                    promiseInfo.callback(promiseInfo.deferred);
+                }
+            });
+        });
 
         debug.log('calling loadReleaseURL()', releaseURLOrId);
-        _currentPlayer.controller.loadReleaseURL(releaseURLOrId, true);
+        getController().loadReleaseURL(releaseURLOrId, true);
         ////////////////////////////////////////////////
 
         return deferred;
