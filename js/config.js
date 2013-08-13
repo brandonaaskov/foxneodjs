@@ -298,7 +298,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         jquery.ajax({
             type: 'get',
             url: overrides,
-            dataType: 'json'
+            dataType: 'jsonp'
         }).done(deferred.resolve).fail(deferred.reject);
 
         return deferred.promise();
