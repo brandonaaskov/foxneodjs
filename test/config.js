@@ -165,5 +165,19 @@ suite('config', function() {
                 done();
             }
         });
+
+        test('should override existing properties with new ones', function(done) {
+            $f.config({
+                name: 'test-a'
+            }, {
+                name: 'test-b'
+            }).done(function(data) {
+                assert.strictEqual(data.name, 'Default Player');
+                done();
+            }).fail(function() {
+                assert.fail(null, null, 'Validation failed');
+                done();
+            });
+        });
     });
 });

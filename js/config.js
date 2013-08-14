@@ -1,14 +1,21 @@
 /*global define */
 
-define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquery, Debug, utils) {
+define([
+    'underscoreloader',
+    'jqueryloader',
+    'Debug',
+    'utils',
+    'Dispatcher'], function(_, jquery, Debug, utils, Dispatcher) {
     'use strict';
 
     var debug = new Debug('config');
+    var dispatcher = new Dispatcher();
 
     var timeoutDuration = 3000;
     var configTimeout;
 
     var defaults = {
+        version: '1.4.5.27',
         shortname: 'default',
         name: 'Default Player',
         plugins: {
@@ -129,28 +136,52 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
             width: 640,
             height: 360
         },
-        appearance: {
-            skinUrl: 'http://player.foxneodigital.com/fox/flash-skin.swf',
-            layoutUrl: 'http://player.foxfdm.com/fox/config/foxLayout.xml',
-            useBootLoader: true,
-            backgroundColor: '#000000',
-            controlBackgroundColor: '#000000',
-            controlColor: '#FFFFFF',
-            controlFrameColor: '#E0E0E0',
-            controlHoverColor: '#00B4FF',
-            controlSelectedColor: '#000000',
-            loadProgressColor: '#BEBEBE',
-            pageBackgroundColor: '#131313',
-            playProgressColor: '#00B4FF',
-            scrubTrackColor: '#131313',
-            scrubberColor: '#F2F2F2',
-            scrubberFrameColor: '#F2F2F2',
-            textBackgroundColor: '#383838',
-            textColor: '#BEBEBE',
-            allowFullscreen: 'true',
-            disabledColor: '#000000',
-            controlHighlightColor: '#00B4FF',
-            useDefaultPlayOverlay: false
+        layouts: {
+            // Supported layout keys:
+            // - swfSkinURL
+            // - jsSkinURL
+            // - defaultLayoutUrl
+            // - liveLayoutUrl
+            // - dvrLayoutUrl
+            // - dvrLiveLayoutUrl
+            // - html5LayoutUrl
+            swfSkinURL: '/fox/swf/skinFox.swf',
+            jsSkinURL: '/fox/config/fox.json',
+            defaultLayoutUrl: '/fox/config/foxLayout.xml',
+            liveLayoutUrl: '/fox/config/liveLayout.xml',
+            dvrLayoutUrl: '/fox/config/dvrLayout.xml',
+            dvrLiveLayoutUrl: '/fox/config/dvrLiveLayout.xml',
+            html5LayoutUrl: '/fox/config/html5Layout.xml',
+            play_overlay_x_offset: '50',
+            play_overlay_y_offset: '50'
+        },
+        colors: {
+            // Color format is like HTML hex but preceeded by '0x' instead of '#'
+            // Supported color keys:
+            // - backgroundColor
+            // - controlBackgroundColor
+            // - controlColor
+            // - controlHoverColor
+            // - controlSelectedColor
+            // - disabledColor
+            // - fp_bgcolor
+            // - frameColor
+            // - playProgressColor
+            // - textColor
+            // - loadProgressColor
+            // - controlHighlightColor
+            backgroundColor: '0x000000',
+            controlBackgroundColor: '0x000000',
+            controlColor: '0xFFFFFF',
+            controlHoverColor: '0x00B4FF',
+            controlSelectedColor: '0x000000',
+            disabledColor: '0x000000',
+            fp_bgcolor: '0x000000',
+            frameColor: '0x000000',
+            playProgressColor: '0x00B4FF',
+            textColor: '0xBEBEBE',
+            loadProgressColor: '0xBEBEBE',
+            controlHighlightColor:'0x00B4FF'
         }
     };
 
@@ -329,10 +360,6 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         return deferred.promise();
     };
 
-    var configurePlayer = function(config) {
-
-    };
-
     var reset = function() {
         configData = jquery.extend({}, defaults);
     };
@@ -361,6 +388,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
                 configData = validate(data, validationRules, configData, firstArg);
                 firstArg = false;
                 if (args.length === 0) {
+                    dispatcher.dispatch('config', true, true);
                     return deferred.resolve(configData);
                 }
                 setConfig.apply(self, args);
