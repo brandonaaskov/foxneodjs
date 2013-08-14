@@ -244,6 +244,31 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         ngc: '/config.json'
     };
 
+    /**
+     *  Validates and merges config data.
+     *  Validation rules are based on the validationRules above. The validate
+     *  function ensures that each field in the config is valid. If a field is
+     *  determined to be valid, it will merge the field/value into the config.
+     *  If the field is not valid, it will not be merged and a warning will be
+     *  issued to the console. If the failOnError flag is set and a field is not
+     *  valid, an error will be thrown. If a field is not specified and isn't
+     *  required, the default value will be used. Default the default config is
+     *  defined in the defaults object above.
+     *  @param config The configuration data to be validated. This should be an
+     *      object. Nested properties are supported.
+     *  @param rules The validation rules to be used when validating the config.
+     *      the rules should correspond to each property of the config. Nested
+     *      properties are supported, but each "leaf" property must specify a
+     *      set of rules.
+     *  @param defaultConfig The configuration properties that will be used if
+     *      not overridden or if a specified property is not valid.
+     *  @param failOnError Flag to determine whether to throw an error when an
+     *      invalid config parameter is provided. If set, a warning will be
+     *      issued to the console and an error will be thrown, halting execution.
+     *      If not set, a warning will be issued to the console and the default
+     *      or existing value will be used.
+     *  @return The config properties.
+     */
     var validate = function(config, rules, defaultConfig, failOnError) {
         if (_.isUndefined(config)) {
             return defaultConfig;
@@ -252,7 +277,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         _.each(rules, function(rule, key) {
             var currentSetting = config[key];
             if (_.isObject(currentSetting)) {
-                config[key] = validate(currentSetting, rule, defaultConfig[key]);
+                config[key] = validate(currentSetting, rule, defaultConfig[key], failOnError);
                 return;
             }
             if (_.isUndefined(currentSetting)) {
@@ -272,7 +297,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
                     }
                     return;
                 }
-                config[key] = validate(currentSetting, rule, defaultConfig[key]);
+                config[key] = validate(currentSetting, rule, defaultConfig[key], failOnError);
             }
         });
         return config;
