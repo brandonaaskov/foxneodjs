@@ -41,13 +41,13 @@ define(['Debug', 'Dispatcher', 'underscoreloader'], function (Debug, Dispatcher,
         if (added(eventName.split('Ready')[0]))
         {
             debug.log('polyfill already added, just dispatching', eventName);
-            dispatcher.addEventListener(eventName, callback);
+            dispatcher.on(eventName, callback);
             dispatcher.dispatch(eventName);
         }
         else
         {
             debug.log('polyfill not already added');
-            dispatcher.addEventListener(eventName, callback);
+            dispatcher.on(eventName, callback);
         }
     };
 

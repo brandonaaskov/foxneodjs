@@ -745,7 +745,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         setURL: setURL,
         getURL: getURL,
         dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.addEventListener,
+        addEventListener: dispatcher.on,
         removeEventListener: dispatcher.removeEventListener
     };
 });

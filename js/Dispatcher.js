@@ -28,7 +28,6 @@ define([
             };
 
             _listeners.push(listener);
-            window.console.log('listener added', listener);
 
             return listener;
         };
@@ -44,29 +43,23 @@ define([
             event.initEvent(name, true, true);
             event.data = data || {};
 
-            if (dispatchOverWindow)
+            if (!dispatchOverWindow)
             {
                 var listeners = _.where(_listeners, {name: eventName});
+
                 _.each(listeners, function (listener) {
+                    listener.deferred.resolve(event);
                     listener.callback(event);
                 });
+
+                return true;
             }
             else
             {
                 window.dispatchEvent(event);
+
+                return true;
             }
-
-            _.each(getEventListeners(), function (listener) {
-                window.console.log('comparison', [name, listener.name]);
-
-                if (name === listener.name)
-                {
-                    listener.deferred.resolve(event);
-                    listener.callback(event);
-
-                    return true;
-                }
-            });
 
             return false;
         };

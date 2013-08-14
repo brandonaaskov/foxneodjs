@@ -139,7 +139,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
         return {
             create: create,
             getReady: getReady,
-            addEventListener: dispatcher.addEventListener,
+            addEventListener: dispatcher.on,
             getEventListeners: dispatcher.getEventListeners,
             hasEventListener: dispatcher.hasEventListener,
             removeEventListener: dispatcher.removeEventListener

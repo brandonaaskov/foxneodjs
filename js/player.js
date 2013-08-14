@@ -470,11 +470,7 @@ define(['ovp',
         ovp.ready().done(function () {
 
             ovp.getController().done(function (controller) {
-                if (!_insideIframe)
-                {
-                    return;
-                }
-
+                debug.log('mapping events to controller', controller);
                 ovp.mapEvents(controller);
 
                 var eventsMap = ovp.getEventsMap();
