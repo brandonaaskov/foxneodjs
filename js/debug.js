@@ -26,12 +26,13 @@
  *
  */
 define([
-    'require',
-    'lodash'
-], function (require, _) {
+    'lodash',
+    'require'
+], function (_, require) {
     'use strict';
 
-    var utils = require('utils'),
+    var utils,
+        storage,
         console = window.console,
         _debugModes = [];
 
@@ -60,7 +61,7 @@ define([
         //-------------------------------------- /validation
 
 
-        var prefix = '@@packageName-@@version:';
+        var prefix = '@@packageName-@@version';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -106,6 +107,11 @@ define([
 
                 if (_.isEqual(mode, category.toLocaleLowerCase()) || _.isEqual(mode, 'all'))
                 {
+                    if (storage.now().get('insideIframe') && prefix.indexOf('(iframe)') === -1)
+                    {
+                        prefix += ' (iframe)';
+                    }
+
                     console[logLevel](prefix + ': ' + category + ': ' + options.message, options.data || '');
                     lastUsedOptions = _.clone(options);
                 }
@@ -117,6 +123,9 @@ define([
         };
 
         (function init () {
+            utils = require('utils');
+            storage = require('storage');
+
             var queryParam = utils.getParamValue('debug');
 
             var splitThatShit = function (queryParams) {
