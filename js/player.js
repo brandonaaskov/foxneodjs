@@ -84,7 +84,7 @@ define([
                 }
 
                 var video = event.data.baseClip;
-                var cleanData = _cleanData(video);
+                var cleanData = _cleanEventData(video);
 
                 switch (ovpEventName)
                 {
@@ -106,7 +106,7 @@ define([
         });
     }
 
-    function _cleanData (video) {
+    function _cleanEventData (video) {
         var cleanData = {
             title: video.title,
             url: video.URL,

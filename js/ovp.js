@@ -83,13 +83,15 @@ define([
         return controller;
     };
 
-    var cleanVideoData = function (video) {
-        if (_.isUndefined(video))
+    var cleanEventData = function (event) {
+        if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
         {
-            throw new Error("The cleanVideoData() received undefined for its only argument");
+            return;
         }
 
-        return thePlatform.cleanVideoData(video);
+        var video = event.data.baseClip;
+
+        return thePlatform.cleanEventData(video);
     };
     ////////////////////////////////////////////////
 
@@ -120,7 +122,7 @@ define([
         pdk: getReady,
         getEventsMap: getEventsMap,
         mapEvents: mapEvents,
-        cleanVideoData: cleanVideoData
+        cleanEventData: cleanEventData
     };
     ////////////////////////////////////////////////
 });

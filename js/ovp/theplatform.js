@@ -47,7 +47,7 @@ define([
         return _eventsMap;
     };
 
-    var cleanVideoData = function (video) {
+    var cleanEventData = function (video) {
         //validation happens at the ovp.js level
 
         return;
@@ -85,7 +85,7 @@ define([
     //////////////////////////////////////////////// public api
     return {
         getEventsMap: getEventsMap,
-        cleanVideoData: cleanVideoData
+        cleanEventData: cleanEventData
     };
     ////////////////////////////////////////////////
 });
