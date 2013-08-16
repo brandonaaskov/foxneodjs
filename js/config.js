@@ -1,6 +1,11 @@
 /*global define */
 
-define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquery, Debug, utils) {
+define([
+    'lodash',
+    'jquery',
+    'Debug',
+    'utils'
+], function(_, $, Debug, utils) {
     'use strict';
 
     var debug = new Debug('config');
@@ -154,7 +159,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         }
     };
 
-    var configData = jquery.extend({}, defaults);
+    var configData = $.extend({}, defaults);
 
     var validationRules = {
         shortname: {
@@ -304,7 +309,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
     };
 
     var lookup = function(overrides) {
-        var deferred = jquery.Deferred();
+        var deferred = $.Deferred();
         if (_.isObject(overrides)) {
             deferred.resolve(overrides);
             return deferred.promise();
@@ -320,7 +325,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
             overrides = presets[overrides];
         }
         debug.log('lookup URL: "' + overrides + '"');
-        jquery.ajax({
+        $.ajax({
             type: 'get',
             url: overrides,
             dataType: 'jsonp'
@@ -334,12 +339,12 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
     };
 
     var reset = function() {
-        configData = jquery.extend({}, defaults);
+        configData = $.extend({}, defaults);
     };
 
     var config = function() {
         var args = Array.prototype.slice.call(arguments, 0);
-        var deferred = jquery.Deferred();
+        var deferred = $.Deferred();
 
         reset();
 
@@ -378,7 +383,7 @@ define(['underscoreloader', 'jqueryloader', 'Debug', 'utils'], function(_, jquer
         return configData;
     };
 
-    jquery(window).on('foxneod:ready', function() {
+    $(window).on('foxneod:ready', function() {
         configTimeout = window.setTimeout(function() {
             debug.warn('config not set after ' + timeoutDuration + 'ms. Using default config.');
             config();

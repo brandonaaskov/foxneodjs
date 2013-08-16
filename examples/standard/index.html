@@ -8,7 +8,11 @@
         window.addEventListener('foxneod:ready', function () {
             foxneod.player.create('#player', {
                 releaseURL: "http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true"
-            })
+            });
+
+            foxneod.player.on('videoStart', function (event) {
+                console.log('videoStart', event);
+            });
         });
     </script>
 

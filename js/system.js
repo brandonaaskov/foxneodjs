@@ -1,6 +1,10 @@
 /*global define */
 
-define(['UAParser', 'Debug', 'underscoreloader'], function (UAParser, Debug, _) {
+define([
+    'UAParser',
+    'Debug',
+    'lodash'
+], function (UAParser, Debug, _) {
     'use strict';
 
     var uaparser = new UAParser();

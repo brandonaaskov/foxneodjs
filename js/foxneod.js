@@ -1,6 +1,8 @@
 /*global define */
 
 define([
+    'lodash',
+    'jquery',
     'Dispatcher',
     'Debug',
     'polyfills',
@@ -10,13 +12,11 @@ define([
     'query',
     'system',
     'base64',
-    'cookies',
     'mvpd',
     'ovp',
     'analytics',
-    'underscoreloader',
-    'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, cookies, mvpd, ovp, analytics, _, jquery, omnitureloader) {
+    'storage'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, analytics, storage) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
@@ -28,15 +28,19 @@ define([
 
 
     //////////////////////////////////////////////// public methods
-    var getOmnitureLibraryReady = function (account) {
-        return omnitureloader.getOmnitureLibrary(account);
-    };
     ////////////////////////////////////////////////
 
 
 
 
     //////////////////////////////////////////////// private methods
+    function _patchIE8Problems () {
+        if (!_.has(window, 'addEventListener') && _.has(window, 'attachEvent'))
+        {
+            window.addEventListener = window.attachEvent;
+        }
+    }
+
     function _messageUnsupportedUsers () {
         var title = "Unsupported Browser",
             message = '';
@@ -60,7 +64,7 @@ define([
         //show site modal
         if (_.has(window, 'VideoAuth') && _.has(window.VideoAuth, 'Modal') && (!_.isEmpty(title) && !_.isEmpty(message)))
         {
-            var $htmlFragment = jquery('<div id="foxneod-error">\n    <h1>Warning</h1>\n    <p class="error-message">' + message + '</p>\n</div>');
+            var $htmlFragment = $('<div id="foxneod-error">\n    <h1>Warning</h1>\n    <p class="error-message">' + message + '</p>\n</div>');
 
             window.VideoAuth.Modal.open(null, title);
             window.VideoAuth.Modal.content.set($htmlFragment);
@@ -74,6 +78,7 @@ define([
     var init = function () {
         debug.log('ready (build date: @@buildDate)');
 
+        _patchIE8Problems();
         _messageUnsupportedUsers();
     };
     ////////////////////////////////////////////////
@@ -85,7 +90,6 @@ define([
         buildDate: '@@buildDate',
         packageName: '@@packageName',
         version: '@@version',
-        getOmnitureLibraryReady: getOmnitureLibraryReady,
         dispatcher: dispatcher,
         dispatch: dispatcher.dispatch,
         on: dispatcher.on,
@@ -94,7 +98,6 @@ define([
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
         analytics: analytics,
-        cookies: cookies,
         Debug: Debug,
         mvpd: mvpd,
         ovp: ovp,
@@ -104,11 +107,9 @@ define([
         system: system,
         utils: utils,
         _: _,
-        jQuery: jquery,
-        __test__: {
-            jQuery: jquery,
-            base64: base64,
-            removeAllEventListeners: dispatcher.removeAllEventListeners
-        }
+        jQuery: $,
+
+        //private/testing
+        _storage: storage
     };
 });

@@ -25,10 +25,14 @@
  * Example: ?debug=utils,player,base64
  *
  */
-define(['utils', 'underscoreloader'], function (utils, _) {
+define([
+    'require',
+    'lodash'
+], function (require, _) {
     'use strict';
 
-    var console = window.console,
+    var utils = require('utils'),
+        console = window.console,
         _debugModes = [];
 
     return function (moduleName) {

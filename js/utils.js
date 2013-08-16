@@ -1,9 +1,10 @@
 /*global define */
 
-define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher, _, jquery) {
+define([
+    'lodash',
+    'jquery'
+], function (_, $) {
     'use strict';
-
-    var dispatcher = new Dispatcher();
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -348,7 +349,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
      * attributes you want to use.
      * @param tagName Name of the tag. E.g. 'script', 'meta', 'style'
      * @param attributes Object of attributes to use (e.g. { src: '//domain.com/js/script.js' })
-     * @returns {jQuery Deferred}
+     * @returns {$ Deferred}
      */
     var addToHead = function (tagName, attributes) {
         if (_.isEmpty(tagName) || !_.isString(tagName))
@@ -363,7 +364,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
         }
 
-        var deferred = jquery.Deferred();
+        var deferred = $.Deferred();
 
         if (!tagInHead(tagName, attributes))
         {
@@ -422,7 +423,7 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
             attrSelector += '['+ key +'="'+ value +'"]';
         });
 
-        var $tag = jquery('head ' + attrSelector);
+        var $tag = $('head ' + attrSelector);
 
         return ($tag.length > 0) ? true : false;
     };
@@ -743,9 +744,6 @@ define(['Dispatcher', 'underscoreloader', 'jqueryloader'], function (Dispatcher,
         isURL: isURL,
 
         setURL: setURL,
-        getURL: getURL,
-        dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.on,
-        removeEventListener: dispatcher.removeEventListener
+        getURL: getURL
     };
 });

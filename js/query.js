@@ -1,6 +1,11 @@
 /*global define */
 
-define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, _, Debug, jquery) {
+define([
+    'lodash',
+    'jquery',
+    'utils',
+    'Debug'
+], function (_, $, utils, Debug) {
     'use strict';
 
     var debug = new Debug('query'),
@@ -17,7 +22,7 @@ define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, 
         _config = {};
 
     function _makeRequest (requestURL) {
-        var deferred = new jquery.Deferred();
+        var deferred = new $.Deferred();
         debug.log('_makeRequest', requestURL);
 
         if (!_.isURL(requestURL))
@@ -31,7 +36,7 @@ define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, 
         }
         else
         {
-            var jqxhr = jquery.get(requestURL)
+            var jqxhr = $.get(requestURL)
                 .done(function (jsonString) {
                     try {
                         var json = JSON.parse(jsonString);
@@ -55,7 +60,7 @@ define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, 
     }
 
     var getFeedDetails = function (feedURL, callback) { //callback is optional since we return a Promise
-        var deferred = new jquery.Deferred();
+        var deferred = new $.Deferred();
         var errorResponse = {
             type: 'error',
             description: "You didn't supply a URL to getFeedDetails()"
@@ -108,7 +113,7 @@ define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, 
 
     var getVideo = function (obj, callback) {
         var video = {},
-            deferred = new jquery.Deferred(),
+            deferred = new $.Deferred(),
             feedURL = _.removeQueryParams(obj) || _defaultConfig.feedURL,
             errorResponse = {
                 type: 'error',
@@ -144,7 +149,7 @@ define(['utils', 'underscoreloader', 'Debug', 'jqueryloader'], function (utils, 
         {
 //            if (_.isFinite(obj)) //id
 //            {
-//                jquery.noop();
+//                $.noop();
 //            }
 
             feedURL += "?form=json&range=1-1&byGuid=" + obj; //try guid

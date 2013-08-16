@@ -15213,230 +15213,6 @@ define('base64',[
         decode: decode
     };
 });
-/*global define, _ */
-
-define('Dispatcher',[
-    'lodash',
-    'jquery',
-    'base64',
-    'require'
-], function (_, jquery, base64, require) {
-    
-
-    var _listeners = [],
-        storage;
-
-    return function (owningModuleName) {
-        var addListener = function (eventName, callback) {
-            if (_.isEmpty(eventName) || !_.isString(eventName))
-            {
-                return false;
-            }
-
-//            if (!_.isFunction(callback))
-//            {
-//                throw new Error("You can't create an event listener without supplying a callback function");
-//            }
-
-            var deferred = new jquery.Deferred();
-            var listener = {
-                name: eventName,
-                callback: callback,
-                deferred: deferred
-            };
-
-            _listeners.push(listener);
-
-            return deferred;
-        };
-
-        var dispatch = function (eventName, data, dispatchOverWindow) {
-            if (_.isEmpty(eventName) || !_.isString(eventName))
-            {
-                throw new Error("You can't dispatch an event without supplying an event name (as a string)");
-            }
-
-            var event = document.createEvent('Event');
-            var name = 'foxneod:' + eventName;
-            event.initEvent(name, true, true);
-            event.data = data || null;
-
-            if (!dispatchOverWindow)
-            {
-                var listeners = _.where(_listeners, {name: eventName});
-
-                _.each(listeners, function (listener) {
-                    listener.deferred.resolveWith(listener, event);
-                    listener.callback(event);
-                });
-
-                return true;
-            }
-            else
-            {
-                window.dispatchEvent(event);
-
-                return true;
-            }
-
-            return false;
-        };
-
-        var getEventListeners = function (eventName) {
-
-            if (_.isUndefined(eventName))
-            {
-                return _listeners;
-            }
-
-            var found = [];
-
-            _.each(_listeners, function (listener) {
-                if (listener.name === eventName)
-                {
-                    found.push(listener);
-                }
-            });
-
-            return found;
-        };
-
-        var hasListener = function (eventName, callback) {
-            var found = false,
-                checkCallbackToo = false;
-
-            if (!_.isEmpty(eventName) && _.isString(eventName))
-            {
-                if (!_.isUndefined(callback) && _.isFunction(callback))
-                {
-                    checkCallbackToo = true;
-                }
-
-                _.each(_listeners, function (listener) {
-                    if (listener.name === eventName)
-                    {
-                        if (checkCallbackToo)
-                        {
-                            if (listener.callback.toString() === callback.toString())
-                            {
-                                found = true;
-                            }
-                        }
-                        else
-                        {
-                            found = true;
-                        }
-                    }
-                });
-            }
-
-            return found;
-        };
-
-        var removeListener = function (eventName, callback) {
-            if (_.isUndefined(eventName) || !_.isString(eventName))
-            {
-                throw new Error("The first argument supplied to removeEventListener() should be a string for the event name");
-            }
-
-            if (_.isUndefined(callback) || !_.isFunction(callback))
-            {
-                throw new Error("The second argument supplied to removeEventListener() should be a function for the callback that was used");
-            }
-
-            var updated = [],
-                removed = false;
-
-            _.each(_listeners, function (listener) {
-                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString())
-                {
-                    updated.push(listener);
-                }
-                else
-                {
-                    removed = true;
-                }
-            });
-
-            _listeners = updated;
-
-            return removed;
-        };
-
-        var removeAllListeners = function () {
-            _listeners = [];
-
-            return _listeners;
-        };
-
-        var up = function (message, data) {
-            if (storage.now().get('insideIframe'))
-            {
-                var payload = {
-                    eventName: message,
-                    data: (!_.isUndefined(data) && !_.isEmpty(data)) ? data : null,
-                    owningModuleName: owningModuleName || null
-                };
-
-                var encoded = 'foxneod:' + base64.encode(payload);
-                window.parent.postMessage(encoded, '*');
-            }
-        };
-
-//        var delivered = function (messageName) {
-//            var deferred = new jquery.Deferred();
-//
-//            _.each(_messages, function (message) {
-//                if ('foxneod:' + messageName === message.eventName)
-//                {
-//                    deferred.resolve(message.payload);
-//                }
-//            });
-//
-//            return deferred;
-//        };
-
-        (function init () {
-            storage = require('storage');
-
-            window.addEventListener('message', function (event) {
-                if (event.data.indexOf('foxneod:') !== -1)
-                {
-                    //split the postMessage string
-                    var encoded = event.data.split('foxneod:')[1];
-                    if (!_.isString(encoded) || _.isEmpty(encoded))
-                    {
-                        throw new Error("Splitting the encoded postMessage failed: please contact the developer");
-                    }
-
-                    //decode the base64 string
-                    var decoded = base64.decode(encoded);
-                    if (!_.isTrueObject(decoded) || _.isEmpty(decoded))
-                    {
-                        throw new Error("The decoded postMessage was either not an object or empty: please contact the developer");
-                    }
-
-                    if (owningModuleName === decoded.owningModuleName)
-                    {
-                        dispatch(decoded.eventName, decoded.data);
-                    }
-                }
-            });
-        })();
-
-        return {
-            on: addListener,
-            dispatch: dispatch,
-            getEventListeners: getEventListeners,
-            hasEventListener: hasListener,
-            removeEventListener: removeListener,
-            removeAllEventListeners: removeAllListeners,
-
-            //postMessage methods
-            up: up
-        };
-    };
-});
 /*global define */
 
 /**
@@ -15465,13 +15241,12 @@ define('Dispatcher',[
  *
  */
 define('Debug',[
-    'require',
+    'utils',
     'lodash'
-], function (require, _) {
+], function (utils, _) {
     
 
-    var utils = require('utils'),
-        console = window.console,
+    var console = window.console,
         _debugModes = [];
 
     return function (moduleName) {
@@ -15499,7 +15274,7 @@ define('Debug',[
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.9.0:';
+        var prefix = 'foxneod-0.8.7:';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -15594,152 +15369,18 @@ define('Debug',[
         };
     };
 });
-/*global define, _ */
-
-define('polyfills',[
-    'lodash',
-    'Debug',
-    'Dispatcher'
-], function (_, Debug, Dispatcher) {
-
-    
-
-    var debug = new Debug('polyfills'),
-        dispatcher = new Dispatcher(),
-        _polyfillsAdded = [];
-
-    var fixBrokenFeatures = function ()
-    {
-        if (_.isArray(arguments[0])) //we expect an array of string options here
-        {
-            var polyfillList = arguments[0];
-            for (var i = 0, n = polyfillList.length; i < n; i++)
-            {
-                if (typeof polyfillList[i] === 'string')
-                {
-                    var polyfillName = polyfillList[i].toLowerCase();
-
-                    switch (polyfillName)
-                    {
-                        case 'watch':
-                            polyfillWatch();
-                            _polyfillsAdded.push(polyfillName);
-                            debug.log(polyfillName + " added");
-                            dispatcher.dispatch(polyfillName + 'Ready');
-                            break;
-                    }
-                }
-            }
-        }
-    };
-
-    /**
-     * Does a little bit extra than the Dispatcher class
-     */
-    var addEventListener = function (eventName, callback) {
-        //instead of requiring a dev to check if it already fired AND listen as a backup, we can take care of that here
-        if (added(eventName.split('Ready')[0]))
-        {
-            debug.log('polyfill already added, just dispatching', eventName);
-            dispatcher.on(eventName, callback);
-            dispatcher.dispatch(eventName);
-        }
-        else
-        {
-            debug.log('polyfill not already added');
-            dispatcher.on(eventName, callback);
-        }
-    };
-
-    var added = function (polyfillName)
-    {
-        var polyfillNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName)]) ? true : false;
-        var eventNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName + 'Ready')]) ? true : false;
-
-        return (polyfillNameFound || eventNameFound);
-    };
-
-    //---------------------------------------------- custom polyfills
-    /**
-     * This allows us to monitor property changes on objects and run callbacks when that happens.
-     */
-    function polyfillWatch () {
-        /*
-         * object.watch polyfill
-         *
-         * 2012-04-03
-         *
-         * By Eli Grey, http://eligrey.com
-         * Public Domain.
-         * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
-         */
-
-        // object.watch
-        if (!Object.prototype.watch) {
-            Object.defineProperty(Object.prototype, "watch", {
-                enumerable: false
-                , configurable: true
-                , writable: false
-                , value: function (prop, handler) {
-                    var
-                        oldval = this[prop]
-                        , newval = oldval
-                        , getter = function () {
-                            return newval;
-                        }
-                        , setter = function (val) {
-                            oldval = newval;
-                            newval = handler.call(this, prop, oldval, val);
-                            return newval;
-                        };
-
-                    if (delete this[prop]) { // can't watch constants
-                        Object.defineProperty(this, prop, {
-                            get: getter
-                            , set: setter
-                            , enumerable: true
-                            , configurable: true
-                        });
-                    }
-                }
-            });
-        }
-
-        // object.unwatch
-        if (!Object.prototype.unwatch) {
-            Object.defineProperty(Object.prototype, "unwatch", {
-                enumerable: false
-                , configurable: true
-                , writable: false
-                , value: function (prop) {
-                    var val = this[prop];
-                    delete this[prop]; // remove accessors
-                    this[prop] = val;
-                }
-            });
-        }
-    }
-    //---------------------------------------------- /custom polyfills
-
-    (function init () {
-        fixBrokenFeatures(['watch', 'addEventListener']);
-    })();
-
-    // Public API
-    return {
-        added: added,
-        dispatch: dispatcher.dispatch,
-        addEventListener: addEventListener,
-        removeEventListener: dispatcher.removeEventListener
-    };
-});
 /*global define */
 
 define('utils',[
     'lodash',
-    'jquery'
-], function (_, $) {
+    'jquery',
+    'Debug',
+    'Dispatcher'
+], function (_, $, Debug, Dispatcher) {
     
+
+    var debug = new Debug('utils'),
+        dispatcher = new Dispatcher('utils');
 
     var arrayToObject = function (arr) {
         var obj = {};
@@ -16479,7 +16120,14 @@ define('utils',[
         isURL: isURL,
 
         setURL: setURL,
-        getURL: getURL
+        getURL: getURL,
+
+        //event listening
+        addEventListener: dispatcher.on,
+        on: dispatcher.on,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
 });
 
@@ -16543,8 +16191,9 @@ define('storage',[
 ], function (_, jquery, utils, Debug, Dispatcher, cookies) {
     
 
-    var _keyValueStore = {},
-        dispatcher = new Dispatcher('storage');
+    var debug = new Debug('storage'),
+        dispatcher = new Dispatcher('storage'),
+        _keyValueStore = {};
 
     //////////////////////////////////////////////// private methods...
     ////////////////////////////////////////////////
@@ -16586,7 +16235,6 @@ define('storage',[
     //////////////////////////////////////////////// public api...
     return {
         now: now,
-        cookies: cookies,
 
         //event listening
         addEventListener: dispatcher.on,
@@ -16596,6 +16244,366 @@ define('storage',[
         removeEventListener: dispatcher.removeEventListener
     };
     ////////////////////////////////////////////////
+});
+/*global define, _ */
+
+define('Dispatcher',[
+    'lodash',
+    'jquery',
+    'base64',
+    'storage'
+], function (_, jquery, base64, storage) {
+    
+
+    var _listeners = [];
+
+    return function (owningModuleName) {
+        var addListener = function (eventName, callback) {
+            if (_.isEmpty(eventName) || !_.isString(eventName))
+            {
+                return false;
+            }
+
+//            if (!_.isFunction(callback))
+//            {
+//                throw new Error("You can't create an event listener without supplying a callback function");
+//            }
+
+            var deferred = new jquery.Deferred();
+            var listener = {
+                name: eventName,
+                callback: callback,
+                deferred: deferred
+            };
+
+            _listeners.push(listener);
+
+            return deferred;
+        };
+
+        var dispatch = function (eventName, data, dispatchOverWindow) {
+            if (_.isEmpty(eventName) || !_.isString(eventName))
+            {
+                throw new Error("You can't dispatch an event without supplying an event name (as a string)");
+            }
+
+            var event = document.createEvent('Event');
+            var name = 'foxneod:' + eventName;
+            event.initEvent(name, true, true);
+            event.data = data || null;
+
+            if (!dispatchOverWindow)
+            {
+                var listeners = _.where(_listeners, {name: eventName});
+
+                _.each(listeners, function (listener) {
+                    listener.deferred.resolveWith(listener, event);
+                    listener.callback(event);
+                });
+
+                return true;
+            }
+            else
+            {
+                window.dispatchEvent(event);
+
+                return true;
+            }
+
+            return false;
+        };
+
+        var getEventListeners = function (eventName) {
+
+            if (_.isUndefined(eventName))
+            {
+                return _listeners;
+            }
+
+            var found = [];
+
+            _.each(_listeners, function (listener) {
+                if (listener.name === eventName)
+                {
+                    found.push(listener);
+                }
+            });
+
+            return found;
+        };
+
+        var hasListener = function (eventName, callback) {
+            var found = false,
+                checkCallbackToo = false;
+
+            if (!_.isEmpty(eventName) && _.isString(eventName))
+            {
+                if (!_.isUndefined(callback) && _.isFunction(callback))
+                {
+                    checkCallbackToo = true;
+                }
+
+                _.each(_listeners, function (listener) {
+                    if (listener.name === eventName)
+                    {
+                        if (checkCallbackToo)
+                        {
+                            if (listener.callback.toString() === callback.toString())
+                            {
+                                found = true;
+                            }
+                        }
+                        else
+                        {
+                            found = true;
+                        }
+                    }
+                });
+            }
+
+            return found;
+        };
+
+        var removeListener = function (eventName, callback) {
+            if (_.isUndefined(eventName) || !_.isString(eventName))
+            {
+                throw new Error("The first argument supplied to removeEventListener() should be a string for the event name");
+            }
+
+            if (_.isUndefined(callback) || !_.isFunction(callback))
+            {
+                throw new Error("The second argument supplied to removeEventListener() should be a function for the callback that was used");
+            }
+
+            var updated = [],
+                removed = false;
+
+            _.each(_listeners, function (listener) {
+                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString())
+                {
+                    updated.push(listener);
+                }
+                else
+                {
+                    removed = true;
+                }
+            });
+
+            _listeners = updated;
+
+            return removed;
+        };
+
+        var removeAllListeners = function () {
+            _listeners = [];
+
+            return _listeners;
+        };
+
+        var up = function (message, data) {
+            if (storage.now().get('insideIframe'))
+            {
+                var payload = {
+                    eventName: message,
+                    data: (!_.isUndefined(data) && !_.isEmpty(data)) ? data : null,
+                    owningModuleName: owningModuleName || null
+                };
+
+                var encoded = 'foxneod:' + base64.encode(payload);
+                window.parent.postMessage(encoded, '*');
+            }
+        };
+
+//        var delivered = function (messageName) {
+//            var deferred = new jquery.Deferred();
+//
+//            _.each(_messages, function (message) {
+//                if ('foxneod:' + messageName === message.eventName)
+//                {
+//                    deferred.resolve(message.payload);
+//                }
+//            });
+//
+//            return deferred;
+//        };
+
+        (function init () {
+            window.addEventListener('message', function (event) {
+                if (event.data.indexOf('foxneod:') !== -1)
+                {
+                    //split the postMessage string
+                    var encoded = event.data.split('foxneod:')[1];
+                    if (!_.isString(encoded) || _.isEmpty(encoded))
+                    {
+                        throw new Error("Splitting the encoded postMessage failed: please contact the developer");
+                    }
+
+                    //decode the base64 string
+                    var decoded = base64.decode(encoded);
+                    if (!_.isTrueObject(decoded) || _.isEmpty(decoded))
+                    {
+                        throw new Error("The decoded postMessage was either not an object or empty: please contact the developer");
+                    }
+
+                    if (owningModuleName === decoded.owningModuleName)
+                    {
+                        dispatch(decoded.eventName, decoded.data);
+                    }
+                }
+            });
+        })();
+
+        return {
+            on: addListener,
+            dispatch: dispatch,
+            getEventListeners: getEventListeners,
+            hasEventListener: hasListener,
+            removeEventListener: removeListener,
+            removeAllEventListeners: removeAllListeners,
+
+            //postMessage methods
+            up: up
+        };
+    };
+});
+/*global define, _ */
+
+define('polyfills',[
+    'lodash',
+    'Debug',
+    'Dispatcher'
+], function (_, Debug, Dispatcher) {
+
+    
+
+    var debug = new Debug('polyfills'),
+        dispatcher = new Dispatcher(),
+        _polyfillsAdded = [];
+
+    var fixBrokenFeatures = function ()
+    {
+        if (_.isArray(arguments[0])) //we expect an array of string options here
+        {
+            var polyfillList = arguments[0];
+            for (var i = 0, n = polyfillList.length; i < n; i++)
+            {
+                if (typeof polyfillList[i] === 'string')
+                {
+                    var polyfillName = polyfillList[i].toLowerCase();
+
+                    switch (polyfillName)
+                    {
+                        case 'watch':
+                            polyfillWatch();
+                            _polyfillsAdded.push(polyfillName);
+                            debug.log(polyfillName + " added");
+                            dispatcher.dispatch(polyfillName + 'Ready');
+                            break;
+                    }
+                }
+            }
+        }
+    };
+
+    /**
+     * Does a little bit extra than the Dispatcher class
+     */
+    var addEventListener = function (eventName, callback) {
+        //instead of requiring a dev to check if it already fired AND listen as a backup, we can take care of that here
+        if (added(eventName.split('Ready')[0]))
+        {
+            debug.log('polyfill already added, just dispatching', eventName);
+            dispatcher.on(eventName, callback);
+            dispatcher.dispatch(eventName);
+        }
+        else
+        {
+            debug.log('polyfill not already added');
+            dispatcher.on(eventName, callback);
+        }
+    };
+
+    var added = function (polyfillName)
+    {
+        var polyfillNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName)]) ? true : false;
+        var eventNameFound = (_polyfillsAdded[_.indexOf(_polyfillsAdded, polyfillName + 'Ready')]) ? true : false;
+
+        return (polyfillNameFound || eventNameFound);
+    };
+
+    //---------------------------------------------- custom polyfills
+    /**
+     * This allows us to monitor property changes on objects and run callbacks when that happens.
+     */
+    function polyfillWatch () {
+        /*
+         * object.watch polyfill
+         *
+         * 2012-04-03
+         *
+         * By Eli Grey, http://eligrey.com
+         * Public Domain.
+         * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+         */
+
+        // object.watch
+        if (!Object.prototype.watch) {
+            Object.defineProperty(Object.prototype, "watch", {
+                enumerable: false
+                , configurable: true
+                , writable: false
+                , value: function (prop, handler) {
+                    var
+                        oldval = this[prop]
+                        , newval = oldval
+                        , getter = function () {
+                            return newval;
+                        }
+                        , setter = function (val) {
+                            oldval = newval;
+                            newval = handler.call(this, prop, oldval, val);
+                            return newval;
+                        };
+
+                    if (delete this[prop]) { // can't watch constants
+                        Object.defineProperty(this, prop, {
+                            get: getter
+                            , set: setter
+                            , enumerable: true
+                            , configurable: true
+                        });
+                    }
+                }
+            });
+        }
+
+        // object.unwatch
+        if (!Object.prototype.unwatch) {
+            Object.defineProperty(Object.prototype, "unwatch", {
+                enumerable: false
+                , configurable: true
+                , writable: false
+                , value: function (prop) {
+                    var val = this[prop];
+                    delete this[prop]; // remove accessors
+                    this[prop] = val;
+                }
+            });
+        }
+    }
+    //---------------------------------------------- /custom polyfills
+
+    (function init () {
+        fixBrokenFeatures(['watch', 'addEventListener']);
+    })();
+
+    // Public API
+    return {
+        added: added,
+        dispatch: dispatcher.dispatch,
+        addEventListener: addEventListener,
+        removeEventListener: dispatcher.removeEventListener
+    };
 });
 /*global define */
 
@@ -19808,7 +19816,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-15 08:08:16)');
+        debug.log('ready (build date: 2013-08-15 08:08:54)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -19819,9 +19827,9 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-15 08:08:16',
+        buildDate: '2013-08-15 08:08:54',
         packageName: 'foxneod',
-        version: '0.9.0',
+        version: '0.8.7',
         dispatcher: dispatcher,
         dispatch: dispatcher.dispatch,
         on: dispatcher.on,

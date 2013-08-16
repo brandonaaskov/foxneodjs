@@ -1,6 +1,12 @@
 /*global define, _ */
 
-define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], function (utils, _, jquery, Debug, Dispatcher) {
+define([
+    'utils',
+    'lodash',
+    'jquery',
+    'Debug',
+    'Dispatcher'
+], function (utils, _, $, Debug, Dispatcher) {
     'use strict';
 
     return function (selector, iframeURL, suppliedAttributes) {
@@ -10,7 +16,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _playerAttributes = {}, //these get passed down from player.js
             _processedAttributes = {},
             _playerToCreate,
-            _deferred = new jquery.Deferred(),
+            _deferred = new $.Deferred(),
             _onloadFired = false;
         //-------------------------------------------------------------------------------- /instance variables
 
@@ -59,7 +65,6 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
         }
 
         function _updateDeferred () {
-            //TODO: this assumes the meta tag in the iframe page, which we obviously can't actually guarantee
             if (_onloadFired)
             {
                 debug.log('resolving the iframe', _playerToCreate);
@@ -108,7 +113,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _playerToCreate = elements[0];
 
             _playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, _playerToCreate.attributes);
-            _playerToCreate.iframe = jquery(_playerToCreate.element).find('iframe')[0];
+            _playerToCreate.iframe = $(_playerToCreate.element).find('iframe')[0];
 
             document.getElementById(_playerToCreate.attributes.iframePlayerId).onload = function (event) {
                 if (!_onloadFired)

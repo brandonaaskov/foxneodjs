@@ -1,6 +1,10 @@
 /*global define, _, FDM_Player_vars, $pdk, console */
 
-define(['css', 'utils', 'Debug'], function (css, utils, Debug) {
+define([
+    'css',
+    'utils',
+    'Debug'
+], function (css, utils, Debug) {
     'use strict';
 
     //-------------------------------------------------------------------------------- private properties

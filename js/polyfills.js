@@ -1,6 +1,10 @@
 /*global define, _ */
 
-define(['Debug', 'Dispatcher', 'underscoreloader'], function (Debug, Dispatcher, _) {
+define([
+    'lodash',
+    'Debug',
+    'Dispatcher'
+], function (_, Debug, Dispatcher) {
 
     'use strict';
 

@@ -1,25 +1,24 @@
 /*global define, FDM_Player */
 
-define(['ovp',
+define([
+    'lodash',
+    'jquery',
+    'utils',
+    'Debug',
+    'Dispatcher',
+    'ovp',
     'player/Iframe',
     'player/playback',
+    'storage',
     'modal',
-    'Debug',
-    'jqueryloader',
-    'underscoreloader',
-    'Dispatcher',
-    'query',
-    'utils'
-], function (ovp, Iframe, playback, modal, Debug, jquery, _, Dispatcher, query, utils) {
+    'query'
+], function (_, $, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query) {
     'use strict';
 
     var debug = new Debug('player'),
-        dispatcher = new Dispatcher(),
-        _currentVideo = {},
-        _mostRecentAd = {},
+        dispatcher = new Dispatcher('player'),
         _players = [],
         _currentPosition,
-        _currentPlayer = {},//TODO replace with Player object/class/module
         _promisesQueue = [],
         _playerIndex = 0,
         _insideIframe = false;
@@ -46,9 +45,9 @@ define(['ovp',
          */
 
         var defaults = {
-            width: (_.has(attributes, 'width')) ? attributes.width : 640,
-            height: (_.has(attributes, 'height')) ? attributes.height : 360,
-            suppliedId: (_.has(attributes, 'suppliedId')) ? attributes.suppliedId : jquery(selector).attr('id'),
+            width: (_.has(attributes, 'width')) ? attributes.width : '',
+            height: (_.has(attributes, 'height')) ? attributes.height : '',
+            suppliedId: (_.has(attributes, 'suppliedId')) ? attributes.suppliedId : $(selector).attr('id'),
             debug: utils.getParamValue('debug')
         };
 
@@ -67,8 +66,77 @@ define(['ovp',
             throw new Error("_setCurrentPlayer() expects a valid player object (with a valid controller property)");
         }
 
-        _currentPlayer = player;
+        storage.now().set('currentPlayer', player);
         playback.setController(player.controller);
+    }
+
+    function _setupEventTranslator () {
+        var eventsMap = ovp.getEventsMap();
+
+        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
+            debug.log('adding listener to controller (dispatching as '+ normalizedEventName +')', ovpEventName);
+
+            ///////////////////////// translate event name and dispatch
+            ovp.on(ovpEventName, function (event) {
+                var cleanedData = {},
+                    video;
+
+                if (!_.isUndefined(event) && _.has(event.data, 'baseClip'))
+                {
+                    video = event.data.baseClip;
+                }
+
+                switch (ovpEventName)
+                {
+                    case 'OnPlayerLoaded':
+                        //do nothing?
+                        break;
+                    case 'OnMediaLoadStart':
+
+                        if (_.has(video, 'isAd'))
+                        {
+                            if (video.isAd)
+                            {
+                                cleanedData = {
+                                    title: video.title,
+                                    banners: video.banners,
+                                    url: video.URL,
+                                    description: video.description,
+                                    type: 'ad',
+                                    id: video.releaseID,
+                                    assetType: video.type,
+                                    duration: video.trueLength
+                                };
+                                normalizedEventName = 'adStart';
+
+                                storage.now().set('mostRecentAd', cleanedData);
+                            }
+                            else
+                            {
+                                cleanedData = {
+                                    title: video.title,
+                                    url: video.URL,
+                                    description: video.description,
+                                    type: 'video',
+                                    id: video.releaseID,
+                                    assetType: video.type,
+                                    duration: video.trueLength
+                                };
+                                storage.now().set('currentVideo', cleanedData);
+                            }
+                        }
+
+                        //tidy the payload for player dispatched events
+//                        ovp.cleanVideoData(event.data); //TODO implement this
+
+                        break;
+                }
+
+                dispatcher.dispatch(normalizedEventName, cleanedData);
+                dispatcher.up(normalizedEventName, cleanedData);
+            });
+            /////////////////////////
+        });
     }
     ////////////////////////////////////////////////
 
@@ -83,7 +151,7 @@ define(['ovp',
      */
     function _bindPlayer(player)
     {
-        var deferred = new jquery.Deferred();
+        var deferred = new $.Deferred();
 
         ovp.ready().done(function () {
             var attributes = player.attributes;
@@ -125,11 +193,28 @@ define(['ovp',
     };
 
     var getCurrentVideo = function () {
-        return _currentVideo;
+        return storage.now().get('currentVideo');
     };
 
     var getMostRecentAd = function () {
-        return _mostRecentAd;
+        return storage.now().get('mostRecentAd');
+    };
+
+    var getCurrentPosition = function () {
+        var details = {
+            position: null,
+            duration: null,
+            percentComplete: null
+        };
+
+        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition))
+        {
+            details.position = _currentPosition.currentTime;
+            details.duration = _currentPosition.duration;
+            details.percentComplete = _currentPosition.percentComplete;
+        }
+
+        return details;
     };
 
     var control = function (playerIdSelector) {
@@ -142,22 +227,23 @@ define(['ovp',
     };
 
     var getController = function (selector) {
-        var elements = jquery(selector),
+        var elements = $(selector),
+            currentPlayer = storage.now().get('currentPlayer'),
             controllerToUse = null;
 
         if (_.isUndefined(selector))
         {
-            if (_.isUndefined(_currentPlayer.controller))
+            if (_.isUndefined(currentPlayer.controller))
             {
                 throw new Error("There was no default controller to return");
             }
 
-            return _currentPlayer.controller;
+            return storage.now().get('currentPlayer').controller;
         }
         else
         {
             _.each(elements, function (element) {
-                var id = jquery(element).attr('id');
+                var id = $(element).attr('id');
 
                 if (!_.isUndefined(id))
                 {
@@ -171,10 +257,10 @@ define(['ovp',
                 }
             });
 
-            if (_.isUndefined(controllerToUse) && (_.isObject(_currentPlayer) && !_.isEmpty(_currentPlayer)))
+            if (_.isUndefined(controllerToUse) && (_.isObject(currentPlayer) && !_.isEmpty(currentPlayer)))
             {
                 debug.log("using the default player's controller");
-                controllerToUse = _currentPlayer.controller;
+                controllerToUse = currentPlayer.controller;
             }
 
             if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
@@ -194,7 +280,7 @@ define(['ovp',
 
     var loadVideo = function (releaseURLOrId, callback) {
         //////////////////////////////////////////////// fail fast...
-        var deferred = new jquery.Deferred(),
+        var deferred = new $.Deferred(),
             errorMessage = '';
 
         if (!query.isReleaseURL(releaseURLOrId))
@@ -204,7 +290,7 @@ define(['ovp',
             throw new Error(errorMessage);
         }
 
-        if (_.isUndefined(_currentPlayer))
+        if (_.isUndefined(storage.now().get('currentPlayer')))
         {
             errorMessage = "There was no default player set to load the video into";
             deferred.reject(errorMessage);
@@ -241,23 +327,6 @@ define(['ovp',
         return deferred;
     };
 
-    var getCurrentPosition = function () {
-        var details = {
-            position: null,
-            duration: null,
-            percentComplete: null
-        };
-
-        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition))
-        {
-            details.position = _currentPosition.currentTime;
-            details.duration = _currentPosition.duration;
-            details.percentComplete = _currentPosition.percentComplete;
-        }
-
-        return details;
-    };
-
     /**
      * Creates a player in the page at the given selector.
      *
@@ -291,11 +360,15 @@ define(['ovp',
             config = _processAttributes(selector, config);
 
             window['player'] = config;
+            debug.log('creating player with config', config);
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
 
             ovp.ready().done(function (pdk) {
-                _currentPlayer.controller = pdk.controller;
-                _setCurrentPlayer(_currentPlayer);
+                var currentPlayer = storage.now().get('currentPlayer') || {};
+                currentPlayer.controller = pdk.controller;
+
+                storage.now().set('currentPlayer', currentPlayer);
+                dispatcher.up('playerSet', currentPlayer);
             });
 
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
@@ -308,8 +381,9 @@ define(['ovp',
                 }
             });
 
+            storage.now().set('insideIframe', _insideIframe);
+
             debug.log('PDK logLevel', player.logLevel);
-            debug.log('creating player with config', config);
         }
         catch (error) {
             throw new Error(error);
@@ -382,8 +456,8 @@ define(['ovp',
             if (!_.isElement(element))
             {
                 throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
-                    "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
-                    "the element that you need. We try to not to depend on jQuery where we don't have to.");
+                    "like a $ object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on $ where we don't have to.");
             }
 
             var allAttributes = element.attributes;
@@ -425,41 +499,48 @@ define(['ovp',
      * @param iframeURL
      * @param suppliedAttributes
      */
-    var injectIframePlayer = function (selector, iframeURL, suppliedAttributes) {
+    var createIframe = function (selector, iframeURL, suppliedAttributes) {
+        if (!_.isString(selector) || _.isEmpty(selector))
+        {
+            throw new Error("You must supply a selector as the first argument when calling createIframe()");
+        }
+
+        if (!_.isString(iframeURL) || _.isEmpty(iframeURL))
+        {
+            throw new Error("You must supply a valid path to your iframe as a string as the second argument when calling createIframe()");
+        }
+
         var declaredAttributes = getPlayerAttributes(selector);
         debug.log('declaredAttributes', declaredAttributes);
 
         var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
         var iframe = new Iframe(selector, iframeURL, attributes);
+        storage.now().set('outsideIframe', true);
 
         var iframePlayer = iframe.create()
             .then(function (player) {
-                iframePlayer = player;
-                return; //returns a Promise
-            })
-            .then(function () {
-                return _bindPlayer(iframePlayer);
+                return _bindPlayer(player);
             })
             .then(function (player) {
                 //interact with the player?
+                storage.now().set('currentPlayer', player);
             });
     };
 
     var hide = function () {
+        var currentPlayer = storage.now().get('currentPlayer');
         playback.pause();
-        jquery(_currentPlayer.element).hide();
+
+        $(currentPlayer.element).hide();
 
         return true;
     };
 
     var show = function () {
-        jquery(_currentPlayer.element).show();
+        var currentPlayer = storage.now().get('currentPlayer');
+        $(currentPlayer.element).show();
 
         return true;
-    };
-
-    var isInsideIframe = function () {
-        return _insideIframe;
     };
     ////////////////////////////////////////////////
 
@@ -467,26 +548,15 @@ define(['ovp',
 
     //////////////////////////////////////////////// init...
     (function init () {
-        ovp.ready().done(function () {
+        storage.now().set('insideIframe', _insideIframe);
+        storage.now().set('outsideIframe', false);
 
+        ovp.ready().done(function () {
             ovp.getController().done(function (controller) {
                 debug.log('mapping events to controller', controller);
+
                 ovp.mapEvents(controller);
-
-                var eventsMap = ovp.getEventsMap();
-
-                _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-                    debug.log('adding listener to controller', [ovpEventName, controller]);
-
-                    ///////////////////////// translate event name and dispatch
-                    controller.addEventListener(ovpEventName, function (event) {
-//                        debug.log('received: ' + ovpEventName, event.data);
-
-//                        var videoData = (normalizedEventName !== 'playerReady') ? ovp.cleanVideoData(event.data) : {};
-//                        debug.log('dispatching: ' + normalizedEventName, videoData);
-                    });
-                    /////////////////////////
-                });
+                _setupEventTranslator();
             }).fail(function (error) {
                 throw new Error(error);
             });
@@ -506,17 +576,15 @@ define(['ovp',
         //public api
         setPlayerMessage: setPlayerMessage,
         clearPlayerMessage: clearPlayerMessage,
-        createIframe: injectIframePlayer,
-        injectIframePlayer: injectIframePlayer, //old alias (will deprecate eventually)
+        createIframe: createIframe,
         hide: hide,
         show: show,
         getCurrentVideo: getCurrentVideo,
         getMostRecentAd: getMostRecentAd,
-        loadVideo: loadVideo,
         getPosition: getCurrentPosition,
+        loadVideo: loadVideo,
         create: createPlayer,
         getPlayers: getPlayers,
-        isInsideIframe: isInsideIframe,
 
         //control methods
         control: control,

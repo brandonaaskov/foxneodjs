@@ -10,9 +10,8 @@ define([
 ], function (_, jquery, utils, Debug, Dispatcher, cookies) {
     'use strict';
 
-    var debug = new Debug('storage'),
-        dispatcher = new Dispatcher('storage'),
-        _keyValueStore = {};
+    var _keyValueStore = {},
+        dispatcher = new Dispatcher('storage');
 
     //////////////////////////////////////////////// private methods...
     ////////////////////////////////////////////////
@@ -54,6 +53,7 @@ define([
     //////////////////////////////////////////////// public api...
     return {
         now: now,
+        cookies: cookies,
 
         //event listening
         addEventListener: dispatcher.on,

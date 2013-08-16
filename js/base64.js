@@ -1,16 +1,28 @@
 /*global define */
 
-define([], function () {
+define([
+    'lodash'
+], function (_) {
     'use strict';
 
-    var jsonToBase64 = function (objectToEncode) {
+    var encode = function (objectToEncode) {
+        if (_.isUndefined(objectToEncode) || !_.isTrueObject(objectToEncode))
+        {
+            throw new Error("The encode() method expects an object for an argument");
+        }
+
         var jsonString = JSON.stringify(objectToEncode);
         var base64String = btoa(jsonString);
 
         return base64String;
     };
 
-    var base64ToJSON = function (base64String) {
+    var decode = function (base64String) {
+        if (!_.isString(base64String) && !_.isEmpty(base64String))
+        {
+            throw new Error("The decode() method expects a string for an argument");
+        }
+
         var jsonString = atob(base64String);
         var json = JSON.parse(jsonString);
 
@@ -19,7 +31,7 @@ define([], function () {
 
     // Public API
     return  {
-        jsonToBase64: jsonToBase64,
-        base64ToJSON: base64ToJSON
+        encode: encode,
+        decode: decode
     };
 });

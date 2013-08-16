@@ -1,14 +1,12 @@
 /*global define, _ */
 
-define(['Debug', 'ovp'], function (Debug, ovp) {
+define([
+    'Debug',
+    'ovp'
+], function (Debug, ovp) {
     'use strict';
 
-    var debug = new Debug('playback'),
-        _controller; //TODO: refactor how this is set and used
-
-    var setController = function (controller) {
-        _controller = controller;
-    };
+    var debug = new Debug('playback');
 
     /**
      * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
@@ -32,7 +30,10 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
         {
             var seekTime = Math.round(timeInSeconds * 1000);
             debug.log("Seeking to (in seconds)...", seekTime/1000);
-            _controller.seekToPosition(seekTime);
+
+            ovp.getController().then(function (controller) {
+                controller.seekToPosition(seekTime);
+            });
         }
         else
         {
@@ -43,18 +44,19 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
     };
 
     var play = function () {
-        _controller.pause(false);
-        return this;
+        return ovp.getController().then(function (controller) {
+            controller.pause(false);
+        });
     };
 
     var pause = function () {
-        _controller.pause(true);
-        return this;
+        return ovp.getController().then(function (controller) {
+            controller.pause(true);
+        });
     };
 
     //public api
     return {
-        setController: setController,
         seekTo: seekTo,
         play: play,
         pause: pause

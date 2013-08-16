@@ -1,44 +1,33 @@
 /*global define */
 
 define([
-    'ovp/theplatform',
+    'lodash',
+    'jquery',
+    'utils',
     'Debug',
     'Dispatcher',
-    'player/pdkwatcher',
-    'underscoreloader',
-    'jqueryloader',
-    'utils',
-    'polyfills'
-], function (thePlatform, Debug, Dispatcher, pdkwatcher, _, jquery, utils, polyfills) {
+    'storage',
+    'ovp/theplatform',
+    'player/pdkwatcher'
+], function (_, $, utils, Debug, Dispatcher, storage, thePlatform, pdkwatcher) {
     'use strict';
 
-    var _pdk,
-        debug = new Debug('ovp'),
-        dispatcher = new Dispatcher(),
-        _readyDeferred = new jquery.Deferred();
+    var debug = new Debug('ovp'),
+        dispatcher = new Dispatcher('ovp'),
+        _readyDeferred = new $.Deferred();
 
 
     //////////////////////////////////////////////// public methods
     var getController = function () {
-        var deferred = new jquery.Deferred();
+        var deferred = new $.Deferred();
 
-        _readyDeferred.done(function () {
-            if (_.isFunction(_pdk.controller))
-            {
-                deferred.resolve(_pdk.controller().controller);
-            }
-            else if (_.isTrueObject(_pdk.controller))
-            {
-                deferred.resolve(_pdk.controller);
-            }
-            else if (!_.isUndefined(window.$pdk) && _.isTrueObject(window.$pdk))
-            {
-                deferred.resolve(window.$pdk.controller);
-            }
-            else
+        _readyDeferred.done(function (pdk) {
+            if (_.isUndefined(pdk) || !_.isTrueObject(pdk))
             {
                 deferred.reject("The controller couldn't be found on the PDK object");
             }
+
+            deferred.resolve(pdk.controller);
         });
 
         return deferred;
@@ -59,22 +48,21 @@ define([
             throw new Error("The controller supplied to mapEvents() was either undefined, empty, or not an object");
         }
 
-        var eventsMap = thePlatform.getEventsMap();
+        _.each(thePlatform.getEventsMap(), function (ovpEventName, normalizedEventName) {
+            debug.log('adding listener to controller (dispatching as '+ ovpEventName +')', ovpEventName);
 
-        debug.log('setting up listeners');
-
-        _.each(eventsMap, function (ovpEventName, normalizedEventName) {
             controller.addEventListener(ovpEventName, function (event) {
-                debug.log('dispatching ovp event', ovpEventName);
-                dispatcher.dispatch(ovpEventName, event);
+
+                dispatcher.dispatch(ovpEventName, event.data);
+
+                if (storage.now().get('insideIframe'))
+                {
+                    dispatcher.up(ovpEventName, event.data);
+                }
             });
         });
 
         return controller;
-    };
-
-    var getPDK = function () {
-        return _pdk;
     };
 
     var cleanVideoData = function (video) {
@@ -89,11 +77,9 @@ define([
 
 
 
-
     //////////////////////////////////////////////// init
     (function () {
         pdkwatcher.done(function (pdk) {
-            _pdk = pdk;
             _readyDeferred.resolve(pdk);
 
             debug.log('PDK is now available inside of ovp.js', pdk);
@@ -101,7 +87,6 @@ define([
         });
     })();
     ////////////////////////////////////////////////
-
 
 
 
@@ -114,7 +99,7 @@ define([
         removeEventListener: dispatcher.removeEventListener,
         ready: getReady,
         getController: getController,
-        pdk: getPDK,
+        pdk: getReady,
         getEventsMap: getEventsMap,
         mapEvents: mapEvents,
         cleanVideoData: cleanVideoData

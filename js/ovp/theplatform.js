@@ -1,7 +1,7 @@
 /*global define */
 
 define([
-    'underscoreloader',
+    'lodash',
     'utils',
     'Debug'
 ], function (_, utils, Debug) {
@@ -17,13 +17,30 @@ define([
             videoReady: 'OnMediaLoadStart',
             videoPause: 'OnMediaPause',
             videoPlay: 'OnMediaPlay',
-//            videoProgress: 'OnMediaPlaying',
+            videoProgress: 'OnMediaPlaying',
             videoSeek: 'OnMediaSeek',
             videoStart: 'OnMediaStart',
             videoResume: 'OnMediaUnpause',
             videoMute: 'OnMute',
-            playerReady: 'OnPlayerLoaded'
+            playerReady: 'OnPlayerLoaded',
+
+            //custom events not supported by the PDK: handled in player.js
+            adStart: null,
+            adComplete: null
+        },
+        _cleanedVideo = {
+            id: null,
+            title: null,
+            description: null,
+            length: null,
+            guid: null,
+            series: null,
+            fullEpisode: null,
+            genre: null
         };
+
+    //////////////////////////////////////////////// private functions...
+    ////////////////////////////////////////////////
 
     //////////////////////////////////////////////// public functions...
     var getEventsMap = function () {
@@ -33,32 +50,33 @@ define([
     var cleanVideoData = function (video) {
         //validation happens at the ovp.js level
 
-        var cleaned = video;
+        return;
 
-        if (!video.isAd)
-        {
-            return {
-                //standard elements
-                id: video.releaseID || null,
-                title: video.title || null,
-                description: video.description || null,
-                length: video.trueLength/1000 || null,
-
-                //ovp-specific elements
-                guid: video.guid,
-                series: video.categories[0].name || null, //TODO process this to strip the "Series/" from the string
-                brightcoveId: video.contentCustomData.brightcoveId || null,
-                fullEpisode: video.contentCustomData.fullEpisode || null,
-                genre: video.contentCustomData.genre || null //TODO parse to make sure we're not capturing "(None)"
-            };
-        }
-
-//        else
+//        var cleaned = video;
+//
+//        if (!video.isAd)
 //        {
-//            //TODO finish this
+//            cleaned = {
+//                //standard elements
+//                id: video.releaseID || null,
+//                title: video.title || null,
+//                description: video.description || null,
+//                length: video.trueLength/1000 || null,
+//
+//                //ovp-specific elements
+//                guid: video.guid,
+//                series: video.categories[0].name || null //TODO process this to strip the "Series/" from the string
+//            };
+//
+//            cleaned = _.map(video, 'releaseId');
 //        }
-
-        return cleaned;
+//
+////        else
+////        {
+////            //TODO finish this
+////        }
+//
+//        return cleaned;
     };
     ////////////////////////////////////////////////
 
