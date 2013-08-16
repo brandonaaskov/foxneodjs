@@ -78,65 +78,41 @@ define([
 
             ///////////////////////// translate event name and dispatch
             ovp.on(ovpEventName, function (event) {
-                var cleanedData = {},
-                    video;
-
-                if (!_.isUndefined(event) && _.has(event.data, 'baseClip'))
+                if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
                 {
-                    video = event.data.baseClip;
+                    return;
                 }
+
+                var cleanData = _cleanData(event.data.baseClip);
 
                 switch (ovpEventName)
                 {
                     case 'OnPlayerLoaded':
                         //do nothing?
                         break;
-                    case 'OnMediaLoadStart':
-
-                        if (_.has(video, 'isAd'))
-                        {
-                            if (video.isAd)
-                            {
-                                cleanedData = {
-                                    title: video.title,
-                                    banners: video.banners,
-                                    url: video.URL,
-                                    description: video.description,
-                                    type: 'ad',
-                                    id: video.releaseID,
-                                    assetType: video.type,
-                                    duration: video.trueLength
-                                };
-                                normalizedEventName = 'adStart';
-
-                                storage.now().set('mostRecentAd', cleanedData);
-                            }
-                            else
-                            {
-                                cleanedData = {
-                                    title: video.title,
-                                    url: video.URL,
-                                    description: video.description,
-                                    type: 'video',
-                                    id: video.releaseID,
-                                    assetType: video.type,
-                                    duration: video.trueLength
-                                };
-                                storage.now().set('currentVideo', cleanedData);
-                            }
-                        }
-
-                        //tidy the payload for player dispatched events
-//                        ovp.cleanVideoData(event.data); //TODO implement this
-
-                        break;
                 }
 
-                dispatcher.dispatch(normalizedEventName, cleanedData);
-                dispatcher.up(normalizedEventName, cleanedData);
+                dispatcher.dispatch(normalizedEventName, cleanData);
+                dispatcher.up(normalizedEventName, cleanData);
             });
             /////////////////////////
         });
+    }
+
+    function _cleanData (video) {
+        var cleanData = {
+            title: video.title,
+            url: video.URL,
+            description: video.description,
+            type: 'video',
+            id: video.releaseID,
+            assetType: video.type,
+            duration: video.trueLength
+        };
+
+        storage.now().set('currentVideo', cleanData);
+
+        return cleanData;
     }
     ////////////////////////////////////////////////
 
