@@ -14,9 +14,10 @@ define([
     'base64',
     'mvpd',
     'ovp',
+    'advertising',
     'analytics',
     'storage'
-], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, analytics, storage) {
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
@@ -97,6 +98,7 @@ define([
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
+        advertising: advertising,
         analytics: analytics,
         Debug: Debug,
         mvpd: mvpd,
