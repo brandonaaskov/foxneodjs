@@ -2676,7 +2676,7 @@ define('ovp/theplatform',[
         return _eventsMap;
     };
 
-    var cleanVideoData = function (video) {
+    var cleanEventData = function (video) {
         //validation happens at the ovp.js level
 
         return;
@@ -2714,7 +2714,7 @@ define('ovp/theplatform',[
     //////////////////////////////////////////////// public api
     return {
         getEventsMap: getEventsMap,
-        cleanVideoData: cleanVideoData
+        cleanEventData: cleanEventData
     };
     ////////////////////////////////////////////////
 });
@@ -2827,13 +2827,15 @@ define('ovp',[
         return controller;
     };
 
-    var cleanVideoData = function (video) {
-        if (_.isUndefined(video))
+    var cleanEventData = function (event) {
+        if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
         {
-            throw new Error("The cleanVideoData() received undefined for its only argument");
+            return;
         }
 
-        return thePlatform.cleanVideoData(video);
+        var video = event.data.baseClip;
+
+        return thePlatform.cleanEventData(video);
     };
     ////////////////////////////////////////////////
 
@@ -2864,7 +2866,7 @@ define('ovp',[
         pdk: getReady,
         getEventsMap: getEventsMap,
         mapEvents: mapEvents,
-        cleanVideoData: cleanVideoData
+        cleanEventData: cleanEventData
     };
     ////////////////////////////////////////////////
 });
@@ -3891,26 +3893,33 @@ define('advertising',[
 
         dispatcher.dispatch(normalizedEventName, cleanData);
         dispatcher.up(normalizedEventName, cleanData);
-        deferred.resolve(cleanData);
+        deferred.resolve(normalizedEventName, cleanData);
 
         return deferred;
     }
 
-    function _checkForCompanions (data, normalizedEventName) {
+    function _checkForCompanions (normalizedEventName, cleanData) {
         var deferred = new jquery.Deferred();
 
         //check for companion banners
-        if (normalizedEventName === 'adStart' && _.isArray(data.banners) && !_.isEmpty(data.banners))
+        if (normalizedEventName === 'adStart' && _.isArray(cleanData.banners) && !_.isEmpty(cleanData.banners))
         {
-            _.each(data.banners, function (banner) {
+            _.each(cleanData.banners, function (banner) {
                 if (!_.isUndefined(banner))
                 {
-                    dispatcher.dispatch('companionAd', banner);
+                    var html = (_.has(banner, 'content')) ? banner.content : null;
+                    dispatcher.dispatch('companionAd', {
+                        banner: html
+                    });
                 }
             });
         }
+        else
+        {
+            debug.log('no companion banners');
+        }
 
-        deferred.resolve(data);
+        deferred.resolve(cleanData);
 
         return deferred;
     }
@@ -3950,7 +3959,9 @@ define('advertising',[
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
             ovp.on(ovpEventName, function (event) {
-                _handlePlayerEvent(event, ovpEventName, normalizedEventName).then(_checkForCompanions);
+                _handlePlayerEvent(event, ovpEventName, normalizedEventName).then(function (normalizedEventName, cleanData) {
+                    _checkForCompanions(normalizedEventName, cleanData);
+                });
             });
         });
     })();
@@ -4058,7 +4069,7 @@ define('player',[
                 }
 
                 var video = event.data.baseClip;
-                var cleanData = _cleanData(video);
+                var cleanData = _cleanEventData(video);
 
                 switch (ovpEventName)
                 {
@@ -4080,7 +4091,7 @@ define('player',[
         });
     }
 
-    function _cleanData (video) {
+    function _cleanEventData (video) {
         var cleanData = {
             title: video.title,
             url: video.URL,
@@ -5993,7 +6004,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-16 06:08:51)');
+        debug.log('ready (build date: 2013-08-16 10:08:47)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6004,7 +6015,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-16 06:08:51',
+        buildDate: '2013-08-16 10:08:47',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
