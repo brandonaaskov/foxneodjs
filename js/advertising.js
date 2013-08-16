@@ -35,7 +35,7 @@ define([
                 if (isAd(video))
                 {
                     normalizedEventName = 'adStart';
-                    storage.now().set('mostRecentAd', cleanData);
+                    storage.now.set('mostRecentAd', cleanData);
                 }
 
                 break;

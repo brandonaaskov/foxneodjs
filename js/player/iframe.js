@@ -46,7 +46,7 @@ define([
         }
 
         function _getIframeHTML (iframeURL, attributes) {
-            var attributesString = utils.objectToQueryString(attributes);
+            var attributesString = utils.objectToQueryString(attributes) + '&insideIframe=true';
             attributes = utils.lowerCasePropertyNames(attributes);
 
             return '<iframe ' +

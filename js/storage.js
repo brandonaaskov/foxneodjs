@@ -16,24 +16,23 @@ define([
 
     //////////////////////////////////////////////// private methods...
     function isInsideIframe () {
-        return now().get('insideIframe') || false;
+        return now.get('insideIframe') || false;
     }
     ////////////////////////////////////////////////
 
 
 
     //////////////////////////////////////////////// public methods...
-    var now = function () {
-        var get = function (key) {
+    var now = {
+        get: function (key) {
             if (_.has(_keyValueStore, key))
             {
                 return _keyValueStore[key];
             }
 
             return undefined;
-        };
-
-        var set = function (key, value) {
+        },
+        set: function (key, value) {
             if (isInsideIframe())
             {
                 debug.log('stored inside iframe, sending up...', [key, value]);
@@ -44,17 +43,10 @@ define([
             }
 
             _keyValueStore[key] = value;
-        };
-
-        var getAll = function () {
+        },
+        getAll: function () {
             return _keyValueStore;
-        };
-
-        return {
-            get: get,
-            set: set,
-            getAll: getAll
-        };
+        }
     };
     ////////////////////////////////////////////////
 
@@ -64,7 +56,7 @@ define([
     (function init () {
         dispatcher.on('storage', function (event) {
             debug.log('got data from iframe - storing', event);
-            now().set(event.data.key, event.data.value);
+            now.set(event.data.key, event.data.value);
         });
     })();
     ////////////////////////////////////////////////

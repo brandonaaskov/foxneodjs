@@ -107,7 +107,7 @@ define([
 
                 if (_.isEqual(mode, category.toLocaleLowerCase()) || _.isEqual(mode, 'all'))
                 {
-                    if (storage.now().get('insideIframe') && prefix.indexOf('(iframe)') === -1)
+                    if (storage.now.get('insideIframe') && prefix.indexOf('(iframe)') === -1)
                     {
                         prefix += ' (iframe)';
                     }

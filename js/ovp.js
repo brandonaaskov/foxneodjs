@@ -9,28 +9,47 @@ define([
     'storage',
     'ovp/theplatform',
     'player/pdkwatcher'
-], function (_, $, utils, Debug, Dispatcher, storage, thePlatform, pdkwatcher) {
+], function (_, jquery, utils, Debug, Dispatcher, storage, thePlatform, pdkwatcher) {
     'use strict';
 
     var debug = new Debug('ovp'),
         dispatcher = new Dispatcher('ovp'),
-        _readyDeferred = new $.Deferred();
+        _readyDeferred = new jquery.Deferred(),
+        _controllerDeferred = new jquery.Deferred();
 
 
     //////////////////////////////////////////////// public methods
     var getController = function () {
-        var deferred = new $.Deferred();
 
         _readyDeferred.done(function (pdk) {
             if (_.isUndefined(pdk) || !_.isTrueObject(pdk))
             {
-                deferred.reject("The controller couldn't be found on the PDK object");
+                _controllerDeferred.reject("The controller couldn't be found on the PDK object");
             }
 
-            deferred.resolve(pdk.controller);
+            if (storage.now.get('insideIframe') || !storage.now.get('iframeExists'))
+            {
+                if (_.isUndefined(pdk) || !_.has(pdk, 'controller'))
+                {
+                    throw new Error("For some unknown reason, there's no contoller on the pdk or the pdk was undefined");
+                }
+
+                _controllerDeferred.resolve(pdk.controller);
+            }
         });
 
-        return deferred;
+        if (storage.now.get('outsideIframe') && storage.now.get('iframeExists'))
+        {
+            var player = storage.now.get('currentPlayer');
+            var iframeId = jquery(player.iframe).attr('id');
+            var controller = document.getElementById(iframeId).contentWindow['@@packageName']
+                .ovp.getController()
+                    .done(function (controller) {
+                        _controllerDeferred.resolve(controller);
+                    });
+        }
+
+        return _controllerDeferred;
     };
 
     var getEventsMap = function () {
@@ -52,10 +71,9 @@ define([
             debug.log('adding listener to controller (dispatching as '+ ovpEventName +')', ovpEventName);
 
             controller.addEventListener(ovpEventName, function (event) {
-
                 dispatcher.dispatch(ovpEventName, event.data);
 
-                if (storage.now().get('insideIframe'))
+                if (storage.now.get('insideIframe'))
                 {
                     dispatcher.up(ovpEventName, event.data);
                 }

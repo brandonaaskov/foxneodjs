@@ -17,7 +17,7 @@ define([], function () {
 
 
     var EMPTY       = '',
-        UNKNOWN     = '?',
+        UNKnowN     = '?',
         FUNC_TYPE   = 'function',
         UNDEF_TYPE  = 'undefined',
         OBJ_TYPE    = 'object',
@@ -128,11 +128,11 @@ define([], function () {
                 if (typeof(map[i]) === OBJ_TYPE && map[i].length > 0) {
                     for (var j in map[i]) {
                         if (util.has(map[i][j], str)) {
-                            return (i === UNKNOWN) ? undefined : i;
+                            return (i === UNKnowN) ? undefined : i;
                         }
                     }
                 } else if (util.has(map[i], str)) {
-                    return (i === UNKNOWN) ? undefined : i;
+                    return (i === UNKnowN) ? undefined : i;
                 }
             }
             return str;

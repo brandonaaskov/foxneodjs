@@ -164,7 +164,7 @@ define([
         };
 
         var up = function (message, data) {
-            if (storage.now().get('insideIframe'))
+            if (storage.now.get('insideIframe'))
             {
                 var payload = {
                     eventName: message,
@@ -212,12 +212,6 @@ define([
                     if (!_.isTrueObject(decoded) || _.isEmpty(decoded))
                     {
                         throw new Error("The decoded postMessage was either not an object or empty: please contact the developer");
-                    }
-
-                    if (owningModuleName === decoded.owningModuleName)
-                    {
-
-                        dispatch(decoded.eventName, decoded.data);
                     }
                 }
             });

@@ -13,7 +13,7 @@ define([
     'modal',
     'query',
     'advertising'
-], function (_, $, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising) {
+], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -21,8 +21,7 @@ define([
         _players = [],
         _currentPosition,
         _promisesQueue = [],
-        _playerIndex = 0,
-        _insideIframe = false;
+        _playerIndex = 0;
 
     //////////////////////////////////////////////// private methods...
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
@@ -48,7 +47,7 @@ define([
         var defaults = {
             width: (_.has(attributes, 'width')) ? attributes.width : '',
             height: (_.has(attributes, 'height')) ? attributes.height : '',
-            suppliedId: (_.has(attributes, 'suppliedId')) ? attributes.suppliedId : $(selector).attr('id'),
+            suppliedId: (_.has(attributes, 'suppliedId')) ? attributes.suppliedId : jquery(selector).attr('id'),
             debug: utils.getParamValue('debug')
         };
 
@@ -67,7 +66,7 @@ define([
             throw new Error("_setCurrentPlayer() expects a valid player object (with a valid controller property)");
         }
 
-        storage.now().set('currentPlayer', player);
+        storage.now.set('currentPlayer', player);
         playback.setController(player.controller);
     }
 
@@ -118,13 +117,9 @@ define([
             duration: video.trueLength
         };
 
-        storage.now().set('currentVideo', cleanData);
+        storage.now.set('currentVideo', cleanData);
 
         return cleanData;
-    }
-
-    function _isAd (video) {
-
     }
     ////////////////////////////////////////////////
 
@@ -139,14 +134,14 @@ define([
      */
     function _bindPlayer(player)
     {
-        var deferred = new $.Deferred();
+        var deferred = new jquery.Deferred();
 
         ovp.ready().done(function () {
             var attributes = player.attributes;
 
-            if(!_insideIframe)
+            if(!storage.now.get('insideIframe'))
             {
-                player.controller = window.$pdk.bind(attributes.iframePlayerId);
+                player.controller = window.jquerypdk.bind(attributes.iframePlayerId);
                 ovp.mapEvents(player.controller);
 
                 _players.push(player);
@@ -181,11 +176,11 @@ define([
     };
 
     var getCurrentVideo = function () {
-        return storage.now().get('currentVideo');
+        return storage.now.get('currentVideo');
     };
 
     var getMostRecentAd = function () {
-        return storage.now().get('mostRecentAd');
+        return storage.now.get('mostRecentAd');
     };
 
     var getCurrentPosition = function () {
@@ -215,23 +210,18 @@ define([
     };
 
     var getController = function (selector) {
-        var elements = $(selector),
-            currentPlayer = storage.now().get('currentPlayer'),
+        var elements = jquery(selector),
+            currentPlayer = storage.now.get('currentPlayer'),
             controllerToUse = null;
 
-        if (_.isUndefined(selector))
+        if (_.isUndefined(selector) && _.has(currentPlayer, 'controller'))
         {
-            if (_.isUndefined(currentPlayer.controller))
-            {
-                throw new Error("There was no default controller to return");
-            }
-
-            return storage.now().get('currentPlayer').controller;
+            return currentPlayer.controller;
         }
         else
         {
             _.each(elements, function (element) {
-                var id = $(element).attr('id');
+                var id = jquery(element).attr('id');
 
                 if (!_.isUndefined(id))
                 {
@@ -268,7 +258,7 @@ define([
 
     var loadVideo = function (releaseURLOrId, callback) {
         //////////////////////////////////////////////// fail fast...
-        var deferred = new $.Deferred(),
+        var deferred = new jquery.Deferred(),
             errorMessage = '';
 
         if (!query.isReleaseURL(releaseURLOrId))
@@ -278,7 +268,7 @@ define([
             throw new Error(errorMessage);
         }
 
-        if (_.isUndefined(storage.now().get('currentPlayer')))
+        if (_.isUndefined(storage.now.get('currentPlayer')))
         {
             errorMessage = "There was no default player set to load the video into";
             deferred.reject(errorMessage);
@@ -351,25 +341,16 @@ define([
             debug.log('creating player with config', config);
             var fdmPlayer = new FDM_Player('player', config.width, config.height);
 
-            ovp.ready().done(function (pdk) {
-                var currentPlayer = storage.now().get('currentPlayer') || {};
-                currentPlayer.controller = pdk.controller;
-
-                storage.now().set('currentPlayer', currentPlayer);
-                dispatcher.up('playerSet', currentPlayer);
-            });
-
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
             //we need to loop through the config to find out if we're inside the iframe or not
             _.each(config, function (prop, key) {
-                if (_.isEqual(key, 'iframePlayerId'))
+                if (_.isEqual(key, 'insideIframe'))
                 {
-                    _insideIframe = true;
+                    storage.now.set('iframeExists', true);
+                    storage.now.set('insideIframe', true);
                 }
             });
-
-            storage.now().set('insideIframe', _insideIframe);
 
             debug.log('PDK logLevel', player.logLevel);
         }
@@ -444,8 +425,8 @@ define([
             if (!_.isElement(element))
             {
                 throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
-                    "like a $ object, but try using document.querySelector() or document.querySelectorAll() to get " +
-                    "the element that you need. We try to not to depend on $ where we don't have to.");
+                    "like a jquery object, but try using document.querySelector() or document.querySelectorAll() to get " +
+                    "the element that you need. We try to not to depend on jquery where we don't have to.");
             }
 
             var allAttributes = element.attributes;
@@ -503,30 +484,28 @@ define([
 
         var attributes = _processAttributes(selector, suppliedAttributes, declaredAttributes);
         var iframe = new Iframe(selector, iframeURL, attributes);
-        storage.now().set('outsideIframe', true);
 
         var iframePlayer = iframe.create()
             .then(function (player) {
-                return _bindPlayer(player);
-            })
-            .then(function (player) {
-                //interact with the player?
-                storage.now().set('currentPlayer', player);
+                storage.now.set('currentPlayer', player);
+                storage.now.set('iframeExists', true);
+                storage.now.set('outsideIframe', true);
+                _bindPlayer(player);
             });
     };
 
     var hide = function () {
-        var currentPlayer = storage.now().get('currentPlayer');
+        var currentPlayer = storage.now.get('currentPlayer');
         playback.pause();
 
-        $(currentPlayer.element).hide();
+        jquery(currentPlayer.element).hide();
 
         return true;
     };
 
     var show = function () {
-        var currentPlayer = storage.now().get('currentPlayer');
-        $(currentPlayer.element).show();
+        var currentPlayer = storage.now.get('currentPlayer');
+        jquery(currentPlayer.element).show();
 
         return true;
     };
@@ -536,20 +515,20 @@ define([
 
     //////////////////////////////////////////////// init...
     (function init () {
-        storage.now().set('insideIframe', _insideIframe);
-        storage.now().set('outsideIframe', false);
+        //initialize player related data that a lot of modules rely on
+        storage.now.set('iframeExists', false);
+        storage.now.set('insideIframe', false);
+        storage.now.set('outsideIframe', false);
+        storage.now.set('currentPlayer', null);
 
-        ovp.ready().done(function () {
-            ovp.getController().done(function (controller) {
+        ovp.ready()
+            .then(ovp.getController)
+            .done(function (controller) {
                 debug.log('mapping events to controller', controller);
 
                 ovp.mapEvents(controller);
                 _setupEventTranslator();
-            }).fail(function (error) {
-                throw new Error(error);
             });
-
-        });
     })();
     ////////////////////////////////////////////////
 
@@ -576,7 +555,7 @@ define([
 
         //control methods
         control: control,
-        getController: getController,
+//        getController: getController,
         seekTo: playback.seekTo,
         play: playback.play,
         pause: playback.pause,
