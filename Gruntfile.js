@@ -125,8 +125,8 @@
                         // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
                             almond: '../bower_components/almond/almond',
-                            lodash: '../bower_components/lodash/lodash',
-                            jquery: '../bower_components/jquery/jquery',
+                            lodash: '../bower_components/lodash/dist/lodash.min',
+                            jquery: '../bower_components/jquery/jquery.min',
                             omnitureloader: 'lib/omniture/omnitureloader'
                         },
 
