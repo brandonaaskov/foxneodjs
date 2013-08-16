@@ -11,8 +11,9 @@ define([
     'player/playback',
     'storage',
     'modal',
-    'query'
-], function (_, $, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query) {
+    'query',
+    'advertising'
+], function (_, $, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -83,12 +84,19 @@ define([
                     return;
                 }
 
-                var cleanData = _cleanData(event.data.baseClip);
+                var video = event.data.baseClip;
+                var cleanData = _cleanData(video);
 
                 switch (ovpEventName)
                 {
                     case 'OnPlayerLoaded':
                         //do nothing?
+                        break;
+                    case 'OnMediaLoadStart':
+                        if (advertising.isAd(video))
+                        {
+                            return;
+                        }
                         break;
                 }
 
@@ -113,6 +121,10 @@ define([
         storage.now().set('currentVideo', cleanData);
 
         return cleanData;
+    }
+
+    function _isAd (video) {
+
     }
     ////////////////////////////////////////////////
 
