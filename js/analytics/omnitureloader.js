@@ -1,11 +1,19 @@
-/*global define, _ */
+/*global define */
 
-define(['utils', 'Dispatcher', 'jqueryloader', 'underscoreloader'], function (utils, Dispatcher, jquery, _) {
+define([
+    'lodash',
+    'jquery'
+], function (_, $, utils, Debug, Dispatcher) {
     'use strict';
 
-    var dispatcher = new Dispatcher(),
-        deferred = jquery.Deferred();
+    var deferred = new $.Deferred();
 
+    //////////////////////////////////////////////// private methods...
+    ////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////// public methods...
     var getOmnitureLibrary = function (account) {
         var attributes = {
             src: '@@ovpAssetsFilePath/js/s_code.js?account=' + account
@@ -28,9 +36,22 @@ define(['utils', 'Dispatcher', 'jqueryloader', 'underscoreloader'], function (ut
 
         return deferred;
     };
+    ////////////////////////////////////////////////
 
-    //Public API
+
+
+    //////////////////////////////////////////////// initialize...
+    (function init () {
+
+    })();
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////// public api...
     return {
         getOmnitureLibrary: getOmnitureLibrary
     };
+    ////////////////////////////////////////////////
 });

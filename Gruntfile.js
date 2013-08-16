@@ -124,18 +124,17 @@
 
                         // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
-                            almond: 'lib/almond/almond'
-                            , jqueryloader: 'lib/jquery/jqueryloader'
-                            , underscoreloader: 'lib/underscore/underscoreloader'
-                            , omnitureloader: 'lib/omniture/omnitureloader'
-                            , modernizrloader: 'lib/modernizr/modernizrloader'
+                            almond: '../bower_components/almond/almond',
+                            lodash: '../bower_components/lodash/lodash',
+                            jquery: '../bower_components/jquery/jquery',
+                            omnitureloader: 'lib/omniture/omnitureloader'
                         },
 
                         shim: {
-                            jqueryloader: {
+                            jquery: {
                                 exports: '$'
                             },
-                            underscoreloader: {
+                            lodash: {
                                 exports: '_'
                             }
                         },
