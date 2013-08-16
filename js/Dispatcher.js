@@ -9,6 +9,8 @@ define([
     'use strict';
 
     var _listeners = [],
+        //gets setup in init
+        debug,
         storage;
 
     return function (owningModuleName) {
@@ -183,6 +185,8 @@ define([
 
         (function init () {
             storage = require('storage');
+            var Debug = require('Debug');
+            debug = new Debug(owningModuleName + '(dispatcher)');
 
             window.addEventListener('message', function (event) {
                 if (event.data.indexOf('@@packageName:') !== -1)
@@ -203,6 +207,7 @@ define([
 
                     if (owningModuleName === decoded.owningModuleName)
                     {
+
                         dispatch(decoded.eventName, decoded.data);
                     }
                 }
