@@ -213,6 +213,11 @@ define([
                     {
                         throw new Error("The decoded postMessage was either not an object or empty: please contact the developer");
                     }
+
+                    if (owningModuleName === decoded.owningModuleName)
+                    {
+                        dispatch(decoded.eventName, decoded.data);
+                    }
                 }
             });
         })();
