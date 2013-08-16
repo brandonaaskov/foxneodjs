@@ -14,14 +14,9 @@ FDM_Player_vars = {
 	isIOS:		0
 };
 
-var aamtt = {
-	isAd:false
-	,form:''
-	,twentyfive:false
-	,fifty:false
-	,seventyfive:false
-	,complete:false
-};
+var aamtt = {};
+
+
 var FDMtpHead		= document.getElementsByTagName('head')[0],
 	FDMtpBaseUrl	= document.createElement('meta'),
 	FDMtpPreferredFormat	= document.createElement('meta'),
@@ -82,9 +77,29 @@ FDM_Player.prototype.configure = function(callback) {
             self.configure(callback);
         }, 50);
     }
+    FDM_Player_vars.shortname = FDM_Player_config.shortname;
     FDM_Player_vars.version = FDM_Player_config.version;
+    FDM_Player_vars.network_name = FDM_Player_config.network_name;
+    FDM_Player_vars.enable_html5 = FDM_Player_config.enable_html5;
+    FDM_Player_vars.enable_auth = FDM_Player_config.enable_auth;
+    FDM_Player_vars.layoutextras = FDM_Player_config.layoutextras;
+    FDM_Player_vars.shouldGetNewJS = FDM_Player_config.shouldGetNewJS;
     FDM_Player_vars.layouts = FDM_Player_config.layouts;
     FDM_Player_vars.colors = FDM_Player_config.colors;
+    FDM_Player_vars.analytics = FDM_Player_config.analytics;
+    FDM_Player_vars.adserver = FDM_Player_config.adserver;
+    FDM_Player_vars.share_emailserver = FDM_Player_config.share_emailserver;
+
+    if (FDM_Player_vars.shortname === 'fox') {
+        aamtt = {
+            isAd: false,
+            form: '',
+            twentyfive: false,
+            fifty: false,
+            seventyfive: false,
+            complete: false
+        };
+    }
     callback();
 };
 
@@ -96,7 +111,7 @@ FDM_Player.prototype.addEventListener = function(evt,han) {
 		};
 		FDM_Player_vars.events[FDM_Player_vars.events.length] = t;
 	}
-}
+};
 
 FDM_Player.prototype.init=function(pst,pre){
 	var w = (typeof this.wd != 'undefined') ? this.wd : '',
@@ -146,7 +161,7 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.fp.wmode='opaque';
 		p.previewScrubbing='false';
 
-		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/LayoutPlugin.swf';
+		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/LayoutPlugin.swf' + (FDM_Player_vars.layoutextras || '');
 		p.skinURL=FDM_Player_vars.host+FDM_Player_vars.layouts.swfSkinURL;
 		p.layoutUrl=FDM_Player_vars.host+FDM_Player_vars.layouts.defaultLayoutUrl;
 
@@ -162,10 +177,13 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Share
 		if ((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') || (!_.isUndefined(player.share_deeplinkfunc) && _.isFunction(player.share_deeplinkfunc)) && String(player.share) != 'false') {
-			
 			var emailString = '';
-			
-			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink+'|shortener=www.fox.com/_app/urlhelper.php|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');	
+            if (FDM_Player_vars.share_emailserver) {
+				var shareEmail = (player.share_email) ? '|emailscript='+ player.share_email : '';
+				var shareEmailServer = '|emailForm=' + FDM_Player_vars.share_emailserver;
+				emailString = shareEmail + shareEmailServer;
+            }
+			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink + (FDM_Player_vars.share_shortenerURL ? '|shortener=' + FDM_Player_vars.share_shortenerURL : '') + '|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');
 		}
 
 		//-------------------------- Closed Captioning
@@ -220,73 +238,105 @@ FDM_Player.prototype.init=function(pst,pre){
 			p.pluginPlayOverlay+='|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset;
 			p.pluginPlayOverlay+='|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 		}
-		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxUrlSigningPlugIn.swf';
-		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/authentication.swf|priority=3|cookie=authToken';
-
-		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/akamaiHD.swf|analyticsKeys=show,season,episode,fullEpisode|analyticsValueFields=showcode,season,episode,fullEpisode|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.527|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
-
+        if (FDM_Player_vars.enable_auth) {
+    		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxUrlSigningPlugIn.swf';
+    		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/authentication.swf|priority=3|cookie=authToken';
+        }
 		//-------------------------- Analytics
-			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+if (FDM_Player_vars.analytics.akamai) {
+    p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/akamaiHD.swf|analyticsKeys=show,season,episode,fullEpisode|analyticsValueFields=showcode,season,episode,fullEpisode|priority=4|hosts=-f.akamaihd.net|playerId=' + FDM_Player_vars.network_name + '-1.4.527' + (FDM_Player_vars.analytics.akamai && FDM_Player_vars.analytics.akamai.beaconPath ? FDM_Player_vars.analytics.akamai.beaconPath : '') + (FDM_Player_vars.analytics ? '|analyticsBeacon=' + FDM_Player_vars.analytics.akamai.beaconPath : '');
+}
+if (FDM_Player_vars.analytics.comscore) {
+			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxComscorePlugIn.swf|priority=1|c2=' + FDM_Player_vars.analytics.comscore.c2 + '|c4=' + FDM_Player_vars.analytics.comscore.c4 + '|c6Field=' + FDM_Player_vars.analytics.comscore.c6Field + '|trackEachChapter=true';
 //p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
+}
 
-			//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
-			//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.527|additionalPropsMethodName=player.extraInfo';
+if (FDM_Player_vars.analytics.sitecatalyst) {
+	//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=' + FDM_Player_vars.analytics.sitecatalyst.host + '|visitorNamespace=' + (FDM_Player_vars.analytics.sitcatalyst.visitorNamespace || 'foxentertainment') + '|account=' + FDM_Player_vars.analytics.sitecatalyst.account;
+	//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxOmnitureMonitor.swf|priority=1|playerId=' + FDM_Player_vars.network_name + '-1.4.527|additionalPropsMethodName=' + FDM_Player_vars.analytics.sitecatalyst.additionalPropsMethodName;
+}
 
-	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/ggtp396.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
+if (FDM_Player_vars.analytics.nielsen) {
+	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/ggtp396.swf|clientid=us-' + FDM_Player_vars.analytics.nielsen.clientid + '|vcid=' + FDM_Player_vars.analytics.nielsen.vcid + '|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=' + FDM_Player_vars.analytics.nielsen.sid + '|tfid=' + FDM_Player_vars.analytics.nielsen.tfid + '|adcategory=' + FDM_Player_vars.analytics.nielsen.adcategory + '|adsubcategory=' + FDM_Player_vars.analytics.nielsen.adsubcategory + '|displayprefix=' + FDM_Player_vars.analytics.nielsen.displayprefix + '|displayfieldname=' + FDM_Player_vars.analytics.nielsen.displayfieldname;
+}
 
+if (FDM_Player_vars.analytics.ga) {
+	p.pluginGA='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/googleAnalytics.swf|ID=' + FDM_Player_vars.analytics.ga.account + '|Histograms=' + FDM_Player_vars.analytics.ga.histograms + '|TrackAds=' + FDM_Player_vars.analytics.ga.trackAds + '|pattern=' + FDM_Player_vars.analytics.ga.pattern + '|playerId=' + FDM_Player_vars.network_name + '-1.4.527';
+}
 
-		p.pluginChartbeat ='type=tracking|URL=http://static.chartbeat.com/swf/ChartbeatPDK.swf|acctId=8971|appId=video@fox.com|priority=1';
+if (FDM_Player_vars.analytics.chartbeat) {
+	p.pluginChartbeat ='type=tracking|URL=http://static.chartbeat.com/swf/ChartbeatPDK.swf|acctId=8971|appId=video@fox.com|priority=1';
+}
 
+if (FDM_Player_vars.analytics.conviva) {
+    if (FDM_Player_vars.analytics.conviva.type === 'full') {
+		//p.pluginConviva='type=|priority=1|customerId=' + FDM_Player_vars.analytics.conviva.customerId + '|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=' + FDM_Player_vars.analytics.conviva.customerId + '|cdnName=AKAMAI|deviceType=PC|playerName=' + FDM_Player_vars.network_name + '-1.4.527|metadataKeys=' + FDM_Player_vars.analytics.conviva.metadataKeys + FDM_Player_vars.analytics.conviva.playerTags;
+	}
+    if (FDM_Player_vars.analytics.conviva.type === 'lite') {
+		//p.pluginConviva='type=|priority=1|customerId=' + FDM_Player_vars.analytics.conviva.customerId + '|serviceUrl=http://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=' + FDM_Player_vars.analytics.conviva.customerId + '|cdnName=AKAMAI|deviceType=PC|playerName=' + FDM_Player_vars.network_name + '-1.4.527|metadataKeys=' + FDM_Player_vars.analytics.conviva.metadataKeys + FDM_Player_vars.analytics.conviva.playerTags;
+	}
+}
 
+if (FDM_Player_vars.adserver) {
+    if (FDM_Player_vars.adserver.name === 'freewheel') {
+        var siteSection = FDM_Player_vars.adserver.siteSection || 'player.siteSection';
+    	p.pluginNewFreewheel = 
+    		'type=adcomponent|' + 
+    		'url='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/freewheel.swf|' + 
+    		'pemURLsSeparator=~|' + 
+    		'siteSectionId=' + siteSection + '|' + 
+    		'isLive=false|' + 
+    		'customVideoAssetIdField=' + FDM_Player_vars.adserver.customVideoAssetIdField + '|' + 
+    		'pemURLs=' + 
+    			'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' + 
+    			'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' + 
+    			'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf|' + 
+    		'networkId=116450|' + 
+    		'siteSectionNetworkId=116450|' + 
+    		'keyValues=' + fdmAAMStuff() + '|' + 
+    		'videoAssetNetworkId=116450|' + 
+    		'priority=1|' + 
+    		'externalCustomVisitor=fdmAAMID|' + 
+    		'autoPlay=true|' + 
+    		'adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.swf|' + 
+    		'playerProfile=116450:FDM_Live|' + 
 
-			//p.pluginConviva='type=|priority=1|customerId=c3.FOX|serviceUrl='+((window.location.protocol == 'https:')?'https':'http') +'://livepass.conviva.com|URL='+((window.location.protocol == 'https:')?'https://livepassdl.secure':'http://livepassdl')+'.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX|cdnName=AKAMAI|deviceType=PC|playerName=foxcom-1.4.527|metadataKeys=episode,fullEpisode,genre,repeat,season,showcode|playerTag.series=|playerTag.playerType=';
-	
+    		'exitFullscreenOnPause=false|' +
+    		'callback=FDM_Player_OnFreeWheelEvent|' +
+    		'extensionName=AnalyticsExtension|' +
+    		'extensionUrl=http://adm.fwmrm.net/p/fox_live/FoxAnalyticsExtension.swf|' +
+    		'cb_profile=116450:FDM_Live|' +
+    		'customIdField=brightcoveId|' +
 
-	p.pluginNewFreewheel = 
-		'type=adcomponent|' + 
-		'url='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/freewheel.swf|' + 
-		'pemURLsSeparator=~|' + 
-		'siteSectionId=' + player.siteSection + '|' + 
-		'isLive=false|' + 
-		'customVideoAssetIdField=brightcoveId|' + 
-		'pemURLs=' + 
-			'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' + 
-			'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' + 
-			'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf|' + 
-		'networkId=116450|' + 
-		'siteSectionNetworkId=116450|' + 
-		'keyValues=' + fdmAAMStuff() + '|' + 
-		'videoAssetNetworkId=116450|' + 
-		'priority=1|' + 
-		'externalCustomVisitor=fdmAAMID|' + 
-		'autoPlay=true|' + 
-		'adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.swf|' + 
-		'playerProfile=116450:FDM_Live|' + 
+    		'serverUrl=http://1c6e2.v.fwmrm.net/';
+    }
 
-		'exitFullscreenOnPause=false|' +
-		'callback=FDM_Player_OnFreeWheelEvent|' +
-		'extensionName=AnalyticsExtension|' +
-		'extensionUrl=http://adm.fwmrm.net/p/fox_live/FoxAnalyticsExtension.swf|' +
-		'cb_profile=116450:FDM_Live|' +
-		'customIdField=brightcoveId|' +
+        if (FDM_Player_vars.adserver.name === 'dfp') {
+    	p.pluginDFP='type=adcomponent|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/doubleclick.swf|priority=1|host=pubads.g.doubleclick.net|bannerSizes=300x60,300x250|bannerRegions=playlistad,video-companion-ad-300x250';
+    }
 
-		'serverUrl=http://1c6e2.v.fwmrm.net/';
+        if (FDM_Player_vars.adserver.name === 'acudeo') {
+    	if(typeof player.tremorID !== undefined && player.tremorID != '') {
+    		p.pluginTremor = 'type=advertising|priority=0|URL=http://objects.tremormedia.com/embed/swf/tpacudeoplugin46.swf|progId='+player.tremorID+'|videoDescriptionUrl=' + FDM_Player_vars.adserver.videoDescriptionUrl;
+    	}
+    }
 
-
-
-
+    if (FDM_Player_vars.adserver.name === 'eplanning') {
+    	p.pluginVastSwf='type=adcomponent|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/vast.swf|priority=1|hosts=' + FDM_Player_vars.adserver.host;
+    }
+}
 		p.autoPlay=(typeof(player.autoplay)=="undefined" || player.autoplay)?true:false;
 
 		if (typeof(player.releaseURL) != "undefined" && player.releaseURL != '') {
-
-			adPolicySuffix = (player.releaseURL.indexOf("?") == -1) ? "?" : "&";
-			adPolicySuffix += "policy=19938";
-			player.releaseURL += adPolicySuffix;
-
+            if (FDM_Player_vars.shortname === 'fox') {
+    			adPolicySuffix = (player.releaseURL.indexOf("?") == -1) ? "?" : "&";
+    			adPolicySuffix += "policy=19938";
+    			player.releaseURL += adPolicySuffix;
+            }
 			p.releaseURL=player.releaseURL;
 		}
 	}
-	else if (FDM_Player_vars.isIOS) {
+	else if (FDM_Player_vars.isIOS && FDM_Player_vars.enable_html5) {
 		var mycss=document.createElement('link');
 			mycss.rel='stylesheet';
 			mycss.type='text/css';
@@ -367,19 +417,27 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-				//p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
-		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+		        if (FDM_Player_vars.analytics.sitecatalyst) {
+            //p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+        }
+		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=' + FDM_Player_vars.analytics.comscore.c2 + '|c4=' + FDM_Player_vars.analytics.comscore.c4 + '|c6Field=' + FDM_Player_vars.analytics.comscore.c6Field + '|trackEachChapter=true';
 
+if (FDM_Player_vars.adserver.name === 'freewheel') {
 	p.pluginFreewheel='type=advertising|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/js/plugins/freewheel.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
+}
 
+if (FDM_Player_vars.adserver.name === 'eplanning') {
+	p.pluginVastJS='type=adcomponent|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/js/plugins/vast.js|priority=1|hosts=' + FDM_Player_vars.adserver.host;
+}
 
 		if(typeof(player.releaseURL) != "undefined" && player.releaseURL != '') {
 			p.releaseURL=player.releaseURL+((player.releaseURL.indexOf('?') != -1) ? '&' : '?')+'manifest=m3u&format=SMIL';
 
-			adPolicySuffix = (player.releaseURL.indexOf("?") == -1) ? "?" : "&";
-			adPolicySuffix += "policy=19938";
-			player.releaseURL += adPolicySuffix;
-
+            if (FDM_Player_vars.shortname === 'fox') {
+    			adPolicySuffix = (player.releaseURL.indexOf("?") == -1) ? "?" : "&";
+    			adPolicySuffix += "policy=19938";
+    			player.releaseURL += adPolicySuffix;
+            }
 			if(navigator.userAgent.toLowerCase().indexOf("android") > -1) {
 				if(player.releaseURL.toLowerCase().indexOf("switch") === -1) {
 					p.releaseURL+='&switch=http';
@@ -426,6 +484,7 @@ FDM_Player.prototype.init=function(pst,pre){
 		$pdk.controller.addEventListener("OnMediaStart", this.onMediaStart);
 		$pdk.controller.addEventListener("OnPlayerLoaded",this.onPlayerLoaded);
 
+    if (FDM_Player_vars.shortname === 'fox') {
 		// CFS (3/5/2013): for audience insights
 		if(typeof mboxTrack != "undefined") {
 
@@ -480,23 +539,26 @@ FDM_Player.prototype.init=function(pst,pre){
 			});
 
 		}
+    }
 
 	}
-	//foxneod communication stuff
-	if (window.$f && window.$f && window.$f.hasOwnProperty('dispatch'))
-    {
-		var debug = new $f.Debug('page');
-		debug.log('$f already existed, dispatching playerReady');
-        window.$f.dispatch('playerReady', {}, true);
+    if (FDM_Player_vars.shouldGetNewJS) {
+    	//foxneod communication stuff
+    	if (window.$f && window.$f.hasOwnProperty('dispatch'))
+        {
+    		var debug = new $f.Debug('page');
+    		debug.log('$f already existed, dispatching playerReady');
+            window.$f.dispatch('playerReady', {}, true);
+        }
+        else
+        {
+        	var adder = (window.addEventListener) ? window.addEventListener : window.attachEvent;
+            adder('foxneod:ready', function (event) {
+                var debug = new $f.Debug('page');
+                debug.log('Page now knows that the library is ready.');
+            });
+        }
     }
-    else
-    {
-    	var adder = (window.addEventListener) ? window.addEventListener : window.attachEvent;
-        adder('foxneod:ready', function (event) {
-            var debug = new $f.Debug('page');
-            debug.log('Page now knows that the library is ready.');
-        });
-    }	
 }
 
 FDM_Player.prototype.fdmOmnitureUniqueId = function() {
@@ -519,7 +581,6 @@ FDM_Player.prototype.onPlayerLoaded=function(e){
 
     b.appendChild(j);
 
-    
     /**Omniture specific configuration for both Flash/JS**/
     FDM_Player_vars.omniConfig  = {
         playerId        :"foxcom-1.4.527",
@@ -532,7 +593,7 @@ FDM_Player.prototype.onPlayerLoaded=function(e){
         network         :"fox",
 		extraInfo		:(typeof player.extraInfo !=  "undefined")?player.extraInfo : null,
 		accountInfo		: {
-			account:  'foxcomprod',
+			account:  FDM_Player_vars.analytics.sitecatalyst && FDM_Player_vars.analytics.sitecatalyst.account || 'foxcomprod',
 			trackingServer:"a.fox.com"
 		}
     }
@@ -624,8 +685,11 @@ FDM_Player.prototype.setReleaseCall = function(releaseUrl) {
 			}
 		}
 	}
-			
-			releaseUrl += ((releaseUrl.indexOf('?') != -1) ? '&' : '?')+'policy=19938';	
+	    if (FDM_Player_vars.shortname === 'fox') {
+        if (FDM_Player_vars.adserver.name === 'freewheel') {
+    		releaseUrl += ((releaseUrl.indexOf('?') != -1) ? '&' : '?')+'policy=19938';
+        }
+    }
 		$pdk.controller.setReleaseURL(releaseUrl, true);
 }
 
@@ -643,7 +707,11 @@ FDM_Player.prototype.loadReleaseCall = function(releaseUrl) {
 
 	}
 			
-			releaseUrl += ((releaseUrl.indexOf('?') != -1) ? '&' : '?')+'policy=19938';	
+    if (FDM_Player_vars.shortname === 'fox') {
+    	if (FDM_Player_vars.adserver.name === 'freewheel') {
+        	releaseUrl += ((releaseUrl.indexOf('?') != -1) ? '&' : '?')+'policy=19938';
+        }
+    }
 		$pdk.controller.loadReleaseURL(releaseUrl, true);
 }
 
@@ -18759,258 +18827,333 @@ define('config',[
     var timeoutDuration = 3000;
     var configTimeout;
 
+    // To override a property, set it to any non-null, defined value.
+    // To accept a default property, don't explicitly override it, or set it to
+    // undefined.
+    // To remove a property, set it to null
     var defaults = {
-        version: '1.4.5.27',
-        shortname: 'default',
-        name: 'Default Player',
-        plugins: {
-            layout: {
-                type: 'overlay',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/LayoutPlugin.swf'
+        version: '1.4.5.27',        // Optional - Not used
+        shortname: 'fox',           // Required - Replaces network in legacy build step
+        name: 'Default Player',     // Optional - Not used
+        network_name: 'foxcom',     // Required - Used for some of the analytics plugins
+        enable_html5: true,         // Optional - Enables HTML5 player on iOS devices
+        enable_auth: true,          // Optional - Enables Fox URL signing plugin
+        shouldGetNewJS: true,       // Optional - Seems to enable event handling for determining when the foxneod library is ready
+        share_emailserver: false,   // Optional
+        share_shortenerURL: null,   // Optional
+        analytics: {        // Optional
+            akamai: {           // Optional
+                beaconPath: 'http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml'   // Required
             },
-            closedCaption: {
-                type: 'overlay',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/ClosedCaptionPlugin.swf'
+            comscore: {         // Optional
+                c2: '3005183',      // Required
+                c4: '8000000',      // Required
+                c6Field: '{comscoreShowId}%7CS{season}E{episode}'   // Required
             },
-            endCard: {
-                type: 'overlay',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/EndCardPlugIn.swf',
-                wait: 10
+            sitecatalyst: {     // Optional
+                host: 'a.fox.com',  // Required
+                visitorNamespace: 'foxentertainment',   // Optional (Defaults to 'foxentertainment' if unset)
+                account: 'foxcomprod',  // Required
+                additionalPropsMethodName: 'player.extraInfo'   // Required
             },
-            foxUrlSigning: {
-                type: 'signature',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/foxUrlSigningPlugIn.swf'
+            nielsen: {          // Optional
+                clientid: '800251',     // Required
+                vcid: 'c01',            // Required
+                sid: '2500011627',      // Required
+                tfid: '1362',           // Required
+                adcategory: 'fw:category',  // Required
+                adsubcategory: 'fw:subcategory',    // Required
+                displayprefix: 'Season',    // Required
+                displayfieldname: 'season'  // Required
             },
-            auth: {
-                type: 'auth',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/pdk/swf/authentication.swf',
-                priority: 3,
-                cookie: 'authToken'
+            ga: {               // Optional
+                account: 'UA-28236326-1',   // Required
+                histograms: '10',           // Required
+                trackAds: 'true',           // Required
+                pattern: 'thePlatform/{playlist.player}/{isAd}/{title}/{histogram}' // Required
             },
-            akamai: {
-                type: 'format',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/pdk/swf/akamaiHD.swf',
-                analyticsKeys: ['show', 'season', 'episode', 'fullEpisode'],
-                analyticsValueFields: ['showcode', 'season', 'episode', 'fullEpisode'],
-                priority: 4,
-                hosts: '-f.akamaihd.net',
-                playerId: 'foxcom-1.4.522',
-                analyticsBeacon: 'http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml'
-            },
-            foxComScore: {
-                type: 'Tracking',
-                URL: 'http://player.foxfdm.com/shared/1.4.522/swf/FoxComscorePlugIn.swf',
-                priority: 1,
-                c2: 3005183,
-                c4: 8000000,
-                c6Field: '{comscoreShowId}%7CS{season}E{episode}',
-                trackEachChapter: true
-            },
-            nielsen: {
-                type: 'Tracking',
-                'URL': 'http://player.foxfdm.com/shared/1.4.522/swf/ggtp396.swf',
-                clientid: 'us-800251',
-                vcid: 'c01',
-                sfCode: 'us',
-                category: 0,
-                prod: ['vc', 'iag'],
-                adUrlField: 'fw:adurl',
-                sid: 2500011627,
-                tfid: 1362,
-                adCategory: 'fw:category',
-                adSubCategory: 'fw:subcategory',
-                displayPrefix: 'Season',
-                displayFieldName: 'season'
-            },
-            chartBeat: {
-                type: 'tracking',
-                URL: 'http://static.chartbeat.com/swf/ChartbeatPDK.swf',
-                acctId: 8971,
-                appId: 'video@foxnews.com',
-                priority: 1
-            },
-            conviva: {
-                type: '',
-                priority: 1,
-                customerId: 'c3.FOX',
-                serviceUrl: 'http://livepass.conviva.com',
-                URL: 'http://livepassdl.conviva.com/thePlatform/ConvivaThePlatformPlugin_5_0_5.swf?customerId=c3.FOX',
-                cdnName: 'AKAMAI',
-                deviceType: 'PC',
-                playerName: 'foxcom-1.4.522',
-                metadataKeys: ['episode', 'fullEpisode', 'genre', 'repeat', 'season', 'showcode'],
-                'playerTag.series': '',
-                'playerTag.playerType': ''
-            },
-            newFreeWheel: {
-                type: 'adcomponent',
-                url: 'http://player.foxfdm.com/shared/1.4.522/pdk/swf/freewheel.swf',
-                pemURLsSeparator: '~',
-                siteSectionId: undefined,
-                isLive: false,
-                customVideoAssetIdField: 'brightcoveId',
-                pemURLs: 'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf',
-                networkId: 116450,
-                siteSectionNetworkId: 116450,
-                keyValues: '',
-                videoAssetNetworkId: 116450,
-                priority: 1,
-                externalCustomVisitor: 'fdmAAMID',
-                autoPlay: true,
-                adManagerUrl: 'http://adm.fwmrm.net/p/fox_live/AdManager.swf',
-                playerProfile: '116450:FDM_Live',
-                callback: 'FDM_Player_OnFreeWheelEvent',
-                extensionName: 'AnalyticsExtension',
-                extensionUrl: 'http://adm.fwmrm.net/p/fox_live/FoxAnalyticsExtension.swf',
-                cb_profile: '116450:FDM_Live',
-                customIdField: 'brightcoveId',
-                serverUrl: 'http://1c6e2.v.fwmrm.net/'
+            chartbeat: true,    // Optional
+            conviva: {          // Optional
+                type: 'full',           // Required
+                customerId: 'c3.FOX',   // Required
+                metadataKeys: 'episode,fullEpisode,genre,repeat,season,showcode',   // Required
+                playerTags: '|playerTag.series=|playerTag.playerType='  //  Required
             }
         },
-        properties: {
-            supportedMedia: ['mpeg4', 'f4m', 'flv', 'm3u', 'ogg', 'webm', 'mpeg',
-                'qt', '3gpp', 'ism', 'wm', '3gpp2', 'aac', 'asx', 'avi', 'move',
-                'mp3'],
-            releaseUrlFormatResolution: false,
-            logLevel: 'none',
-            enableDynamicSubtitleFonts: true,
-            allowScriptAccess: 'always',
-            previewScrubbing: true,
-            autoplay: true,
-            releaseUrl: 'http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true&policy=19938',
-            width: 640,
-            height: 360
+        adserver: {         // Optional
+            name: 'freewheel'      // Required
         },
-        layouts: {
-            // Supported layout keys:
-            // - swfSkinURL
-            // - jsSkinURL
-            // - defaultLayoutUrl
-            // - liveLayoutUrl
-            // - dvrLayoutUrl
-            // - dvrLiveLayoutUrl
-            // - html5LayoutUrl
-            swfSkinURL: '/fox/swf/skinFox.swf',
-            jsSkinURL: '/fox/config/fox.json',
-            defaultLayoutUrl: '/fox/config/foxLayout.xml',
-            liveLayoutUrl: '/fox/config/liveLayout.xml',
-            dvrLayoutUrl: '/fox/config/dvrLayout.xml',
-            dvrLiveLayoutUrl: '/fox/config/dvrLiveLayout.xml',
-            html5LayoutUrl: '/fox/config/html5Layout.xml',
-            play_overlay_x_offset: '50',
-            play_overlay_y_offset: '50'
+        layouts: {  // Optional (Do not unset)
+            swfSkinURL: '/fox/swf/skinFox.swf',     // Optional (Do not unset)
+            jsSkinURL: '/fox/config/fox.json',      // Optional (Do not unset)
+            defaultLayoutUrl: '/fox/config/foxLayout.xml',      // Optional (Do not unset)
+            liveLayoutUrl: '/fox/config/liveLayout.xml',        // Optional (Do not unset)
+            dvrLayoutUrl: '/fox/config/dvrLayout.xml',          // Optional (Do not unset)
+            dvrLiveLayoutUrl: '/fox/config/dvrLiveLayout.xml',  // Optional (Do not unset)
+            html5LayoutUrl: '/fox/config/html5Layout.xml',      // Optional (Do not unset)
+            play_overlay_x_offset: '50',        // Optional (Do not unset)
+            play_overlay_y_offset: '50'         // Optional (Do not unset)
         },
-        colors: {
-            // Color format is like HTML hex but preceeded by '0x' instead of '#'
-            // Supported color keys:
-            // - backgroundColor
-            // - controlBackgroundColor
-            // - controlColor
-            // - controlHoverColor
-            // - controlSelectedColor
-            // - disabledColor
-            // - fp_bgcolor
-            // - frameColor
-            // - playProgressColor
-            // - textColor
-            // - loadProgressColor
-            // - controlHighlightColor
-            backgroundColor: '0x000000',
-            controlBackgroundColor: '0x000000',
-            controlColor: '0xFFFFFF',
-            controlHoverColor: '0x00B4FF',
-            controlSelectedColor: '0x000000',
-            disabledColor: '0x000000',
-            fp_bgcolor: '0x000000',
-            frameColor: '0x000000',
-            playProgressColor: '0x00B4FF',
-            textColor: '0xBEBEBE',
-            loadProgressColor: '0xBEBEBE',
-            controlHighlightColor:'0x00B4FF'
+        colors: {   // Optional (Do not unset)
+            backgroundColor: '0x000000',        // Optional (Do not unset)
+            controlBackgroundColor: '0x000000', // Optional (Do not unset)
+            controlColor: '0xFFFFFF',           // Optional (Do not unset)
+            controlHoverColor: '0x00B4FF',      // Optional (Do not unset)
+            controlSelectedColor: '0x000000',   // Optional (Do not unset)
+            disabledColor: '0x000000',          // Optional (Do not unset)
+            fp_bgcolor: '0x000000',             // Optional (Do not unset)
+            frameColor: '0x000000',             // Optional (Do not unset)
+            playProgressColor: '0x0000FF',      // Optional (Do not unset)
+            textColor: '0x0000ff',              // Optional (Do not unset)
+            loadProgressColor: '0xBEBEBE',      // Optional (Do not unset)
+            controlHighlightColor: '0x00FF00'   // Optional (Do not unset)
         }
     };
 
-    var configData = jquery.extend({}, defaults);
+    var configData = {};
 
     var validationRules = {
-        shortname: {
-            required: false,
-            defaults: defaults.shortname
+        required: false,
+        defaults: defaults,
+        version: {
+            required: false
         },
-        name: {
+        shortname: {
             required: true
         },
-        plugins: {
+        name: {
+            required: true,
+            defaults: defaults.name
+        },
+        network_name: {
+            required: true
+        },
+        enable_html5: {
             required: false,
-            defaults: {
-                layout: defaults.plugins.layout,
-                closedCaption: defaults.plugins.closedCaption,
-                endCard: defaults.plugins.endCard
+            defaults: defaults.enable_html5
+        },
+        enable_auth: {
+            required: false,
+            defaults: defaults.enable_auth
+        },
+        shouldGetNewJS: {
+            required: false,
+            defaults: defaults.shouldGetNewJS
+        },
+        share_emailserver: {
+            required: false
+        },
+        share_shortenerURL: {
+            required: false
+        },
+        analytics: {
+            required: false,
+            defaults: {},
+            akamai: {
+                required: false,
+                beaconPath: {
+                    required: true
+                }
+            },
+            comscore: {
+                required: false,
+                c2: {
+                    required: true
+                },
+                c4: {
+                    required: true
+                },
+                c6Field: {
+                    required: true
+                }
+            },
+            sitecatalyst: {
+                required: false,
+                host: {
+                    required: true
+                },
+                visitorNamespace: {
+                    required: false,
+                    defaults: defaults.analytics.sitecatalyst.visitorNamespace
+                },
+                account: {
+                    required: true
+                },
+                additionalPropsMethodName: {
+                    required: true
+                }
+            },
+            nielsen: {
+                required: false,
+                clientid: {
+                    required: true
+                },
+                vcid: {
+                    required: true
+                },
+                sid: {
+                    required: true
+                },
+                tfid: {
+                    required: true
+                },
+                adcategory: {
+                    required: true
+                },
+                adsubcategory: {
+                    required: true
+                },
+                displayprefix: {
+                    required: true
+                },
+                displayfieldname: {
+                    required: true
+                }
+            },
+            ga: {
+                required: false,
+                account: {
+                    required: true
+                },
+                histograms: {
+                    required: true
+                },
+                trackAds: {
+                    required: true
+                },
+                pattern: {
+                    required: true
+                }
+            },
+            chartbeat: {
+                required: false
+            },
+            conviva: {
+                required: false,
+                type: {
+                    required: true,
+                    'enum': ['full', 'lite']
+                },
+                customerId: {
+                    required: true
+                },
+                metadataKeys: {
+                    required: true
+                },
+                playerTags: {
+                    required: true
+                }
             }
         },
-        appearance: {
-            skinUrl: {
+        adserver: {
+            required: false,
+            defaults: defaults.adserver,
+            name: {
+                required: true
+            },
+            siteSection: {
                 required: false
             },
-            layoutUrl: {
+            customVideoAssetIdField: {
                 required: false
             },
-            useBootLoader: {
+            videoDescriptionUrl: {
                 required: false
             },
+            host: {
+                required: false
+            }
+        },
+        layouts: {
+            required: false,
+            defaults: defaults.layouts,
+            swfSkinURL: {
+                required: false,
+                defaults: defaults.layouts.swfSkinURL
+            },
+            jsSkinURL: {
+                required: false,
+                defaults: defaults.layouts.jsSkinURL
+            },
+            defaultLayoutUrl: {
+                required: false,
+                defaults: defaults.layouts.defaultLayoutUrl
+            },
+            liveLayoutUrl: {
+                required: false,
+                defaults: defaults.layouts.liveLayoutUrl
+            },
+            dvrLayoutUrl: {
+                required: false,
+                defaults: defaults.layouts.dvrLayoutUrl
+            },
+            dvrLiveLayoutUrl: {
+                required: false,
+                defaults: defaults.layouts.dvrLiveLayoutUrl
+            },
+            html5LayoutUrl: {
+                required: false,
+                defaults: defaults.layouts.html5LayoutUrl
+            },
+            play_overlay_x_offset: {
+                required: false,
+                defaults: defaults.layouts.play_overlay_x_offset
+            },
+            play_overlay_y_offset: {
+                required: false,
+                defaults: defaults.layouts.play_overlay_y_offset
+            }
+        },
+        colors: {
+            required: false,
+            defaults: defaults.colors,
             backgroundColor: {
-                required: false
+                required: false,
+                defaults: defaults.colors.backgroundColor
             },
             controlBackgroundColor: {
-                required: false
+                required: false,
+                defaults: defaults.colors.controlBackgroundColor
             },
             controlColor: {
-                required: false
-            },
-            controlFrameColor: {
-                required: false
+                required: false,
+                defaults: defaults.colors.controlColor
             },
             controlHoverColor: {
-                required: false
+                required: false,
+                defaults: defaults.colors.controlHoverColor
             },
             controlSelectedColor: {
-                required: false
-            },
-            loadProgressColor: {
-                required: false
-            },
-            pageBackgroundColor: {
-                required: false
-            },
-            playProgressColor: {
-                required: false
-            },
-            scrubTrackColor: {
-                required: false
-            },
-            scrubberColor: {
-                required: false
-            },
-            scrubberFrameColor: {
-                required: false
-            },
-            textBackgroundColor: {
-                required: false
-            },
-            textColor: {
-                required: false
-            },
-            allowFullscreen: {
-                required: false
+                required: false,
+                defaults: defaults.colors.controlSelectedColor
             },
             disabledColor: {
-                required: false
+                required: false,
+                defaults: defaults.colors.disabledColor
+            },
+            fp_bgcolor: {
+                required: false,
+                defaults: defaults.colors.fp_bgcolor
+            },
+            frameColor: {
+                required: false,
+                defaults: defaults.colors.frameColor
+            },
+            playProgressColor: {
+                required: false,
+                defaults: defaults.colors.playProgressColor
+            },
+            textColor: {
+                required: false,
+                defaults: defaults.colors.textColor
+            },
+            loadProgressColor: {
+                required: false,
+                defaults: defaults.colors.loadProgressColor
             },
             controlHighlightColor: {
-                required: false
-            },
-            useDefaultPlayOverlay: {
-                required: false
+                required: false,
+                defaults: defaults.colors.controlHighlightColor
             }
         }
     };
@@ -19031,11 +19174,20 @@ define('config',[
      *  required, the default value will be used. Default the default config is
      *  defined in the defaults object above.
      *  @param config The configuration data to be validated. This should be an
-     *      object. Nested properties are supported.
+     *      object. Nested properties are supported. Pass in null to delete
+     *      to remove the property from the config (this overrides defaults).
      *  @param rules The validation rules to be used when validating the config.
      *      the rules should correspond to each property of the config. Nested
-     *      properties are supported, but each "leaf" property must specify a
-     *      set of rules.
+     *      properties are supported, but each "node" of the validation tree must
+     *      specify a set of rules.
+     *      Rules:
+     *          required: Boolean - determines whether the config object must
+     *              specify a value for this field.
+     *          defaults: Any type - if an optional field is not specified by
+     *              the config object, it will be set to this value.
+     *          enum: Array - specifies that the config value must be a member of
+     *              the array. Works best on "leaf" nodes where the value data
+     *              type is a String or Number.
      *  @param defaultConfig The configuration properties that will be used if
      *      not overridden or if a specified property is not valid.
      *  @param failOnError Flag to determine whether to throw an error when an
@@ -19047,10 +19199,11 @@ define('config',[
      */
     var validate = function(config, rules, defaultConfig, failOnError) {
         if (_.isUndefined(config)) {
-            return defaultConfig;
+            return rules.defaults;
         }
 
         _.each(rules, function(rule, key) {
+            var message;
             var currentSetting = config[key];
             if (_.isObject(currentSetting)) {
                 config[key] = validate(currentSetting, rule, defaultConfig[key], failOnError);
@@ -19058,7 +19211,7 @@ define('config',[
             }
             if (_.isUndefined(currentSetting)) {
                 if (rule.required === true) {
-                    var message = 'Required configuration setting "' + key + '" is not provided.';
+                    message = 'Required configuration setting "' + key + '" is not provided.';
                     debug.warn(message);
                     if (failOnError) {
                         throw new Error(message);
@@ -19073,7 +19226,26 @@ define('config',[
                     }
                     return;
                 }
-                config[key] = validate(currentSetting, rule, defaultConfig[key], failOnError);
+            }
+            if (_.isNull(currentSetting)) {
+                if (rule.required === true) {
+                    message = 'Cannot unset required configuration setting "' + key + '"';
+                    debug.warn(message);
+                    if (failOnError) {
+                        throw new Error(message);
+                    }
+                    return;
+                }
+                delete config[key];
+                return;
+            }
+            if (rule['enum'] && rule['enum'].indexOf(currentSetting) === -1) {
+                message = 'Invalid value specified for "' + key + '": "' + currentSetting + '"';
+                debug.warn(message);
+                if (failOnError) {
+                    throw new Error(message);
+                }
+                return;
             }
         });
         return config;
@@ -20128,7 +20300,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-14 03:08:31)');
+        debug.log('ready (build date: 2013-08-16 12:08:00)');
 
         _messageUnsupportedUsers();
     };
@@ -20138,7 +20310,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-14 03:08:31',
+        buildDate: '2013-08-16 12:08:00',
         packageName: 'foxneod',
         version: '0.8.7',
         getOmnitureLibraryReady: getOmnitureLibraryReady,

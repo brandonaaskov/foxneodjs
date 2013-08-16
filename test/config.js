@@ -69,39 +69,9 @@ suite('config', function() {
 
         test('should pass when given a single valid object', function(done) {
             $f.config({
+                name: 'test',
                 shortname: 'test',
-                name: 'test player',
-                plugins: [],
-                layout: [{
-                    name: 'default layout',
-                    type: 'layout',
-                    files: [
-                        'http://player.foxneodigital.com/fox/flash-layout.xml',
-                        'http://player.foxneodigital.com/fox/js-layout.json'
-                    ]
-                }, {
-                    name: 'live player layout',
-                    type: 'layout',
-                    files: 'http://player.foxneodigital.com/fox/live-layout.xml'
-                }, {
-                    name: 'default skin',
-                    type: 'skin',
-                    files: 'http://player.foxneodigital.com/fox/flash-skin.swf'
-                }],
-                colors: {
-                    backgroundColor: '#000000',
-                    controlBackgroundColor: '#000000',
-                    controlColor: '#FFFFFF',
-                    controlHoverColor: '#00b4ff',
-                    controlSelectedColor: '#000000',
-                    disabledColor: '#000000',
-                    'fp.bgcolor': '#000000',
-                    frameColor: '#000000',
-                    playProgressColor: '#00b4ff',
-                    textColor: '#BEBEBE',
-                    loadProgressColor: '#BEBEBE',
-                    controlHighlightColor: '#00b4ff'
-                }
+                network_name: 'test'
             }).done(function(data) {
                 assert.ok(data);
                 done();
@@ -123,11 +93,13 @@ suite('config', function() {
             }
         });
 
-        test('should use defaults if an optional key is missing', function(done) {
+        test('should use defaults if an optional key (with default specified) is missing', function(done) {
             $f.config({
-                name: 'test'
+                name: 'test',
+                shortname: 'test',
+                network_name: 'test'
             }).done(function(data) {
-                assert.strictEqual(data.shortname, 'default');
+                assert.strictEqual(data.enable_html5, true);
                 done();
             }).fail(function() {
                 assert.fail(null, null, 'Validation failed');
@@ -137,11 +109,13 @@ suite('config', function() {
 
         test('should extend config with second argument', function(done) {
             $f.config({
-                name: 'test'
+                name: 'test',
+                shortname: 'test',
+                network_name: 'test'
             }, {
-                shortname: 'test'
+                shortname: 'test2'
             }).done(function(data) {
-                assert.strictEqual(data.shortname, 'test');
+                assert.strictEqual(data.shortname, 'test2');
                 done();
             }).fail(function() {
                 assert.fail(null, null, 'Validation failed');
@@ -152,7 +126,9 @@ suite('config', function() {
         test('should not fail if second argument is invalid', function(done) {
             try {
                 $f.config({
-                    name: 'test'
+                    name: 'test',
+                    shortname: 'test',
+                    network_name: 'test'
                 }, {}).done(function(data) {
                     assert.ok(data);
                     done();
@@ -168,16 +144,132 @@ suite('config', function() {
 
         test('should override existing properties with new ones', function(done) {
             $f.config({
-                name: 'test-a'
+                name: 'test',
+                shortname: 'test-a',
+                network_name: 'test'
             }, {
-                name: 'test-b'
+                shortname: 'test-b'
             }).done(function(data) {
-                assert.strictEqual(data.name, 'Default Player');
+                assert.strictEqual(data.shortname, 'test-b');
                 done();
             }).fail(function() {
                 assert.fail(null, null, 'Validation failed');
                 done();
             });
+        });
+
+        test('should not set default values if a field is not set and has no default value', function(done) {
+            $f.config({
+                name: 'test',
+                shortname: 'test',
+                network_name: 'test'
+            }).done(function(data) {
+                assert.isUndefined(data.version);
+                done();
+            }).fail(function() {
+                assert.fail(null, null, 'validation failed');
+                done();
+            });
+        });
+
+        test('should not set a value if an enum rule is specified and the value is bad', function(done) {
+            try {
+                $f.config({
+                    name: 'test',
+                    shortname: 'test',
+                    network_name: 'test',
+                    analytics: {
+                        conviva: {
+                            type: 'invalid',
+                            customerId: 'test',
+                            metadataKeys: 'test',
+                            playerTags: 'test'
+                        }
+                    }
+                }).done(function(data) {
+                    assert.fail(null, null, 'Validation should have failed');
+                    done();
+                }).fail(function() {
+                    assert.ok(true);
+                    done();
+                });
+            } catch(err) {
+                assert.ok(true);
+                done();
+            }
+        });
+
+        test('should accept a value if an enum rule is specified and the value is valid', function(done) {
+            try {
+                $f.config({
+                    name: 'test',
+                    shortname: 'test',
+                    network_name: 'test',
+                    analytics: {
+                        conviva: {
+                            type: 'full',
+                            customerId: 'test',
+                            metadataKeys: 'test',
+                            playerTags: 'test'
+                        }
+                    }
+                }).done(function(data) {
+                    assert.strictEqual(data.analytics.conviva.type, 'full');
+                    done();
+                }).fail(function() {
+                    assert.fail(null, null, 'Validation failed');
+                    done();
+                });
+            } catch(err) {
+                assert.fail(null, null, 'Validation failed');
+                done();
+            }
+        });
+
+        test('should be able to delete existing optional settings', function(done) {
+            $f.config({
+                name: 'test',
+                shortname: 'test',
+                network_name: 'test',
+                analytics: {
+                    akamai: {
+                        beaconPath: 'http://localhost:80'
+                    }
+                },
+                version: 'test'
+            }, {
+                version: null
+            }).done(function(data) {
+                assert.isUndefined(data.version);
+                done();
+            }).fail(function() {
+                assert.fail(null, null, 'Validation failed');
+                done();
+            });
+        });
+
+        test('should not be able to delete required settings', function(done) {
+            try {
+                $f.config({
+                    name: 'test',
+                    shortname: null,
+                    network_name: 'test',
+                    analytics: {
+                        akamai: {
+                            beaconPath: 'http://localhost:80'
+                        }
+                    }
+                }).done(function(data) {
+                    assert.fail(null, null, 'Validation should have failed');
+                    done();
+                }).fail(function() {
+                    assert.ok(true);
+                    done();
+                });
+            } catch(err) {
+                assert.ok(true);
+                done();
+            }
         });
     });
 });
