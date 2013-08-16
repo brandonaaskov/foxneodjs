@@ -43,26 +43,33 @@ define([
 
         dispatcher.dispatch(normalizedEventName, cleanData);
         dispatcher.up(normalizedEventName, cleanData);
-        deferred.resolve(cleanData);
+        deferred.resolve(normalizedEventName, cleanData);
 
         return deferred;
     }
 
-    function _checkForCompanions (data, normalizedEventName) {
+    function _checkForCompanions (normalizedEventName, cleanData) {
         var deferred = new jquery.Deferred();
 
         //check for companion banners
-        if (normalizedEventName === 'adStart' && _.isArray(data.banners) && !_.isEmpty(data.banners))
+        if (normalizedEventName === 'adStart' && _.isArray(cleanData.banners) && !_.isEmpty(cleanData.banners))
         {
-            _.each(data.banners, function (banner) {
+            _.each(cleanData.banners, function (banner) {
                 if (!_.isUndefined(banner))
                 {
-                    dispatcher.dispatch('companionAd', banner);
+                    var html = (_.has(banner, 'content')) ? banner.content : null;
+                    dispatcher.dispatch('companionAd', {
+                        banner: html
+                    });
                 }
             });
         }
+        else
+        {
+            debug.log('no companion banners');
+        }
 
-        deferred.resolve(data);
+        deferred.resolve(cleanData);
 
         return deferred;
     }
@@ -102,7 +109,9 @@ define([
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
             ovp.on(ovpEventName, function (event) {
-                _handlePlayerEvent(event, ovpEventName, normalizedEventName).then(_checkForCompanions);
+                _handlePlayerEvent(event, ovpEventName, normalizedEventName).then(function (normalizedEventName, cleanData) {
+                    _checkForCompanions(normalizedEventName, cleanData);
+                });
             });
         });
     })();
