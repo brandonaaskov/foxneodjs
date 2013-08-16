@@ -336,6 +336,7 @@ define([
                 });
 
             config = _processAttributes(selector, config);
+            storage.now.set('playerConfig', config);
 
             window['player'] = config;
             debug.log('creating player with config', config);

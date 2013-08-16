@@ -22,7 +22,7 @@ define([
         if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
         {
             deferred.reject(event);
-            return;
+            return deferred;
         }
 
         var video = event.data.baseClip,

@@ -144,6 +144,13 @@ FDM_Player.prototype.init=function(pst,pre){
 	FDM_Player_vars.isIOS=(($pdk.env.Detect.getInstance().getPlaybackRuntime()=="html5")?true:false) || ((location.search + location.hash).indexOf('isIOS') != -1);
 	FDM_Player_vars.isFlash=(flshV>FDM_Player_vars.flash) ? true : false;
 
+	var foxneodPlayerConfig = foxneod._storage.now.get('playerConfig');
+	if (_.has(foxneodPlayerConfig, 'forceHTML') && foxneodPlayerConfig.forceHTML)
+	{
+		FDM_Player_vars.isIOS = true;
+		FDM_Player_vars.isFlash = false;
+	}
+
 	if (FDM_Player_vars.isFlash) {
 		p.allowFullScreen='true';
 		p.allowScriptAccess='always';
@@ -3872,7 +3879,7 @@ define('advertising',[
         if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
         {
             deferred.reject(event);
-            return;
+            return deferred;
         }
 
         var video = event.data.baseClip,
@@ -4321,6 +4328,7 @@ define('player',[
                 });
 
             config = _processAttributes(selector, config);
+            storage.now.set('playerConfig', config);
 
             window['player'] = config;
             debug.log('creating player with config', config);
@@ -6004,7 +6012,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-16 10:08:47)');
+        debug.log('ready (build date: 2013-08-16 03:08:41)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6015,7 +6023,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-16 10:08:47',
+        buildDate: '2013-08-16 03:08:41',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
