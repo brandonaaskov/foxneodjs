@@ -16,6 +16,57 @@ define([
         dispatcher = new Dispatcher('advertising');
 
     //////////////////////////////////////////////// private methods...
+    function _handlePlayerEvent (event, ovpEventName, normalizedEventName) {
+        var deferred = new jquery.Deferred();
+
+        if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
+        {
+            deferred.reject(event);
+            return;
+        }
+
+        var video = event.data.baseClip,
+            cleanData = _cleanData(event.data.baseClip);
+
+        switch (ovpEventName)
+        {
+            case 'OnMediaLoadStart':
+
+                if (isAd(video))
+                {
+                    normalizedEventName = 'adStart';
+                    storage.now().set('mostRecentAd', cleanData);
+                }
+
+                break;
+        }
+
+        dispatcher.dispatch(normalizedEventName, cleanData);
+        dispatcher.up(normalizedEventName, cleanData);
+        deferred.resolve(cleanData);
+
+        return deferred;
+    }
+
+    function _checkForCompanions (data, normalizedEventName) {
+        var deferred = new jquery.Deferred();
+
+        //check for companion banners
+        if (normalizedEventName === 'adStart' && _.isArray(data.banners) && !_.isEmpty(data.banners))
+        {
+            _.each(data.banners, function (banner) {
+                if (!_.isUndefined(banner))
+                {
+                    dispatcher.dispatch('companionAd', banner);
+                }
+            });
+        }
+
+        deferred.resolve(data);
+
+        return deferred;
+    }
+
     function _cleanData (video) {
         var banners = !_.isEmpty(video.banners) ? video.banners : null;
 
@@ -37,6 +88,9 @@ define([
 
 
     //////////////////////////////////////////////// public methods...
+    var isAd = function (video) {
+        return !!(_.has(video, 'isAd') && video.isAd);
+    };
     ////////////////////////////////////////////////
 
 
@@ -48,43 +102,7 @@ define([
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
             ovp.on(ovpEventName, function (event) {
-                if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
-                {
-                    return;
-                }
-
-                var video = event.data.baseClip,
-                    cleanData = _cleanData(event.data.baseClip);
-
-                switch (ovpEventName)
-                {
-                    case 'OnMediaLoadStart':
-
-                        if (_.has(video, 'isAd'))
-                        {
-                            if (video.isAd)
-                            {
-                                normalizedEventName = 'adStart';
-                                storage.now().set('mostRecentAd', cleanData);
-                            }
-                        }
-
-                        break;
-                }
-
-                dispatcher.dispatch(normalizedEventName, cleanData);
-                dispatcher.up(normalizedEventName, cleanData);
-
-                //check for companion banners
-                if (normalizedEventName === 'adStart' && _.isArray(cleanData.banners) && !_.isEmpty(cleanData.banners))
-                {
-                    _.each(cleanData.banners, function (banner) {
-                        if (!_.isUndefined(banner))
-                        {
-                           dispatcher.dispatch('companionAd', banner);
-                        }
-                    });
-                }
+                _handlePlayerEvent(event, ovpEventName, normalizedEventName).then(_checkForCompanions);
             });
         });
     })();
@@ -95,6 +113,8 @@ define([
 
     //////////////////////////////////////////////// public api...
     return {
+        isAd: isAd,
+
         //event listening
         addEventListener: dispatcher.on,
         on: dispatcher.on,
