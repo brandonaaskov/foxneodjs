@@ -14,6 +14,13 @@ define([
         storage;
 
     return function (owningModuleName) {
+
+        //////////////////////////////////////////////// private methods...
+        ////////////////////////////////////////////////
+
+
+
+        //////////////////////////////////////////////// public methods...
         var addListener = function (eventName, callback) {
             if (_.isEmpty(eventName) || !_.isString(eventName))
             {
@@ -169,6 +176,7 @@ define([
                 window.parent.postMessage(encoded, '*');
             }
         };
+        ////////////////////////////////////////////////
 
 //        var delivered = function (messageName) {
 //            var deferred = new jquery.Deferred();
@@ -183,6 +191,7 @@ define([
 //            return deferred;
 //        };
 
+        //////////////////////////////////////////////// initialize...
         (function init () {
             storage = require('storage');
             var Debug = require('Debug');
@@ -213,7 +222,11 @@ define([
                 }
             });
         })();
+        ////////////////////////////////////////////////
 
+
+
+        //////////////////////////////////////////////// public api...
         return {
             on: addListener,
             dispatch: dispatch,
@@ -225,5 +238,6 @@ define([
             //postMessage methods
             up: up
         };
+        ////////////////////////////////////////////////
     };
 });
