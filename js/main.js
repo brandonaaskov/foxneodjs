@@ -2,12 +2,12 @@
 
 require([
     'almond',
-    'jqueryloader',
-    'underscoreloader',
+    'jquery',
+    'lodash',
     'Dispatcher',
     'Debug',
     'foxneod'
-], function (almond, jquery, _, Dispatcher, Debug, foxneod) {
+], function (almond, $, _, Dispatcher, Debug, foxneod) {
     'use strict';
 
     var dispatcher = new Dispatcher(),
@@ -16,15 +16,14 @@ require([
     (function () {
         if (_.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
         {
-            window._ = _;
-            debug.log('jQuery (internal) version after noConflict is', jquery().jquery);
+            debug.log('jQuery (internal)', $().jquery);
 
             if(window.jQuery)
             {
-                debug.log('jQuery (page) version after noConflict is', window.jQuery().jquery);
+                debug.log('jQuery (page)', window.jQuery().jquery);
             }
 
-            debug.log('Underscore version after noConflict is', _.VERSION);
+            debug.log('Lo-Dash', _.VERSION);
 
             window['@@packageName'] = window.$f = foxneod;
             window['@@packageName']._init();

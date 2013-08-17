@@ -1,20 +1,51 @@
 /*global define */
 
 define([
-    'underscoreloader',
+    'lodash',
+    'jquery',
+    'utils',
     'Debug',
-    'cookies'
-], function (_, Debug, cookies) {
+    'Dispatcher',
+    'storage'
+], function (_, jquery, utils, Debug, Dispatcher, storage) {
     'use strict';
 
-    var _freewheelKeyValues = cookies.grab('aam_freewheel'),
-        debug = new Debug('audience manager');
+    var debug = new Debug('audience manager'),
+        dispatcher = new Dispatcher('audience manager'),
+        _freewheelKeyValues = storage.cookies.grab('aam_freewheel');
 
+    //////////////////////////////////////////////// private methods...
+    ////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////// public methods...
     var getUserId = function () {
-        return cookies.grab('aam_uuid');
+        return storage.cookies.grab('aam_uuid');
     };
+    ////////////////////////////////////////////////
 
+
+
+    //////////////////////////////////////////////// initialize...
+    (function init () {
+
+    })();
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////// public api...
     return {
-        getUserId: getUserId
+        getUserId: getUserId,
+
+        //event listening
+        addEventListener: dispatcher.on,
+        on: dispatcher.on,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
+    ////////////////////////////////////////////////
 });

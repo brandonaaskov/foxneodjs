@@ -1,7 +1,7 @@
 /*global define */
 
 define([
-    'underscoreloader',
+    'lodash',
     'Debug',
     'Dispatcher',
     'cookies'

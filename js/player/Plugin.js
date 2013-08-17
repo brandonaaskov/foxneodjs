@@ -1,9 +1,9 @@
 /*global define */
 
 define([
+    'lodash',
     'Debug',
-    'Dispatcher',
-    'underscoreloader'
+    'Dispatcher'
 ], function (Debug, Dispatcher, _) {
     'use strict';
 });

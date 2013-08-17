@@ -1,24 +1,26 @@
 /*global define */
 
 define([
+    'lodash',
+    'jquery',
     'Dispatcher',
     'Debug',
     'polyfills',
     'utils',
     'player',
+    'config',
     'query',
     'system',
     'base64',
-    'cookies',
     'mvpd',
+    'ovp',
+    'advertising',
     'analytics',
-    'underscoreloader',
-    'jqueryloader',
-    'omnitureloader'], function (Dispatcher, Debug, polyfills, utils, player, query, system, base64, cookies, mvpd, analytics, _, jquery, omnitureloader) {
+    'storage'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
-    var buildTimestamp = '@@buildDate';
     var debug = new Debug('core'),
         dispatcher = new Dispatcher();
     ////////////////////////////////////////////////
@@ -27,15 +29,19 @@ define([
 
 
     //////////////////////////////////////////////// public methods
-    var getOmnitureLibraryReady = function () {
-        return omnitureloader.getOmnitureLibrary();
-    };
     ////////////////////////////////////////////////
 
 
 
 
     //////////////////////////////////////////////// private methods
+    function _patchIE8Problems () {
+        if (!_.has(window, 'addEventListener') && _.has(window, 'attachEvent'))
+        {
+            window.addEventListener = window.attachEvent;
+        }
+    }
+
     function _messageUnsupportedUsers () {
         var title = "Unsupported Browser",
             message = '';
@@ -59,7 +65,7 @@ define([
         //show site modal
         if (_.has(window, 'VideoAuth') && _.has(window.VideoAuth, 'Modal') && (!_.isEmpty(title) && !_.isEmpty(message)))
         {
-            var $htmlFragment = jquery('<div id="foxneod-error">\n    <h1>Warning</h1>\n    <p class="error-message">' + message + '</p>\n</div>');
+            var $htmlFragment = $('<div id="foxneod-error">\n    <h1>Warning</h1>\n    <p class="error-message">' + message + '</p>\n</div>');
 
             window.VideoAuth.Modal.open(null, title);
             window.VideoAuth.Modal.content.set($htmlFragment);
@@ -73,6 +79,7 @@ define([
     var init = function () {
         debug.log('ready (build date: @@buildDate)');
 
+        _patchIE8Problems();
         _messageUnsupportedUsers();
     };
     ////////////////////////////////////////////////
@@ -84,24 +91,27 @@ define([
         buildDate: '@@buildDate',
         packageName: '@@packageName',
         version: '@@version',
-        getOmnitureLibraryReady: getOmnitureLibraryReady,
+        dispatcher: dispatcher,
         dispatch: dispatcher.dispatch,
-        addEventListener: dispatcher.addEventListener,
+        on: dispatcher.on,
+        addEventListener: dispatcher.on,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
         removeEventListener: dispatcher.removeEventListener,
+        advertising: advertising,
         analytics: analytics,
-        cookies: cookies,
         Debug: Debug,
         mvpd: mvpd,
+        ovp: ovp,
         player: player,
+        config: config,
         query: query,
         system: system,
         utils: utils,
-        __test__: {
-            jQuery: jquery,
-            base64: base64,
-            removeAllEventListeners: dispatcher.removeAllEventListeners
-        }
+        _: _,
+        jQuery: $,
+
+        //private/testing
+        _storage: storage
     };
 });

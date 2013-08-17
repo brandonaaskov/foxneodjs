@@ -1,6 +1,12 @@
 /*global define, _ */
 
-define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], function (utils, _, jquery, Debug, Dispatcher) {
+define([
+    'utils',
+    'lodash',
+    'jquery',
+    'Debug',
+    'Dispatcher'
+], function (utils, _, $, Debug, Dispatcher) {
     'use strict';
 
     return function (selector, iframeURL, suppliedAttributes) {
@@ -10,7 +16,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _playerAttributes = {}, //these get passed down from player.js
             _processedAttributes = {},
             _playerToCreate,
-            _deferred = new jquery.Deferred(),
+            _deferred = new $.Deferred(),
             _onloadFired = false;
         //-------------------------------------------------------------------------------- /instance variables
 
@@ -40,7 +46,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
         }
 
         function _getIframeHTML (iframeURL, attributes) {
-            var attributesString = utils.objectToQueryString(attributes);
+            var attributesString = utils.objectToQueryString(attributes) + '&insideIframe=true';
             attributes = utils.lowerCasePropertyNames(attributes);
 
             return '<iframe ' +
@@ -53,22 +59,12 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
         }
 
         function _onLoad (event) {
-            debug.log('#2) onload fired');
+            debug.log('onload fired');
             _onloadFired = true;
             _updateDeferred();
         }
 
-        function _onMetaTagExists () {
-//            debug.log('_onMetaTagExists fired');
-//            _metaTagExists = true;
-//            _updateDeferred();
-        }
-
         function _updateDeferred () {
-
-//            if (_metaTagExists && _onloadFired)
-            debug.log('#3) meta tag exists');
-            //TODO: this assumes the meta tag in the iframe page, which we obviously can't actually guarantee
             if (_onloadFired)
             {
                 debug.log('resolving the iframe', _playerToCreate);
@@ -117,7 +113,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
             _playerToCreate = elements[0];
 
             _playerToCreate.element.innerHTML = _getIframeHTML(iframeURL, _playerToCreate.attributes);
-            _playerToCreate.iframe = jquery(_playerToCreate.element).find('iframe')[0];
+            _playerToCreate.iframe = $(_playerToCreate.element).find('iframe')[0];
 
             document.getElementById(_playerToCreate.attributes.iframePlayerId).onload = function (event) {
                 if (!_onloadFired)
@@ -126,7 +122,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
                 }
             };
 
-            debug.log('#1) html injected', _playerToCreate);
+            debug.log('html injected', _playerToCreate);
 
             return getReady();
         };
@@ -148,7 +144,7 @@ define(['utils', 'underscoreloader', 'jqueryloader', 'Debug', 'Dispatcher'], fun
         return {
             create: create,
             getReady: getReady,
-            addEventListener: dispatcher.addEventListener,
+            addEventListener: dispatcher.on,
             getEventListeners: dispatcher.getEventListeners,
             hasEventListener: dispatcher.hasEventListener,
             removeEventListener: dispatcher.removeEventListener

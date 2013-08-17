@@ -1,19 +1,50 @@
 /*global define */
 
 define([
-    'underscoreloader',
+    'lodash',
+    'jquery',
+    'utils',
     'Debug',
-    'cookies'
-], function (_, Debug, cookies) {
+    'Dispatcher',
+    'storage'
+], function (_, jquery, utils, Debug, Dispatcher, storage) {
     'use strict';
 
-    var debug = new Debug('akamai media analytics');
+    var debug = new Debug('akamai media analytics'),
+        dispatcher = new Dispatcher('akamai media analytics');
 
+    //////////////////////////////////////////////// private methods...
+    ////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////// public methods...
     var getUserId = function () {
-        return cookies.grab('Akamai_AnalyticsMetrics_clientId');
+        return storage.cookies.grab('Akamai_AnalyticsMetrics_clientId');
     };
+    ////////////////////////////////////////////////
 
+
+
+    //////////////////////////////////////////////// initialize...
+    (function init () {
+
+    })();
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////// public api...
     return {
-        getUserId: getUserId
+        getUserId: getUserId,
+
+        //event listening
+        addEventListener: dispatcher.on,
+        on: dispatcher.on,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
+    ////////////////////////////////////////////////
 });

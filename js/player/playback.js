@@ -1,15 +1,28 @@
-/*global define, _ */
+/*global define */
 
-define(['Debug', 'ovp'], function (Debug, ovp) {
+define([
+    'require',
+    'lodash',
+    'jquery',
+    'utils',
+    'Debug',
+    'Dispatcher',
+    'ovp',
+    'storage'
+], function (require, _, jquery, utils, Debug, Dispatcher, ovp, storage) {
     'use strict';
 
     var debug = new Debug('playback'),
-        _controller; //TODO: refactor how this is set and used
+        dispatcher = new Dispatcher('playback'),
+        player, //populates in init
+        _insideIframe = false;
 
-    var _setController = function (controller) {
-        _controller = controller;
-    };
+    //////////////////////////////////////////////// private methods...
+    ////////////////////////////////////////////////
 
+
+
+    //////////////////////////////////////////////// public methods...
     /**
      * Takes the time to seek to in seconds, rounds it and seeks to that position. If the pdk isn't available, it
      * will return false
@@ -32,7 +45,10 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
         {
             var seekTime = Math.round(timeInSeconds * 1000);
             debug.log("Seeking to (in seconds)...", seekTime/1000);
-            _controller.seekToPosition(seekTime);
+
+            ovp.getController().then(function (controller) {
+                controller.seekToPosition(seekTime);
+            });
         }
         else
         {
@@ -43,20 +59,49 @@ define(['Debug', 'ovp'], function (Debug, ovp) {
     };
 
     var play = function () {
-        _controller.pause(false);
-        return this;
+        return ovp.getController().then(function (controller) {
+            controller.pause(false);
+        });
     };
 
     var pause = function () {
-        _controller.pause(true);
-        return this;
-    };
+        var deferred = new jquery.Deferred();
 
-    //public api
+        debug.log('iframeExists', _.booleanToString(storage.now.get('iframeExists')));
+        debug.log('insideIframe', _.booleanToString(_insideIframe));
+
+        ovp.getController().then(function (controller) {
+            controller.pause(true);
+            deferred.resolve();
+        });
+
+        return deferred;
+    };
+    ////////////////////////////////////////////////
+
+
+
+    //////////////////////////////////////////////// initialize...
+    (function init () {
+        player = require('player');
+    })();
+    ////////////////////////////////////////////////
+
+
+
+
+    //////////////////////////////////////////////// public api...
     return {
-        _setController: _setController,
         seekTo: seekTo,
         play: play,
-        pause: pause
+        pause: pause,
+
+        //event listening
+        addEventListener: dispatcher.on,
+        on: dispatcher.on,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
+    ////////////////////////////////////////////////
 });

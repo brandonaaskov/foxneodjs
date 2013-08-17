@@ -25,10 +25,15 @@
  * Example: ?debug=utils,player,base64
  *
  */
-define(['utils', 'underscoreloader'], function (utils, _) {
+define([
+    'lodash',
+    'require'
+], function (_, require) {
     'use strict';
 
-    var console = window.console,
+    var utils,
+        storage,
+        console = window.console,
         _debugModes = [];
 
     return function (moduleName) {
@@ -56,7 +61,7 @@ define(['utils', 'underscoreloader'], function (utils, _) {
         //-------------------------------------- /validation
 
 
-        var prefix = '@@packageName-@@version:';
+        var prefix = '@@packageName-@@version';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -102,6 +107,11 @@ define(['utils', 'underscoreloader'], function (utils, _) {
 
                 if (_.isEqual(mode, category.toLocaleLowerCase()) || _.isEqual(mode, 'all'))
                 {
+                    if (storage.now.get('insideIframe') && prefix.indexOf('(iframe)') === -1)
+                    {
+                        prefix += ' (iframe)';
+                    }
+
                     console[logLevel](prefix + ': ' + category + ': ' + options.message, options.data || '');
                     lastUsedOptions = _.clone(options);
                 }
@@ -113,6 +123,9 @@ define(['utils', 'underscoreloader'], function (utils, _) {
         };
 
         (function init () {
+            utils = require('utils');
+            storage = require('storage');
+
             var queryParam = utils.getParamValue('debug');
 
             var splitThatShit = function (queryParams) {

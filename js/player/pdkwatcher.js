@@ -1,10 +1,14 @@
 /*global define, _ */
 
-define(['Debug', 'jqueryloader', 'underscoreloader'], function (Debug, jquery, _) {
+define([
+    'Debug',
+    'jquery',
+    'lodash'
+], function (Debug, $, _) {
     'use strict';
 
     var debug = new Debug('pdkwatcher'),
-    _deferred = jquery.Deferred();
+    _deferred = $.Deferred();
 
     //yuck... so ghetto (the PDK should dispatch an event when it's ready)
     var interval = setInterval(function () {

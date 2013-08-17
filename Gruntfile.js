@@ -64,7 +64,7 @@
                 options: {
                     jshintrc: '.jshintrc'
                 },
-                files: ['Gruntfile.js', 'js/*.js', 'js/analytics/**/*.js', 'js/ovp/**/*.js', 'js/player/**/*.js']
+                files: ['gruntfile.js', 'js/**/*.js']
             },
 
             requirejs: {
@@ -124,18 +124,25 @@
 
                         // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
-                            almond: 'lib/almond/almond'
-                            , jqueryloader: 'lib/jquery/jqueryloader'
-                            , underscoreloader: 'lib/underscore/underscoreloader'
-                            , omnitureloader: 'lib/omniture/omnitureloader'
-                            , modernizrloader: 'lib/modernizr/modernizrloader'
+                            almond: '../bower_components/almond/almond',
+                            lodash: '../bower_components/lodash/dist/lodash.min',
+                            jquery: '../bower_components/jquery/jquery.min',
+                            omnitureloader: 'lib/omniture/omnitureloader'
                         },
 
+                        //Finds require() dependencies inside a require() or define call. By default
+                        //this value is false, because those resources should be considered dynamic/runtime
+                        //calls. However, for some optimization scenarios, it is desirable to
+                        //include them in the build.
+                        //Introduced in 1.0.3. Previous versions incorrectly found the nested calls
+                        //by default.
+                        findNestedDependencies: true,
+
                         shim: {
-                            jqueryloader: {
+                            jquery: {
                                 exports: '$'
                             },
-                            underscoreloader: {
+                            lodash: {
                                 exports: '_'
                             }
                         },
@@ -180,31 +187,9 @@
                 }
             },
 
-            mocha_phantomjs: {
-                all:
-                {
-                    options:
-                    {
-                        urls: ['http://baaskov.local/foxneod.js/test/index.html']
-                    }
-                },
-
-                connect:
-                {
-                    server:
-                    {
-                        options:
-                        {
-                            port: 8000
-                        }
-                    }
-                }
-            },
-
-
             shell : {
                 phpbuild: {
-                    command: "cd ../legacy/ && node build qa fx btn fox deportes"
+                    command: "cd ../legacy-svn-trunk/trunk/ && node build qa fx btn fox deportes"
                 }
             },
 
@@ -219,7 +204,6 @@
         grunt.loadNpmTasks('grunt-contrib-jshint');
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-text-replace');
-        grunt.loadNpmTasks('grunt-mocha-phantomjs');
         grunt.loadNpmTasks('grunt-shell');
 
 

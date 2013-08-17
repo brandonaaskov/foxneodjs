@@ -1,7 +1,7 @@
 /*global define */
 
 define([
-    'underscoreloader',
+    'lodash',
     'utils',
     'Debug'
 ], function (_, utils, Debug) {
@@ -22,12 +22,61 @@ define([
             videoStart: 'OnMediaStart',
             videoResume: 'OnMediaUnpause',
             videoMute: 'OnMute',
-            playerLoad: 'OnPlayerLoaded'
+            playerReady: 'OnPlayerLoaded',
+
+            //custom events not supported by the PDK: handled in player.js
+            adStart: null,
+            adComplete: null
+        },
+        _cleanedVideo = {
+            id: null,
+            title: null,
+            description: null,
+            length: null,
+            guid: null,
+            series: null,
+            fullEpisode: null,
+            genre: null
         };
+
+    //////////////////////////////////////////////// private functions...
+    ////////////////////////////////////////////////
 
     //////////////////////////////////////////////// public functions...
     var getEventsMap = function () {
         return _eventsMap;
+    };
+
+    var cleanEventData = function (video) {
+        //validation happens at the ovp.js level
+
+        return;
+
+//        var cleaned = video;
+//
+//        if (!video.isAd)
+//        {
+//            cleaned = {
+//                //standard elements
+//                id: video.releaseID || null,
+//                title: video.title || null,
+//                description: video.description || null,
+//                length: video.trueLength/1000 || null,
+//
+//                //ovp-specific elements
+//                guid: video.guid,
+//                series: video.categories[0].name || null //TODO process this to strip the "Series/" from the string
+//            };
+//
+//            cleaned = _.map(video, 'releaseId');
+//        }
+//
+////        else
+////        {
+////            //TODO finish this
+////        }
+//
+//        return cleaned;
     };
     ////////////////////////////////////////////////
 
@@ -35,7 +84,8 @@ define([
 
     //////////////////////////////////////////////// public api
     return {
-        getEventsMap: getEventsMap
+        getEventsMap: getEventsMap,
+        cleanEventData: cleanEventData
     };
     ////////////////////////////////////////////////
 });
