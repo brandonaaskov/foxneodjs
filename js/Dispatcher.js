@@ -63,7 +63,7 @@ define([
                 evt = document.createEvent('Event');
                 evt.initEvent(name, true, true);
             } else {
-                evt = jquery.Event(name);
+                evt = window.jQuery.Event(name);
             }
             evt.data = data || null;
 
@@ -81,7 +81,8 @@ define([
                 if (window.dispatchEvent) {
                     window.dispatchEvent(evt);
                 } else {
-                    jquery(window).trigger(name, evt);
+                    window.console.log('Dispatching ' + name + ' over window with jQuery');
+                    window.jQuery(window).trigger(name, evt);
                 }
             }
             return true;
