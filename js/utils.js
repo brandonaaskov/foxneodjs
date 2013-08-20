@@ -94,8 +94,7 @@ define([
     var getQueryParams = function (url) {
         var queryParamsObject = {}; //this is what we're storing and returning
         url = url || urlString;
-
-        var urlSplit = url.split(/\?(.+)?/)[1];
+        var urlSplit = url.split(/\?/)[1];
 
         if (_.isString(urlSplit) && !_.isEmpty(urlSplit))
         {

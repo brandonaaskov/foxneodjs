@@ -125,9 +125,10 @@
                         // uses prefixed commas - makes for easy commenting-out (cmd + /)
                         paths: {
                             almond: '../bower_components/almond/almond',
-                            lodash: '../bower_components/lodash/dist/lodash.min',
+                            lodash: '../bower_components/lodash/dist/lodash.compat.min',
                             jquery: '../bower_components/jquery/jquery.min',
-                            omnitureloader: 'lib/omniture/omnitureloader'
+                            omnitureloader: 'lib/omniture/omnitureloader',
+                            JSON: '../bower_components/JSON-js/json2'
                         },
 
                         //Finds require() dependencies inside a require() or define call. By default

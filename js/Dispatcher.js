@@ -8,6 +8,13 @@ define([
 ], function (_, jquery, base64, require) {
     'use strict';
 
+    var ieEvents = ['onblur', 'onchange', 'onclick', 'oncontextmenu', 'oncopy',
+        'oncut', 'ondblclick', 'onerror', 'onfocus', 'onfocusin', 'onfocusout',
+        'onhashchange', 'onkeydown', 'onkeypress',' onkeyup', 'onload', 'onmousedown',
+        'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover',
+        'onmouseup', 'onmousewheel', 'onpaste', 'onreset', 'onresize', 'onscroll',
+        'onselect', 'onsubmit', 'onunload'];
+
     var _listeners = [],
         //gets setup in init
         debug,
@@ -50,30 +57,23 @@ define([
                 throw new Error("You can't dispatch an event without supplying an event name (as a string)");
             }
 
-            var event = document.createEvent('Event');
             var name = '@@packageName:' + eventName;
-            event.initEvent(name, true, true);
-            event.data = data || null;
+            var evt = jquery.Event(name);
 
             if (!dispatchOverWindow)
             {
                 var listeners = _.where(_listeners, {name: eventName});
 
                 _.each(listeners, function (listener) {
-                    listener.deferred.resolveWith(listener, event);
-                    listener.callback(event);
+                    listener.deferred.resolveWith(listener, evt);
+                    listener.callback(evt);
                 });
-
-                return true;
             }
             else
             {
-                window.dispatchEvent(event);
-
-                return true;
+                jquery(window).trigger(name, evt);
             }
-
-            return false;
+            return true;
         };
 
         var getEventListeners = function (eventName) {
@@ -195,9 +195,11 @@ define([
         (function init () {
             storage = require('storage');
             var Debug = require('Debug');
+            var listen = window.addEventListener || window.attachEvent;
             debug = new Debug(owningModuleName + '(dispatcher)');
 
-            window.addEventListener('message', function (event) {
+            listen('message', function (event) {
+
                 if (event.data.indexOf('@@packageName:') !== -1)
                 {
                     //split the postMessage string
