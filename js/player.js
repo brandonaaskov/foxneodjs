@@ -263,7 +263,7 @@ define([
 //        return false;
 //    };
 
-    var loadVideo = function (releaseURLOrId, callback) {
+    var loadVideo = function (releaseURLOrId, callback, cueVideo) {
         //////////////////////////////////////////////// fail fast...
         var deferred = new jquery.Deferred(),
             errorMessage = '';
@@ -283,34 +283,22 @@ define([
         }
         ////////////////////////////////////////////////
 
+
+        //////////////////////////////////////////////// load...
         _loadVideoPromises.push({
             id: _.removeQueryParams(releaseURLOrId),
             deferred: deferred,
-            callback: callback
+            callback: callback,
+            loaded: false
         });
 
-        //html5 endMedia()
-
-        //////////////////////////////////////////////// load...
-        ovp.on('OnLoadReleaseUrl', function (event) {
-            debug.log('OnLoadReleaseURL fired', event);
-
-            _.each(_loadVideoPromises, function (promiseInfo) {
-                debug.log('resolving promise', promiseInfo);
-                promiseInfo.deferred.resolveWith(_publicAPI, event);
-
-                if (_.isFunction(promiseInfo.callback))
-                {
-                    promiseInfo.callback(promiseInfo.deferred);
-                }
-            });
-        });
+        debug.warn('check it wreck it', new Date().getTime());
 
         ovp.getController().then(function (controller) {
             //end our current stream
 
             //this method is a whole bunch of bullshit that doesn't help me much at all here
-//            if (_.isFunction(controller.endMedia)) // && _videoStarted)
+//            if (_.isFunction(controller.endMedia) && _videoStarted)
 //            {
 //                debug.log('calling endMedia()', _videoStarted);
 //                controller.endMedia();
@@ -318,6 +306,12 @@ define([
 //            else
 //            {
 //                debug.warn("endMedia() didn't exist on the controller", controller);
+//
+//                if (_videoStarted)
+//                {
+//                    debug.log('video already started, so we have to pause');
+//                    controller.pause(false);
+//                }
 //            }
 
             if (_.isFunction(controller.resetPlayer))
@@ -325,8 +319,7 @@ define([
                 debug.log('calling resetPlayer()');
                 controller.resetPlayer();
             }
-
-            if (_.isFunction(controller.setRelease))
+            else if (_.isFunction(controller.setRelease))
             {
                 debug.log('calling setRelease({}, true)');
                 controller.setRelease({}, true);
@@ -334,16 +327,16 @@ define([
 
             _videoStarted = false;
 
-            if (system.browser.name.toLowerCase() !== 'mobile safari')
+            if (!cueVideo)
             {
-                debug.log('calling loadReleaseURL', [releaseURLOrId, controller]);
-                controller.loadReleaseURL(releaseURLOrId, true);
+                //defaults to setReleaseURL for now since it's what everyone wants anyway
+                debug.log('calling setReleaseURL', [releaseURLOrId, controller]);
+                controller.setReleaseURL(releaseURLOrId, true);
             }
             else
             {
-                //need this for mobile environments otherwise it won't play properly
-                debug.log('calling setReleaseURL', [releaseURLOrId, controller]);
-                controller.setReleaseURL(releaseURLOrId, true);
+                debug.log('calling loadReleaseURL', [releaseURLOrId, controller]);
+                controller.loadReleaseURL(releaseURLOrId, true);
             }
         });
         ////////////////////////////////////////////////
@@ -578,6 +571,10 @@ define([
             getCurrentVideo: getCurrentVideo,
             getPosition: getCurrentPosition,
             loadVideo: loadVideo,
+            cueVideo: function (releaseURL, callback) {
+                //third param forces loadReleaseURL instead of setReleaseURL
+                loadVideo(releaseURL, callback, true);
+            },
             create: createPlayer,
             getPlayers: getPlayers,
             ready: function () {
@@ -589,6 +586,7 @@ define([
             play: function () {
                 if (_videoStarted)
                 {
+                    debug.log('calling play on the playback module');
                     playback.play();
                 }
                 else
@@ -596,10 +594,13 @@ define([
                     ovp.getController().then(function (controller) {
                         if (_.isFunction(controller.clickPlayButton))
                         {
+                            var timeout = 250;
+
                             //TODO work with thePlatform to change this
                             setTimeout(function () {
+                                debug.log('calling clickPlayButton() after a '+ timeout +'ms timeout');
                                 controller.clickPlayButton();
-                            }, 2000);
+                            }, timeout);
                         }
                     });
                 }
@@ -643,6 +644,47 @@ define([
                 storage.now.set('currentPlayer', currentPlayer);
                 _playerReadyDeferred.resolve(currentPlayer);
             });
+        });
+
+        ovp.on('OnLoadReleaseUrl', function (event) {
+            debug.log('OnLoadReleaseURL fired', event);
+
+            _.each(_loadVideoPromises, function (promiseInfo) {
+                promiseInfo.loaded = true;
+            });
+        });
+
+        ovp.on('OnSetReleaseURL', function (event) {
+            debug.log('OnSetReleaseURL fired', event);
+
+            _.each(_loadVideoPromises, function (promiseInfo) {
+                promiseInfo.loaded = true;
+            });
+        });
+
+        ovp.on('OnShowPlayOverlay', function (event) {
+            debug.log('OnShowPlayOverlay fired', event);
+
+            _.each(_loadVideoPromises, function (promiseInfo) {
+                if (promiseInfo.loaded)
+                {
+                    debug.log('resolving promise', promiseInfo);
+                    promiseInfo.deferred.resolveWith(_publicAPI, event);
+
+                    if (_.isFunction(promiseInfo.callback))
+                    {
+                        promiseInfo.callback(promiseInfo.deferred);
+                    }
+                }
+            });
+        });
+
+        ovp.on('OnMediaLoadStart', function (event) {
+            debug.log('OnMediaLoadStart fired', event);
+        });
+
+        ovp.on('OnMediaError', function (event) {
+            debug.warn('OnMediaError fired', event);
         });
     })();
     ////////////////////////////////////////////////
