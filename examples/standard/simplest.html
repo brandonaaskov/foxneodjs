@@ -4,7 +4,8 @@
     <title>Simplest Integration</title>
     <script type="text/javascript" src="../js/player_qa.js"></script>
     <script type="text/javascript">
-        jQuery(window).on('foxneod:ready', function () {
+        // jQuery(window).on('foxneod:ready', function () {
+        window.addEventListener('foxneod:ready', function() {
             var config = foxneod.player.create('#player', {
                 releaseURL: "http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true"
             });
