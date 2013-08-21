@@ -6,14 +6,16 @@ require([
     'jquery-loader',
     'Dispatcher',
     'Debug',
-    'foxneod'
-], function (almond, _, $, Dispatcher, Debug, foxneod) {
+    'foxneod',
+    'Profiler'
+], function (almond, _, $, Dispatcher, Debug, foxneod, Profiler) {
     'use strict';
 
     var dispatcher = new Dispatcher(),
         debug = new Debug('core');
 
     (function () {
+        var profiler = new Profiler('init', true);
         if (_.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
         {
             debug.log('jQuery (internal)', $().jquery);
@@ -28,6 +30,7 @@ require([
             window['@@packageName'] = window.$f = foxneod;
             window['@@packageName']._init();
             dispatcher.dispatch('ready', {}, true);
+            profiler.end();
             debug.log('@@packageName assigned to window.@@packageName and window.$f');
         }
         else

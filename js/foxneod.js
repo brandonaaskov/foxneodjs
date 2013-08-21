@@ -16,8 +16,9 @@ define([
     'ovp',
     'advertising',
     'analytics',
-    'storage'
-], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage) {
+    'storage',
+    'Profiler'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
@@ -108,6 +109,7 @@ define([
         query: query,
         system: system,
         utils: utils,
+        Profiler: Profiler,
         _: _,
         jQuery: $,
 

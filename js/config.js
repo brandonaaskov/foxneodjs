@@ -5,8 +5,9 @@ define([
     'jquery-loader',
     'Debug',
     'utils',
-    'Dispatcher'
-], function(_, $, Debug, utils, Dispatcher) {
+    'Dispatcher',
+    'Profiler'
+], function(_, $, Debug, utils, Dispatcher, Profiler) {
     'use strict';
 
     var debug = new Debug('config');
@@ -472,6 +473,7 @@ define([
     var config = function() {
         var args = Array.prototype.slice.call(arguments, 0);
         var deferred = $.Deferred();
+        var profiler = new Profiler('config', true);
 
         reset();
 
@@ -504,6 +506,8 @@ define([
         };
 
         setConfig.apply(this, args);
+
+        profiler.end();
 
         return deferred.promise();
     };

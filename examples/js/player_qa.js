@@ -4674,13 +4674,61 @@ define('player',[
 });
 /*global define */
 
+define('Profiler',[
+    'Debug',
+    'lodash'
+], function (Debug, _) {
+    
+
+    var debug = new Debug('profiler');
+    var staticEvents = {};
+
+    var calcTime = function(event, startTime) {
+        if (_.isUndefined(startTime)) {
+            return debug.error('cannot end timer for event "' + event +
+                '", it must start first (you can pass true as a second ' +
+                'parameter to start during constructor call');
+        }
+        var difference = new Date().getTime() - startTime;
+        debug.log('event "' + event + '" completed in ' + difference + 'ms');
+        return difference;
+    };
+
+    var Profiler = function(event, start) {
+        this.event = event;
+        if (start) {
+            this.start();
+        }
+    };
+
+    Profiler.prototype.start = function() {
+        this.startTime = new Date().getTime();  // Date.now() doesn't work in IE
+    };
+
+    Profiler.prototype.end = function() {
+        return calcTime(this.event, this.startTime);
+    };
+
+    Profiler.start = function(event) {
+        staticEvents[event] = new Date().getTime();
+    };
+
+    Profiler.end = function(event) {
+        return calcTime(event, staticEvents[event]);
+    };
+
+    return Profiler;
+});
+/*global define */
+
 define('config',[
     'lodash',
     'jquery-loader',
     'Debug',
     'utils',
-    'Dispatcher'
-], function(_, $, Debug, utils, Dispatcher) {
+    'Dispatcher',
+    'Profiler'
+], function(_, $, Debug, utils, Dispatcher, Profiler) {
     
 
     var debug = new Debug('config');
@@ -5146,6 +5194,7 @@ define('config',[
     var config = function() {
         var args = Array.prototype.slice.call(arguments, 0);
         var deferred = $.Deferred();
+        var profiler = new Profiler('config', true);
 
         reset();
 
@@ -5178,6 +5227,8 @@ define('config',[
         };
 
         setConfig.apply(this, args);
+
+        profiler.end();
 
         return deferred.promise();
     };
@@ -6190,8 +6241,9 @@ define('foxneod',[
     'ovp',
     'advertising',
     'analytics',
-    'storage'
-], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage) {
+    'storage',
+    'Profiler'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler) {
     
 
     //////////////////////////////////////////////// instance variables
@@ -6251,7 +6303,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-21 03:08:18)');
+        debug.log('ready (build date: 2013-08-21 05:08:59)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6262,7 +6314,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-21 03:08:18',
+        buildDate: '2013-08-21 05:08:59',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
@@ -6282,6 +6334,7 @@ define('foxneod',[
         query: query,
         system: system,
         utils: utils,
+        Profiler: Profiler,
         _: _,
         jQuery: $,
 
@@ -6298,14 +6351,16 @@ require([
     'jquery-loader',
     'Dispatcher',
     'Debug',
-    'foxneod'
-], function (almond, _, $, Dispatcher, Debug, foxneod) {
+    'foxneod',
+    'Profiler'
+], function (almond, _, $, Dispatcher, Debug, foxneod, Profiler) {
     
 
     var dispatcher = new Dispatcher(),
         debug = new Debug('core');
 
     (function () {
+        var profiler = new Profiler('init', true);
         if (_.isUndefined(window['foxneod'])) //protects against the file being loaded multiple times
         {
             debug.log('jQuery (internal)', $().jquery);
@@ -6320,6 +6375,7 @@ require([
             window['foxneod'] = window.$f = foxneod;
             window['foxneod']._init();
             dispatcher.dispatch('ready', {}, true);
+            profiler.end();
             debug.log('foxneod assigned to window.foxneod and window.$f');
         }
         else
