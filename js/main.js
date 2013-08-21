@@ -7,7 +7,7 @@ require([
     'Dispatcher',
     'Debug',
     'foxneod'
-], function (almond, $, _, Dispatcher, Debug, foxneod) {
+], function (almond, jquery, _, Dispatcher, Debug, foxneod) {
     'use strict';
 
     var dispatcher = new Dispatcher(),
@@ -16,7 +16,7 @@ require([
     (function () {
         if (_.isUndefined(window['@@packageName'])) //protects against the file being loaded multiple times
         {
-            debug.log('jQuery (internal)', $().jquery);
+            debug.log('jQuery (internal)', jquery().jquery);
 
             if(window.jQuery)
             {
@@ -25,10 +25,10 @@ require([
 
             debug.log('Lo-Dash', _.VERSION);
 
-            window['@@packageName'] = window.$f = foxneod;
+            window['@@packageName'] = window.jqueryf = foxneod;
             window['@@packageName']._init();
             dispatcher.dispatch('ready', {}, true);
-            debug.log('@@packageName assigned to window.@@packageName and window.$f');
+            debug.log('@@packageName assigned to window.@@packageName and window.jquery');
         }
         else
         {

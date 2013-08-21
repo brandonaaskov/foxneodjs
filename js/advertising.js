@@ -95,6 +95,10 @@ define([
 
 
     //////////////////////////////////////////////// public methods...
+    var getMostRecentAd = function () {
+        return storage.now.get('mostRecentAd');
+    };
+
     var isAd = function (video) {
         return !!(_.has(video, 'isAd') && video.isAd);
     };
@@ -122,6 +126,7 @@ define([
 
     //////////////////////////////////////////////// public api...
     return {
+        getMostRecentAd: getMostRecentAd,
         isAd: isAd,
 
         //event listening

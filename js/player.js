@@ -292,8 +292,6 @@ define([
             loaded: false
         });
 
-        debug.warn('check it wreck it', new Date().getTime());
-
         ovp.getController().then(function (controller) {
             //end our current stream
 
@@ -313,6 +311,8 @@ define([
 //                    controller.pause(false);
 //                }
 //            }
+
+            debugger;
 
             if (_.isFunction(controller.resetPlayer))
             {

@@ -126,7 +126,7 @@
                         paths: {
                             almond: '../bower_components/almond/almond',
                             lodash: '../bower_components/lodash/dist/lodash.min',
-                            jquery: '../bower_components/jquery/jquery.min',
+                            jquery: '../bower_components/jquery/jquery',
                             omnitureloader: 'lib/omniture/omnitureloader'
                         },
 
@@ -189,7 +189,7 @@
 
             shell : {
                 phpbuild: {
-                    command: "cd ../legacy-svn-trunk/trunk/ && node build qa fx btn fox deportes"
+                    command: "cd ../legacy-svn-trunk/trunk/ && node build qa fx btn fox deportes wigs"
                 }
             },
 

@@ -8,7 +8,7 @@ define([
     'Dispatcher',
     'storage',
     'ovp/theplatform',
-    'player/pdkwatcher'
+    'ovp/pdkwatcher'
 ], function (_, jquery, utils, Debug, Dispatcher, storage, thePlatform, pdkwatcher) {
     'use strict';
 
@@ -27,7 +27,7 @@ define([
                 _controllerDeferred.reject("The controller couldn't be found on the PDK object");
             }
 
-            if (storage.now.get('insideIframe') || !storage.now.get('iframeExists'))
+            if (!storage.now.get('iframeExists') || storage.now.get('insideIframe'))
             {
                 if (_.isUndefined(pdk) || !_.has(pdk, 'controller'))
                 {
@@ -36,18 +36,19 @@ define([
 
                 _controllerDeferred.resolve(pdk.controller);
             }
-        });
 
-        if (storage.now.get('outsideIframe') && storage.now.get('iframeExists'))
-        {
-            var player = storage.now.get('currentPlayer');
-            var iframeId = jquery(player.iframe).attr('id');
-            var controller = document.getElementById(iframeId).contentWindow['@@packageName']
-                .ovp.getController()
+            if (storage.now.get('outsideIframe') && storage.now.get('iframeExists'))
+            {
+                debugger;
+                var player = storage.now.get('currentPlayer');
+                var iframeId = jquery(player.iframe).attr('id');
+                var controller = document.getElementById(iframeId).contentWindow['@@packageName']
+                    .ovp.getController()
                     .done(function (controller) {
                         _controllerDeferred.resolve(controller);
                     });
-        }
+            }
+        });
 
         return _controllerDeferred;
     };
@@ -111,18 +112,20 @@ define([
 
 
     //////////////////////////////////////////////// Public API
+    ////////////////////////////////////////////////
     return {
         version: '@@ovpVersion',
-        on: dispatcher.on,
-        getEventListeners: dispatcher.getEventListeners,
-        hasEventListener: dispatcher.hasEventListener,
-        removeEventListener: dispatcher.removeEventListener,
         ready: getReady,
         getController: getController,
         pdk: getReady,
         getEventsMap: getEventsMap,
         mapEvents: mapEvents,
-        cleanEventData: cleanEventData
+        cleanEventData: cleanEventData,
+
+        //event listening
+        on: dispatcher.on,
+        getEventListeners: dispatcher.getEventListeners,
+        hasEventListener: dispatcher.hasEventListener,
+        removeEventListener: dispatcher.removeEventListener
     };
-    ////////////////////////////////////////////////
 });
