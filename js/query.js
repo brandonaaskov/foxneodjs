@@ -2,7 +2,7 @@
 
 define([
     'lodash',
-    'jquery',
+    'jquery-loader',
     'utils',
     'Debug'
 ], function (_, $, utils, Debug) {

@@ -2,7 +2,7 @@
 
 define([
     'lodash',
-    'jquery',
+    'jquery-loader',
     'Dispatcher',
     'Debug',
     'polyfills',

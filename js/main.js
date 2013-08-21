@@ -2,12 +2,12 @@
 
 require([
     'almond',
-    'jquery',
     'lodash',
+    'jquery-loader',
     'Dispatcher',
     'Debug',
     'foxneod'
-], function (almond, $, _, Dispatcher, Debug, foxneod) {
+], function (almond, _, $, Dispatcher, Debug, foxneod) {
     'use strict';
 
     var dispatcher = new Dispatcher(),

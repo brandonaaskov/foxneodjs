@@ -2,7 +2,7 @@
 
 define([
     'lodash',
-    'jquery',
+    'jquery-loader',
     'base64',
     'require'
 ], function (_, jquery, base64, require) {
@@ -59,6 +59,7 @@ define([
 
             var name = '@@packageName:' + eventName;
             var evt;
+
             if (window.dispatchEvent) {
                 evt = document.createEvent('Event');
                 evt.initEvent(name, true, true);
@@ -81,7 +82,7 @@ define([
                 if (window.dispatchEvent) {
                     window.dispatchEvent(evt);
                 } else {
-                    window.console.log('Dispatching ' + name + ' over window with jQuery');
+                    debug.log('Dispatching ' + name + ' over window with jQuery');
                     window.jQuery(window).trigger(name, evt);
                 }
             }

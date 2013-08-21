@@ -3,7 +3,7 @@
 define([
     'require',
     'lodash',
-    'jquery',
+    'jquery-loader',
     'utils',
     'Debug',
     'Dispatcher',

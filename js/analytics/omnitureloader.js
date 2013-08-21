@@ -2,7 +2,7 @@
 
 define([
     'lodash',
-    'jquery'
+    'jquery-loader'
 ], function (_, $, utils, Debug, Dispatcher) {
     'use strict';
 
