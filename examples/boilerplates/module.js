@@ -34,7 +34,6 @@ define([
     //////////////////////////////////////////////// public api...
     return {
         //event listening
-        addEventListener: dispatcher.on,
         on: dispatcher.on,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
