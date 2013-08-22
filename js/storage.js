@@ -70,7 +70,6 @@ define([
         cookies: cookies,
 
         //event listening
-        addEventListener: dispatcher.on,
         on: dispatcher.on,
         getEventListeners: dispatcher.getEventListeners,
         hasEventListener: dispatcher.hasEventListener,
