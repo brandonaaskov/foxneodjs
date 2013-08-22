@@ -14,7 +14,8 @@ define([
             videoEnd: 'OnMediaComplete',
             videoChapterEnd: 'OnMediaEnd',
             videoError: 'OnMediaError',
-            videoReady: 'OnMediaLoadStart',
+            videoLoading: 'OnMediaLoadStart',
+            videoReady: 'OnLoadRelease',
             videoPause: 'OnMediaPause',
             videoPlay: 'OnMediaPlay',
             videoProgress: 'OnMediaPlaying',
@@ -23,10 +24,7 @@ define([
             videoResume: 'OnMediaUnpause',
             videoMute: 'OnMute',
             playerReady: 'OnPlayerLoaded',
-
-            //custom events not supported by the PDK: handled in player.js
-            adStart: null,
-            adComplete: null
+            playerOverlayUp: 'OnShowPlayOverlay'
         },
         _cleanedVideo = {
             id: null,
