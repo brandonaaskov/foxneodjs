@@ -190,7 +190,7 @@
 
             shell : {
                 phpbuild: {
-                    command: "cd ../legacy-svn-trunk/trunk/ && node build qa fx btn fox deportes"
+                    command: "cd ../legacy-svn-trunk/trunk/ && node build qa fx btn fox deportes wigs"
                 }
             },
 
