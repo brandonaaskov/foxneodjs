@@ -2799,7 +2799,7 @@ define('ovp/pdkwatcher',[
 
 define('ovp',[
     'lodash',
-    'jquery-loader',
+    'jquery',
     'utils',
     'Debug',
     'Dispatcher',
@@ -2836,7 +2836,6 @@ define('ovp',[
 
             if (storage.now.get('outsideIframe') && storage.now.get('iframeExists'))
             {
-                debugger;
                 var player = storage.now.get('currentPlayer');
                 var iframeId = jquery(player.iframe).attr('id');
                 var controller = document.getElementById(iframeId).contentWindow['foxneod']
@@ -6324,7 +6323,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-22 03:08:33)');
+        debug.log('ready (build date: 2013-08-22 03:08:21)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6335,7 +6334,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-22 03:08:33',
+        buildDate: '2013-08-22 03:08:21',
         packageName: 'foxneod',
         version: '0.9.4',
         dispatcher: dispatcher,
