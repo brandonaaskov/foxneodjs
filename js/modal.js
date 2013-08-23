@@ -3,8 +3,9 @@
 define([
     'css',
     'utils',
-    'Debug'
-], function (css, utils, Debug) {
+    'Debug',
+    'playerHandler'
+], function (css, utils, Debug, PlayerHandler) {
     'use strict';
 
     //-------------------------------------------------------------------------------- private properties

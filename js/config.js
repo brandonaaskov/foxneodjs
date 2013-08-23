@@ -84,22 +84,23 @@ define([
             play_overlay_y_offset: '50'         // Optional (Do not unset)
         },
         colors: {   // Optional (Do not unset)
-            backgroundColor: '0x000000',        // Optional (Do not unset)
-            controlBackgroundColor: '0x000000', // Optional (Do not unset)
-            controlColor: '0xFFFFFF',           // Optional (Do not unset)
-            controlHoverColor: '0x00B4FF',      // Optional (Do not unset)
-            controlSelectedColor: '0x000000',   // Optional (Do not unset)
-            disabledColor: '0x000000',          // Optional (Do not unset)
-            fp_bgcolor: '0x000000',             // Optional (Do not unset)
-            frameColor: '0x000000',             // Optional (Do not unset)
-            playProgressColor: '0x0000FF',      // Optional (Do not unset)
-            textColor: '0x0000ff',              // Optional (Do not unset)
-            loadProgressColor: '0xBEBEBE',      // Optional (Do not unset)
-            controlHighlightColor: '0x00FF00'   // Optional (Do not unset)
+            backgroundColor: '0x131313',        // Optional (Do not unset)
+            controlBackgroundColor: '0x131313', // Optional (Do not unset)
+            controlColor: '0xF2F2F2',           // Optional (Do not unset)
+            controlHoverColor: '0xFFFFFF',      // Optional (Do not unset)
+            controlSelectedColor: '0x00CCFF',   // Optional (Do not unset)
+            disabledColor: '0x999999',          // Optional (Do not unset)
+            fp_bgcolor: '0x131313',             // Optional (Do not unset)
+            frameColor: '0xE0E0E0',             // Optional (Do not unset)
+            playProgressColor: '0x131313',      // Optional (Do not unset)
+            textColor: '0xF2F2F2',              // Optional (Do not unset)
+            loadProgressColor: '0x7C7C7C',      // Optional (Do not unset)
+            controlHighlightColor: '0xE0E0E0',  // Optional (Do not unset)
+            controlFrameColor: '0xE0E0E0'       // Optional (Do not unset)
         }
     };
 
-    var configData = {};
+    var configData = null;
 
     var validationRules = {
         required: false,

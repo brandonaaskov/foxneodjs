@@ -1,5 +1,4 @@
-/*global define, FDM_Player */
-
+/*global define */
 define([
     'lodash',
     'jquery-loader',
@@ -12,8 +11,9 @@ define([
     'storage',
     'modal',
     'query',
-    'advertising'
-], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising) {
+    'advertising',
+    'playerHandler'
+], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising, PlayerHandler) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -340,7 +340,7 @@ define([
 
             window['player'] = config;
             debug.log('creating player with config', config);
-            var fdmPlayer = new FDM_Player('player', config.width, config.height);
+            var playerHandler = new PlayerHandler('player', config.width, config.height);
 
             player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 

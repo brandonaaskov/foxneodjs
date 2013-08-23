@@ -51,6 +51,10 @@
                 to: function () {
                     return packageJSON.authors.join(',');
                 }
+            },
+            {
+                from: '@@fdmVersion',
+                to: packageJSON.fdmVersion
             }
         ];
 
