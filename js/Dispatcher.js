@@ -155,7 +155,7 @@ define([
                 removed = false;
 
             _.each(_listeners, function (listener) {
-                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString())
+                if (listener.name !== eventName && _.isFunction(_listeners.callback) && _listeners.callback.toString() !== callback.toString())
                 {
                     updated.push(listener);
                 }
@@ -244,6 +244,9 @@ define([
         return {
             on: addListener,
             dispatch: dispatch,
+            dispatchOverWindow: function (eventName, data) {
+                dispatch(eventName, data);
+            },
             getEventListeners: getEventListeners,
             hasEventListener: hasListener,
             removeEventListener: removeListener,
