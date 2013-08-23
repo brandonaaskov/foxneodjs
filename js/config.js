@@ -2,11 +2,11 @@
 
 define([
     'lodash',
-    'jquery-loader',
+    'jquery',
     'Debug',
     'utils',
     'Dispatcher'
-], function(_, $, Debug, utils, Dispatcher) {
+], function(_, jquery, Debug, utils, Dispatcher) {
     'use strict';
 
     var debug = new Debug('config');
@@ -440,7 +440,7 @@ define([
     };
 
     var lookup = function(overrides) {
-        var deferred = $.Deferred();
+        var deferred = jquery.Deferred();
         if (_.isObject(overrides)) {
             deferred.resolve(overrides);
             return deferred.promise();
@@ -456,7 +456,7 @@ define([
             overrides = presets[overrides];
         }
         debug.log('lookup URL: "' + overrides + '"');
-        $.ajax({
+        jquery.ajax({
             type: 'get',
             url: overrides,
             dataType: 'jsonp'
@@ -466,12 +466,12 @@ define([
     };
 
     var reset = function() {
-        configData = $.extend({}, defaults);
+        configData = jquery.extend({}, defaults);
     };
 
     var config = function() {
         var args = Array.prototype.slice.call(arguments, 0);
-        var deferred = $.Deferred();
+        var deferred = jquery.Deferred();
 
         reset();
 
@@ -512,7 +512,7 @@ define([
         return configData;
     };
 
-    $(window).on('foxneod:ready', function() {
+    jquery(window).on('foxneod:ready', function() {
         configTimeout = window.setTimeout(function() {
             debug.warn('config not set after ' + timeoutDuration + 'ms. Using default config.');
             config();
