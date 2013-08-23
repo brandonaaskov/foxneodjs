@@ -608,7 +608,6 @@ define([
             pause: playback.pause,
 
             //event listening
-            addEventListener: dispatcher.on,
             on: dispatcher.on,
             getEventListeners: dispatcher.getEventListeners,
             hasEventListener: dispatcher.hasEventListener,
