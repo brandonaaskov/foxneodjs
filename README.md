@@ -1,5 +1,7 @@
 # foxneodjs
 
+[ ![Codeship Status for foxneod/foxneodjs](https://www.codeship.io/projects/85cff1d0-ecd4-0130-b8d9-5677d0049f6c/status?branch=master)](https://www.codeship.io/projects/6103)
+
 ### Overview
 The `foxneod` javascript library is a globally referenced object that contains all aspects of the Fox digital video player within. It can be referenced globally through `foxneod` or `$f`. You can see more in the examples below.
 
