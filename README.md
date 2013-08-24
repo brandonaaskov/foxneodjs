@@ -24,3 +24,11 @@ If you want to set up the project on your local machine, make sure you first hav
 ## Building
 
 To run a development build (no minification), simply run `grunt` from the command line at the root of the project. If you want to do a production build, run `grunt prod`. If you're in development mode and don't want to have to build over and over, running `grunt watch` will watch for changes to the javascript files and automatically build as necessary, so you can just refresh the page and get the latest.
+
+## Testing
+
+Run unit tests from a browser via `test/index.html` or from a command line:
+
+```bash
+grunt test
+```

@@ -201,6 +201,13 @@
             watch: {
                 files: ['<%= jshint.files %>'],
                 tasks: ['dev']
+            },
+
+            mocha_phantomjs: {
+                options: {
+                    reporter: 'spec'
+                },
+                all: ['test/index.html']
             }
         });
 
@@ -210,10 +217,12 @@
         grunt.loadNpmTasks('grunt-contrib-watch');
         grunt.loadNpmTasks('grunt-text-replace');
         grunt.loadNpmTasks('grunt-shell');
+        grunt.loadNpmTasks('grunt-mocha-phantomjs');
 
 
         grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
         grunt.registerTask('dev', ['jshint', 'requirejs', 'replace', 'shell:phpbuild']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
+        grunt.registerTask('test', ['jshint', 'mocha_phantomjs']);
     };
 })();
