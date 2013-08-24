@@ -34,3 +34,11 @@ Run unit tests from a browser via `test/index.html` or from a command line:
 ```bash
 grunt test
 ```
+
+Codeship wants to build every commit that is pushed to every branch of a repo on Github. To prevent building a branch or a commit, append `- -skip-ci` to the end of the branch name or the commit message ([see here](http://blog.codeship.io/2012/08/14/notification-and-branch-selection.html)).
+
+Code coverage reports can be generated using [istanbul](https://github.com/gotwarlost/istanbul).
+
+```bash
+grunt cover
+```

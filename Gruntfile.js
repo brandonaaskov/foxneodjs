@@ -5,6 +5,10 @@
 
     module.exports = function (grunt) {
         var packageJSON = grunt.file.readJSON('package.json');
+
+        var reportDir = 'reports/';
+
+
         var timestamp = function () {
             return new Date().getTime();
         };
@@ -208,6 +212,21 @@
                     reporter: 'spec'
                 },
                 all: ['test/index.html']
+            },
+
+            storeCoverage: {
+                options: {
+                    dir: reportDir
+                }
+            },
+
+            makeReport: {
+                src: reportDir + '**/*.json',
+                options: {
+                    type: 'lcov',
+                    dir: reportDir,
+                    print: 'detail'
+                }
             }
         });
 
@@ -218,11 +237,13 @@
         grunt.loadNpmTasks('grunt-text-replace');
         grunt.loadNpmTasks('grunt-shell');
         grunt.loadNpmTasks('grunt-mocha-phantomjs');
+        grunt.loadNpmTasks('grunt-istanbul');
 
 
         grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
         grunt.registerTask('dev', ['jshint', 'requirejs', 'replace', 'shell:phpbuild']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
         grunt.registerTask('test', ['jshint', 'mocha_phantomjs']);
+        grunt.registerTask('cover', ['mocha_phantomjs', 'storeCoverage', 'makeReport']);
     };
 })();
