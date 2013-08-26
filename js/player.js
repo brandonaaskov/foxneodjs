@@ -340,9 +340,9 @@ define([
 
             window['player'] = config;
             debug.log('creating player with config', config);
-            var playerHandler = new PlayerHandler('player', config.width, config.height);
+            var playerHandler = new PlayerHandler('player', config, config.width, config.height);
 
-            player.logLevel= (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
+            player.logLevel = (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
             //we need to loop through the config to find out if we're inside the iframe or not
             _.each(config, function (prop, key) {

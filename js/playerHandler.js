@@ -45,6 +45,58 @@ define([
         }
     }
 
+    function setNestedProperty(object, path, value) {
+        var key = path.shift();
+        if (!object) {
+            object = {};
+        }
+        if (path.length === 0) {
+            object[key] = value;
+            return object;
+        }
+        if (path.length > 0) {
+            object[key] = setNestedProperty(object[key], path, value);
+        }
+        return object;
+    }
+
+    function extendMarkup(config, element) {
+        var attributes = element.attributes;
+        for (var i = 0, n = attributes.length; i < n; i += 1) {
+            var attribute = attributes[i];
+            setNestedProperty(config, attribute.name.split('.'), attribute.value);
+        }
+    }
+
+    function extendArgument(config, param) {
+        var keys = _.keys(param);
+        for (var i = 0, n = keys.length; i < n; i += 1) {
+            var key = keys[i];
+            if (!_.isObject(param[key])) {
+                config[key] = param[key];
+                continue;
+            }
+            if (!_.isObject(config[key])) {
+                config[key] = param[key];
+                continue;
+            }
+            extendArgument(config[key], param[key]);
+        }
+    }
+
+    function extendURL(config) {
+        var search = location.search.substr(1);
+        var tuples = search.split('&');
+        for (var i = 0, n = tuples.length; i < n; i += 1) {
+            var pair = tuples[i].split('=');
+            var key = pair[0].split('.');
+            var prefix = key.shift();
+            if (prefix === '@@packageName') {
+                setNestedProperty(config, key, pair[1]);
+            }
+        }
+    }
+
     function setPlayerColors(player, colors) {
         debug.log('setting player colors', colors);
         player.backgroundcolor = colors.backgroundColor;
@@ -561,10 +613,11 @@ define([
         jquery('#playerAdBgSkin').html(html);
     }
 
-    function PlayerHandler(id, width, height, postHandlers, preHandlers) {
+    function PlayerHandler(id, config, width, height, postHandlers, preHandlers) {
         var self = this;
         debug.log('creating a new instance for #' + id);
         this.id = id || 'player';
+        this.element = document.getElementById(this.id);
         this.width = width || '';
         this.height = height || '';
         this.player = null;
@@ -575,8 +628,8 @@ define([
             url: playerVars.host + '/shared/' + version + '/pdk/tpPdk.js'
         }).success(function() {
             debug.log('loaded $pdk script');
-            debug.log('configuring player');
-            self.configure(function() {
+            debug.log('configuring player', config);
+            self.configure(config, function() {
                 self.init(postHandlers, preHandlers);
                 debug.log('player initialized', self.player);
             });
@@ -735,15 +788,25 @@ define([
         this.player = null;
     };
 
-    PlayerHandler.prototype.configure = function(callback) {
+    PlayerHandler.prototype.configure = function(data, callback) {
         var self = this;
+        if (_.isFunction(data)) {
+            callback = data;
+            data = undefined;
+        }
         this.configData = config.getConfig();
         if (!this.configData) {
             // Wait for config module init to finish
             return setTimeout(function() {
-                self.configure(callback);
+                self.configure(data, callback);
             }, 50);
         }
+        extendMarkup(this.configData, this.element);
+        if (data) {
+            extendArgument(this.configData, data);
+        }
+        extendURL(this.configData);
+
         if (this.configData.shortname === 'fox') {
             self.aamtt = {
                 isAd: false,
