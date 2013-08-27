@@ -3223,14 +3223,14 @@ define('playerHandler',[
     'utils',
     'Debug',
     'Dispatcher',
-    'config'
-], function (_, jquery, utils, Debug, Dispatcher, config) {
+    'config',
+    'storage'
+], function (_, jquery, utils, Debug, Dispatcher, config, storage) {
     
 
     var debug = new Debug('playerHandler');
     var version = '1.4.527';
 
-    // TODO see if something like $pdk is adding variables to FDM_Player_vars
     var playerVars = {
         flash:      11,
         host:       window.location.protocol + '//player.foxfdm.com',  // Brandon had http[s] prepended
@@ -3238,6 +3238,13 @@ define('playerHandler',[
         isFlash:    0,
         isIOS:      0
     };
+
+    var savedPlayerConfig = storage.now.get('playerConfig');
+
+    if (savedPlayerConfig && savedPlayerConfig.forceHTML) {
+        playerVars.isIOS = true;
+        playerVars.isFlash = false;
+    }
 
     var documentHead,
         documentBody,
@@ -3383,7 +3390,9 @@ define('playerHandler',[
             '/shared/' + version + '/swf/ClosedCaptionPlugin.swf';
 
         if (window.player.endcard + '' !== 'false') {
-            adPolicySuffix = "&params=policy%3D19938";
+            if (playerVars.shortname === 'fox') {
+                adPolicySuffix = "&params=policy%3D19938";
+            }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_playlist)) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
@@ -3552,7 +3561,7 @@ define('playerHandler',[
 
             if (playerVars.adserver.name === 'dfp') {
                 player.pluginDFP = 'type=adcomponent' +
-                    '|URL=' + playerVars.host + '/shared/' + version + '/pdk/swf/doubleclick.swf' +
+                    '|URL=' + playerVars.host + '/shared/' + version + '/pdk/swf/inStream.swf' +
                     '|priority=1' +
                     '|host=pubads.g.doubleclick.net' +
                     '|bannerSizes=300x60,300x250' +
@@ -3660,7 +3669,9 @@ define('playerHandler',[
         }
 
         if(window.player.endcard + '' !== 'false') {
-            adPolicySuffix = "&params=policy%3D19938";
+            if (playerVars.shortname === 'fox') {
+                adPolicySuffix = "&params=policy%3D19938";
+            }
             if(window.player.endcard_playlist) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
@@ -3743,19 +3754,23 @@ define('playerHandler',[
             dataType: 'script',
             url: playerVars.host + '/shared/' + version + '/js/OmniturePlugin.js'
         }).success(function() {
+            var sitecatalyst = playerVars.analytics && playerVars.analytics.sitecatalyst || {};
+            var accountId = sitecatalyst.account || 'foxcomprod';
+            var host = sitecatalyst.host || 'a.fox.com';
+
             playerVars.omniConfig = {
-                playerId: 'foxcom-' + version,
+                playerId: playerVars.shortname + 'com-' + version,
                 visitorNamespace: 'foxentertainment',
-                host: 'a.fox.com',
+                host: host,
                 frequency: '60',
                 entitled: 'public', //values: public or entitled
                 auth: 'true',
                 mvpd: null,         //value of prop/eVar is the MVDP name of the user.
-                network: 'fox',
+                network: playerVars.shortname,
                 extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
                 accountInfo: {
-                    account:  playerVars.analytics.sitecatalyst && playerVars.analytics.sitecatalyst.account || 'foxcomprod',
-                    trackingServer: 'a.fox.com'
+                    account:  accountId,
+                    trackingServer: host
                 }
             };
         }).error(function() {
@@ -3838,20 +3853,29 @@ define('playerHandler',[
         this.width = width || '';
         this.height = height || '';
         this.player = null;
+        this.token = null;      // I don't think this is actually used anywhere
         this.aamtt = {}; // Only used if fox, looks like play feedback signaling
 
         jquery.ajax({
             dataType: 'script',
-            url: playerVars.host + '/shared/' + version + '/pdk/tpPdk.js'
-        }).success(function() {
-            debug.log('loaded $pdk script');
-            debug.log('configuring player', config);
-            self.configure(config, function() {
-                self.init(postHandlers, preHandlers);
-                debug.log('player initialized', self.player);
+            url: 'http://foxneod-proxy.herokuapp.com/'
+        }). success(function(response) {
+            self.token = response && response.signInResponse && response.signInResponse.token;
+            jquery.ajax({
+                dataType: 'script',
+                url: playerVars.host + '/shared/' + version + '/pdk/tpPdk.js'
+            }).success(function() {
+                debug.log('loaded $pdk script');
+                debug.log('configuring player', config);
+                self.configure(config, function() {
+                    self.init(postHandlers, preHandlers);
+                    debug.log('player initialized', self.player);
+                });
+            }).error(function() {
+                debug.error('Failed to load PDK script', arguments);
             });
         }).error(function() {
-            debug.error('Failed to load PDK script', arguments);
+            debug.error('Failed to lookup token');
         });
     }
 
@@ -6453,7 +6477,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-26 03:08:06)');
+        debug.log('ready (build date: 2013-08-27 11:08:32)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6464,7 +6488,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-26 03:08:06',
+        buildDate: '2013-08-27 11:08:32',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
