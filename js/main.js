@@ -27,7 +27,7 @@ require([
 
             window['@@packageName'] = window.$f = foxneod;
             window['@@packageName']._init();
-            dispatcher.dispatch('ready', {}, true);
+            dispatcher.dispatchOverWindow('ready', window['@@packageName']);
             debug.log('@@packageName assigned to window.@@packageName and window.jquery');
         }
         else

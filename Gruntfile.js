@@ -127,8 +127,9 @@
                             almond: '../bower_components/almond/almond',
                             lodash: '../bower_components/lodash/dist/lodash.compat.min',
                             jquery: '../bower_components/jquery/jquery.min',
-                            omnitureloader: 'lib/omniture/omnitureloader',
-                            JSON: '../bower_components/JSON-js/json2'
+                            omnitureloader: 'lib/omniture/omnitureloader', //do we still have this?
+                            JSON: '../bower_components/JSON-js/json2',
+                            pdk: 'lib/pdk/tpPdk'
                         },
 
                         //Finds require() dependencies inside a require() or define call. By default

@@ -186,6 +186,7 @@ define([
                 };
 
                 var encoded = '@@packageName:' + base64.encode(payload);
+                debug.log('dispatching up', encoded);
                 window.parent.postMessage(encoded, '*');
             }
         };
@@ -212,6 +213,7 @@ define([
             debug = new Debug(owningModuleName + '(dispatcher)');
 
             listen('message', function (event) {
+                debug.log('dispatching postMessage', event);
 
                 if (event.data.indexOf('@@packageName:') !== -1)
                 {

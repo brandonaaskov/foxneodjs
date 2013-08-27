@@ -12,9 +12,8 @@ define([
     'storage',
     'modal',
     'query',
-    'advertising',
-    'system'
-], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising, system) {
+    'advertising'
+], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -525,6 +524,9 @@ define([
             throw new Error("You must supply a valid path to your iframe as a string as the second argument when calling createIframe()");
         }
 
+        storage.now.set('iframeExists', true);
+        storage.now.set('outsideIframe', true);
+
         var declaredAttributes = getPlayerAttributes(selector);
         debug.log('declaredAttributes', declaredAttributes);
 
@@ -534,8 +536,6 @@ define([
         var iframePlayer = iframe.create()
             .then(function (player) {
                 storage.now.set('currentPlayer', player);
-                storage.now.set('iframeExists', true);
-                storage.now.set('outsideIframe', true);
                 _bindPlayer(player);
             });
     };

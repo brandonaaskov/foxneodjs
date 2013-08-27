@@ -99,11 +99,24 @@ define([
 
     //////////////////////////////////////////////// init
     (function () {
+        debug.log('init');
+
+        //one of these is going to resolve first
+        dispatcher.on('pdkReady', function (event) {
+            if (_readyDeferred.state() !== 'resolved')
+            {
+                debug.log('caught the ready event', event.data);
+                _readyDeferred.resolve(window.$pdk);
+                debug.log('PDK is now available inside of ovp.js', event.data);
+            }
+        });
+
         pdkwatcher.done(function (pdk) {
             _readyDeferred.resolve(pdk);
 
             debug.log('PDK is now available inside of ovp.js', pdk);
-            dispatcher.dispatch('ready', pdk);
+            dispatcher.dispatch('pdkReady', pdk);
+            dispatcher.up('pdkReady', pdk);
         });
     })();
     ////////////////////////////////////////////////

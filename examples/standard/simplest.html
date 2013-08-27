@@ -2,12 +2,11 @@
 <html>
 <head>
     <title>Simplest Integration</title>
-    <!-- jQuery, for IE8 support of custom events -->
-    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+
+    <script type="text/javascript" src="../js/player_qa.js"></script>
     <script type="text/javascript">
-        jQuery(window).bind('foxneod:ready', function () {
-        // window.addEventListener('foxneod:ready', function() {
-            var config = foxneod.player.create('#player', {
+        window.addEventListener('foxneod:ready', function () {
+            foxneod.player.create('#player', {
                 releaseURL: "http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true"
             });
 
@@ -16,7 +15,6 @@
             });
         });
     </script>
-    <script type="text/javascript" src="../js/player_qa.js"></script>
 
     <style type="text/css">
         body {
