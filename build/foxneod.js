@@ -544,10 +544,11 @@ define('Dispatcher',[
 
     var ieEvents = ['onblur', 'onchange', 'onclick', 'oncontextmenu', 'oncopy',
         'oncut', 'ondblclick', 'onerror', 'onfocus', 'onfocusin', 'onfocusout',
-        'onhashchange', 'onkeydown', 'onkeypress',' onkeyup', 'onload', 'onmousedown',
+        'onhashchange', 'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onmousedown',
         'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover',
         'onmouseup', 'onmousewheel', 'onpaste', 'onreset', 'onresize', 'onscroll',
-        'onselect', 'onsubmit', 'onunload'];
+        'onselect', 'onsubmit', 'onunload'
+    ];
 
     var _listeners = [],
         //gets setup in init
@@ -558,20 +559,37 @@ define('Dispatcher',[
 
         //////////////////////////////////////////////// private methods...
         ////////////////////////////////////////////////
-
-
+        var addWindowListener = function (eventName, callback) {
+            if (window.addEventListener) {
+                debug.log('Adding event listener via native window.addEventListener');
+                window.addEventListener(eventName, function() {
+                    debug.log('Caught event ' + eventName + ' over window');
+                    callback.apply(this, arguments);
+                });
+            } else {
+                debug.log('Adding event listener via jQuery');
+                window.jQuery(window).bind(eventName, function() {
+                    debug.log('Caught event ' + eventName + ' via jQuery');
+                    callback.apply(this, arguments);
+                });
+            }
+        };
 
         //////////////////////////////////////////////// public methods...
-        var addListener = function (eventName, callback) {
-            if (_.isEmpty(eventName) || !_.isString(eventName))
-            {
+        var addListener = function (eventName, overWindow, callback) {
+            if (_.isFunction(overWindow)) {
+                callback = overWindow;
+                overWindow = undefined;
+            }
+            if (!_.isFunction(callback)) {
+                throw new Error("You can't create an event listener without supplying a callback function");
+            }
+            if (overWindow) {
+                return addWindowListener(eventName, callback);
+            }
+            if (_.isEmpty(eventName) || !_.isString(eventName)) {
                 return false;
             }
-
-//            if (!_.isFunction(callback))
-//            {
-//                throw new Error("You can't create an event listener without supplying a callback function");
-//            }
 
             var deferred = new jquery.Deferred();
             var listener = {
@@ -586,8 +604,7 @@ define('Dispatcher',[
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
-            if (_.isEmpty(eventName) || !_.isString(eventName))
-            {
+            if (_.isEmpty(eventName) || !_.isString(eventName)) {
                 throw new Error("You can't dispatch an event without supplying an event name (as a string)");
             }
 
@@ -602,18 +619,18 @@ define('Dispatcher',[
             }
             evt.data = data || null;
 
-            if (!dispatchOverWindow)
-            {
-                var listeners = _.where(_listeners, {name: eventName});
+            if (!dispatchOverWindow) {
+                var listeners = _.where(_listeners, {
+                    name: eventName
+                });
 
                 _.each(listeners, function (listener) {
                     listener.deferred.resolveWith(listener, evt);
                     listener.callback(evt);
                 });
-            }
-            else
-            {
+            } else {
                 if (window.dispatchEvent) {
+                    debug.log('Dispatching ' + name + ' via window.dispatchEvent');
                     window.dispatchEvent(evt);
                 } else {
                     debug.log('Dispatching ' + name + ' over window with jQuery');
@@ -625,16 +642,14 @@ define('Dispatcher',[
 
         var getEventListeners = function (eventName) {
 
-            if (_.isUndefined(eventName))
-            {
+            if (_.isUndefined(eventName)) {
                 return _listeners;
             }
 
             var found = [];
 
             _.each(_listeners, function (listener) {
-                if (listener.name === eventName)
-                {
+                if (listener.name === eventName) {
                     found.push(listener);
                 }
             });
@@ -646,25 +661,18 @@ define('Dispatcher',[
             var found = false,
                 checkCallbackToo = false;
 
-            if (!_.isEmpty(eventName) && _.isString(eventName))
-            {
-                if (!_.isUndefined(callback) && _.isFunction(callback))
-                {
+            if (!_.isEmpty(eventName) && _.isString(eventName)) {
+                if (!_.isUndefined(callback) && _.isFunction(callback)) {
                     checkCallbackToo = true;
                 }
 
                 _.each(_listeners, function (listener) {
-                    if (listener.name === eventName)
-                    {
-                        if (checkCallbackToo)
-                        {
-                            if (listener.callback.toString() === callback.toString())
-                            {
+                    if (listener.name === eventName) {
+                        if (checkCallbackToo) {
+                            if (listener.callback.toString() === callback.toString()) {
                                 found = true;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             found = true;
                         }
                     }
@@ -675,13 +683,11 @@ define('Dispatcher',[
         };
 
         var removeListener = function (eventName, callback) {
-            if (_.isUndefined(eventName) || !_.isString(eventName))
-            {
+            if (_.isUndefined(eventName) || !_.isString(eventName)) {
                 throw new Error("The first argument supplied to removeEventListener() should be a string for the event name");
             }
 
-            if (_.isUndefined(callback) || !_.isFunction(callback))
-            {
+            if (_.isUndefined(callback) || !_.isFunction(callback)) {
                 throw new Error("The second argument supplied to removeEventListener() should be a function for the callback that was used");
             }
 
@@ -689,12 +695,9 @@ define('Dispatcher',[
                 removed = false;
 
             _.each(_listeners, function (listener) {
-                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString())
-                {
+                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString()) {
                     updated.push(listener);
-                }
-                else
-                {
+                } else {
                     removed = true;
                 }
             });
@@ -711,8 +714,7 @@ define('Dispatcher',[
         };
 
         var up = function (message, data) {
-            if (storage.now.get('insideIframe'))
-            {
+            if (storage.now.get('insideIframe')) {
                 var payload = {
                     eventName: message,
                     data: (!_.isUndefined(data) && !_.isEmpty(data)) ? data : null,
@@ -747,24 +749,20 @@ define('Dispatcher',[
 
             listen('message', function (event) {
 
-                if (event.data.indexOf('foxneod:') !== -1)
-                {
+                if (event.data.indexOf('foxneod:') !== -1) {
                     //split the postMessage string
                     var encoded = event.data.split('foxneod:')[1];
-                    if (!_.isString(encoded) || _.isEmpty(encoded))
-                    {
+                    if (!_.isString(encoded) || _.isEmpty(encoded)) {
                         throw new Error("Splitting the encoded postMessage failed: please contact the developer");
                     }
 
                     //decode the base64 string
                     var decoded = base64.decode(encoded);
-                    if (!_.isTrueObject(decoded) || _.isEmpty(decoded))
-                    {
+                    if (!_.isTrueObject(decoded) || _.isEmpty(decoded)) {
                         throw new Error("The decoded postMessage was either not an object or empty: please contact the developer");
                     }
 
-                    if (owningModuleName === decoded.owningModuleName)
-                    {
+                    if (owningModuleName === decoded.owningModuleName) {
                         dispatch(decoded.eventName, decoded.data);
                     }
                 }
@@ -1110,17 +1108,13 @@ define('utils',[
     var arrayToObject = function (arr) {
         var obj = {};
 
-        for (var i = 0, n = arr.length; i < n; i++)
-        {
+        for (var i = 0, n = arr.length; i < n; i++) {
             var item = arr[i];
-            if (item.indexOf('=') !== -1)
-            {
+            if (item.indexOf('=') !== -1) {
                 var itemPieces = item.split('=');
 
                 obj[itemPieces[0]] = itemPieces[1];
-            }
-            else
-            {
+            } else {
                 obj[i] = item;
             }
         }
@@ -1128,17 +1122,14 @@ define('utils',[
         return obj;
     };
 
-    var booleanToString = function (flag) {
-        if (_.isUndefined(flag))
-        {
-//            debug.warn("Whatever you passed to booleanToString() was undefined, so we returned false to play it safe.");
+    var booleanToString = function(flag) {
+        if (_.isUndefined(flag)) {
+            //            debug.warn("Whatever you passed to booleanToString() was undefined, so we returned false to play it safe.");
             return 'false';
-        }
-        else if (!_.isBoolean(flag)) //if we don't get a boolean, just return false
+        } else if (!_.isBoolean(flag)) //if we don't get a boolean, just return false
         {
-            if (_.isString(flag))
-            {
-//                debug.warn("You passed a string ("+ flag +") to the booleanToString() method. Don't do that.");
+            if (_.isString(flag)) {
+                //                debug.warn("You passed a string ("+ flag +") to the booleanToString() method. Don't do that.");
                 flag = booleanToString(flag);
             }
 
@@ -1157,14 +1148,11 @@ define('utils',[
      * @returns {String}
      */
     var getKeyFromValue = function (obj, value) {
-        for (var prop in obj)
-        {
-            if (_.has(obj, prop))
-            {
+        for (var prop in obj) {
+            if (_.has(obj, prop)) {
                 //we want this to be flexible, so we check the string versions (want to keep strict equal)
                 // (see /tests/qunit/tests.js)
-                if (String(obj[prop]) === String(value))
-                {
+                if (String(obj[prop]) === String(value)) {
                     return prop;
                 }
             }
@@ -1179,10 +1167,8 @@ define('utils',[
 
         if (_.isObject(queryParams)) //it should always be an object, but just in case
         {
-            for (var prop in queryParams)
-            {
-                if (prop === key)
-                {
+            for (var prop in queryParams) {
+                if (prop === key) {
                     returnValue = queryParams[prop];
                 }
             }
@@ -1196,14 +1182,12 @@ define('utils',[
         url = url || urlString;
         var urlSplit = url.split(/\?/)[1];
 
-        if (_.isString(urlSplit) && !_.isEmpty(urlSplit))
-        {
+        if (_.isString(urlSplit) && !_.isEmpty(urlSplit)) {
             var queryParams = decodeURIComponent(urlSplit).split('&');
 
             queryParamsObject = arrayToObject(queryParams);
 
-            if (!_.isEmpty(queryParamsObject))
-            {
+            if (!_.isEmpty(queryParamsObject)) {
                 return queryParamsObject;
             }
         }
@@ -1224,20 +1208,16 @@ define('utils',[
 
     var isDefined = function (obj, checkEmpty) {
 
-        if (_.isUndefined(obj))
-        {
+        if (_.isUndefined(obj)) {
             return false;
         }
 
-        if (_.isNull(obj))
-        {
+        if (_.isNull(obj)) {
             return false;
         }
 
-        if (checkEmpty)
-        {
-            if (_.isEmpty(obj))
-            {
+        if (checkEmpty) {
+            if (_.isEmpty(obj)) {
                 return false;
             }
         }
@@ -1246,8 +1226,7 @@ define('utils',[
     };
 
     var isLooseEqual = function (itemA, itemB) {
-        if (_.isUndefined(itemA) || _.isUndefined(itemB))
-        {
+        if (_.isUndefined(itemA) || _.isUndefined(itemB)) {
             return false;
         }
 
@@ -1256,8 +1235,7 @@ define('utils',[
 
         //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
         // and I've already cast the objects to strings anyway
-        if (normalizedA === normalizedB)
-        {
+        if (normalizedA === normalizedB) {
             return true;
         }
 
@@ -1265,18 +1243,15 @@ define('utils',[
     };
 
     var isShallowObject = function (obj) {
-        if (_.isUndefined(obj))
-        {
+        if (_.isUndefined(obj)) {
             return false;
         }
 
-        if (!_.isTrueObject(obj))
-        {
+        if (!_.isTrueObject(obj)) {
             return false;
         }
 
-        if (_.isTrueObject(obj) && _.isEmpty(obj))
-        {
+        if (_.isTrueObject(obj) && _.isEmpty(obj)) {
             return false;
         }
 
@@ -1285,8 +1260,7 @@ define('utils',[
         _.each(obj, function (index, item) {
             var value = obj[item];
 
-            if (_.isTrueObject(value))
-            {
+            if (_.isTrueObject(value)) {
                 shallow = false;
             }
         });
@@ -1295,13 +1269,11 @@ define('utils',[
     };
 
     var isTrueObject = function (obj) {
-        if (_.isUndefined(obj))
-        {
+        if (_.isUndefined(obj)) {
             return false;
         }
 
-        if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj))
-        {
+        if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj)) {
             return true;
         }
 
@@ -1309,13 +1281,11 @@ define('utils',[
     };
 
     var isURL = function (url) {
-        if (_.isUndefined(url) || _.isEmpty(url))
-        {
+        if (_.isUndefined(url) || _.isEmpty(url)) {
             return false;
         }
 
-        if (!_.isString(url))
-        {
+        if (!_.isString(url)) {
             return false;
         }
 
@@ -1336,9 +1306,8 @@ define('utils',[
         _.each(obj, function (value, key) {
 
             //it's just a true object (i.e. {})
-            if (_.isObject(value) && !_.isFunction(value) && !_.isArray(value))
-            {
-//                throw new Error("lowerCasePropertyNames() only supports a shallow object.");
+            if (_.isObject(value) && !_.isFunction(value) && !_.isArray(value)) {
+                //                throw new Error("lowerCasePropertyNames() only supports a shallow object.");
                 value = lowerCasePropertyNames(value);
             }
 
@@ -1353,12 +1322,9 @@ define('utils',[
         var outputArray = [];
 
         _.each(obj, function (value, key) {
-            if (!_.isObject(value))
-            {
-                outputArray.push(key +'='+ value);
-            }
-            else
-            {
+            if (!_.isObject(value)) {
+                outputArray.push(key + '=' + value);
+            } else {
                 throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
                     "shallow object");
             }
@@ -1370,14 +1336,11 @@ define('utils',[
     var objectToPipeString = function (obj, delimiter) {
         var properties = [];
 
-        if (isShallowObject(obj))
-        {
+        if (isShallowObject(obj)) {
             _.each(obj, function (value, key) {
                 properties.push(key + '=' + value);
             });
-        }
-        else
-        {
+        } else {
             throw new Error("The first argument you supplied to objectToPipeString() was not a " +
                 "valid object. The objectToPipeString() method only supports a shallow object of strings and numbers.");
         }
@@ -1386,21 +1349,18 @@ define('utils',[
     };
 
     var objectToQueryString = function (object) {
-        if (!_.isTrueObject(object) || _.isEmpty(object))
-        {
+        if (!_.isTrueObject(object) || _.isEmpty(object)) {
             throw new Error("The single argument you should be providing should be an object");
         }
 
         var keyValuePairs = [];
 
         _.each(object, function (value, key) {
-            if (_.isTrueObject(value) && !_.isEmpty(value))
-            {
+            if (_.isTrueObject(value) && !_.isEmpty(value)) {
                 keyValuePairs.push(key + '=' + objectToQueryString(value)); //recursion
             }
 
-            if (_.isArray(value) && !_.isEmpty(value))
-            {
+            if (_.isArray(value) && !_.isEmpty(value)) {
                 keyValuePairs.push(key + '=' + value.join('&'));
             }
 
@@ -1413,8 +1373,7 @@ define('utils',[
     var override = function (startWith, overrideWith, overlay) {
         overlay = overlay || false;
 
-        if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
-        {
+        if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith)) {
             throw new Error("Both arguments supplied should be non-empty objects");
         }
 
@@ -1422,8 +1381,7 @@ define('utils',[
 
         _.each(startWith, function (value, key) {
             _.each(overrideWith, function (overrideItemValue, overrideItemKey) {
-                if (key === overrideItemKey)
-                {
+                if (key === overrideItemKey) {
 //                    if (overlay && (_.isTrueObject(overrideItemValue) || _.isArray(overrideItemValue)) && !_.isEmpty(overrideItemValue))
 //                    {
 //                        if (_.isArray(overrideItemValue))
@@ -1455,20 +1413,13 @@ define('utils',[
     var paramExists = function (key, value, url) {
         var queryParams = getQueryParams(url);
 
-        for (var prop in queryParams)
-        {
-            if (queryParams.hasOwnProperty(prop))
-            {
-                if (prop === key)
-                {
-                    if (value)
-                    {
-                        if (queryParams[prop] === value)
-                        {
+        for (var prop in queryParams) {
+            if (queryParams.hasOwnProperty(prop)) {
+                if (prop === key) {
+                    if (value) {
+                        if (queryParams[prop] === value) {
                             return true;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     }
@@ -1486,8 +1437,7 @@ define('utils',[
 
         var kvPairs = pipeString.split('|');
 
-        for (var i = 0, n = kvPairs.length; i < n; i++)
-        {
+        for (var i = 0, n = kvPairs.length; i < n; i++) {
             var pair = kvPairs[i].split(/=(.+)?/, 2); //makes sure we only split on the first = found
             var value = pair[1] || null; //i prefer null in this case
             obj[pair[0]] = value; //sets the key value pair on our return object
@@ -1499,16 +1449,12 @@ define('utils',[
     var removeQueryParams = function (url) {
         var cleanedURL = '';
 
-        if (_.isDefined(url) && _.isURL(url))
-        {
+        if (_.isDefined(url) && _.isURL(url)) {
             cleanedURL = url;
 
-            if (url.indexOf('?') !== -1)
-            {
+            if (url.indexOf('?') !== -1) {
                 cleanedURL = url.split('?')[0];
-            }
-            else
-            {
+            } else {
                 cleanedURL = url;
             }
         }
@@ -1531,20 +1477,17 @@ define('utils',[
      * @returns {String} String with whitespace stripped from beginning and end of string
      */
     var trim = function (text) {
-        if (!_.isString(text) || _.isEmpty(text))
-        {
+        if (!_.isString(text) || _.isEmpty(text)) {
             throw new Error("Whatever you passed to trim() was either not a string or was an empty string", text);
         }
 
         //if there's a leading space, slice it and try again
-        if (text.charAt(0) === ' ')
-        {
+        if (text.charAt(0) === ' ') {
             text = trim(text.slice(1));
         }
 
         //if there's a trailing space, slice it and try again
-        if (text.charAt(text.length-1) === ' ')
-        {
+        if (text.charAt(text.length - 1) === ' ') {
             text = trim(text.slice(0, -1));
         }
 
@@ -1559,8 +1502,7 @@ define('utils',[
         var size = String(text);
         var index = String(size).indexOf('px');
 
-        if (index === -1)
-        {
+        if (index === -1) {
             size = size + 'px';
         }
 //        else if (index < (text.length-1))
@@ -1585,48 +1527,39 @@ define('utils',[
      * @returns {$ Deferred}
      */
     var addToHead = function (tagName, attributes) {
-        if (_.isEmpty(tagName) || !_.isString(tagName))
-        {
+        if (_.isEmpty(tagName) || !_.isString(tagName)) {
             throw new Error("You have to provide a tag name when calling addToHead()");
         }
 
         tagName = tagName.toLowerCase(); //lowercasing
 
-        if (_.isEmpty(attributes) || !_.isTrueObject(attributes))
-        {
+        if (_.isEmpty(attributes) || !_.isTrueObject(attributes)) {
             throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
         }
 
         var deferred = $.Deferred();
 
-        if (!tagInHead(tagName, attributes))
-        {
+        if (!tagInHead(tagName, attributes)) {
             var elem = document.createElement(tagName);
 
             _.each(attributes, function (value, key) {
                 key = key.toLowerCase().replace(/\W/g, '');
 
-                if (/^[a-z0-9-]+$/.test(key))
-                {
+                if (/^[a-z0-9-]+$/.test(key)) {
                     elem.setAttribute(key, value);
                 }
             });
 
-            if (tagName === 'style' || tagName === 'script')
-            {
+            if (tagName === 'style' || tagName === 'script') {
                 elem.onload = function () {
                     deferred.resolve();
                 };
                 document.getElementsByTagName('head')[0].appendChild(elem);
-            }
-            else
-            {
+            } else {
                 document.getElementsByTagName('head')[0].appendChild(elem);
                 deferred.resolve(elem);
             }
-        }
-        else
-        {
+        } else {
             //we should probably let people know if the tag was already there since that might be a sign of
             //another problem
 //            debug.warn("You called addToHead(), but the tag already existed in the head", {
@@ -1640,10 +1573,8 @@ define('utils',[
     };
 
     var getColorFromString = function (color) {
-        if (!_.isUndefined(color))
-        {
-            if (!_.isString(color))
-            {
+        if (!_.isUndefined(color)) {
+            if (!_.isString(color)) {
                 throw new Error('The value supplied to getColorFromString() should be a string, not whatever you passed in.');
             }
 
@@ -1652,10 +1583,8 @@ define('utils',[
              * and 7 with). Then, if no hash exists, we add it ourselves.
              */
             var correctLength = (color.length === 6 || color.length === 7);
-            if (correctLength)
-            {
-                if (color.length === 6 && color.indexOf('#') === -1)
-                {
+            if (correctLength) {
+                if (color.length === 6 && color.indexOf('#') === -1) {
                     color = '#' + color;
                 }
 
@@ -1679,10 +1608,8 @@ define('utils',[
         text = String(text);
         var index = text.indexOf('px');
 
-        if (index !== -1)
-        {
-            if (index === (text.length-2))
-            {
+        if (index !== -1) {
+            if (index === (text.length - 2)) {
                 return text.substr(0, index);
             }
 //            else
@@ -1711,20 +1638,18 @@ define('utils',[
     };
 
     var tagInHead = function (tagName, attributes) {
-        if (_.isEmpty(tagName) || !_.isString(tagName))
-        {
+        if (_.isEmpty(tagName) || !_.isString(tagName)) {
             throw new Error("You have to provide a tag name when calling tagInHead()");
         }
 
-        if (_.isEmpty(attributes) || !_.isShallowObject(attributes))
-        {
+        if (_.isEmpty(attributes) || !_.isShallowObject(attributes)) {
             throw new Error("You called tagInHead() with no attributes to match against");
         }
 
         var attrSelector = tagName;
 
         _.map(attributes, function (value, key) {
-            attrSelector += '['+ key +'="'+ value +'"]';
+            attrSelector += '[' + key + '="' + value + '"]';
         });
 
         var $tag = $('head ' + attrSelector);
@@ -1743,7 +1668,7 @@ define('utils',[
     };
 
     var getCookie = function(name) {
-        var nameEQ = name +'=';
+        var nameEQ = name + '=';
         var cookieData = window.document.cookie.split(';');
 
         for (var i = 0, n = cookieData.length; i < n; i += 1) {
@@ -1758,6 +1683,40 @@ define('utils',[
         }
         return null;
     };
+
+    var setNestedProperty = function(object, path, value) {
+        var key = path.shift();
+        if (!object) {
+            object = {};
+        }
+        if (path.length === 0) {
+            object[key] = value;
+            return object;
+        }
+        if (path.length > 0) {
+            object[key] = setNestedProperty(object[key], path, value);
+        }
+        return object;
+    };
+
+    function patchObject(object, param) {
+        window.console.log('patch', object, param);
+        var keys = _.keys(param);
+        for (var i = 0, n = keys.length; i < n; i += 1) {
+            var key = keys[i];
+            if (!_.isObject(param[key])) {
+                object[key] = param[key];
+                continue;
+            }
+            if (!_.isObject(object[key])) {
+                object[key] = param[key];
+                continue;
+            }
+            object[key] = patchObject(object[key], param[key]);
+        }
+        window.console.log('patched', object, param);
+        return object;
+    }
 
     var urlString = window.location.href;
     ////////////////////////////////////////////////
@@ -1823,7 +1782,9 @@ define('utils',[
         setURL: setURL,
         getURL: getURL,
         setCookie: setCookie,
-        getCookie: getCookie
+        getCookie: getCookie,
+        setNestedProperty: setNestedProperty,
+        patchObject: patchObject
     };
     ////////////////////////////////////////////////
 });
@@ -2703,6 +2664,8 @@ define('config',[
 
     var timeoutDuration = 3000;
     var configTimeout;
+    var deferred = $.Deferred();
+    var failOnValidationError = true;
 
     // To override a property, set it to any non-null, defined value.
     // To accept a default property, don't explicitly override it, or set it to
@@ -2718,73 +2681,73 @@ define('config',[
         shouldGetNewJS: true,       // Optional - Seems to enable event handling for determining when the foxneod library is ready
         share_emailserver: false,   // Optional
         share_shortenerURL: null,   // Optional
-        analytics: {        // Optional
-            akamai: {           // Optional
-                beaconPath: 'http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml'   // Required
+        analytics: {                // Optional
+            akamai: {               // Optional
+                beaconPath: 'http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml' // Required
             },
-            comscore: {         // Optional
+            comscore: {             // Optional
                 c2: '3005183',      // Required
                 c4: '8000000',      // Required
                 c6Field: '{comscoreShowId}%7CS{season}E{episode}'   // Required
             },
-            sitecatalyst: {     // Optional
+            sitecatalyst: {         // Optional
                 host: 'a.fox.com',  // Required
                 visitorNamespace: 'foxentertainment',   // Optional (Defaults to 'foxentertainment' if unset)
                 account: 'foxcomprod',  // Required
-                additionalPropsMethodName: 'player.extraInfo'   // Required
+                additionalPropsMethodName: 'player.extraInfo'       // Required
             },
-            nielsen: {          // Optional
-                clientid: '800251',     // Required
-                vcid: 'c01',            // Required
-                sid: '2500011627',      // Required
-                tfid: '1362',           // Required
-                adcategory: 'fw:category',  // Required
-                adsubcategory: 'fw:subcategory',    // Required
-                displayprefix: 'Season',    // Required
-                displayfieldname: 'season'  // Required
+            nielsen: {              // Optional
+                clientid: '800251', // Required
+                vcid: 'c01',        // Required
+                sid: '2500011627',  // Required
+                tfid: '1362',       // Required
+                adcategory: 'fw:category',              // Required
+                adsubcategory: 'fw:subcategory',        // Required
+                displayprefix: 'Season',                // Required
+                displayfieldname: 'season'              // Required
             },
-            ga: {               // Optional
-                account: 'UA-28236326-1',   // Required
-                histograms: '10',           // Required
-                trackAds: 'true',           // Required
+            ga: {                   // Optional
+                account: 'UA-28236326-1',               // Required
+                histograms: '10',   // Required
+                trackAds: 'true',   // Required
                 pattern: 'thePlatform/{playlist.player}/{isAd}/{title}/{histogram}' // Required
             },
-            chartbeat: true,    // Optional
-            conviva: {          // Optional
-                type: 'full',           // Required
+            chartbeat: true,        // Optional
+            conviva: {              // Optional
+                type: 'full',       // Required
                 customerId: 'c3.FOX',   // Required
                 metadataKeys: 'episode,fullEpisode,genre,repeat,season,showcode',   // Required
                 playerTags: '|playerTag.series=|playerTag.playerType='  //  Required
             }
         },
-        adserver: {         // Optional
-            name: 'freewheel'      // Required
+        adserver: {                 // Optional
+            name: 'freewheel'       // Required
         },
-        layouts: {  // Optional (Do not unset)
-            swfSkinURL: '/fox/swf/skinFox.swf',     // Optional (Do not unset)
-            jsSkinURL: '/fox/config/fox.json',      // Optional (Do not unset)
+        layouts: {                  // Optional (Do not unset)
+            swfSkinURL: '/fox/swf/skinFox.swf', // Optional (Do not unset)
+            jsSkinURL: '/fox/config/fox.json',  // Optional (Do not unset)
             defaultLayoutUrl: '/fox/config/foxLayout.xml',      // Optional (Do not unset)
             liveLayoutUrl: '/fox/config/liveLayout.xml',        // Optional (Do not unset)
             dvrLayoutUrl: '/fox/config/dvrLayout.xml',          // Optional (Do not unset)
             dvrLiveLayoutUrl: '/fox/config/dvrLiveLayout.xml',  // Optional (Do not unset)
             html5LayoutUrl: '/fox/config/html5Layout.xml',      // Optional (Do not unset)
-            play_overlay_x_offset: '50',        // Optional (Do not unset)
-            play_overlay_y_offset: '50'         // Optional (Do not unset)
+            play_overlay_x_offset: '50',    // Optional (Do not unset)
+            play_overlay_y_offset: '50'     // Optional (Do not unset)
         },
-        colors: {   // Optional (Do not unset)
-            backgroundColor: '0x131313',        // Optional (Do not unset)
+        colors: {                   // Optional (Do not unset)
+            backgroundColor: '0x131313',    // Optional (Do not unset)
             controlBackgroundColor: '0x131313', // Optional (Do not unset)
-            controlColor: '0xF2F2F2',           // Optional (Do not unset)
-            controlHoverColor: '0xFFFFFF',      // Optional (Do not unset)
+            controlColor: '0xF2F2F2',       // Optional (Do not unset)
+            controlHoverColor: '0xFFFFFF',  // Optional (Do not unset)
             controlSelectedColor: '0x00CCFF',   // Optional (Do not unset)
-            disabledColor: '0x999999',          // Optional (Do not unset)
-            fp_bgcolor: '0x131313',             // Optional (Do not unset)
-            frameColor: '0xE0E0E0',             // Optional (Do not unset)
-            playProgressColor: '0x131313',      // Optional (Do not unset)
-            textColor: '0xF2F2F2',              // Optional (Do not unset)
-            loadProgressColor: '0x7C7C7C',      // Optional (Do not unset)
+            disabledColor: '0x999999',      // Optional (Do not unset)
+            fp_bgcolor: '0x131313',         // Optional (Do not unset)
+            frameColor: '0xE0E0E0',         // Optional (Do not unset)
+            playProgressColor: '0x131313',  // Optional (Do not unset)
+            textColor: '0xF2F2F2',          // Optional (Do not unset)
+            loadProgressColor: '0x7C7C7C',  // Optional (Do not unset)
             controlHighlightColor: '0xE0E0E0',  // Optional (Do not unset)
-            controlFrameColor: '0xE0E0E0'       // Optional (Do not unset)
+            controlFrameColor: '0xE0E0E0'   // Optional (Do not unset)
         }
     };
 
@@ -3159,9 +3122,29 @@ define('config',[
         configData = $.extend({}, defaults);
     };
 
+    var setConfig = function() {
+        config.isCurrent = false;
+        var self = this;
+        var args = Array.prototype.slice.call(arguments, 0);
+        var data = args.shift();
+        lookup(data).done(function(data) {
+            configData = validate(data, validationRules, configData, failOnValidationError);
+            failOnValidationError = false;
+            if (args.length === 0) {
+                debug.log('dispatching config event over window');
+                config.isCurrent = true;
+                dispatcher.dispatch('config', true, true);
+                return deferred.resolve(configData);
+            }
+            setConfig.apply(self, args);
+        }).fail(function() {
+            config.isCurrent = true;
+            deferred.reject.apply(deferred, args);
+        });
+    };
+
     var config = function() {
         var args = Array.prototype.slice.call(arguments, 0);
-        var deferred = $.Deferred();
         var profiler = new Profiler('config', true);
 
         reset();
@@ -3175,35 +3158,26 @@ define('config',[
             args = [configData];
         }
 
-        var firstArg = true;
-        var setConfig = function() {
-            var self = this;
-            var args = Array.prototype.slice.call(arguments, 0);
-            var data = args.shift();
-            lookup(data).done(function(data) {
-                configData = validate(data, validationRules, configData, firstArg);
-                firstArg = false;
-                if (args.length === 0) {
-                    debug.log('dispatching config event over window');
-                    dispatcher.dispatch('config', true, true);
-                    return deferred.resolve(configData);
-                }
-                setConfig.apply(self, args);
-            }).fail(function() {
-                deferred.reject.apply(deferred, args);
-            });
-        };
-
         setConfig.apply(this, args);
-
         profiler.end();
-
         return deferred.promise();
     };
 
     config.getConfig = function() {
         return configData;
     };
+
+    config.update = function(overrides) {
+        if (!configData) {
+            return debug.warn('Cannot update config data before initial configuration');
+        }
+        setConfig(overrides);
+    };
+
+    config.isCurrent = false; // Flag to determine if the data has been fully
+    // updated since config was last called. This is
+    // required because config lookup can sometimes
+    // be asynchronous.
 
     $(window).on('foxneod:ready', function() {
         configTimeout = window.setTimeout(function() {
@@ -3214,7 +3188,6 @@ define('config',[
 
     return config;
 });
-
 /*global define */
 
 define('playerHandler',[
@@ -3224,19 +3197,21 @@ define('playerHandler',[
     'Debug',
     'Dispatcher',
     'config',
-    'storage'
-], function (_, jquery, utils, Debug, Dispatcher, config, storage) {
+    'storage',
+    'ovp'
+], function(_, jquery, utils, Debug, Dispatcher, config, storage, ovp) {
     
 
     var debug = new Debug('playerHandler');
+    var dispatcher = new Dispatcher('playerHandler');
     var version = '1.4.527';
 
     var playerVars = {
-        flash:      11,
-        host:       window.location.protocol + '//player.foxfdm.com',  // Brandon had http[s] prepended
-        events:     [],
-        isFlash:    0,
-        isIOS:      0
+        flash: 11,
+        host: window.location.protocol + '//player.foxfdm.com', // Brandon had http[s] prepended
+        events: [],
+        isFlash: 0,
+        isIOS: 0
     };
 
     var savedPlayerConfig = storage.now.get('playerConfig');
@@ -3246,8 +3221,7 @@ define('playerHandler',[
         playerVars.isFlash = false;
     }
 
-    var documentHead,
-        documentBody,
+    var documentBody,
         metaBaseUrl,
         metaPreferredFormat,
         metaPreferredRuntime;
@@ -3257,54 +3231,21 @@ define('playerHandler',[
         var freewheelCookie = utils.getCookie('aam_freewheel');
         if (freewheelCookie) {
             var freewheelValue = freewheelCookie.replace(/%3B/g, '%26');
-            if(!_.isUndefined(window.player.freewheel_keyvalue)) {
+            if (!_.isUndefined(window.player.freewheel_keyvalue)) {
                 return window.player.freewheel_keyvalue + '%26' + freewheelValue;
-            }
-            else {
+            } else {
                 return freewheelValue;
             }
-        }
-        else {
+        } else {
             return '';
         }
-    }
-
-    function setNestedProperty(object, path, value) {
-        var key = path.shift();
-        if (!object) {
-            object = {};
-        }
-        if (path.length === 0) {
-            object[key] = value;
-            return object;
-        }
-        if (path.length > 0) {
-            object[key] = setNestedProperty(object[key], path, value);
-        }
-        return object;
     }
 
     function extendMarkup(config, element) {
         var attributes = element.attributes;
         for (var i = 0, n = attributes.length; i < n; i += 1) {
             var attribute = attributes[i];
-            setNestedProperty(config, attribute.name.split('.'), attribute.value);
-        }
-    }
-
-    function extendArgument(config, param) {
-        var keys = _.keys(param);
-        for (var i = 0, n = keys.length; i < n; i += 1) {
-            var key = keys[i];
-            if (!_.isObject(param[key])) {
-                config[key] = param[key];
-                continue;
-            }
-            if (!_.isObject(config[key])) {
-                config[key] = param[key];
-                continue;
-            }
-            extendArgument(config[key], param[key]);
+            utils.setNestedProperty(config, attribute.name.split('.'), attribute.value);
         }
     }
 
@@ -3316,7 +3257,7 @@ define('playerHandler',[
             var key = pair[0].split('.');
             var prefix = key.shift();
             if (prefix === 'foxneod') {
-                setNestedProperty(config, key, pair[1]);
+                utils.setNestedProperty(config, key, pair[1]);
             }
         }
     }
@@ -3360,11 +3301,11 @@ define('playerHandler',[
         if (window.player.introURL || window.player.outroURL) {
             player.pluginBumper = 'type=control' +
                 '|URL=' + playerVars.host + '/shared/' + version + '/swf/BumperPlugin.swf' +
-                '|introURL=' + (window.player.introURL ? window.player.introURL : '') +
-                '|introLink=' + (window.player.introLink ? player.introLink : '') +
-                '|outroURL=' + (window.player.outroURL ? player.outroURL : '') +
-                '|outroLink=' + (window.player.outroLink ? player.outroLink : '') +
-                '|waitTime=' + (window.player.waitTime ? player.waitTime : '10');
+                '|introURL=' + (window.player.introURL || '') +
+                '|introLink=' + (window.player.introLink || '') +
+                '|outroURL=' + (window.player.outroURL || '') +
+                '|outroLink=' + (window.player.outroLink || '') +
+                '|waitTime=' + (window.player.waitTime || '10');
         }
 
         if (window.player.share_deeplink || _.isFunction(window.player.share_deeplinkfunc) && window.player.share + '' !== 'false') {
@@ -3381,9 +3322,9 @@ define('playerHandler',[
                     '|shortener=' + playerVars.share_shortenerURL : '') +
                 '|embed=' + window.player.share_embed + '|twitterField=title' +
                 (window.player.share_deeplinkfunc ?
-                    '|deeplinkFunc=' + window.player.share_deeplinkfunc : '') +
+                '|deeplinkFunc=' + window.player.share_deeplinkfunc : '') +
                 '|hidepostup=' + window.player.hidePostup +
-                (window.player.share_iframeurl ? '|iframeurl='+player.share_iframeurl : '');
+                (window.player.share_iframeurl ? '|iframeurl=' + player.share_iframeurl : '');
         }
 
         player.pluginClosedCaption = 'type=overlay|URL=' + playerVars.host +
@@ -3397,14 +3338,14 @@ define('playerHandler',[
             if (window.foxneod.query.isFeedURL(window.player.endcard_playlist)) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (player.endcard_playlist.indexOf('policy') !== -1 ? '' : adPolicySuffix);
             }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_related)) {
                 window.player.endcard_related = window.player.endcard_related +
-                (window.player.endcard_related.indexOf('form=json') !== -1 ?
+                    (window.player.endcard_related.indexOf('form=json') !== -1 ?
                     '' : (player.endcard_related.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_related.indexOf('policy') !== -1 ? '' : adPolicySuffix);
@@ -3413,8 +3354,8 @@ define('playerHandler',[
             if (window.foxneod.query.isFeedURL(player.endcard_editorial)) {
                 window.player.endcard_editorial = window.player.endcard_editorial +
                     (window.player.endcard_editorial.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_editorial.indexOf('policy') !== -1 ? '' : adPolicySuffix);
             }
 
@@ -3477,7 +3418,7 @@ define('playerHandler',[
                 '|analyticsKeys=show,season,episode,fullEpisode' +
                 '|analyticsValueFields=showcode,season,episode,fullEpisode' +
                 '|priority=4|hosts=-f.akamaihd.net' +
-                '|playerId=' + playerVars.network_name +'-' + version + (playerVars.analytics.akamai ?
+                '|playerId=' + playerVars.network_name + '-' + version + (playerVars.analytics.akamai ?
                     '|analyticsBeacon=' + playerVars.analytics.akamai.beaconPath : '');
         }
 
@@ -3532,15 +3473,15 @@ define('playerHandler',[
             if (playerVars.adserver.name === 'freewheel') {
                 var siteSection = playerVars.adserver.siteSection || 'player.siteSection';
                 player.pluginNewFreewheel = 'type=adcomponent' +
-                    '|url=' + playerVars.host+'/shared/' + version + '/pdk/swf/freewheel.swf' +
+                    '|url=' + playerVars.host + '/shared/' + version + '/pdk/swf/freewheel.swf' +
                     '|pemURLsSeparator=~' +
                     '|siteSectionId=' + siteSection +
                     '|isLive=false' +
                     (playerVars.adserver.customVideoAssetIdField ? '|customVideoAssetIdField=' + playerVars.adserver.customVideoAssetIdField : '') +
                     '|pemURLs=' +
-                        'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' +
-                        'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' +
-                        'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf' +
+                    'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' +
+                    'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' +
+                    'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf' +
                     '|networkId=116450' +
                     '|siteSectionNetworkId=116450' +
                     '|keyValues=' + fdmAAMStuff() +
@@ -3598,12 +3539,12 @@ define('playerHandler',[
 
     function configureHTML5(player, configData) {
         var adPolicySuffix;
-        var cssNode = window.document.createElement('link');
-        cssNode.rel = 'stylesheet';
-        cssNode.type = 'text/css';
-        cssNode.href = playerVars.host + (playerVars.layouts.htmlcss ||
-            ('/shared/' + playerVars.version + '/css/html5_main.css'));
-        documentHead.appendChild(cssNode);
+        utils.addToHead('link', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: playerVars.host + (playerVars.layouts.htmlcss ||
+                ('/shared/' + playerVars.version + '/css/html5_main.css'))
+        });
 
         // Always set to false, because if true, it causes wildly different
         // experiences and on certain devices, issues.
@@ -3614,22 +3555,22 @@ define('playerHandler',[
         player.skinURL = playerVars.host + playerVars.layouts.jsSkinURL;
 
         switch (window.player.deliveryMode) {
-        case 'live':
-            player.layoutUrl = playerVars.host + playerVars.layouts.liveLayoutUrl;
-            break;
-        case 'livedvr':
-            player.layoutUrl = playerVars.host + playerVars.layouts.dvrLiveLayoutUrl;
-            break;
-        case 'dvr':
-            player.layoutUrl = playerVars.host + playerVars.layouts.dvrLayoutUrl;
-            break;
-        case 'vod':
-            player.layoutUrl = playerVars.host + playerVars.layouts.defaultLayoutUrl;
-            break;
-        default:
-            //no mode specified, load VOD layout
-            player.layoutUrl = playerVars.host +
-                (playerVars.layouts.html5LayoutUrl || playerVars.layouts.defaultLayoutUrl);
+            case 'live':
+                player.layoutUrl = playerVars.host + playerVars.layouts.liveLayoutUrl;
+                break;
+            case 'livedvr':
+                player.layoutUrl = playerVars.host + playerVars.layouts.dvrLiveLayoutUrl;
+                break;
+            case 'dvr':
+                player.layoutUrl = playerVars.host + playerVars.layouts.dvrLayoutUrl;
+                break;
+            case 'vod':
+                player.layoutUrl = playerVars.host + playerVars.layouts.defaultLayoutUrl;
+                break;
+            default:
+                //no mode specified, load VOD layout
+                player.layoutUrl = playerVars.host +
+                    (playerVars.layouts.html5LayoutUrl || playerVars.layouts.defaultLayoutUrl);
         }
 
         player.pluginLayout = 'type=overlay' +
@@ -3638,7 +3579,7 @@ define('playerHandler',[
             '|offsetX=' + playerVars.layouts.play_overlay_x_offset +
             '|offsetY=' + playerVars.layouts.play_overlay_y_offset;
 
-        if(window.player.introURL || window.player.outroURL) {
+        if (window.player.introURL || window.player.outroURL) {
             player.pluginBumper = 'type=ad' +
                 '|URL=' + playerVars.host + '/shared/' + version + '/js/FoxBumperPlugin.js' +
                 '|introLink=' + window.player.introLink +
@@ -3646,15 +3587,15 @@ define('playerHandler',[
                 '|waitTime=' + (player.waitTime || '10');
         }
 
-        if(window.player.watermark_src) {
+        if (window.player.watermark_src) {
             player.pluginWatermark = 'type=overlay' +
                 '|URL=' + playerVars.host + '/shared/' + version + '/js/FoxWatermarkPlugin.js';
 
-            if(!_.isUndefined(window.player.watermark_corner)) {
+            if (!_.isUndefined(window.player.watermark_corner)) {
                 player.pluginWatermark += '|corner=' + window.player.watermark_corner;
             }
             player.pluginWatermark += '|watermarkSrc=' + window.player.watermark_src;
-            if(!_.isUndefined(window.player.watermark_opacity)) {
+            if (!_.isUndefined(window.player.watermark_opacity)) {
                 player.pluginWatermark += '|watermarkOpacity=' + window.player.watermark_opacity;
             }
         }
@@ -3668,33 +3609,33 @@ define('playerHandler',[
                 (window.player.share_deeplinkfunc ? '|deeplinkFunc=' + window.player.share_deeplinkfunc : '');
         }
 
-        if(window.player.endcard + '' !== 'false') {
+        if (window.player.endcard + '' !== 'false') {
             if (playerVars.shortname === 'fox') {
                 adPolicySuffix = "&params=policy%3D19938";
             }
-            if(window.player.endcard_playlist) {
+            if (window.player.endcard_playlist) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_playlist.indexOf('policy') !== -1 ?
-                        '' : adPolicySuffix);
+                    '' : adPolicySuffix);
             }
-            if(window.player.endcard_related) {
+            if (window.player.endcard_related) {
                 window.player.endcard_related = window.player.endcard_related +
                     (window.player.endcard_related.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_related.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_related.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_related.indexOf('policy') !== -1 ?
-                        '' : adPolicySuffix);
+                    '' : adPolicySuffix);
             }
-            if(window.player.endcard_editorial) {
+            if (window.player.endcard_editorial) {
                 window.player.endcard_editorial = window.player.endcard_editorial +
                     (window.player.endcard_editorial.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_editorial.indexOf('policy') !== -1 ?
-                        '' : adPolicySuffix);
+                    '' : adPolicySuffix);
             }
 
             player.pluginEndcard = 'type=overlay' +
@@ -3731,7 +3672,7 @@ define('playerHandler',[
                 '|priority=1|hosts=' + playerVars.adserver.host;
         }
 
-        if(window.player.releaseURL) {
+        if (window.player.releaseURL) {
             player.releaseURL = window.player.releaseURL +
                 (player.releaseURL.indexOf('?') !== -1 ? '&' : '?') +
                 'manifest=m3u&format=SMIL';
@@ -3741,8 +3682,8 @@ define('playerHandler',[
                 adPolicySuffix += 'policy=19938';
                 player.releaseURL += adPolicySuffix;
             }
-            if(window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
-                if(window.player.releaseURL.toLowerCase().indexOf('switch') === -1) {
+            if (window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
+                if (window.player.releaseURL.toLowerCase().indexOf('switch') === -1) {
                     player.releaseURL += '&switch=http';
                 }
             }
@@ -3765,11 +3706,11 @@ define('playerHandler',[
                 frequency: '60',
                 entitled: 'public', //values: public or entitled
                 auth: 'true',
-                mvpd: null,         //value of prop/eVar is the MVDP name of the user.
+                mvpd: null, //value of prop/eVar is the MVDP name of the user.
                 network: playerVars.shortname,
                 extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
                 accountInfo: {
-                    account:  accountId,
+                    account: accountId,
                     trackingServer: host
                 }
             };
@@ -3789,20 +3730,19 @@ define('playerHandler',[
             if (!event.data.baseClip.contentCustomData) {
                 return;
             }
-            if(event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
+            if (event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
                 window.$pdk.controller.resetPlayer();
                 window.$pdk.controller.setPlayerMessage('The video you are ' +
                     'attempting to watch is only available to viewers within ' +
                     'the US, US territories, and military bases.', 35000);
-            } else if(event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
+            } else if (event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
                 window.$pdk.controller.resetPlayer();
                 window.$pdk.controller.setPlayerMessage('Your token/session has ' +
                     'expired. Please refresh the page to continue watching.', 35000);
-            } else if(event.data.baseClip.contentCustomData.licensedMusic === 'true') {
-                if(window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+            } else if (event.data.baseClip.contentCustomData.licensedMusic === 'true') {
+                if (window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
                     window.foxneod.player.setPlayerMessage({
-                        message: 'Sorry, the video you selected is not available ' +
-                            'for viewing on this device.',
+                        message: 'Sorry, the video you selected is not available for viewing on this device.',
                         resetPlayer: true
                     });
                 }
@@ -3853,13 +3793,13 @@ define('playerHandler',[
         this.width = width || '';
         this.height = height || '';
         this.player = null;
-        this.token = null;      // I don't think this is actually used anywhere
+        this.token = null; // I don't think this is actually used anywhere
         this.aamtt = {}; // Only used if fox, looks like play feedback signaling
 
         jquery.ajax({
-            dataType: 'script',
-            url: 'http://foxneod-proxy.herokuapp.com/'
-        }). success(function(response) {
+            dataType: 'jsonp',
+            url: 'http://foxneod-proxy.herokuapp.com'
+        }).success(function(response) {
             self.token = response && response.signInResponse && response.signInResponse.token;
             jquery.ajax({
                 dataType: 'script',
@@ -3877,21 +3817,13 @@ define('playerHandler',[
         }).error(function() {
             debug.error('Failed to lookup token');
         });
+
+        dispatcher.on('foxneod:config', true, function() {
+            self.updateConfig();
+        });
     }
 
-    PlayerHandler.prototype.init = function(postHandlers, preHandlers) {
-        var self = this;
-        debug.log('initializing player');
-        this.player = new window.Player(this.id, this.width, this.height);
-        this.player.id = this.id;
-        if (this.width) {
-            this.player.width = this.width;
-        }
-        if (this.height) {
-            this.player.height = this.height;
-        }
-        window.tpLogLevel = (window.player.debug === 'debug') ? 'debug' : 'none';
-        this.player.logLevel = window.tpLogLevel;
+    PlayerHandler.prototype.applyConfig = function() {
         setPlayerColors(this.player, this.configData.colors);
         this.player.enableDynamicSubtitleFonts = true;
         this.player.useDefaultPlayOverlay = false;
@@ -3913,12 +3845,12 @@ define('playerHandler',[
             debug.log('environment doesn\'t support player :(');
             window.document.getElementById(this.player.id).innerHTML =
                 '<p class="fdmplayer_no_flash">' +
-                    'We&#039;ve detected an older version of Flash Player.' +
-                    '<br/><br/>' +
-                    'In order to view video on this site please download Flash 11.' +
+                'We&#039;ve detected an older version of Flash Player.' +
+                '<br/><br/>' +
+                'In order to view video on this site please download Flash 11.' +
                 '</p>' +
                 '<a href="http://get.adobe.com/flashplayer/" target="_blank">' +
-                    '<img src="http://player.foxfdm.com/shared/img/get_flash_player.gif">' +
+                '<img src="http://player.foxfdm.com/shared/img/get_flash_player.gif">' +
                 '</a>';
             this.player = null;
         }
@@ -3932,16 +3864,37 @@ define('playerHandler',[
                 pageDebug.log('foxneod already existed, dispatching playerReady');
                 window.foxneod.dispatch('playerReady', {}, true);
             } else {
-                jquery.bind('foxneod:ready', function (event) {
+                jquery.bind('foxneod:ready', function(event) {
                     pageDebug = new window.foxneod.Debug('page');
                     pageDebug.log('Page now knows that the library is ready.');
                 });
             }
         }
 
+        debug.log('Applying config to player', this.player);
+        // TODO If the player supports updates, this is where the appropriate
+        // call would go.
+        this.player.bind(this.id);
+    };
+
+    PlayerHandler.prototype.init = function(postHandlers, preHandlers) {
+        var self = this;
+        debug.log('initializing player');
+        window.testPlayer = this.player = new window.Player(this.id, this.width, this.height);
         if (!this.player) {
             return;
         }
+        this.player.id = this.id;
+        if (this.width) {
+            this.player.width = this.width;
+        }
+        if (this.height) {
+            this.player.height = this.height;
+        }
+        window.tpLogLevel = (window.player.debug === 'debug') ? 'debug' : 'none';
+        this.player.logLevel = window.tpLogLevel;
+        this.applyConfig();
+
         var i, n;
         if (_.isFunction(preHandlers)) {
             preHandlers();
@@ -3950,8 +3903,6 @@ define('playerHandler',[
                 preHandlers[i]();
             }
         }
-
-        this.player.bind();
 
         if (_.isFunction(postHandlers)) {
             postHandlers();
@@ -3976,16 +3927,16 @@ define('playerHandler',[
             // CFS (3/5/2013): for audience insights
             if (!_.isUndefined(window.mboxTrack)) {
                 var clipStarted = false;
-                window.$pdk.controller.addEventListener('OnReleaseStart', function (event) {
+                window.$pdk.controller.addEventListener('OnReleaseStart', function(event) {
                     //don't change. it's called playlist.chapters.chapters
                     if (event.data && event.data.chapters && event.data.chapters.chapters.length > 1) {
-                        self.aamtt.form  = 'lf';
+                        self.aamtt.form = 'lf';
                     } else {
-                        self.aamtt.form  = 'sf';
+                        self.aamtt.form = 'sf';
                     }
                 });
 
-                window.$pdk.controller.addEventListener('OnMediaStart', function (event) {
+                window.$pdk.controller.addEventListener('OnMediaStart', function(event) {
                     if (event) {
                         self.aamtt.isAd = event.data.baseClip.isAd;
                         if (!self.aamtt.isAd && event.data.chapter && !clipStarted) {
@@ -4016,13 +3967,28 @@ define('playerHandler',[
                         window.mboxTrack(this.aamtt.form + '_video_75');
                         this.aamtt.seventyfive = true;
                     }
-                    if(percent === 98 && !this.aamtt.complete) {
+                    if (percent === 98 && !this.aamtt.complete) {
                         window.mboxTrack(this.aamtt.form + '_video_complete');
                         this.aamtt.complete = true;
                     }
                 });
             }
         }
+    };
+
+    PlayerHandler.prototype.updateConfig = function(data, callback) {
+        var self = this;
+        if (!this.player) {
+            return debug.warn('no player to update yet');
+        }
+
+        // TODO delete testPlayer reference
+        this.configure(data, function() {
+            self.applyConfig();
+            if (_.isFunction(callback)) {
+                callback();
+            }
+        });
     };
 
     PlayerHandler.prototype.killPlayer = function() {
@@ -4036,7 +4002,7 @@ define('playerHandler',[
             data = undefined;
         }
         this.configData = config.getConfig();
-        if (!this.configData) {
+        if (!this.configData || !config.isCurrent) {
             // Wait for config module init to finish
             return setTimeout(function() {
                 self.configure(data, callback);
@@ -4044,7 +4010,7 @@ define('playerHandler',[
         }
         extendMarkup(this.configData, this.element);
         if (data) {
-            extendArgument(this.configData, data);
+            utils.patchObject(this.configData, data);
         }
         extendURL(this.configData);
 
@@ -4060,7 +4026,9 @@ define('playerHandler',[
         }
         _.extend(playerVars, this.configData);
         debug.log('config set', playerVars);
-        callback();
+        if (_.isFunction(callback)) {
+            callback();
+        }
     };
 
     PlayerHandler.prototype.pause = function() {
@@ -4074,7 +4042,7 @@ define('playerHandler',[
             // It seems odd that we would be checking for android inside a block
             // that should only execute on iOS devices.
             if (window.navigator.userAgent.toLowerCase().indexOf('?') !== -1 &&
-                    releaseUrl.toLowerCase().indexOf('embedded') === -1) {
+                releaseUrl.toLowerCase().indexOf('embedded') === -1) {
                 releaseUrl += '&switch=http';
             }
         }
@@ -4087,12 +4055,12 @@ define('playerHandler',[
 
     PlayerHandler.prototype.loadReleaseCall = function(releaseUrl) {
         window.$pdk.controller.resetPlayer();
-        if(playerVars.isIOS) {
+        if (playerVars.isIOS) {
             releaseUrl += (releaseUrl.indexOf('?') !== -1 ? '&' : '?') + 'manifest=m3u';
 
-            if(window.navigator.userAgent.toLowerCase().indexOf('android') > -1 &&
-                    releaseUrl.toLowerCase().indexOf('embedded') === -1) {
-                releaseUrl+='&switch=http';
+            if (window.navigator.userAgent.toLowerCase().indexOf('android') > -1 &&
+                releaseUrl.toLowerCase().indexOf('embedded') === -1) {
+                releaseUrl += '&switch=http';
             }
         }
         if (playerVars.shortname === 'fox' && playerVars.adserver.name === 'freewheel') {
@@ -4115,26 +4083,26 @@ define('playerHandler',[
             window.$pdk.controller.showFullScreen(false);
         }
         switch (event.type) {
-        case 'podStart':
-            // pods contains ads at an ad break
-            window.$pdk.controller.dispatchEvent(event.type);
-            break;
-        case 'adStart':
-            // all ad types fire this event
-            if (!event.info) {
+            case 'podStart':
+                // pods contains ads at an ad break
+                window.$pdk.controller.dispatchEvent(event.type);
                 break;
-            }
-            if(event.info.type === 'preroll' || event.info.type === 'midroll' ||
+            case 'adStart':
+                // all ad types fire this event
+                if (!event.info) {
+                    break;
+                }
+                if (event.info.type === 'preroll' || event.info.type === 'midroll' ||
                     event.info.type === 'postroll') {
-                wipeBrandedCanvas();
-            }
-            if(!_.isUndefined(window.AUTH)) {
-                window.AUTH.activateLogin();
-            }
-            break;
-        case 'adComplete':
-            // all ad types fire this event
-            break;
+                    wipeBrandedCanvas();
+                }
+                if (!_.isUndefined(window.AUTH)) {
+                    window.AUTH.activateLogin();
+                }
+                break;
+            case 'adComplete':
+                // all ad types fire this event
+                break;
         }
     };
 
@@ -4152,29 +4120,24 @@ define('playerHandler',[
     };
 
     (function init() {
-        documentHead = window.document.getElementsByTagName('head')[0];
         documentBody = window.document.getElementsByTagName('body')[0];
 
-        metaBaseUrl = window.document.createElement('meta');
-        metaBaseUrl.name = 'tp:baseUrl';
-        metaBaseUrl.content = playerVars.host + '/shared/' + version + '/pdk';
-
-        metaPreferredFormat = window.document.createElement('meta');
-        metaPreferredFormat.name = 'tp:preferredFormats';
-        metaPreferredFormat.content = 'mpeg4,webm,ogg,flv';
-
-        metaPreferredRuntime = document.createElement('meta');
-        metaPreferredRuntime.name = 'tp:PreferredRuntimes';
-        metaPreferredRuntime.content = 'flash,html5';
-
-        documentHead.appendChild(metaBaseUrl);
-        documentHead.appendChild(metaPreferredFormat);
-        documentHead.appendChild(metaPreferredRuntime);
+        utils.addToHead('meta', {
+            name: 'tp:baseUrl',
+            content: playerVars.host + '/shared/' + version + '/pdk'
+        });
+        utils.addToHead('meta', {
+            name: 'tp:preferredFormats',
+            content: 'mpeg4,webm,ogg,flv'
+        });
+        utils.addToHead('meta', {
+            name: 'tp:PreferredRuntimes',
+            content: 'flash,html5'
+        });
     })();
 
     return PlayerHandler;
 });
-
 /*global define, _, FDM_Player_vars, $pdk, console */
 
 define('modal',[
@@ -4872,20 +4835,17 @@ define('player',[
         _players = [],
         _currentPosition,
         _promisesQueue = [],
-        _playerIndex = 0;
+        _playerIndex = 0,
+        playerHandler = null;
 
     //////////////////////////////////////////////// private methods...
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
         var attributes = suppliedAttributes || {};
 
-        if (_.isDefined(declaredAttributes))
-        {
-            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
-            {
+        if (_.isDefined(declaredAttributes)) {
+            if (_.isTrueObject(attributes) && !_.isEmpty(attributes)) {
                 attributes = utils.override(declaredAttributes || {}, attributes);
-            }
-            else
-            {
+            } else {
                 attributes = declaredAttributes;
             }
         }
@@ -4912,8 +4872,7 @@ define('player',[
     }
 
     function _setCurrentPlayer (player) {
-        if (_.isUndefined(player) || !_.isTrueObject(player) || _.isUndefined(player.controller) || _.isEmpty(player.controller))
-        {
+        if (_.isUndefined(player) || !_.isTrueObject(player) || _.isUndefined(player.controller) || _.isEmpty(player.controller)) {
             throw new Error("_setCurrentPlayer() expects a valid player object (with a valid controller property)");
         }
 
@@ -4925,26 +4884,23 @@ define('player',[
         var eventsMap = ovp.getEventsMap();
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-            debug.log('adding listener to controller (dispatching as '+ normalizedEventName +')', ovpEventName);
+            debug.log('adding listener to controller (dispatching as ' + normalizedEventName + ')', ovpEventName);
 
             ///////////////////////// translate event name and dispatch
             ovp.on(ovpEventName, function (event) {
-                if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
-                {
+                if (_.isUndefined(event) || !_.has(event.data, 'baseClip')) {
                     return;
                 }
 
                 var video = event.data.baseClip;
                 var cleanData = _cleanEventData(video);
 
-                switch (ovpEventName)
-                {
+                switch (ovpEventName) {
                     case 'OnPlayerLoaded':
                         //do nothing?
                         break;
                     case 'OnMediaLoadStart':
-                        if (advertising.isAd(video))
-                        {
+                        if (advertising.isAd(video)) {
                             return;
                         }
                         break;
@@ -4983,15 +4939,14 @@ define('player',[
      * @param player
      * @private
      */
-    function _bindPlayer(player)
-    {
+
+    function _bindPlayer (player) {
         var deferred = new jquery.Deferred();
 
         ovp.ready().done(function () {
             var attributes = player.attributes;
 
-            if(!storage.now.get('insideIframe'))
-            {
+            if (!storage.now.get('insideIframe')) {
                 player.controller = window.jquerypdk.bind(attributes.iframePlayerId);
                 ovp.mapEvents(player.controller);
 
@@ -5012,12 +4967,9 @@ define('player',[
 
     //////////////////////////////////////////////// public methods...
     var setPlayerMessage = function (options) {
-        if (_.isObject(options))
-        {
+        if (_.isObject(options)) {
             modal.displayModal(options);
-        }
-        else
-        {
+        } else {
             debug.log('setPlayerMessage expected 1 argument: an object of options.', options);
         }
     };
@@ -5041,8 +4993,7 @@ define('player',[
             percentComplete: null
         };
 
-        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition))
-        {
+        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition)) {
             details.position = _currentPosition.currentTime;
             details.duration = _currentPosition.duration;
             details.percentComplete = _currentPosition.percentComplete;
@@ -5065,40 +5016,31 @@ define('player',[
             currentPlayer = storage.now.get('currentPlayer'),
             controllerToUse = null;
 
-        if (_.isUndefined(selector) && _.has(currentPlayer, 'controller'))
-        {
+        if (_.isUndefined(selector) && _.has(currentPlayer, 'controller')) {
             return currentPlayer.controller;
-        }
-        else
-        {
+        } else {
             _.each(elements, function (element) {
                 var id = jquery(element).attr('id');
 
-                if (!_.isUndefined(id))
-                {
+                if (!_.isUndefined(id)) {
                     _.each(_players, function (player) {
                         debug.log("searching for player controller...");
-                        if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
-                        {
+                        if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id) {
                             controllerToUse = player.controller;
                         }
                     });
                 }
             });
 
-            if (_.isUndefined(controllerToUse) && (_.isObject(currentPlayer) && !_.isEmpty(currentPlayer)))
-            {
+            if (_.isUndefined(controllerToUse) && (_.isObject(currentPlayer) && !_.isEmpty(currentPlayer))) {
                 debug.log("using the default player's controller");
                 controllerToUse = currentPlayer.controller;
             }
 
-            if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
-            {
+            if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse)) {
                 debug.log('controller to use', controllerToUse);
                 return controllerToUse().controller;
-            }
-            else
-            {
+            } else {
                 debug.warn("The selector you provided doesn't point to a player on the page");
             }
         }
@@ -5112,15 +5054,13 @@ define('player',[
         var deferred = new jquery.Deferred(),
             errorMessage = '';
 
-        if (!query.isReleaseURL(releaseURLOrId))
-        {
+        if (!query.isReleaseURL(releaseURLOrId)) {
             errorMessage = "The loadVideo() method expects one argument: a release URL";
             deferred.reject(errorMessage);
             throw new Error(errorMessage);
         }
 
-        if (_.isUndefined(storage.now.get('currentPlayer')))
-        {
+        if (_.isUndefined(storage.now.get('currentPlayer'))) {
             errorMessage = "There was no default player set to load the video into";
             deferred.reject(errorMessage);
             throw new Error(errorMessage);
@@ -5142,8 +5082,7 @@ define('player',[
 
                 promiseInfo.deferred.resolve(event);
 
-                if (_.isFunction(promiseInfo.callback))
-                {
+                if (_.isFunction(promiseInfo.callback)) {
                     promiseInfo.callback(promiseInfo.deferred);
                 }
             });
@@ -5166,22 +5105,19 @@ define('player',[
      */
     var createPlayer = function (selector, config) {
         //validate selector argument
-        if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector))
-        {
+        if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector)) {
             throw new Error("The first argument supplied to create() should be a selector string");
         }
 
         //validate config argument
-        if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config)))
-        {
+        if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config))) {
             throw new Error("The second argument supplied to create() should be either a network acronym or a non-empty object");
         }
 
         try {
             var player = window.player = {},
                 pdkDebug = _.find(debug.getDebugModes(), function (debugMode) {
-                    if (_.isEqual(debugMode, 'pdk'))
-                    {
+                    if (_.isEqual(debugMode, 'pdk')) {
                         return true;
                     }
                 });
@@ -5191,22 +5127,20 @@ define('player',[
 
             window['player'] = config;
             debug.log('creating player with config', config);
-            var playerHandler = new PlayerHandler('player', config, config.width, config.height);
+            playerHandler = new PlayerHandler('player', config, config.width, config.height);
 
             player.logLevel = (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
             //we need to loop through the config to find out if we're inside the iframe or not
             _.each(config, function (prop, key) {
-                if (_.isEqual(key, 'insideIframe'))
-                {
+                if (_.isEqual(key, 'insideIframe')) {
                     storage.now.set('iframeExists', true);
                     storage.now.set('insideIframe', true);
                 }
             });
 
             debug.log('PDK logLevel', player.logLevel);
-        }
-        catch (error) {
+        } catch (error) {
             throw new Error(error);
         }
 
@@ -5224,27 +5158,22 @@ define('player',[
     };
 
     var getPlayerByAttribute = function (key, value) {
-        if (_.isUndefined(key) || _.isUndefined(value))
-        {
+        if (_.isUndefined(key) || _.isUndefined(value)) {
             throw new Error("getPlayerByAttribute() expects two arguments: a key and a value");
         }
 
-        if (!_.isString(key) || _.isEmpty(key))
-        {
+        if (!_.isString(key) || _.isEmpty(key)) {
             throw new Error("The first argument for getPlayerByAttribute() should be a non-empty string");
         }
 
-        if ((!_.isString(value) && !_.isNumber(value)) || _.isEmpty(value))
-        {
+        if ((!_.isString(value) && !_.isNumber(value)) || _.isEmpty(value)) {
             throw new Error("The second argument for getPlayerByAttribute() should be a non-empty string or a number");
         }
 
-        if (!_.isEmpty(_players))
-        {
+        if (!_.isEmpty(_players)) {
             _.each(_players, function (player) {
                 _.each(player, function (playerValue, playerKey) {
-                    if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase())
-                    {
+                    if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase()) {
                         return player;
                     }
                 });
@@ -5267,15 +5196,12 @@ define('player',[
         var element = document.querySelectorAll(selector);
 
         //if there are multiple elements from the selector, just use the first one we found
-        if (_.isObject(element))
-        {
+        if (_.isObject(element)) {
             element = element[0];
         }
 
-        if (_.isDefined(element))
-        {
-            if (!_.isElement(element))
-            {
+        if (_.isDefined(element)) {
+            if (!_.isElement(element)) {
                 throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
                     "like a jquery object, but try using document.querySelector() or document.querySelectorAll() to get " +
                     "the element that you need. We try to not to depend on jquery where we don't have to.");
@@ -5283,30 +5209,24 @@ define('player',[
 
             var allAttributes = element.attributes;
 
-            for (var i = 0, n = allAttributes.length; i < n; i++)
-            {
+            for (var i = 0, n = allAttributes.length; i < n; i++) {
                 var attr = allAttributes[i],
                     attrName = attr.nodeName;
 
-                if (attrName === 'data-player')
-                {
+                if (attrName === 'data-player') {
                     playerAttributes = utils.pipeStringToObject(attr.nodeValue);
                 }
 
-                if (attrName === 'id')
-                {
+                if (attrName === 'id') {
                     elementId = attr.nodeValue;
                 }
             }
 
             //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
-            if (elementId)
-            {
+            if (elementId) {
                 playerAttributes.id = elementId;
             }
-        }
-        else
-        {
+        } else {
             debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
                 "undefined. Thought you should know since it's probably giving you a headache by now :)");
         }
@@ -5321,13 +5241,11 @@ define('player',[
      * @param suppliedAttributes
      */
     var createIframe = function (selector, iframeURL, suppliedAttributes) {
-        if (!_.isString(selector) || _.isEmpty(selector))
-        {
+        if (!_.isString(selector) || _.isEmpty(selector)) {
             throw new Error("You must supply a selector as the first argument when calling createIframe()");
         }
 
-        if (!_.isString(iframeURL) || _.isEmpty(iframeURL))
-        {
+        if (!_.isString(iframeURL) || _.isEmpty(iframeURL)) {
             throw new Error("You must supply a valid path to your iframe as a string as the second argument when calling createIframe()");
         }
 
@@ -6477,7 +6395,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-27 11:08:32)');
+        debug.log('ready (build date: 2013-08-28 02:08:30)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6488,7 +6406,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-27 11:08:32',
+        buildDate: '2013-08-28 02:08:30',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,

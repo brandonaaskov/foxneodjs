@@ -10,10 +10,11 @@ define([
 
     var ieEvents = ['onblur', 'onchange', 'onclick', 'oncontextmenu', 'oncopy',
         'oncut', 'ondblclick', 'onerror', 'onfocus', 'onfocusin', 'onfocusout',
-        'onhashchange', 'onkeydown', 'onkeypress',' onkeyup', 'onload', 'onmousedown',
+        'onhashchange', 'onkeydown', 'onkeypress', 'onkeyup', 'onload', 'onmousedown',
         'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover',
         'onmouseup', 'onmousewheel', 'onpaste', 'onreset', 'onresize', 'onscroll',
-        'onselect', 'onsubmit', 'onunload'];
+        'onselect', 'onsubmit', 'onunload'
+    ];
 
     var _listeners = [],
         //gets setup in init
@@ -24,20 +25,37 @@ define([
 
         //////////////////////////////////////////////// private methods...
         ////////////////////////////////////////////////
-
-
+        var addWindowListener = function (eventName, callback) {
+            if (window.addEventListener) {
+                debug.log('Adding event listener via native window.addEventListener');
+                window.addEventListener(eventName, function() {
+                    debug.log('Caught event ' + eventName + ' over window');
+                    callback.apply(this, arguments);
+                });
+            } else {
+                debug.log('Adding event listener via jQuery');
+                window.jQuery(window).bind(eventName, function() {
+                    debug.log('Caught event ' + eventName + ' via jQuery');
+                    callback.apply(this, arguments);
+                });
+            }
+        };
 
         //////////////////////////////////////////////// public methods...
-        var addListener = function (eventName, callback) {
-            if (_.isEmpty(eventName) || !_.isString(eventName))
-            {
+        var addListener = function (eventName, overWindow, callback) {
+            if (_.isFunction(overWindow)) {
+                callback = overWindow;
+                overWindow = undefined;
+            }
+            if (!_.isFunction(callback)) {
+                throw new Error("You can't create an event listener without supplying a callback function");
+            }
+            if (overWindow) {
+                return addWindowListener(eventName, callback);
+            }
+            if (_.isEmpty(eventName) || !_.isString(eventName)) {
                 return false;
             }
-
-//            if (!_.isFunction(callback))
-//            {
-//                throw new Error("You can't create an event listener without supplying a callback function");
-//            }
 
             var deferred = new jquery.Deferred();
             var listener = {
@@ -52,8 +70,7 @@ define([
         };
 
         var dispatch = function (eventName, data, dispatchOverWindow) {
-            if (_.isEmpty(eventName) || !_.isString(eventName))
-            {
+            if (_.isEmpty(eventName) || !_.isString(eventName)) {
                 throw new Error("You can't dispatch an event without supplying an event name (as a string)");
             }
 
@@ -68,18 +85,18 @@ define([
             }
             evt.data = data || null;
 
-            if (!dispatchOverWindow)
-            {
-                var listeners = _.where(_listeners, {name: eventName});
+            if (!dispatchOverWindow) {
+                var listeners = _.where(_listeners, {
+                    name: eventName
+                });
 
                 _.each(listeners, function (listener) {
                     listener.deferred.resolveWith(listener, evt);
                     listener.callback(evt);
                 });
-            }
-            else
-            {
+            } else {
                 if (window.dispatchEvent) {
+                    debug.log('Dispatching ' + name + ' via window.dispatchEvent');
                     window.dispatchEvent(evt);
                 } else {
                     debug.log('Dispatching ' + name + ' over window with jQuery');
@@ -91,16 +108,14 @@ define([
 
         var getEventListeners = function (eventName) {
 
-            if (_.isUndefined(eventName))
-            {
+            if (_.isUndefined(eventName)) {
                 return _listeners;
             }
 
             var found = [];
 
             _.each(_listeners, function (listener) {
-                if (listener.name === eventName)
-                {
+                if (listener.name === eventName) {
                     found.push(listener);
                 }
             });
@@ -112,25 +127,18 @@ define([
             var found = false,
                 checkCallbackToo = false;
 
-            if (!_.isEmpty(eventName) && _.isString(eventName))
-            {
-                if (!_.isUndefined(callback) && _.isFunction(callback))
-                {
+            if (!_.isEmpty(eventName) && _.isString(eventName)) {
+                if (!_.isUndefined(callback) && _.isFunction(callback)) {
                     checkCallbackToo = true;
                 }
 
                 _.each(_listeners, function (listener) {
-                    if (listener.name === eventName)
-                    {
-                        if (checkCallbackToo)
-                        {
-                            if (listener.callback.toString() === callback.toString())
-                            {
+                    if (listener.name === eventName) {
+                        if (checkCallbackToo) {
+                            if (listener.callback.toString() === callback.toString()) {
                                 found = true;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             found = true;
                         }
                     }
@@ -141,13 +149,11 @@ define([
         };
 
         var removeListener = function (eventName, callback) {
-            if (_.isUndefined(eventName) || !_.isString(eventName))
-            {
+            if (_.isUndefined(eventName) || !_.isString(eventName)) {
                 throw new Error("The first argument supplied to removeEventListener() should be a string for the event name");
             }
 
-            if (_.isUndefined(callback) || !_.isFunction(callback))
-            {
+            if (_.isUndefined(callback) || !_.isFunction(callback)) {
                 throw new Error("The second argument supplied to removeEventListener() should be a function for the callback that was used");
             }
 
@@ -155,12 +161,9 @@ define([
                 removed = false;
 
             _.each(_listeners, function (listener) {
-                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString())
-                {
+                if (listener.name !== eventName && _listeners.callback.toString() !== callback.toString()) {
                     updated.push(listener);
-                }
-                else
-                {
+                } else {
                     removed = true;
                 }
             });
@@ -177,8 +180,7 @@ define([
         };
 
         var up = function (message, data) {
-            if (storage.now.get('insideIframe'))
-            {
+            if (storage.now.get('insideIframe')) {
                 var payload = {
                     eventName: message,
                     data: (!_.isUndefined(data) && !_.isEmpty(data)) ? data : null,
@@ -213,24 +215,20 @@ define([
 
             listen('message', function (event) {
 
-                if (event.data.indexOf('@@packageName:') !== -1)
-                {
+                if (event.data.indexOf('@@packageName:') !== -1) {
                     //split the postMessage string
                     var encoded = event.data.split('@@packageName:')[1];
-                    if (!_.isString(encoded) || _.isEmpty(encoded))
-                    {
+                    if (!_.isString(encoded) || _.isEmpty(encoded)) {
                         throw new Error("Splitting the encoded postMessage failed: please contact the developer");
                     }
 
                     //decode the base64 string
                     var decoded = base64.decode(encoded);
-                    if (!_.isTrueObject(decoded) || _.isEmpty(decoded))
-                    {
+                    if (!_.isTrueObject(decoded) || _.isEmpty(decoded)) {
                         throw new Error("The decoded postMessage was either not an object or empty: please contact the developer");
                     }
 
-                    if (owningModuleName === decoded.owningModuleName)
-                    {
+                    if (owningModuleName === decoded.owningModuleName) {
                         dispatch(decoded.eventName, decoded.data);
                     }
                 }

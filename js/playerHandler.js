@@ -7,19 +7,21 @@ define([
     'Debug',
     'Dispatcher',
     'config',
-    'storage'
-], function (_, jquery, utils, Debug, Dispatcher, config, storage) {
+    'storage',
+    'ovp'
+], function(_, jquery, utils, Debug, Dispatcher, config, storage, ovp) {
     'use strict';
 
     var debug = new Debug('playerHandler');
+    var dispatcher = new Dispatcher('playerHandler');
     var version = '@@fdmVersion';
 
     var playerVars = {
-        flash:      11,
-        host:       window.location.protocol + '//player.foxfdm.com',  // Brandon had http[s] prepended
-        events:     [],
-        isFlash:    0,
-        isIOS:      0
+        flash: 11,
+        host: window.location.protocol + '//player.foxfdm.com', // Brandon had http[s] prepended
+        events: [],
+        isFlash: 0,
+        isIOS: 0
     };
 
     var savedPlayerConfig = storage.now.get('playerConfig');
@@ -29,8 +31,7 @@ define([
         playerVars.isFlash = false;
     }
 
-    var documentHead,
-        documentBody,
+    var documentBody,
         metaBaseUrl,
         metaPreferredFormat,
         metaPreferredRuntime;
@@ -40,54 +41,21 @@ define([
         var freewheelCookie = utils.getCookie('aam_freewheel');
         if (freewheelCookie) {
             var freewheelValue = freewheelCookie.replace(/%3B/g, '%26');
-            if(!_.isUndefined(window.player.freewheel_keyvalue)) {
+            if (!_.isUndefined(window.player.freewheel_keyvalue)) {
                 return window.player.freewheel_keyvalue + '%26' + freewheelValue;
-            }
-            else {
+            } else {
                 return freewheelValue;
             }
-        }
-        else {
+        } else {
             return '';
         }
-    }
-
-    function setNestedProperty(object, path, value) {
-        var key = path.shift();
-        if (!object) {
-            object = {};
-        }
-        if (path.length === 0) {
-            object[key] = value;
-            return object;
-        }
-        if (path.length > 0) {
-            object[key] = setNestedProperty(object[key], path, value);
-        }
-        return object;
     }
 
     function extendMarkup(config, element) {
         var attributes = element.attributes;
         for (var i = 0, n = attributes.length; i < n; i += 1) {
             var attribute = attributes[i];
-            setNestedProperty(config, attribute.name.split('.'), attribute.value);
-        }
-    }
-
-    function extendArgument(config, param) {
-        var keys = _.keys(param);
-        for (var i = 0, n = keys.length; i < n; i += 1) {
-            var key = keys[i];
-            if (!_.isObject(param[key])) {
-                config[key] = param[key];
-                continue;
-            }
-            if (!_.isObject(config[key])) {
-                config[key] = param[key];
-                continue;
-            }
-            extendArgument(config[key], param[key]);
+            utils.setNestedProperty(config, attribute.name.split('.'), attribute.value);
         }
     }
 
@@ -99,7 +67,7 @@ define([
             var key = pair[0].split('.');
             var prefix = key.shift();
             if (prefix === '@@packageName') {
-                setNestedProperty(config, key, pair[1]);
+                utils.setNestedProperty(config, key, pair[1]);
             }
         }
     }
@@ -143,11 +111,11 @@ define([
         if (window.player.introURL || window.player.outroURL) {
             player.pluginBumper = 'type=control' +
                 '|URL=' + playerVars.host + '/shared/' + version + '/swf/BumperPlugin.swf' +
-                '|introURL=' + (window.player.introURL ? window.player.introURL : '') +
-                '|introLink=' + (window.player.introLink ? player.introLink : '') +
-                '|outroURL=' + (window.player.outroURL ? player.outroURL : '') +
-                '|outroLink=' + (window.player.outroLink ? player.outroLink : '') +
-                '|waitTime=' + (window.player.waitTime ? player.waitTime : '10');
+                '|introURL=' + (window.player.introURL || '') +
+                '|introLink=' + (window.player.introLink || '') +
+                '|outroURL=' + (window.player.outroURL || '') +
+                '|outroLink=' + (window.player.outroLink || '') +
+                '|waitTime=' + (window.player.waitTime || '10');
         }
 
         if (window.player.share_deeplink || _.isFunction(window.player.share_deeplinkfunc) && window.player.share + '' !== 'false') {
@@ -164,9 +132,9 @@ define([
                     '|shortener=' + playerVars.share_shortenerURL : '') +
                 '|embed=' + window.player.share_embed + '|twitterField=title' +
                 (window.player.share_deeplinkfunc ?
-                    '|deeplinkFunc=' + window.player.share_deeplinkfunc : '') +
+                '|deeplinkFunc=' + window.player.share_deeplinkfunc : '') +
                 '|hidepostup=' + window.player.hidePostup +
-                (window.player.share_iframeurl ? '|iframeurl='+player.share_iframeurl : '');
+                (window.player.share_iframeurl ? '|iframeurl=' + player.share_iframeurl : '');
         }
 
         player.pluginClosedCaption = 'type=overlay|URL=' + playerVars.host +
@@ -180,14 +148,14 @@ define([
             if (window.foxneod.query.isFeedURL(window.player.endcard_playlist)) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (player.endcard_playlist.indexOf('policy') !== -1 ? '' : adPolicySuffix);
             }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_related)) {
                 window.player.endcard_related = window.player.endcard_related +
-                (window.player.endcard_related.indexOf('form=json') !== -1 ?
+                    (window.player.endcard_related.indexOf('form=json') !== -1 ?
                     '' : (player.endcard_related.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_related.indexOf('policy') !== -1 ? '' : adPolicySuffix);
@@ -196,8 +164,8 @@ define([
             if (window.foxneod.query.isFeedURL(player.endcard_editorial)) {
                 window.player.endcard_editorial = window.player.endcard_editorial +
                     (window.player.endcard_editorial.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_editorial.indexOf('policy') !== -1 ? '' : adPolicySuffix);
             }
 
@@ -260,7 +228,7 @@ define([
                 '|analyticsKeys=show,season,episode,fullEpisode' +
                 '|analyticsValueFields=showcode,season,episode,fullEpisode' +
                 '|priority=4|hosts=-f.akamaihd.net' +
-                '|playerId=' + playerVars.network_name +'-' + version + (playerVars.analytics.akamai ?
+                '|playerId=' + playerVars.network_name + '-' + version + (playerVars.analytics.akamai ?
                     '|analyticsBeacon=' + playerVars.analytics.akamai.beaconPath : '');
         }
 
@@ -315,15 +283,15 @@ define([
             if (playerVars.adserver.name === 'freewheel') {
                 var siteSection = playerVars.adserver.siteSection || 'player.siteSection';
                 player.pluginNewFreewheel = 'type=adcomponent' +
-                    '|url=' + playerVars.host+'/shared/' + version + '/pdk/swf/freewheel.swf' +
+                    '|url=' + playerVars.host + '/shared/' + version + '/pdk/swf/freewheel.swf' +
                     '|pemURLsSeparator=~' +
                     '|siteSectionId=' + siteSection +
                     '|isLive=false' +
                     (playerVars.adserver.customVideoAssetIdField ? '|customVideoAssetIdField=' + playerVars.adserver.customVideoAssetIdField : '') +
                     '|pemURLs=' +
-                        'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' +
-                        'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' +
-                        'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf' +
+                    'http://adm.fwmrm.net/p/fox_live/CountdownTimerExtension.swf?timePositionClasses=preroll,midroll,postroll&textFont=Arial~' +
+                    'http://adm.fwmrm.net/p/fox_live/SingleAdExtension.swf~' +
+                    'http://adm.fwmrm.net/p/fox_live/PauseAdExtension.swf' +
                     '|networkId=116450' +
                     '|siteSectionNetworkId=116450' +
                     '|keyValues=' + fdmAAMStuff() +
@@ -381,12 +349,12 @@ define([
 
     function configureHTML5(player, configData) {
         var adPolicySuffix;
-        var cssNode = window.document.createElement('link');
-        cssNode.rel = 'stylesheet';
-        cssNode.type = 'text/css';
-        cssNode.href = playerVars.host + (playerVars.layouts.htmlcss ||
-            ('/shared/' + playerVars.version + '/css/html5_main.css'));
-        documentHead.appendChild(cssNode);
+        utils.addToHead('link', {
+            rel: 'stylesheet',
+            type: 'text/css',
+            href: playerVars.host + (playerVars.layouts.htmlcss ||
+                ('/shared/' + playerVars.version + '/css/html5_main.css'))
+        });
 
         // Always set to false, because if true, it causes wildly different
         // experiences and on certain devices, issues.
@@ -397,22 +365,22 @@ define([
         player.skinURL = playerVars.host + playerVars.layouts.jsSkinURL;
 
         switch (window.player.deliveryMode) {
-        case 'live':
-            player.layoutUrl = playerVars.host + playerVars.layouts.liveLayoutUrl;
-            break;
-        case 'livedvr':
-            player.layoutUrl = playerVars.host + playerVars.layouts.dvrLiveLayoutUrl;
-            break;
-        case 'dvr':
-            player.layoutUrl = playerVars.host + playerVars.layouts.dvrLayoutUrl;
-            break;
-        case 'vod':
-            player.layoutUrl = playerVars.host + playerVars.layouts.defaultLayoutUrl;
-            break;
-        default:
-            //no mode specified, load VOD layout
-            player.layoutUrl = playerVars.host +
-                (playerVars.layouts.html5LayoutUrl || playerVars.layouts.defaultLayoutUrl);
+            case 'live':
+                player.layoutUrl = playerVars.host + playerVars.layouts.liveLayoutUrl;
+                break;
+            case 'livedvr':
+                player.layoutUrl = playerVars.host + playerVars.layouts.dvrLiveLayoutUrl;
+                break;
+            case 'dvr':
+                player.layoutUrl = playerVars.host + playerVars.layouts.dvrLayoutUrl;
+                break;
+            case 'vod':
+                player.layoutUrl = playerVars.host + playerVars.layouts.defaultLayoutUrl;
+                break;
+            default:
+                //no mode specified, load VOD layout
+                player.layoutUrl = playerVars.host +
+                    (playerVars.layouts.html5LayoutUrl || playerVars.layouts.defaultLayoutUrl);
         }
 
         player.pluginLayout = 'type=overlay' +
@@ -421,7 +389,7 @@ define([
             '|offsetX=' + playerVars.layouts.play_overlay_x_offset +
             '|offsetY=' + playerVars.layouts.play_overlay_y_offset;
 
-        if(window.player.introURL || window.player.outroURL) {
+        if (window.player.introURL || window.player.outroURL) {
             player.pluginBumper = 'type=ad' +
                 '|URL=' + playerVars.host + '/shared/' + version + '/js/FoxBumperPlugin.js' +
                 '|introLink=' + window.player.introLink +
@@ -429,15 +397,15 @@ define([
                 '|waitTime=' + (player.waitTime || '10');
         }
 
-        if(window.player.watermark_src) {
+        if (window.player.watermark_src) {
             player.pluginWatermark = 'type=overlay' +
                 '|URL=' + playerVars.host + '/shared/' + version + '/js/FoxWatermarkPlugin.js';
 
-            if(!_.isUndefined(window.player.watermark_corner)) {
+            if (!_.isUndefined(window.player.watermark_corner)) {
                 player.pluginWatermark += '|corner=' + window.player.watermark_corner;
             }
             player.pluginWatermark += '|watermarkSrc=' + window.player.watermark_src;
-            if(!_.isUndefined(window.player.watermark_opacity)) {
+            if (!_.isUndefined(window.player.watermark_opacity)) {
                 player.pluginWatermark += '|watermarkOpacity=' + window.player.watermark_opacity;
             }
         }
@@ -451,33 +419,33 @@ define([
                 (window.player.share_deeplinkfunc ? '|deeplinkFunc=' + window.player.share_deeplinkfunc : '');
         }
 
-        if(window.player.endcard + '' !== 'false') {
+        if (window.player.endcard + '' !== 'false') {
             if (playerVars.shortname === 'fox') {
                 adPolicySuffix = "&params=policy%3D19938";
             }
-            if(window.player.endcard_playlist) {
+            if (window.player.endcard_playlist) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_playlist.indexOf('policy') !== -1 ?
-                        '' : adPolicySuffix);
+                    '' : adPolicySuffix);
             }
-            if(window.player.endcard_related) {
+            if (window.player.endcard_related) {
                 window.player.endcard_related = window.player.endcard_related +
                     (window.player.endcard_related.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_related.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_related.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_related.indexOf('policy') !== -1 ?
-                        '' : adPolicySuffix);
+                    '' : adPolicySuffix);
             }
-            if(window.player.endcard_editorial) {
+            if (window.player.endcard_editorial) {
                 window.player.endcard_editorial = window.player.endcard_editorial +
                     (window.player.endcard_editorial.indexOf('form=json') !== -1 ?
-                        '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
-                            '&form=json' : '?form=json')) +
+                    '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
+                        '&form=json' : '?form=json')) +
                     (window.player.endcard_editorial.indexOf('policy') !== -1 ?
-                        '' : adPolicySuffix);
+                    '' : adPolicySuffix);
             }
 
             player.pluginEndcard = 'type=overlay' +
@@ -514,7 +482,7 @@ define([
                 '|priority=1|hosts=' + playerVars.adserver.host;
         }
 
-        if(window.player.releaseURL) {
+        if (window.player.releaseURL) {
             player.releaseURL = window.player.releaseURL +
                 (player.releaseURL.indexOf('?') !== -1 ? '&' : '?') +
                 'manifest=m3u&format=SMIL';
@@ -524,8 +492,8 @@ define([
                 adPolicySuffix += 'policy=19938';
                 player.releaseURL += adPolicySuffix;
             }
-            if(window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
-                if(window.player.releaseURL.toLowerCase().indexOf('switch') === -1) {
+            if (window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
+                if (window.player.releaseURL.toLowerCase().indexOf('switch') === -1) {
                     player.releaseURL += '&switch=http';
                 }
             }
@@ -548,11 +516,11 @@ define([
                 frequency: '60',
                 entitled: 'public', //values: public or entitled
                 auth: 'true',
-                mvpd: null,         //value of prop/eVar is the MVDP name of the user.
+                mvpd: null, //value of prop/eVar is the MVDP name of the user.
                 network: playerVars.shortname,
                 extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
                 accountInfo: {
-                    account:  accountId,
+                    account: accountId,
                     trackingServer: host
                 }
             };
@@ -572,20 +540,19 @@ define([
             if (!event.data.baseClip.contentCustomData) {
                 return;
             }
-            if(event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
+            if (event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
                 window.$pdk.controller.resetPlayer();
                 window.$pdk.controller.setPlayerMessage('The video you are ' +
                     'attempting to watch is only available to viewers within ' +
                     'the US, US territories, and military bases.', 35000);
-            } else if(event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
+            } else if (event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
                 window.$pdk.controller.resetPlayer();
                 window.$pdk.controller.setPlayerMessage('Your token/session has ' +
                     'expired. Please refresh the page to continue watching.', 35000);
-            } else if(event.data.baseClip.contentCustomData.licensedMusic === 'true') {
-                if(window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+            } else if (event.data.baseClip.contentCustomData.licensedMusic === 'true') {
+                if (window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
                     window.foxneod.player.setPlayerMessage({
-                        message: 'Sorry, the video you selected is not available ' +
-                            'for viewing on this device.',
+                        message: 'Sorry, the video you selected is not available for viewing on this device.',
                         resetPlayer: true
                     });
                 }
@@ -636,13 +603,13 @@ define([
         this.width = width || '';
         this.height = height || '';
         this.player = null;
-        this.token = null;      // I don't think this is actually used anywhere
+        this.token = null; // I don't think this is actually used anywhere
         this.aamtt = {}; // Only used if fox, looks like play feedback signaling
 
         jquery.ajax({
-            dataType: 'script',
-            url: 'http://foxneod-proxy.herokuapp.com/'
-        }). success(function(response) {
+            dataType: 'jsonp',
+            url: 'http://foxneod-proxy.herokuapp.com'
+        }).success(function(response) {
             self.token = response && response.signInResponse && response.signInResponse.token;
             jquery.ajax({
                 dataType: 'script',
@@ -660,21 +627,13 @@ define([
         }).error(function() {
             debug.error('Failed to lookup token');
         });
+
+        dispatcher.on('@@packageName:config', true, function() {
+            self.updateConfig();
+        });
     }
 
-    PlayerHandler.prototype.init = function(postHandlers, preHandlers) {
-        var self = this;
-        debug.log('initializing player');
-        this.player = new window.Player(this.id, this.width, this.height);
-        this.player.id = this.id;
-        if (this.width) {
-            this.player.width = this.width;
-        }
-        if (this.height) {
-            this.player.height = this.height;
-        }
-        window.tpLogLevel = (window.player.debug === 'debug') ? 'debug' : 'none';
-        this.player.logLevel = window.tpLogLevel;
+    PlayerHandler.prototype.applyConfig = function() {
         setPlayerColors(this.player, this.configData.colors);
         this.player.enableDynamicSubtitleFonts = true;
         this.player.useDefaultPlayOverlay = false;
@@ -696,12 +655,12 @@ define([
             debug.log('environment doesn\'t support player :(');
             window.document.getElementById(this.player.id).innerHTML =
                 '<p class="fdmplayer_no_flash">' +
-                    'We&#039;ve detected an older version of Flash Player.' +
-                    '<br/><br/>' +
-                    'In order to view video on this site please download Flash 11.' +
+                'We&#039;ve detected an older version of Flash Player.' +
+                '<br/><br/>' +
+                'In order to view video on this site please download Flash 11.' +
                 '</p>' +
                 '<a href="http://get.adobe.com/flashplayer/" target="_blank">' +
-                    '<img src="http://player.foxfdm.com/shared/img/get_flash_player.gif">' +
+                '<img src="http://player.foxfdm.com/shared/img/get_flash_player.gif">' +
                 '</a>';
             this.player = null;
         }
@@ -715,16 +674,37 @@ define([
                 pageDebug.log('foxneod already existed, dispatching playerReady');
                 window.foxneod.dispatch('playerReady', {}, true);
             } else {
-                jquery.bind('foxneod:ready', function (event) {
+                jquery.bind('foxneod:ready', function(event) {
                     pageDebug = new window.foxneod.Debug('page');
                     pageDebug.log('Page now knows that the library is ready.');
                 });
             }
         }
 
+        debug.log('Applying config to player', this.player);
+        // TODO If the player supports updates, this is where the appropriate
+        // call would go.
+        this.player.bind(this.id);
+    };
+
+    PlayerHandler.prototype.init = function(postHandlers, preHandlers) {
+        var self = this;
+        debug.log('initializing player');
+        window.testPlayer = this.player = new window.Player(this.id, this.width, this.height);
         if (!this.player) {
             return;
         }
+        this.player.id = this.id;
+        if (this.width) {
+            this.player.width = this.width;
+        }
+        if (this.height) {
+            this.player.height = this.height;
+        }
+        window.tpLogLevel = (window.player.debug === 'debug') ? 'debug' : 'none';
+        this.player.logLevel = window.tpLogLevel;
+        this.applyConfig();
+
         var i, n;
         if (_.isFunction(preHandlers)) {
             preHandlers();
@@ -733,8 +713,6 @@ define([
                 preHandlers[i]();
             }
         }
-
-        this.player.bind();
 
         if (_.isFunction(postHandlers)) {
             postHandlers();
@@ -759,16 +737,16 @@ define([
             // CFS (3/5/2013): for audience insights
             if (!_.isUndefined(window.mboxTrack)) {
                 var clipStarted = false;
-                window.$pdk.controller.addEventListener('OnReleaseStart', function (event) {
+                window.$pdk.controller.addEventListener('OnReleaseStart', function(event) {
                     //don't change. it's called playlist.chapters.chapters
                     if (event.data && event.data.chapters && event.data.chapters.chapters.length > 1) {
-                        self.aamtt.form  = 'lf';
+                        self.aamtt.form = 'lf';
                     } else {
-                        self.aamtt.form  = 'sf';
+                        self.aamtt.form = 'sf';
                     }
                 });
 
-                window.$pdk.controller.addEventListener('OnMediaStart', function (event) {
+                window.$pdk.controller.addEventListener('OnMediaStart', function(event) {
                     if (event) {
                         self.aamtt.isAd = event.data.baseClip.isAd;
                         if (!self.aamtt.isAd && event.data.chapter && !clipStarted) {
@@ -799,13 +777,28 @@ define([
                         window.mboxTrack(this.aamtt.form + '_video_75');
                         this.aamtt.seventyfive = true;
                     }
-                    if(percent === 98 && !this.aamtt.complete) {
+                    if (percent === 98 && !this.aamtt.complete) {
                         window.mboxTrack(this.aamtt.form + '_video_complete');
                         this.aamtt.complete = true;
                     }
                 });
             }
         }
+    };
+
+    PlayerHandler.prototype.updateConfig = function(data, callback) {
+        var self = this;
+        if (!this.player) {
+            return debug.warn('no player to update yet');
+        }
+
+        // TODO delete testPlayer reference
+        this.configure(data, function() {
+            self.applyConfig();
+            if (_.isFunction(callback)) {
+                callback();
+            }
+        });
     };
 
     PlayerHandler.prototype.killPlayer = function() {
@@ -819,7 +812,7 @@ define([
             data = undefined;
         }
         this.configData = config.getConfig();
-        if (!this.configData) {
+        if (!this.configData || !config.isCurrent) {
             // Wait for config module init to finish
             return setTimeout(function() {
                 self.configure(data, callback);
@@ -827,7 +820,7 @@ define([
         }
         extendMarkup(this.configData, this.element);
         if (data) {
-            extendArgument(this.configData, data);
+            utils.patchObject(this.configData, data);
         }
         extendURL(this.configData);
 
@@ -843,7 +836,9 @@ define([
         }
         _.extend(playerVars, this.configData);
         debug.log('config set', playerVars);
-        callback();
+        if (_.isFunction(callback)) {
+            callback();
+        }
     };
 
     PlayerHandler.prototype.pause = function() {
@@ -857,7 +852,7 @@ define([
             // It seems odd that we would be checking for android inside a block
             // that should only execute on iOS devices.
             if (window.navigator.userAgent.toLowerCase().indexOf('?') !== -1 &&
-                    releaseUrl.toLowerCase().indexOf('embedded') === -1) {
+                releaseUrl.toLowerCase().indexOf('embedded') === -1) {
                 releaseUrl += '&switch=http';
             }
         }
@@ -870,12 +865,12 @@ define([
 
     PlayerHandler.prototype.loadReleaseCall = function(releaseUrl) {
         window.$pdk.controller.resetPlayer();
-        if(playerVars.isIOS) {
+        if (playerVars.isIOS) {
             releaseUrl += (releaseUrl.indexOf('?') !== -1 ? '&' : '?') + 'manifest=m3u';
 
-            if(window.navigator.userAgent.toLowerCase().indexOf('android') > -1 &&
-                    releaseUrl.toLowerCase().indexOf('embedded') === -1) {
-                releaseUrl+='&switch=http';
+            if (window.navigator.userAgent.toLowerCase().indexOf('android') > -1 &&
+                releaseUrl.toLowerCase().indexOf('embedded') === -1) {
+                releaseUrl += '&switch=http';
             }
         }
         if (playerVars.shortname === 'fox' && playerVars.adserver.name === 'freewheel') {
@@ -898,26 +893,26 @@ define([
             window.$pdk.controller.showFullScreen(false);
         }
         switch (event.type) {
-        case 'podStart':
-            // pods contains ads at an ad break
-            window.$pdk.controller.dispatchEvent(event.type);
-            break;
-        case 'adStart':
-            // all ad types fire this event
-            if (!event.info) {
+            case 'podStart':
+                // pods contains ads at an ad break
+                window.$pdk.controller.dispatchEvent(event.type);
                 break;
-            }
-            if(event.info.type === 'preroll' || event.info.type === 'midroll' ||
+            case 'adStart':
+                // all ad types fire this event
+                if (!event.info) {
+                    break;
+                }
+                if (event.info.type === 'preroll' || event.info.type === 'midroll' ||
                     event.info.type === 'postroll') {
-                wipeBrandedCanvas();
-            }
-            if(!_.isUndefined(window.AUTH)) {
-                window.AUTH.activateLogin();
-            }
-            break;
-        case 'adComplete':
-            // all ad types fire this event
-            break;
+                    wipeBrandedCanvas();
+                }
+                if (!_.isUndefined(window.AUTH)) {
+                    window.AUTH.activateLogin();
+                }
+                break;
+            case 'adComplete':
+                // all ad types fire this event
+                break;
         }
     };
 
@@ -935,24 +930,20 @@ define([
     };
 
     (function init() {
-        documentHead = window.document.getElementsByTagName('head')[0];
         documentBody = window.document.getElementsByTagName('body')[0];
 
-        metaBaseUrl = window.document.createElement('meta');
-        metaBaseUrl.name = 'tp:baseUrl';
-        metaBaseUrl.content = playerVars.host + '/shared/' + version + '/pdk';
-
-        metaPreferredFormat = window.document.createElement('meta');
-        metaPreferredFormat.name = 'tp:preferredFormats';
-        metaPreferredFormat.content = 'mpeg4,webm,ogg,flv';
-
-        metaPreferredRuntime = document.createElement('meta');
-        metaPreferredRuntime.name = 'tp:PreferredRuntimes';
-        metaPreferredRuntime.content = 'flash,html5';
-
-        documentHead.appendChild(metaBaseUrl);
-        documentHead.appendChild(metaPreferredFormat);
-        documentHead.appendChild(metaPreferredRuntime);
+        utils.addToHead('meta', {
+            name: 'tp:baseUrl',
+            content: playerVars.host + '/shared/' + version + '/pdk'
+        });
+        utils.addToHead('meta', {
+            name: 'tp:preferredFormats',
+            content: 'mpeg4,webm,ogg,flv'
+        });
+        utils.addToHead('meta', {
+            name: 'tp:PreferredRuntimes',
+            content: 'flash,html5'
+        });
     })();
 
     return PlayerHandler;

@@ -21,20 +21,17 @@ define([
         _players = [],
         _currentPosition,
         _promisesQueue = [],
-        _playerIndex = 0;
+        _playerIndex = 0,
+        playerHandler = null;
 
     //////////////////////////////////////////////// private methods...
     function _processAttributes (selector, suppliedAttributes, declaredAttributes) {
         var attributes = suppliedAttributes || {};
 
-        if (_.isDefined(declaredAttributes))
-        {
-            if (_.isTrueObject(attributes) && !_.isEmpty(attributes))
-            {
+        if (_.isDefined(declaredAttributes)) {
+            if (_.isTrueObject(attributes) && !_.isEmpty(attributes)) {
                 attributes = utils.override(declaredAttributes || {}, attributes);
-            }
-            else
-            {
+            } else {
                 attributes = declaredAttributes;
             }
         }
@@ -61,8 +58,7 @@ define([
     }
 
     function _setCurrentPlayer (player) {
-        if (_.isUndefined(player) || !_.isTrueObject(player) || _.isUndefined(player.controller) || _.isEmpty(player.controller))
-        {
+        if (_.isUndefined(player) || !_.isTrueObject(player) || _.isUndefined(player.controller) || _.isEmpty(player.controller)) {
             throw new Error("_setCurrentPlayer() expects a valid player object (with a valid controller property)");
         }
 
@@ -74,26 +70,23 @@ define([
         var eventsMap = ovp.getEventsMap();
 
         _.each(eventsMap, function (ovpEventName, normalizedEventName) {
-            debug.log('adding listener to controller (dispatching as '+ normalizedEventName +')', ovpEventName);
+            debug.log('adding listener to controller (dispatching as ' + normalizedEventName + ')', ovpEventName);
 
             ///////////////////////// translate event name and dispatch
             ovp.on(ovpEventName, function (event) {
-                if (_.isUndefined(event) || !_.has(event.data, 'baseClip'))
-                {
+                if (_.isUndefined(event) || !_.has(event.data, 'baseClip')) {
                     return;
                 }
 
                 var video = event.data.baseClip;
                 var cleanData = _cleanEventData(video);
 
-                switch (ovpEventName)
-                {
+                switch (ovpEventName) {
                     case 'OnPlayerLoaded':
                         //do nothing?
                         break;
                     case 'OnMediaLoadStart':
-                        if (advertising.isAd(video))
-                        {
+                        if (advertising.isAd(video)) {
                             return;
                         }
                         break;
@@ -132,15 +125,14 @@ define([
      * @param player
      * @private
      */
-    function _bindPlayer(player)
-    {
+
+    function _bindPlayer (player) {
         var deferred = new jquery.Deferred();
 
         ovp.ready().done(function () {
             var attributes = player.attributes;
 
-            if(!storage.now.get('insideIframe'))
-            {
+            if (!storage.now.get('insideIframe')) {
                 player.controller = window.jquerypdk.bind(attributes.iframePlayerId);
                 ovp.mapEvents(player.controller);
 
@@ -161,12 +153,9 @@ define([
 
     //////////////////////////////////////////////// public methods...
     var setPlayerMessage = function (options) {
-        if (_.isObject(options))
-        {
+        if (_.isObject(options)) {
             modal.displayModal(options);
-        }
-        else
-        {
+        } else {
             debug.log('setPlayerMessage expected 1 argument: an object of options.', options);
         }
     };
@@ -190,8 +179,7 @@ define([
             percentComplete: null
         };
 
-        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition))
-        {
+        if (_.isTrueObject(_currentPosition) && !_.isEmpty(_currentPosition)) {
             details.position = _currentPosition.currentTime;
             details.duration = _currentPosition.duration;
             details.percentComplete = _currentPosition.percentComplete;
@@ -214,40 +202,31 @@ define([
             currentPlayer = storage.now.get('currentPlayer'),
             controllerToUse = null;
 
-        if (_.isUndefined(selector) && _.has(currentPlayer, 'controller'))
-        {
+        if (_.isUndefined(selector) && _.has(currentPlayer, 'controller')) {
             return currentPlayer.controller;
-        }
-        else
-        {
+        } else {
             _.each(elements, function (element) {
                 var id = jquery(element).attr('id');
 
-                if (!_.isUndefined(id))
-                {
+                if (!_.isUndefined(id)) {
                     _.each(_players, function (player) {
                         debug.log("searching for player controller...");
-                        if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id)
-                        {
+                        if (player.attributes.suppliedId === id || player.attributes.iframePlayerId === id) {
                             controllerToUse = player.controller;
                         }
                     });
                 }
             });
 
-            if (_.isUndefined(controllerToUse) && (_.isObject(currentPlayer) && !_.isEmpty(currentPlayer)))
-            {
+            if (_.isUndefined(controllerToUse) && (_.isObject(currentPlayer) && !_.isEmpty(currentPlayer))) {
                 debug.log("using the default player's controller");
                 controllerToUse = currentPlayer.controller;
             }
 
-            if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse))
-            {
+            if (!_.isUndefined(controllerToUse) && !_.isEmpty(controllerToUse)) {
                 debug.log('controller to use', controllerToUse);
                 return controllerToUse().controller;
-            }
-            else
-            {
+            } else {
                 debug.warn("The selector you provided doesn't point to a player on the page");
             }
         }
@@ -261,15 +240,13 @@ define([
         var deferred = new jquery.Deferred(),
             errorMessage = '';
 
-        if (!query.isReleaseURL(releaseURLOrId))
-        {
+        if (!query.isReleaseURL(releaseURLOrId)) {
             errorMessage = "The loadVideo() method expects one argument: a release URL";
             deferred.reject(errorMessage);
             throw new Error(errorMessage);
         }
 
-        if (_.isUndefined(storage.now.get('currentPlayer')))
-        {
+        if (_.isUndefined(storage.now.get('currentPlayer'))) {
             errorMessage = "There was no default player set to load the video into";
             deferred.reject(errorMessage);
             throw new Error(errorMessage);
@@ -291,8 +268,7 @@ define([
 
                 promiseInfo.deferred.resolve(event);
 
-                if (_.isFunction(promiseInfo.callback))
-                {
+                if (_.isFunction(promiseInfo.callback)) {
                     promiseInfo.callback(promiseInfo.deferred);
                 }
             });
@@ -315,22 +291,19 @@ define([
      */
     var createPlayer = function (selector, config) {
         //validate selector argument
-        if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector))
-        {
+        if (_.isUndefined(selector) || !_.isString(selector) || _.isEmpty(selector)) {
             throw new Error("The first argument supplied to create() should be a selector string");
         }
 
         //validate config argument
-        if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config)))
-        {
+        if (_.isEmpty(config) || (!_.isString(config) && !_.isTrueObject(config))) {
             throw new Error("The second argument supplied to create() should be either a network acronym or a non-empty object");
         }
 
         try {
             var player = window.player = {},
                 pdkDebug = _.find(debug.getDebugModes(), function (debugMode) {
-                    if (_.isEqual(debugMode, 'pdk'))
-                    {
+                    if (_.isEqual(debugMode, 'pdk')) {
                         return true;
                     }
                 });
@@ -340,22 +313,20 @@ define([
 
             window['player'] = config;
             debug.log('creating player with config', config);
-            var playerHandler = new PlayerHandler('player', config, config.width, config.height);
+            playerHandler = new PlayerHandler('player', config, config.width, config.height);
 
             player.logLevel = (_.isEqual(pdkDebug, 'pdk')) ? 'debug' : 'none';
 
             //we need to loop through the config to find out if we're inside the iframe or not
             _.each(config, function (prop, key) {
-                if (_.isEqual(key, 'insideIframe'))
-                {
+                if (_.isEqual(key, 'insideIframe')) {
                     storage.now.set('iframeExists', true);
                     storage.now.set('insideIframe', true);
                 }
             });
 
             debug.log('PDK logLevel', player.logLevel);
-        }
-        catch (error) {
+        } catch (error) {
             throw new Error(error);
         }
 
@@ -373,27 +344,22 @@ define([
     };
 
     var getPlayerByAttribute = function (key, value) {
-        if (_.isUndefined(key) || _.isUndefined(value))
-        {
+        if (_.isUndefined(key) || _.isUndefined(value)) {
             throw new Error("getPlayerByAttribute() expects two arguments: a key and a value");
         }
 
-        if (!_.isString(key) || _.isEmpty(key))
-        {
+        if (!_.isString(key) || _.isEmpty(key)) {
             throw new Error("The first argument for getPlayerByAttribute() should be a non-empty string");
         }
 
-        if ((!_.isString(value) && !_.isNumber(value)) || _.isEmpty(value))
-        {
+        if ((!_.isString(value) && !_.isNumber(value)) || _.isEmpty(value)) {
             throw new Error("The second argument for getPlayerByAttribute() should be a non-empty string or a number");
         }
 
-        if (!_.isEmpty(_players))
-        {
+        if (!_.isEmpty(_players)) {
             _.each(_players, function (player) {
                 _.each(player, function (playerValue, playerKey) {
-                    if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase())
-                    {
+                    if (playerKey.toLowerCase() === key.toLowerCase() && playerValue.toLowerCase() === value.toLowerCase()) {
                         return player;
                     }
                 });
@@ -416,15 +382,12 @@ define([
         var element = document.querySelectorAll(selector);
 
         //if there are multiple elements from the selector, just use the first one we found
-        if (_.isObject(element))
-        {
+        if (_.isObject(element)) {
             element = element[0];
         }
 
-        if (_.isDefined(element))
-        {
-            if (!_.isElement(element))
-            {
+        if (_.isDefined(element)) {
+            if (!_.isElement(element)) {
                 throw new Error("What you passed to getPlayerAttributes() wasn't an element. It was likely something " +
                     "like a jquery object, but try using document.querySelector() or document.querySelectorAll() to get " +
                     "the element that you need. We try to not to depend on jquery where we don't have to.");
@@ -432,30 +395,24 @@ define([
 
             var allAttributes = element.attributes;
 
-            for (var i = 0, n = allAttributes.length; i < n; i++)
-            {
+            for (var i = 0, n = allAttributes.length; i < n; i++) {
                 var attr = allAttributes[i],
                     attrName = attr.nodeName;
 
-                if (attrName === 'data-player')
-                {
+                if (attrName === 'data-player') {
                     playerAttributes = utils.pipeStringToObject(attr.nodeValue);
                 }
 
-                if (attrName === 'id')
-                {
+                if (attrName === 'id') {
                     elementId = attr.nodeValue;
                 }
             }
 
             //if the element supplied has an ID, just use that since it's unique (or at least it should be!)
-            if (elementId)
-            {
+            if (elementId) {
                 playerAttributes.id = elementId;
             }
-        }
-        else
-        {
+        } else {
             debug.warn("You called getPlayerAttributes() and whatever you passed (or didn't pass to it) was " +
                 "undefined. Thought you should know since it's probably giving you a headache by now :)");
         }
@@ -470,13 +427,11 @@ define([
      * @param suppliedAttributes
      */
     var createIframe = function (selector, iframeURL, suppliedAttributes) {
-        if (!_.isString(selector) || _.isEmpty(selector))
-        {
+        if (!_.isString(selector) || _.isEmpty(selector)) {
             throw new Error("You must supply a selector as the first argument when calling createIframe()");
         }
 
-        if (!_.isString(iframeURL) || _.isEmpty(iframeURL))
-        {
+        if (!_.isString(iframeURL) || _.isEmpty(iframeURL)) {
             throw new Error("You must supply a valid path to your iframe as a string as the second argument when calling createIframe()");
         }
 

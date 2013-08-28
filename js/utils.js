@@ -10,17 +10,13 @@ define([
     var arrayToObject = function (arr) {
         var obj = {};
 
-        for (var i = 0, n = arr.length; i < n; i++)
-        {
+        for (var i = 0, n = arr.length; i < n; i++) {
             var item = arr[i];
-            if (item.indexOf('=') !== -1)
-            {
+            if (item.indexOf('=') !== -1) {
                 var itemPieces = item.split('=');
 
                 obj[itemPieces[0]] = itemPieces[1];
-            }
-            else
-            {
+            } else {
                 obj[i] = item;
             }
         }
@@ -28,17 +24,14 @@ define([
         return obj;
     };
 
-    var booleanToString = function (flag) {
-        if (_.isUndefined(flag))
-        {
-//            debug.warn("Whatever you passed to booleanToString() was undefined, so we returned false to play it safe.");
+    var booleanToString = function(flag) {
+        if (_.isUndefined(flag)) {
+            //            debug.warn("Whatever you passed to booleanToString() was undefined, so we returned false to play it safe.");
             return 'false';
-        }
-        else if (!_.isBoolean(flag)) //if we don't get a boolean, just return false
+        } else if (!_.isBoolean(flag)) //if we don't get a boolean, just return false
         {
-            if (_.isString(flag))
-            {
-//                debug.warn("You passed a string ("+ flag +") to the booleanToString() method. Don't do that.");
+            if (_.isString(flag)) {
+                //                debug.warn("You passed a string ("+ flag +") to the booleanToString() method. Don't do that.");
                 flag = booleanToString(flag);
             }
 
@@ -57,14 +50,11 @@ define([
      * @returns {String}
      */
     var getKeyFromValue = function (obj, value) {
-        for (var prop in obj)
-        {
-            if (_.has(obj, prop))
-            {
+        for (var prop in obj) {
+            if (_.has(obj, prop)) {
                 //we want this to be flexible, so we check the string versions (want to keep strict equal)
                 // (see /tests/qunit/tests.js)
-                if (String(obj[prop]) === String(value))
-                {
+                if (String(obj[prop]) === String(value)) {
                     return prop;
                 }
             }
@@ -79,10 +69,8 @@ define([
 
         if (_.isObject(queryParams)) //it should always be an object, but just in case
         {
-            for (var prop in queryParams)
-            {
-                if (prop === key)
-                {
+            for (var prop in queryParams) {
+                if (prop === key) {
                     returnValue = queryParams[prop];
                 }
             }
@@ -96,14 +84,12 @@ define([
         url = url || urlString;
         var urlSplit = url.split(/\?/)[1];
 
-        if (_.isString(urlSplit) && !_.isEmpty(urlSplit))
-        {
+        if (_.isString(urlSplit) && !_.isEmpty(urlSplit)) {
             var queryParams = decodeURIComponent(urlSplit).split('&');
 
             queryParamsObject = arrayToObject(queryParams);
 
-            if (!_.isEmpty(queryParamsObject))
-            {
+            if (!_.isEmpty(queryParamsObject)) {
                 return queryParamsObject;
             }
         }
@@ -124,20 +110,16 @@ define([
 
     var isDefined = function (obj, checkEmpty) {
 
-        if (_.isUndefined(obj))
-        {
+        if (_.isUndefined(obj)) {
             return false;
         }
 
-        if (_.isNull(obj))
-        {
+        if (_.isNull(obj)) {
             return false;
         }
 
-        if (checkEmpty)
-        {
-            if (_.isEmpty(obj))
-            {
+        if (checkEmpty) {
+            if (_.isEmpty(obj)) {
                 return false;
             }
         }
@@ -146,8 +128,7 @@ define([
     };
 
     var isLooseEqual = function (itemA, itemB) {
-        if (_.isUndefined(itemA) || _.isUndefined(itemB))
-        {
+        if (_.isUndefined(itemA) || _.isUndefined(itemB)) {
             return false;
         }
 
@@ -156,8 +137,7 @@ define([
 
         //despite how odd it is that i use strict equal in a function called isLooseEqual, it's because of JSHint
         // and I've already cast the objects to strings anyway
-        if (normalizedA === normalizedB)
-        {
+        if (normalizedA === normalizedB) {
             return true;
         }
 
@@ -165,18 +145,15 @@ define([
     };
 
     var isShallowObject = function (obj) {
-        if (_.isUndefined(obj))
-        {
+        if (_.isUndefined(obj)) {
             return false;
         }
 
-        if (!_.isTrueObject(obj))
-        {
+        if (!_.isTrueObject(obj)) {
             return false;
         }
 
-        if (_.isTrueObject(obj) && _.isEmpty(obj))
-        {
+        if (_.isTrueObject(obj) && _.isEmpty(obj)) {
             return false;
         }
 
@@ -185,8 +162,7 @@ define([
         _.each(obj, function (index, item) {
             var value = obj[item];
 
-            if (_.isTrueObject(value))
-            {
+            if (_.isTrueObject(value)) {
                 shallow = false;
             }
         });
@@ -195,13 +171,11 @@ define([
     };
 
     var isTrueObject = function (obj) {
-        if (_.isUndefined(obj))
-        {
+        if (_.isUndefined(obj)) {
             return false;
         }
 
-        if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj))
-        {
+        if (_.isObject(obj) && !_.isFunction(obj) && !_.isArray(obj)) {
             return true;
         }
 
@@ -209,13 +183,11 @@ define([
     };
 
     var isURL = function (url) {
-        if (_.isUndefined(url) || _.isEmpty(url))
-        {
+        if (_.isUndefined(url) || _.isEmpty(url)) {
             return false;
         }
 
-        if (!_.isString(url))
-        {
+        if (!_.isString(url)) {
             return false;
         }
 
@@ -236,9 +208,8 @@ define([
         _.each(obj, function (value, key) {
 
             //it's just a true object (i.e. {})
-            if (_.isObject(value) && !_.isFunction(value) && !_.isArray(value))
-            {
-//                throw new Error("lowerCasePropertyNames() only supports a shallow object.");
+            if (_.isObject(value) && !_.isFunction(value) && !_.isArray(value)) {
+                //                throw new Error("lowerCasePropertyNames() only supports a shallow object.");
                 value = lowerCasePropertyNames(value);
             }
 
@@ -253,12 +224,9 @@ define([
         var outputArray = [];
 
         _.each(obj, function (value, key) {
-            if (!_.isObject(value))
-            {
-                outputArray.push(key +'='+ value);
-            }
-            else
-            {
+            if (!_.isObject(value)) {
+                outputArray.push(key + '=' + value);
+            } else {
                 throw new Error("The value you supplied to objectToArray() was not a basic (numbers and strings) " +
                     "shallow object");
             }
@@ -270,14 +238,11 @@ define([
     var objectToPipeString = function (obj, delimiter) {
         var properties = [];
 
-        if (isShallowObject(obj))
-        {
+        if (isShallowObject(obj)) {
             _.each(obj, function (value, key) {
                 properties.push(key + '=' + value);
             });
-        }
-        else
-        {
+        } else {
             throw new Error("The first argument you supplied to objectToPipeString() was not a " +
                 "valid object. The objectToPipeString() method only supports a shallow object of strings and numbers.");
         }
@@ -286,21 +251,18 @@ define([
     };
 
     var objectToQueryString = function (object) {
-        if (!_.isTrueObject(object) || _.isEmpty(object))
-        {
+        if (!_.isTrueObject(object) || _.isEmpty(object)) {
             throw new Error("The single argument you should be providing should be an object");
         }
 
         var keyValuePairs = [];
 
         _.each(object, function (value, key) {
-            if (_.isTrueObject(value) && !_.isEmpty(value))
-            {
+            if (_.isTrueObject(value) && !_.isEmpty(value)) {
                 keyValuePairs.push(key + '=' + objectToQueryString(value)); //recursion
             }
 
-            if (_.isArray(value) && !_.isEmpty(value))
-            {
+            if (_.isArray(value) && !_.isEmpty(value)) {
                 keyValuePairs.push(key + '=' + value.join('&'));
             }
 
@@ -313,8 +275,7 @@ define([
     var override = function (startWith, overrideWith, overlay) {
         overlay = overlay || false;
 
-        if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith))
-        {
+        if (_.isEmpty(startWith) || _.isEmpty(overrideWith) || !_.isTrueObject(startWith) || !_.isTrueObject(overrideWith)) {
             throw new Error("Both arguments supplied should be non-empty objects");
         }
 
@@ -322,8 +283,7 @@ define([
 
         _.each(startWith, function (value, key) {
             _.each(overrideWith, function (overrideItemValue, overrideItemKey) {
-                if (key === overrideItemKey)
-                {
+                if (key === overrideItemKey) {
 //                    if (overlay && (_.isTrueObject(overrideItemValue) || _.isArray(overrideItemValue)) && !_.isEmpty(overrideItemValue))
 //                    {
 //                        if (_.isArray(overrideItemValue))
@@ -355,20 +315,13 @@ define([
     var paramExists = function (key, value, url) {
         var queryParams = getQueryParams(url);
 
-        for (var prop in queryParams)
-        {
-            if (queryParams.hasOwnProperty(prop))
-            {
-                if (prop === key)
-                {
-                    if (value)
-                    {
-                        if (queryParams[prop] === value)
-                        {
+        for (var prop in queryParams) {
+            if (queryParams.hasOwnProperty(prop)) {
+                if (prop === key) {
+                    if (value) {
+                        if (queryParams[prop] === value) {
                             return true;
-                        }
-                        else
-                        {
+                        } else {
                             return false;
                         }
                     }
@@ -386,8 +339,7 @@ define([
 
         var kvPairs = pipeString.split('|');
 
-        for (var i = 0, n = kvPairs.length; i < n; i++)
-        {
+        for (var i = 0, n = kvPairs.length; i < n; i++) {
             var pair = kvPairs[i].split(/=(.+)?/, 2); //makes sure we only split on the first = found
             var value = pair[1] || null; //i prefer null in this case
             obj[pair[0]] = value; //sets the key value pair on our return object
@@ -399,16 +351,12 @@ define([
     var removeQueryParams = function (url) {
         var cleanedURL = '';
 
-        if (_.isDefined(url) && _.isURL(url))
-        {
+        if (_.isDefined(url) && _.isURL(url)) {
             cleanedURL = url;
 
-            if (url.indexOf('?') !== -1)
-            {
+            if (url.indexOf('?') !== -1) {
                 cleanedURL = url.split('?')[0];
-            }
-            else
-            {
+            } else {
                 cleanedURL = url;
             }
         }
@@ -431,20 +379,17 @@ define([
      * @returns {String} String with whitespace stripped from beginning and end of string
      */
     var trim = function (text) {
-        if (!_.isString(text) || _.isEmpty(text))
-        {
+        if (!_.isString(text) || _.isEmpty(text)) {
             throw new Error("Whatever you passed to trim() was either not a string or was an empty string", text);
         }
 
         //if there's a leading space, slice it and try again
-        if (text.charAt(0) === ' ')
-        {
+        if (text.charAt(0) === ' ') {
             text = trim(text.slice(1));
         }
 
         //if there's a trailing space, slice it and try again
-        if (text.charAt(text.length-1) === ' ')
-        {
+        if (text.charAt(text.length - 1) === ' ') {
             text = trim(text.slice(0, -1));
         }
 
@@ -459,8 +404,7 @@ define([
         var size = String(text);
         var index = String(size).indexOf('px');
 
-        if (index === -1)
-        {
+        if (index === -1) {
             size = size + 'px';
         }
 //        else if (index < (text.length-1))
@@ -485,48 +429,39 @@ define([
      * @returns {$ Deferred}
      */
     var addToHead = function (tagName, attributes) {
-        if (_.isEmpty(tagName) || !_.isString(tagName))
-        {
+        if (_.isEmpty(tagName) || !_.isString(tagName)) {
             throw new Error("You have to provide a tag name when calling addToHead()");
         }
 
         tagName = tagName.toLowerCase(); //lowercasing
 
-        if (_.isEmpty(attributes) || !_.isTrueObject(attributes))
-        {
+        if (_.isEmpty(attributes) || !_.isTrueObject(attributes)) {
             throw new Error("You have to provide at least one attribute and it needs to be passed as an object");
         }
 
         var deferred = $.Deferred();
 
-        if (!tagInHead(tagName, attributes))
-        {
+        if (!tagInHead(tagName, attributes)) {
             var elem = document.createElement(tagName);
 
             _.each(attributes, function (value, key) {
                 key = key.toLowerCase().replace(/\W/g, '');
 
-                if (/^[a-z0-9-]+$/.test(key))
-                {
+                if (/^[a-z0-9-]+$/.test(key)) {
                     elem.setAttribute(key, value);
                 }
             });
 
-            if (tagName === 'style' || tagName === 'script')
-            {
+            if (tagName === 'style' || tagName === 'script') {
                 elem.onload = function () {
                     deferred.resolve();
                 };
                 document.getElementsByTagName('head')[0].appendChild(elem);
-            }
-            else
-            {
+            } else {
                 document.getElementsByTagName('head')[0].appendChild(elem);
                 deferred.resolve(elem);
             }
-        }
-        else
-        {
+        } else {
             //we should probably let people know if the tag was already there since that might be a sign of
             //another problem
 //            debug.warn("You called addToHead(), but the tag already existed in the head", {
@@ -540,10 +475,8 @@ define([
     };
 
     var getColorFromString = function (color) {
-        if (!_.isUndefined(color))
-        {
-            if (!_.isString(color))
-            {
+        if (!_.isUndefined(color)) {
+            if (!_.isString(color)) {
                 throw new Error('The value supplied to getColorFromString() should be a string, not whatever you passed in.');
             }
 
@@ -552,10 +485,8 @@ define([
              * and 7 with). Then, if no hash exists, we add it ourselves.
              */
             var correctLength = (color.length === 6 || color.length === 7);
-            if (correctLength)
-            {
-                if (color.length === 6 && color.indexOf('#') === -1)
-                {
+            if (correctLength) {
+                if (color.length === 6 && color.indexOf('#') === -1) {
                     color = '#' + color;
                 }
 
@@ -579,10 +510,8 @@ define([
         text = String(text);
         var index = text.indexOf('px');
 
-        if (index !== -1)
-        {
-            if (index === (text.length-2))
-            {
+        if (index !== -1) {
+            if (index === (text.length - 2)) {
                 return text.substr(0, index);
             }
 //            else
@@ -611,20 +540,18 @@ define([
     };
 
     var tagInHead = function (tagName, attributes) {
-        if (_.isEmpty(tagName) || !_.isString(tagName))
-        {
+        if (_.isEmpty(tagName) || !_.isString(tagName)) {
             throw new Error("You have to provide a tag name when calling tagInHead()");
         }
 
-        if (_.isEmpty(attributes) || !_.isShallowObject(attributes))
-        {
+        if (_.isEmpty(attributes) || !_.isShallowObject(attributes)) {
             throw new Error("You called tagInHead() with no attributes to match against");
         }
 
         var attrSelector = tagName;
 
         _.map(attributes, function (value, key) {
-            attrSelector += '['+ key +'="'+ value +'"]';
+            attrSelector += '[' + key + '="' + value + '"]';
         });
 
         var $tag = $('head ' + attrSelector);
@@ -643,7 +570,7 @@ define([
     };
 
     var getCookie = function(name) {
-        var nameEQ = name +'=';
+        var nameEQ = name + '=';
         var cookieData = window.document.cookie.split(';');
 
         for (var i = 0, n = cookieData.length; i < n; i += 1) {
@@ -658,6 +585,40 @@ define([
         }
         return null;
     };
+
+    var setNestedProperty = function(object, path, value) {
+        var key = path.shift();
+        if (!object) {
+            object = {};
+        }
+        if (path.length === 0) {
+            object[key] = value;
+            return object;
+        }
+        if (path.length > 0) {
+            object[key] = setNestedProperty(object[key], path, value);
+        }
+        return object;
+    };
+
+    function patchObject(object, param) {
+        window.console.log('patch', object, param);
+        var keys = _.keys(param);
+        for (var i = 0, n = keys.length; i < n; i += 1) {
+            var key = keys[i];
+            if (!_.isObject(param[key])) {
+                object[key] = param[key];
+                continue;
+            }
+            if (!_.isObject(object[key])) {
+                object[key] = param[key];
+                continue;
+            }
+            object[key] = patchObject(object[key], param[key]);
+        }
+        window.console.log('patched', object, param);
+        return object;
+    }
 
     var urlString = window.location.href;
     ////////////////////////////////////////////////
@@ -723,7 +684,9 @@ define([
         setURL: setURL,
         getURL: getURL,
         setCookie: setCookie,
-        getCookie: getCookie
+        getCookie: getCookie,
+        setNestedProperty: setNestedProperty,
+        patchObject: patchObject
     };
     ////////////////////////////////////////////////
 });
