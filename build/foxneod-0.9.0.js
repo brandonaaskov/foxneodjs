@@ -1700,7 +1700,9 @@ define('utils',[
     };
 
     function patchObject(object, param) {
-        window.console.log('patch', object, param);
+        if (_.isUndefined(param)) {
+            return;
+        }
         var keys = _.keys(param);
         for (var i = 0, n = keys.length; i < n; i += 1) {
             var key = keys[i];
@@ -1714,7 +1716,6 @@ define('utils',[
             }
             object[key] = patchObject(object[key], param[key]);
         }
-        window.console.log('patched', object, param);
         return object;
     }
 
@@ -3207,6 +3208,7 @@ define('playerHandler',[
     var version = '1.4.527';
 
     var playerVars = {
+        adPolicySuffix: '',
         flash: 11,
         host: window.location.protocol + '//player.foxfdm.com', // Brandon had http[s] prepended
         events: [],
@@ -3220,11 +3222,6 @@ define('playerHandler',[
         playerVars.isIOS = true;
         playerVars.isFlash = false;
     }
-
-    var documentBody,
-        metaBaseUrl,
-        metaPreferredFormat,
-        metaPreferredRuntime;
 
     // Added for FW/AAM
     function fdmAAMStuff() {
@@ -3281,7 +3278,6 @@ define('playerHandler',[
     }
 
     function configureFlash(player, configData) {
-        var adPolicySuffix;
         player.allowFullScreen = 'true';
         player.allowScriptAccess = 'always';
         player.fp.wmode = 'opaque';
@@ -3332,7 +3328,7 @@ define('playerHandler',[
 
         if (window.player.endcard + '' !== 'false') {
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = "&params=policy%3D19938";
+                playerVars.adPolicySuffix = "&params=policy%3D19938";
             }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_playlist)) {
@@ -3340,7 +3336,7 @@ define('playerHandler',[
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
                     '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
-                    (player.endcard_playlist.indexOf('policy') !== -1 ? '' : adPolicySuffix);
+                    (player.endcard_playlist.indexOf('policy') !== -1 ? '' : playerVars.adPolicySuffix);
             }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_related)) {
@@ -3348,7 +3344,7 @@ define('playerHandler',[
                     (window.player.endcard_related.indexOf('form=json') !== -1 ?
                     '' : (player.endcard_related.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
-                    (window.player.endcard_related.indexOf('policy') !== -1 ? '' : adPolicySuffix);
+                    (window.player.endcard_related.indexOf('policy') !== -1 ? '' : playerVars.adPolicySuffix);
             }
 
             if (window.foxneod.query.isFeedURL(player.endcard_editorial)) {
@@ -3356,7 +3352,7 @@ define('playerHandler',[
                     (window.player.endcard_editorial.indexOf('form=json') !== -1 ?
                     '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
-                    (window.player.endcard_editorial.indexOf('policy') !== -1 ? '' : adPolicySuffix);
+                    (window.player.endcard_editorial.indexOf('policy') !== -1 ? '' : playerVars.adPolicySuffix);
             }
 
             player.pluginEndcard = 'type=overlay|URL=' + playerVars.host +
@@ -3529,16 +3525,15 @@ define('playerHandler',[
 
         if (window.player.releaseURL) {
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = (window.player.releaseURL.indexOf('?') === -1) ? '?' : '&';
-                adPolicySuffix += 'policy=19938';
-                window.player.releaseURL += adPolicySuffix;
+                playerVars.adPolicySuffix = (window.player.releaseURL.indexOf('?') === -1) ? '?' : '&';
+                playerVars.adPolicySuffix += 'policy=19938';
+                window.player.releaseURL += playerVars.adPolicySuffix;
             }
             player.releaseURL = window.player.releaseURL;
         }
     }
 
     function configureHTML5(player, configData) {
-        var adPolicySuffix;
         utils.addToHead('link', {
             rel: 'stylesheet',
             type: 'text/css',
@@ -3611,7 +3606,7 @@ define('playerHandler',[
 
         if (window.player.endcard + '' !== 'false') {
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = "&params=policy%3D19938";
+                playerVars.adPolicySuffix = "&params=policy%3D19938";
             }
             if (window.player.endcard_playlist) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
@@ -3619,7 +3614,7 @@ define('playerHandler',[
                     '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_playlist.indexOf('policy') !== -1 ?
-                    '' : adPolicySuffix);
+                    '' : playerVars.adPolicySuffix);
             }
             if (window.player.endcard_related) {
                 window.player.endcard_related = window.player.endcard_related +
@@ -3627,7 +3622,7 @@ define('playerHandler',[
                     '' : (window.player.endcard_related.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_related.indexOf('policy') !== -1 ?
-                    '' : adPolicySuffix);
+                    '' : playerVars.adPolicySuffix);
             }
             if (window.player.endcard_editorial) {
                 window.player.endcard_editorial = window.player.endcard_editorial +
@@ -3635,7 +3630,7 @@ define('playerHandler',[
                     '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_editorial.indexOf('policy') !== -1 ?
-                    '' : adPolicySuffix);
+                    '' : playerVars.adPolicySuffix);
             }
 
             player.pluginEndcard = 'type=overlay' +
@@ -3678,9 +3673,9 @@ define('playerHandler',[
                 'manifest=m3u&format=SMIL';
 
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = (player.releaseURL.indexOf('?') === -1 ? '?' : '&');
-                adPolicySuffix += 'policy=19938';
-                player.releaseURL += adPolicySuffix;
+                playerVars.adPolicySuffix = (player.releaseURL.indexOf('?') === -1 ? '?' : '&');
+                playerVars.adPolicySuffix += 'policy=19938';
+                player.releaseURL += playerVars.adPolicySuffix;
             }
             if (window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
                 if (window.player.releaseURL.toLowerCase().indexOf('switch') === -1) {
@@ -3688,101 +3683,6 @@ define('playerHandler',[
                 }
             }
         }
-    }
-
-    function onPlayerLoaded(event) {
-        jquery.ajax({
-            dataType: 'script',
-            url: playerVars.host + '/shared/' + version + '/js/OmniturePlugin.js'
-        }).success(function() {
-            var sitecatalyst = playerVars.analytics && playerVars.analytics.sitecatalyst || {};
-            var accountId = sitecatalyst.account || 'foxcomprod';
-            var host = sitecatalyst.host || 'a.fox.com';
-
-            playerVars.omniConfig = {
-                playerId: playerVars.shortname + 'com-' + version,
-                visitorNamespace: 'foxentertainment',
-                host: host,
-                frequency: '60',
-                entitled: 'public', //values: public or entitled
-                auth: 'true',
-                mvpd: null, //value of prop/eVar is the MVDP name of the user.
-                network: playerVars.shortname,
-                extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
-                accountInfo: {
-                    account: accountId,
-                    trackingServer: host
-                }
-            };
-        }).error(function() {
-            debug.error('Failed to load OmniturePlugin script', arguments);
-        });
-    }
-
-    function onMediaLoadStart(event) {
-        if (!event) {
-            return;
-        }
-        try {
-            if (event.data.baseClip.isAd) {
-                return;
-            }
-            if (!event.data.baseClip.contentCustomData) {
-                return;
-            }
-            if (event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
-                window.$pdk.controller.resetPlayer();
-                window.$pdk.controller.setPlayerMessage('The video you are ' +
-                    'attempting to watch is only available to viewers within ' +
-                    'the US, US territories, and military bases.', 35000);
-            } else if (event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
-                window.$pdk.controller.resetPlayer();
-                window.$pdk.controller.setPlayerMessage('Your token/session has ' +
-                    'expired. Please refresh the page to continue watching.', 35000);
-            } else if (event.data.baseClip.contentCustomData.licensedMusic === 'true') {
-                if (window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-                    window.foxneod.player.setPlayerMessage({
-                        message: 'Sorry, the video you selected is not available for viewing on this device.',
-                        resetPlayer: true
-                    });
-                }
-            }
-        } catch (err) {
-            debug.error('onMediaLoadStart error', err);
-        }
-    }
-
-    function onMediaStart(event) {
-        if (!event) {
-            return;
-        }
-        try {
-            var clip = event.data;
-            var customContent = clip.baseClip.contentCustomData;
-            if (!playerVars.isIOS) {
-                return;
-            }
-            if (customContent && customContent.fullEpisode) {
-                window.$pdk.controller.resetPlayer();
-            }
-            window.$pdk.jQuery('video').attr('controls', false);
-        } catch (err) {
-            debug.error('onMediaStart error', err);
-        }
-    }
-
-    // Resets Branded Canvas DIV inner HTML
-    function wipeBrandedCanvas(event) {
-        var html = '<span id="brandedCanvas" class="_fwph">' +
-            '<form id="_fw_form_brandedCanvas" style="display:none">' +
-                '<input type="hidden" name="_fw_input_brandedCanvas" ' +
-                    'id="_fw_input_brandedCanvas" ' +
-                    'value="w=1500&amp;h=350&amp;envp=FOX_display&amp;ssct=text/fdm-canvas&amp;sflg=-nrpl;"' +
-                '/>' +
-            '</form>' +
-            '<span id="_fw_container_brandedCanvas" class="_fwac"></span>' +
-        '</span>';
-        jquery('#playerAdBgSkin').html(html);
     }
 
     function PlayerHandler(id, config, width, height, postHandlers, preHandlers) {
@@ -3822,6 +3722,101 @@ define('playerHandler',[
             self.updateConfig();
         });
     }
+
+    PlayerHandler.prototype.onPlayerLoaded = function(event) {
+        jquery.ajax({
+            dataType: 'script',
+            url: playerVars.host + '/shared/' + version + '/js/OmniturePlugin.js'
+        }).success(function() {
+            var sitecatalyst = playerVars.analytics && playerVars.analytics.sitecatalyst || {};
+            var accountId = sitecatalyst.account || 'foxcomprod';
+            var host = sitecatalyst.host || 'a.fox.com';
+
+            playerVars.omniConfig = {
+                playerId: playerVars.shortname + 'com-' + version,
+                visitorNamespace: 'foxentertainment',
+                host: host,
+                frequency: '60',
+                entitled: 'public', //values: public or entitled
+                auth: 'true',
+                mvpd: null, //value of prop/eVar is the MVDP name of the user.
+                network: playerVars.shortname,
+                extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
+                accountInfo: {
+                    account: accountId,
+                    trackingServer: host
+                }
+            };
+        }).error(function() {
+            debug.error('Failed to load OmniturePlugin script', arguments);
+        });
+    };
+
+    PlayerHandler.prototype.onMediaLoadStart = function(event) {
+        if (!event) {
+            return;
+        }
+        try {
+            if (event.data.baseClip.isAd) {
+                return;
+            }
+            if (!event.data.baseClip.contentCustomData) {
+                return;
+            }
+            if (event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
+                window.$pdk.controller.resetPlayer();
+                window.$pdk.controller.setPlayerMessage('The video you are ' +
+                    'attempting to watch is only available to viewers within ' +
+                    'the US, US territories, and military bases.', 35000);
+            } else if (event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
+                window.$pdk.controller.resetPlayer();
+                window.$pdk.controller.setPlayerMessage('Your token/session has ' +
+                    'expired. Please refresh the page to continue watching.', 35000);
+            } else if (event.data.baseClip.contentCustomData.licensedMusic === 'true') {
+                if (window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+                    window.foxneod.player.setPlayerMessage({
+                        message: 'Sorry, the video you selected is not available for viewing on this device.',
+                        resetPlayer: true
+                    });
+                }
+            }
+        } catch (err) {
+            debug.error('onMediaLoadStart error', err);
+        }
+    };
+
+    PlayerHandler.prototype.onMediaStart = function(event) {
+        if (!event) {
+            return;
+        }
+        try {
+            var clip = event.data;
+            var customContent = clip.baseClip.contentCustomData;
+            if (!playerVars.isIOS) {
+                return;
+            }
+            if (customContent && customContent.fullEpisode) {
+                window.$pdk.controller.resetPlayer();
+            }
+            window.$pdk.jQuery('video').attr('controls', false);
+        } catch (err) {
+            debug.error('onMediaStart error', err);
+        }
+    };
+
+    // Resets Branded Canvas DIV inner HTML
+    PlayerHandler.wipeBrandedCanvas = function () {
+        var html = '<span id="brandedCanvas" class="_fwph">' +
+            '<form id="_fw_form_brandedCanvas" style="display:none">' +
+                '<input type="hidden" name="_fw_input_brandedCanvas" ' +
+                    'id="_fw_input_brandedCanvas" ' +
+                    'value="w=1500&amp;h=350&amp;envp=FOX_display&amp;ssct=text/fdm-canvas&amp;sflg=-nrpl;"' +
+                '/>' +
+            '</form>' +
+            '<span id="_fw_container_brandedCanvas" class="_fwac"></span>' +
+        '</span>';
+        jquery('#playerAdBgSkin').html(html);
+    };
 
     PlayerHandler.prototype.applyConfig = function() {
         setPlayerColors(this.player, this.configData.colors);
@@ -3919,9 +3914,9 @@ define('playerHandler',[
             }
         }
 
-        window.$pdk.controller.addEventListener('OnMediaLoadStart', onMediaLoadStart);
-        window.$pdk.controller.addEventListener('OnMediaStart', onMediaStart);
-        window.$pdk.controller.addEventListener('OnPlayerLoaded', onPlayerLoaded);
+        window.$pdk.controller.addEventListener('OnMediaLoadStart', PlayerHandler.onMediaLoadStart);
+        window.$pdk.controller.addEventListener('OnMediaStart', PlayerHandler.onMediaStart);
+        window.$pdk.controller.addEventListener('OnPlayerLoaded', PlayerHandler.onPlayerLoaded);
 
         if (playerVars.shortname === 'fox') {
             // CFS (3/5/2013): for audience insights
@@ -4094,7 +4089,7 @@ define('playerHandler',[
                 }
                 if (event.info.type === 'preroll' || event.info.type === 'midroll' ||
                     event.info.type === 'postroll') {
-                    wipeBrandedCanvas();
+                    PlayerHandler.wipeBrandedCanvas();
                 }
                 if (!_.isUndefined(window.AUTH)) {
                     window.AUTH.activateLogin();
@@ -4120,8 +4115,6 @@ define('playerHandler',[
     };
 
     (function init() {
-        documentBody = window.document.getElementsByTagName('body')[0];
-
         utils.addToHead('meta', {
             name: 'tp:baseUrl',
             content: playerVars.host + '/shared/' + version + '/pdk'
@@ -4135,6 +4128,8 @@ define('playerHandler',[
             content: 'flash,html5'
         });
     })();
+
+    PlayerHandler.playerVars = playerVars;
 
     return PlayerHandler;
 });
@@ -5279,6 +5274,10 @@ define('player',[
 
         return true;
     };
+
+    var getPlayerHandler = function () {
+        return playerHandler;
+    };
     ////////////////////////////////////////////////
 
 
@@ -5322,6 +5321,7 @@ define('player',[
         loadVideo: loadVideo,
         create: createPlayer,
         getPlayers: getPlayers,
+        getPlayerHandler: getPlayerHandler,
 
         //control methods
         control: control,
@@ -6317,6 +6317,279 @@ define('analytics',[
 
 /*global define */
 
+/**
+ * This class just provides some convenient ways to handle debugging so that it can always be built in and turned on at
+ * any point.
+ *
+ * When you want to provide a debugging level for a module, ask for the debug module as a dependency as you normally
+ * would. As a convention, name the argument passed to your module Debug instead of debug. Having a capital letter
+ * indicates that you can create new instances using the new keyword and it also allows for better syntax later (you'll
+ * see what I mean).
+ *
+ * Example:
+ * define(['debug'], function (Debug) {
+ *  var debug = new Debug('modulename');
+ *
+ * The name that we pass when we instantiate a Debug instance is really important. Aesthetically, it just adds some
+ * more context to a console message, but you can also filter debug statements on the page using that same module name.
+ * For instance, if you wanted to see debug messages for an advertising module, you would use the query param
+ * ?debug=advertising, assuming the string passed to debug was 'advertising' (Note: we actually lowercase everything
+ * internally, so it doesn't matter what the case is of the string you supply). That will only show debug messages for
+ * that module while you're testing. The default in dev is 'all', which allows you to see every debug message. In prod,
+ * there is no default, so debugging can only be enabled by explicitly asking for it via a query param.
+ *
+ * If you want to see debug messages for many modules at once, just comma separate the items in the query param's value.
+ * Example: ?debug=utils,player,base64
+ *
+ */
+define('debug',[
+    'lodash',
+    'require'
+], function (_, require) {
+    
+
+    var utils,
+        storage,
+        console = window.console,
+        _debugModes = [];
+
+    return function (moduleName) {
+        //-------------------------------------- validation
+        if (_.isUndefined(moduleName))
+        {
+            throw new Error("You didn't supply a category string when you instantiated a Debug instance. " +
+                "That's required. Sorry kiddo!");
+        }
+        else if (_.isString(moduleName))
+        {
+            // It's my personal belief that no descriptive word can be less than 3 characters, so I'm throwing errors
+            // at lazy developers ;)
+            if (moduleName.length < 3)
+            {
+                throw new Error("Please use a descriptive category string when instantiating the Debug class. " +
+                    "Something at least 3 characters long, anyway, geez!");
+            }
+        }
+        else
+        {
+            throw new Error("When instantiating the Debug class, it expects a string for the category name as the " +
+                "only argument.");
+        }
+        //-------------------------------------- /validation
+
+
+        var prefix = 'foxneod-0.9.0';
+        var lastUsedOptions = {};
+        var category = moduleName.toLowerCase();
+
+        var log = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('log', options);
+
+            return options;
+        };
+
+        var warn = function (message, data) {
+            //we add the !!!WARNING!!! since most consoles don't have a native way to display console.warn() differently
+            var options = {
+                message: '!!!WARNING!!!: ' + message,
+                data: data
+            };
+
+            _log('warn', options);
+
+            return options;
+        };
+
+        var error = function (message, data) {
+            var options = {
+                message: message,
+                data: data
+            };
+
+            _log('error', options);
+
+            return options;
+        };
+
+        var _log = function (logLevel, options) {
+            var debugModes = getDebugModes();
+
+            _.each(getDebugModes(), function (mode) {
+                mode = mode.toLowerCase();
+
+                if (_.isEqual(mode, category.toLocaleLowerCase()) || _.isEqual(mode, 'all'))
+                {
+                    if (storage.now.get('insideIframe') && prefix.indexOf('(iframe)') === -1)
+                    {
+                        prefix += ' (iframe)';
+                    }
+
+                    console[logLevel](prefix + ': ' + category + ': ' + options.message, options.data || '');
+                    lastUsedOptions = _.clone(options);
+                }
+            });
+        };
+
+        var getDebugModes = function () {
+            return _debugModes;
+        };
+
+        (function init () {
+            utils = require('utils');
+            storage = require('storage');
+
+            var queryParam = utils.getParamValue('debug');
+
+            var splitThatShit = function (queryParams) {
+                return queryParam.split(',');
+            };
+
+            var lowerCaseThatShit = function (params) {
+                return _.each(params, function (param) {
+                    param.toLowerCase();
+                });
+            };
+
+            var processQueryParams = _.compose(splitThatShit, lowerCaseThatShit);
+
+            _debugModes = (queryParam && _.isString(queryParam)) ? processQueryParams() : ['none'];
+        })();
+
+        // Surfaced for testing purposes
+        var test = {
+            getLastUsedOptions: function () {
+                console.log('getLastUsedOptions', lastUsedOptions);
+                return lastUsedOptions;
+            },
+            getCategory: function () {
+                return category;
+            }
+        };
+
+        // Public API
+        return {
+            getDebugModes: getDebugModes,
+            log: log,
+            warn: warn,
+            error: error,
+            __test__: test
+        };
+    };
+});
+/*global define */
+
+// Provide legacy support to phase out FDM_Player
+
+define('legacy',[
+    'debug',
+    'player',
+    'playerHandler',
+    'utils'
+], function(Debug, player, PlayerHandler, utils) {
+    
+
+    var debug = new Debug('legacy');
+
+    function FDM_Player(id, width, height, postHandlers, preHandlers) {
+        debug.log('FDM_Player constructor called');
+        this.playerHandler = new PlayerHandler(id, undefined, width, height, postHandlers, preHandlers);
+    }
+
+    FDM_Player.prototype.addEventListener = function(evt, handler) {
+        debug.log('FDM_Player.addEventListener called');
+        // This function is actually implemented here because it didn't seem to
+        // be used anywhere when the PlayerHandler was introduced.
+        if (!evt || !handler) {
+            return;
+        }
+        PlayerHandler.playerVars.events = PlayerHandler.playerVars.events || {};
+        PlayerHandler.playerVars.events.push({
+            e: evt,
+            h: handler
+        });
+    };
+
+    FDM_Player.prototype.init = function(postHandlers, preHandlers) {
+        debug.log('FDM_Player.init called');
+        return this.playerHandler.init.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.fdmOmnitureUniqueId = function() {
+        debug.log('FDM_Player.fdmOmnitureUniqueId called');
+        return this.playerHandler.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.onPlayerLoaded = function() {
+        debug.log('FDM_Player.onPlayerLoaded called');
+        return PlayerHandler.onPlayerLoaded.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.onMediaLoadStart = function() {
+        debug.log('FDM_Player.onMediaLoadStart called');
+        return PlayerHandler.onMediaLoadStart.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.onMediaStart = function() {
+        debug.log('FDM_Player.onMediaStart called');
+        return PlayerHandler.onMediaStart.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.pause = function() {
+        debug.log('FDM_Player.pause called');
+        return this.playerHandler.pause.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.setReleaseCall = function() {
+        debug.log('FDM_Player.setReleaseCall called');
+        return this.playerHandler.setReleaseCall.apply(this.playerHandler, arguments);
+    };
+
+    FDM_Player.prototype.loadReleaseCall = function() {
+        debug.log('FDM_Player.loadReleaseCall called');
+        return this.playerHandler.loadReleaseCall.apply(this.playerHandler, arguments);
+    };
+
+    function FDM_Player_kill() {
+        debug.log('FDM_Player_kill called');
+        return player.getPlayerHandler().killPlayer();
+    }
+
+    function wipeBrandedCanvas() {
+        debug.log('wipeBrandedCanvas called');
+        return PlayerHandler.wipeBrandedCanvas();
+    }
+
+    function createCookie() {
+        debug.log('createCookie called');
+        return utils.setCookie.apply(window, arguments);
+    }
+
+    function readCookie(name) {
+        debug.log('readCookie called');
+        return utils.getCookie.apply(window, arguments);
+    }
+
+    // Legacy globals
+    window.FDM_Player_vars = PlayerHandler.playerVars;
+    window.FDM_Player_kill = FDM_Player_kill;
+    window.adPolicySuffix = PlayerHandler.playerVars.adPolicySuffix;
+
+    window.FDM_Player = FDM_Player;
+    window.FDM_Player_OnFreeWheelEvent = window.foxneodOnFreeWheelEvent; // This function is already defined in playerHandler.js
+    window.fdmAAMID = window.fdmAAMID;  // This function is already defined in playerHandler.js
+    window.wipeBrandedCanvas = wipeBrandedCanvas;
+    window.createCookie = createCookie;
+    window.readCookie = readCookie;
+    window.setOmnitureProps = window.setOmnitureProps || function() {};
+});
+
+/*global define */
+
 define('foxneod',[
     'lodash',
     'jquery-loader',
@@ -6334,8 +6607,9 @@ define('foxneod',[
     'advertising',
     'analytics',
     'storage',
-    'Profiler'
-], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler) {
+    'Profiler',
+    'legacy'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler, legacy) {
     
 
     //////////////////////////////////////////////// instance variables
@@ -6395,7 +6669,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-28 02:08:30)');
+        debug.log('ready (build date: 2013-08-28 06:08:56)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6406,7 +6680,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-28 02:08:30',
+        buildDate: '2013-08-28 06:08:56',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,

@@ -602,7 +602,9 @@ define([
     };
 
     function patchObject(object, param) {
-        window.console.log('patch', object, param);
+        if (_.isUndefined(param)) {
+            return;
+        }
         var keys = _.keys(param);
         for (var i = 0, n = keys.length; i < n; i += 1) {
             var key = keys[i];
@@ -616,7 +618,6 @@ define([
             }
             object[key] = patchObject(object[key], param[key]);
         }
-        window.console.log('patched', object, param);
         return object;
     }
 

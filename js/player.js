@@ -465,6 +465,10 @@ define([
 
         return true;
     };
+
+    var getPlayerHandler = function () {
+        return playerHandler;
+    };
     ////////////////////////////////////////////////
 
 
@@ -508,6 +512,7 @@ define([
         loadVideo: loadVideo,
         create: createPlayer,
         getPlayers: getPlayers,
+        getPlayerHandler: getPlayerHandler,
 
         //control methods
         control: control,

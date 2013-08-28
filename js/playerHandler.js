@@ -17,6 +17,7 @@ define([
     var version = '@@fdmVersion';
 
     var playerVars = {
+        adPolicySuffix: '',
         flash: 11,
         host: window.location.protocol + '//player.foxfdm.com', // Brandon had http[s] prepended
         events: [],
@@ -30,11 +31,6 @@ define([
         playerVars.isIOS = true;
         playerVars.isFlash = false;
     }
-
-    var documentBody,
-        metaBaseUrl,
-        metaPreferredFormat,
-        metaPreferredRuntime;
 
     // Added for FW/AAM
     function fdmAAMStuff() {
@@ -91,7 +87,6 @@ define([
     }
 
     function configureFlash(player, configData) {
-        var adPolicySuffix;
         player.allowFullScreen = 'true';
         player.allowScriptAccess = 'always';
         player.fp.wmode = 'opaque';
@@ -142,7 +137,7 @@ define([
 
         if (window.player.endcard + '' !== 'false') {
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = "&params=policy%3D19938";
+                playerVars.adPolicySuffix = "&params=policy%3D19938";
             }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_playlist)) {
@@ -150,7 +145,7 @@ define([
                     (window.player.endcard_playlist.indexOf('form=json') !== -1 ?
                     '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
-                    (player.endcard_playlist.indexOf('policy') !== -1 ? '' : adPolicySuffix);
+                    (player.endcard_playlist.indexOf('policy') !== -1 ? '' : playerVars.adPolicySuffix);
             }
 
             if (window.foxneod.query.isFeedURL(window.player.endcard_related)) {
@@ -158,7 +153,7 @@ define([
                     (window.player.endcard_related.indexOf('form=json') !== -1 ?
                     '' : (player.endcard_related.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
-                    (window.player.endcard_related.indexOf('policy') !== -1 ? '' : adPolicySuffix);
+                    (window.player.endcard_related.indexOf('policy') !== -1 ? '' : playerVars.adPolicySuffix);
             }
 
             if (window.foxneod.query.isFeedURL(player.endcard_editorial)) {
@@ -166,7 +161,7 @@ define([
                     (window.player.endcard_editorial.indexOf('form=json') !== -1 ?
                     '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
-                    (window.player.endcard_editorial.indexOf('policy') !== -1 ? '' : adPolicySuffix);
+                    (window.player.endcard_editorial.indexOf('policy') !== -1 ? '' : playerVars.adPolicySuffix);
             }
 
             player.pluginEndcard = 'type=overlay|URL=' + playerVars.host +
@@ -339,16 +334,15 @@ define([
 
         if (window.player.releaseURL) {
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = (window.player.releaseURL.indexOf('?') === -1) ? '?' : '&';
-                adPolicySuffix += 'policy=19938';
-                window.player.releaseURL += adPolicySuffix;
+                playerVars.adPolicySuffix = (window.player.releaseURL.indexOf('?') === -1) ? '?' : '&';
+                playerVars.adPolicySuffix += 'policy=19938';
+                window.player.releaseURL += playerVars.adPolicySuffix;
             }
             player.releaseURL = window.player.releaseURL;
         }
     }
 
     function configureHTML5(player, configData) {
-        var adPolicySuffix;
         utils.addToHead('link', {
             rel: 'stylesheet',
             type: 'text/css',
@@ -421,7 +415,7 @@ define([
 
         if (window.player.endcard + '' !== 'false') {
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = "&params=policy%3D19938";
+                playerVars.adPolicySuffix = "&params=policy%3D19938";
             }
             if (window.player.endcard_playlist) {
                 window.player.endcard_playlist = window.player.endcard_playlist +
@@ -429,7 +423,7 @@ define([
                     '' : (window.player.endcard_playlist.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_playlist.indexOf('policy') !== -1 ?
-                    '' : adPolicySuffix);
+                    '' : playerVars.adPolicySuffix);
             }
             if (window.player.endcard_related) {
                 window.player.endcard_related = window.player.endcard_related +
@@ -437,7 +431,7 @@ define([
                     '' : (window.player.endcard_related.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_related.indexOf('policy') !== -1 ?
-                    '' : adPolicySuffix);
+                    '' : playerVars.adPolicySuffix);
             }
             if (window.player.endcard_editorial) {
                 window.player.endcard_editorial = window.player.endcard_editorial +
@@ -445,7 +439,7 @@ define([
                     '' : (window.player.endcard_editorial.indexOf('?') !== -1 ?
                         '&form=json' : '?form=json')) +
                     (window.player.endcard_editorial.indexOf('policy') !== -1 ?
-                    '' : adPolicySuffix);
+                    '' : playerVars.adPolicySuffix);
             }
 
             player.pluginEndcard = 'type=overlay' +
@@ -488,9 +482,9 @@ define([
                 'manifest=m3u&format=SMIL';
 
             if (playerVars.shortname === 'fox') {
-                adPolicySuffix = (player.releaseURL.indexOf('?') === -1 ? '?' : '&');
-                adPolicySuffix += 'policy=19938';
-                player.releaseURL += adPolicySuffix;
+                playerVars.adPolicySuffix = (player.releaseURL.indexOf('?') === -1 ? '?' : '&');
+                playerVars.adPolicySuffix += 'policy=19938';
+                player.releaseURL += playerVars.adPolicySuffix;
             }
             if (window.navigator.userAgent.toLowerCase().indexOf('android') > -1) {
                 if (window.player.releaseURL.toLowerCase().indexOf('switch') === -1) {
@@ -498,101 +492,6 @@ define([
                 }
             }
         }
-    }
-
-    function onPlayerLoaded(event) {
-        jquery.ajax({
-            dataType: 'script',
-            url: playerVars.host + '/shared/' + version + '/js/OmniturePlugin.js'
-        }).success(function() {
-            var sitecatalyst = playerVars.analytics && playerVars.analytics.sitecatalyst || {};
-            var accountId = sitecatalyst.account || 'foxcomprod';
-            var host = sitecatalyst.host || 'a.fox.com';
-
-            playerVars.omniConfig = {
-                playerId: playerVars.shortname + 'com-' + version,
-                visitorNamespace: 'foxentertainment',
-                host: host,
-                frequency: '60',
-                entitled: 'public', //values: public or entitled
-                auth: 'true',
-                mvpd: null, //value of prop/eVar is the MVDP name of the user.
-                network: playerVars.shortname,
-                extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
-                accountInfo: {
-                    account: accountId,
-                    trackingServer: host
-                }
-            };
-        }).error(function() {
-            debug.error('Failed to load OmniturePlugin script', arguments);
-        });
-    }
-
-    function onMediaLoadStart(event) {
-        if (!event) {
-            return;
-        }
-        try {
-            if (event.data.baseClip.isAd) {
-                return;
-            }
-            if (!event.data.baseClip.contentCustomData) {
-                return;
-            }
-            if (event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
-                window.$pdk.controller.resetPlayer();
-                window.$pdk.controller.setPlayerMessage('The video you are ' +
-                    'attempting to watch is only available to viewers within ' +
-                    'the US, US territories, and military bases.', 35000);
-            } else if (event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
-                window.$pdk.controller.resetPlayer();
-                window.$pdk.controller.setPlayerMessage('Your token/session has ' +
-                    'expired. Please refresh the page to continue watching.', 35000);
-            } else if (event.data.baseClip.contentCustomData.licensedMusic === 'true') {
-                if (window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-                    window.foxneod.player.setPlayerMessage({
-                        message: 'Sorry, the video you selected is not available for viewing on this device.',
-                        resetPlayer: true
-                    });
-                }
-            }
-        } catch (err) {
-            debug.error('onMediaLoadStart error', err);
-        }
-    }
-
-    function onMediaStart(event) {
-        if (!event) {
-            return;
-        }
-        try {
-            var clip = event.data;
-            var customContent = clip.baseClip.contentCustomData;
-            if (!playerVars.isIOS) {
-                return;
-            }
-            if (customContent && customContent.fullEpisode) {
-                window.$pdk.controller.resetPlayer();
-            }
-            window.$pdk.jQuery('video').attr('controls', false);
-        } catch (err) {
-            debug.error('onMediaStart error', err);
-        }
-    }
-
-    // Resets Branded Canvas DIV inner HTML
-    function wipeBrandedCanvas(event) {
-        var html = '<span id="brandedCanvas" class="_fwph">' +
-            '<form id="_fw_form_brandedCanvas" style="display:none">' +
-                '<input type="hidden" name="_fw_input_brandedCanvas" ' +
-                    'id="_fw_input_brandedCanvas" ' +
-                    'value="w=1500&amp;h=350&amp;envp=FOX_display&amp;ssct=text/fdm-canvas&amp;sflg=-nrpl;"' +
-                '/>' +
-            '</form>' +
-            '<span id="_fw_container_brandedCanvas" class="_fwac"></span>' +
-        '</span>';
-        jquery('#playerAdBgSkin').html(html);
     }
 
     function PlayerHandler(id, config, width, height, postHandlers, preHandlers) {
@@ -632,6 +531,101 @@ define([
             self.updateConfig();
         });
     }
+
+    PlayerHandler.prototype.onPlayerLoaded = function(event) {
+        jquery.ajax({
+            dataType: 'script',
+            url: playerVars.host + '/shared/' + version + '/js/OmniturePlugin.js'
+        }).success(function() {
+            var sitecatalyst = playerVars.analytics && playerVars.analytics.sitecatalyst || {};
+            var accountId = sitecatalyst.account || 'foxcomprod';
+            var host = sitecatalyst.host || 'a.fox.com';
+
+            playerVars.omniConfig = {
+                playerId: playerVars.shortname + 'com-' + version,
+                visitorNamespace: 'foxentertainment',
+                host: host,
+                frequency: '60',
+                entitled: 'public', //values: public or entitled
+                auth: 'true',
+                mvpd: null, //value of prop/eVar is the MVDP name of the user.
+                network: playerVars.shortname,
+                extraInfo: (!_.isUndefined(window.player.extraInfo) ? window.player.extraInfo : null),
+                accountInfo: {
+                    account: accountId,
+                    trackingServer: host
+                }
+            };
+        }).error(function() {
+            debug.error('Failed to load OmniturePlugin script', arguments);
+        });
+    };
+
+    PlayerHandler.prototype.onMediaLoadStart = function(event) {
+        if (!event) {
+            return;
+        }
+        try {
+            if (event.data.baseClip.isAd) {
+                return;
+            }
+            if (!event.data.baseClip.contentCustomData) {
+                return;
+            }
+            if (event.data.baseClip.contentCustomData.exception === 'GeoLocationBlocked') {
+                window.$pdk.controller.resetPlayer();
+                window.$pdk.controller.setPlayerMessage('The video you are ' +
+                    'attempting to watch is only available to viewers within ' +
+                    'the US, US territories, and military bases.', 35000);
+            } else if (event.data.baseClip.contentCustomData.exception === 'AdobePassTokenExpired') {
+                window.$pdk.controller.resetPlayer();
+                window.$pdk.controller.setPlayerMessage('Your token/session has ' +
+                    'expired. Please refresh the page to continue watching.', 35000);
+            } else if (event.data.baseClip.contentCustomData.licensedMusic === 'true') {
+                if (window.navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+                    window.foxneod.player.setPlayerMessage({
+                        message: 'Sorry, the video you selected is not available for viewing on this device.',
+                        resetPlayer: true
+                    });
+                }
+            }
+        } catch (err) {
+            debug.error('onMediaLoadStart error', err);
+        }
+    };
+
+    PlayerHandler.prototype.onMediaStart = function(event) {
+        if (!event) {
+            return;
+        }
+        try {
+            var clip = event.data;
+            var customContent = clip.baseClip.contentCustomData;
+            if (!playerVars.isIOS) {
+                return;
+            }
+            if (customContent && customContent.fullEpisode) {
+                window.$pdk.controller.resetPlayer();
+            }
+            window.$pdk.jQuery('video').attr('controls', false);
+        } catch (err) {
+            debug.error('onMediaStart error', err);
+        }
+    };
+
+    // Resets Branded Canvas DIV inner HTML
+    PlayerHandler.wipeBrandedCanvas = function () {
+        var html = '<span id="brandedCanvas" class="_fwph">' +
+            '<form id="_fw_form_brandedCanvas" style="display:none">' +
+                '<input type="hidden" name="_fw_input_brandedCanvas" ' +
+                    'id="_fw_input_brandedCanvas" ' +
+                    'value="w=1500&amp;h=350&amp;envp=FOX_display&amp;ssct=text/fdm-canvas&amp;sflg=-nrpl;"' +
+                '/>' +
+            '</form>' +
+            '<span id="_fw_container_brandedCanvas" class="_fwac"></span>' +
+        '</span>';
+        jquery('#playerAdBgSkin').html(html);
+    };
 
     PlayerHandler.prototype.applyConfig = function() {
         setPlayerColors(this.player, this.configData.colors);
@@ -729,9 +723,9 @@ define([
             }
         }
 
-        window.$pdk.controller.addEventListener('OnMediaLoadStart', onMediaLoadStart);
-        window.$pdk.controller.addEventListener('OnMediaStart', onMediaStart);
-        window.$pdk.controller.addEventListener('OnPlayerLoaded', onPlayerLoaded);
+        window.$pdk.controller.addEventListener('OnMediaLoadStart', PlayerHandler.onMediaLoadStart);
+        window.$pdk.controller.addEventListener('OnMediaStart', PlayerHandler.onMediaStart);
+        window.$pdk.controller.addEventListener('OnPlayerLoaded', PlayerHandler.onPlayerLoaded);
 
         if (playerVars.shortname === 'fox') {
             // CFS (3/5/2013): for audience insights
@@ -904,7 +898,7 @@ define([
                 }
                 if (event.info.type === 'preroll' || event.info.type === 'midroll' ||
                     event.info.type === 'postroll') {
-                    wipeBrandedCanvas();
+                    PlayerHandler.wipeBrandedCanvas();
                 }
                 if (!_.isUndefined(window.AUTH)) {
                     window.AUTH.activateLogin();
@@ -930,8 +924,6 @@ define([
     };
 
     (function init() {
-        documentBody = window.document.getElementsByTagName('body')[0];
-
         utils.addToHead('meta', {
             name: 'tp:baseUrl',
             content: playerVars.host + '/shared/' + version + '/pdk'
@@ -945,6 +937,8 @@ define([
             content: 'flash,html5'
         });
     })();
+
+    PlayerHandler.playerVars = playerVars;
 
     return PlayerHandler;
 });

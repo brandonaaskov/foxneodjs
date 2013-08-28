@@ -17,8 +17,9 @@ define([
     'advertising',
     'analytics',
     'storage',
-    'Profiler'
-], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler) {
+    'Profiler',
+    'legacy'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler, legacy) {
     'use strict';
 
     //////////////////////////////////////////////// instance variables
