@@ -1850,8 +1850,7 @@ define('storage',[
 ], function (_, jquery, utils, Debug, Dispatcher, cookies) {
     
 
-    var _keyValueStore = {},
-        debug = new Debug('storage'),
+    var debug = new Debug('storage'),
         dispatcher = new Dispatcher('storage');
 
     //////////////////////////////////////////////// private methods...
@@ -1865,14 +1864,10 @@ define('storage',[
     //////////////////////////////////////////////// public methods...
     var now = {
         get: function (key) {
-            if (_.has(_keyValueStore, key))
-            {
-                return _keyValueStore[key];
-            }
-
-            return undefined;
+            return JSON.parse(window.localStorage.getItem(key));
         },
         set: function (key, value) {
+            debug.log('setting "' + key + '"', value);
             if (isInsideIframe())
             {
                 debug.log('stored inside iframe, sending up...', [key, value]);
@@ -1882,10 +1877,11 @@ define('storage',[
                 });
             }
 
-            _keyValueStore[key] = value;
+            window.localStorage.setItem(key, JSON.stringify(value));
         },
-        getAll: function () {
-            return _keyValueStore;
+        remove: function (key) {
+            debug.log('removing "' + key + '"');
+            window.localStorage.removeItem(key);
         }
     };
     ////////////////////////////////////////////////
@@ -4808,6 +4804,46 @@ define('advertising',[
     ////////////////////////////////////////////////
 });
 /*global define */
+
+define('history',[
+    'Debug',
+    'storage'
+], function (Debug, storage) {
+    
+
+    var maxHistoryLength = 10;
+    var storageKey = 'history';
+    var debug = new Debug('history');
+
+    //////////////////////////////////////////////// public methods...
+    ////////////////////////////////////////////////
+    /**
+     * Get history as an array of views, ordered most recent to least recent.
+     */
+    var getHistory = function() {
+        return storage.now.get('history') || [];
+    };
+
+    var addHistory = function(view) {
+        var viewHistory = getHistory();
+        view.timestamp = new Date();
+        viewHistory.unshift(view);
+        storage.now.set(storageKey, viewHistory.slice(0, 10));
+    };
+
+    var clearHistory = function() {
+        storage.now.remove(storageKey);
+    };
+
+    //////////////////////////////////////////////// public api...
+    return {
+        getHistory: getHistory,
+        addHistory: addHistory,
+        clearHistory: clearHistory
+    };
+    ////////////////////////////////////////////////
+});
+/*global define */
 define('player',[
     'lodash',
     'jquery-loader',
@@ -4821,8 +4857,9 @@ define('player',[
     'modal',
     'query',
     'advertising',
-    'playerHandler'
-], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising, PlayerHandler) {
+    'playerHandler',
+    'history'
+], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising, PlayerHandler, history) {
     
 
     var debug = new Debug('player'),
@@ -4899,6 +4936,11 @@ define('player',[
                             return;
                         }
                         break;
+                    case 'OnMediaStart':
+                        if (advertising.isAd(video)) {
+                            return;
+                        }
+                        history.addHistory(cleanData);
                 }
 
                 dispatcher.dispatch(normalizedEventName, cleanData);
@@ -6608,8 +6650,9 @@ define('foxneod',[
     'analytics',
     'storage',
     'Profiler',
-    'legacy'
-], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler, legacy) {
+    'legacy',
+    'history'
+], function (_, $, Dispatcher, Debug, polyfills, utils, player, config, query, system, base64, mvpd, ovp, advertising, analytics, storage, Profiler, legacy, history) {
     
 
     //////////////////////////////////////////////// instance variables
@@ -6669,7 +6712,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-28 06:08:56)');
+        debug.log('ready (build date: 2013-08-29 02:08:41)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -6680,7 +6723,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-28 06:08:56',
+        buildDate: '2013-08-29 02:08:41',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
@@ -6700,6 +6743,7 @@ define('foxneod',[
         query: query,
         system: system,
         utils: utils,
+        history: history,
         Profiler: Profiler,
         _: _,
         jQuery: $,

@@ -12,8 +12,9 @@ define([
     'modal',
     'query',
     'advertising',
-    'playerHandler'
-], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising, PlayerHandler) {
+    'playerHandler',
+    'history'
+], function (_, jquery, utils, Debug, Dispatcher, ovp, Iframe, playback, storage, modal, query, advertising, PlayerHandler, history) {
     'use strict';
 
     var debug = new Debug('player'),
@@ -90,6 +91,11 @@ define([
                             return;
                         }
                         break;
+                    case 'OnMediaStart':
+                        if (advertising.isAd(video)) {
+                            return;
+                        }
+                        history.addHistory(cleanData);
                 }
 
                 dispatcher.dispatch(normalizedEventName, cleanData);

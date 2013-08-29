@@ -10,8 +10,7 @@ define([
 ], function (_, jquery, utils, Debug, Dispatcher, cookies) {
     'use strict';
 
-    var _keyValueStore = {},
-        debug = new Debug('storage'),
+    var debug = new Debug('storage'),
         dispatcher = new Dispatcher('storage');
 
     //////////////////////////////////////////////// private methods...
@@ -25,14 +24,10 @@ define([
     //////////////////////////////////////////////// public methods...
     var now = {
         get: function (key) {
-            if (_.has(_keyValueStore, key))
-            {
-                return _keyValueStore[key];
-            }
-
-            return undefined;
+            return JSON.parse(window.localStorage.getItem(key));
         },
         set: function (key, value) {
+            debug.log('setting "' + key + '"', value);
             if (isInsideIframe())
             {
                 debug.log('stored inside iframe, sending up...', [key, value]);
@@ -42,10 +37,11 @@ define([
                 });
             }
 
-            _keyValueStore[key] = value;
+            window.localStorage.setItem(key, JSON.stringify(value));
         },
-        getAll: function () {
-            return _keyValueStore;
+        remove: function (key) {
+            debug.log('removing "' + key + '"');
+            window.localStorage.removeItem(key);
         }
     };
     ////////////////////////////////////////////////
