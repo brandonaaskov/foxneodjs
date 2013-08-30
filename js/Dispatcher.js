@@ -4,8 +4,9 @@ define([
     'lodash',
     'jquery',
     'base64',
-    'require'
-], function (_, jquery, base64, require) {
+    'require',
+    'utils'
+], function (_, jquery, base64, require, utils) {
     'use strict';
 
     var _listeners = [],
@@ -14,6 +15,7 @@ define([
         storage;
 
     return function (owningModuleName) {
+        utils.requireConstructor.call(this);
 
         //////////////////////////////////////////////// private methods...
         ////////////////////////////////////////////////
