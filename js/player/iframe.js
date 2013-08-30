@@ -10,6 +10,8 @@ define([
     'use strict';
 
     return function (selector, iframeURL, suppliedAttributes) {
+        utils.requireConstructor.call(this);
+
         //-------------------------------------------------------------------------------- instance variables
         var debug = new Debug('iframe'),
             dispatcher = new Dispatcher(),

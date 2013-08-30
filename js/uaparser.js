@@ -1,6 +1,6 @@
 /*global define, _ */
 
-define([], function () {
+define(['utils'], function (utils) {
 
     // UAParser.js v0.6.1
     // Lightweight JavaScript-based User-Agent string parser
@@ -461,6 +461,7 @@ define([], function () {
 
 
     var UAParser = function (uastring) {
+        utils.requireConstructor.call(this);
 
         var ua = uastring || ((window && window.navigator && window.navigator.userAgent) ? window.navigator.userAgent : EMPTY);
 

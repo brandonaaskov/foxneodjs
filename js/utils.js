@@ -633,6 +633,14 @@ define([
         return ($tag.length > 0) ? true : false;
     };
 
+    function requireConstructor() {
+        /*jshint validthis: true */
+        if ($.isWindow(this)) {
+            throw new Error((requireConstructor.caller && requireConstructor.caller.name || '(No caller identified)').toString() +
+                ' should be invoked with the "new" keyword');
+        }
+    }
+
     var urlString = window.location.href;
     ////////////////////////////////////////////////
 
@@ -696,7 +704,8 @@ define([
         isURL: isURL,
 
         setURL: setURL,
-        getURL: getURL
+        getURL: getURL,
+        requireConstructor: requireConstructor
     };
     ////////////////////////////////////////////////
 });

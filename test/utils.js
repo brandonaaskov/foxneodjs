@@ -938,11 +938,11 @@ suite('utils', function () {
         });
     });
 
-    suite('trim()', function () {
-        assert.throws(function () {
+    // suite('trim()', function () {
+    //     assert.throws(function () {
 
-        }, "Whatever you passed to trim() was either not a string or was an empty string");
-    });
+    //     }, "Whatever you passed to trim() was either not a string or was an empty string");
+    // });
 
     suite('dispatchEvent()', function () {
         test('Event dispatches over the library core (with no data payload)', function (done) {
@@ -1072,6 +1072,18 @@ suite('utils', function () {
         test('setURL works for other methods that do not explicitly pass the URL', function () {
             $f.utils.setURL(testURL);
             assert.deepEqual(_.getQueryParams(), expected);
+        });
+    });
+
+    suite('requireConstructor()', function () {
+        test('Should throw an error when invoked from a global context', function() {
+            assert.throws(function() {
+                $f.utils.requireConstructor.call(window);
+            });
+        });
+
+        test('Should not throw an error when invoked from a not global context', function() {
+            $f.utils.requireConstructor.call({});
         });
     });
 });

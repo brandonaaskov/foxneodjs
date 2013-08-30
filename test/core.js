@@ -54,7 +54,7 @@ suite('core', function () {
 
     suite('hasEventListener()', function () {
         this.afterEach(function () {
-            $f.__test__.removeAllEventListeners();
+            $f.__test__ && $f.__test__.removeAllEventListeners();
         });
 
         test('Passing in nothing returns false', function () {
@@ -93,7 +93,7 @@ suite('core', function () {
 
     suite('dispatch()', function () {
         this.afterEach(function () {
-            $f.__test__.removeAllEventListeners();
+            $f.__test__ && $.__test__.removeAllEventListeners();
         });
 
         test('Passing in nothing throws an error', function () {

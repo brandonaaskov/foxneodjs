@@ -27,16 +27,17 @@
  */
 define([
     'lodash',
-    'require'
-], function (_, require) {
+    'require',
+    'utils'
+], function (_, require, utils) {
     'use strict';
 
-    var utils,
-        storage,
+    var storage,
         console = window.console,
         _debugModes = [];
 
     return function (moduleName) {
+        utils.requireConstructor.call(this);
         //-------------------------------------- validation
         if (_.isUndefined(moduleName))
         {
@@ -123,7 +124,6 @@ define([
         };
 
         (function init () {
-            utils = require('utils');
             storage = require('storage');
 
             var queryParam = utils.getParamValue('debug');
