@@ -4882,16 +4882,15 @@ define('system',[
 
     return system;
 });
-/*global define */
+/*global define, AdobePass */
 
 define('mvpd',[
     'jquery',
     'lodash',
     'Debug',
     'Dispatcher',
-    'cookies',
-    'config'
-], function (jquery, _, Debug, Dispatcher, cookies, config) {
+    'cookies'
+], function (jquery, _, Debug, Dispatcher, cookies) {
     
 
     var debug = new Debug('mvpd'),
@@ -4909,10 +4908,9 @@ define('mvpd',[
     };
 
     var getInfo = function () {
-        var info = config.getInfo();
-        if (_.isObject(info)) {
-            mvpdInfo = {
-                shortname: info.shortname
+        if (typeof AdobePass !== 'undefined') {
+            mvpdInfo = mvpdInfo || {
+                selectedMvpd: AdobePass.getSelectedMvpd()
             };
         }
         return mvpdInfo;
@@ -5288,7 +5286,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-09-03 10:09:02)');
+        debug.log('ready (build date: 2013-09-03 04:09:58)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5299,7 +5297,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-09-03 10:09:02',
+        buildDate: '2013-09-03 04:09:58',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,

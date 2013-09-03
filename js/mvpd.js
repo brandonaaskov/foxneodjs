@@ -1,13 +1,12 @@
-/*global define */
+/*global define, AdobePass */
 
 define([
     'jquery',
     'lodash',
     'Debug',
     'Dispatcher',
-    'cookies',
-    'config'
-], function (jquery, _, Debug, Dispatcher, cookies, config) {
+    'cookies'
+], function (jquery, _, Debug, Dispatcher, cookies) {
     'use strict';
 
     var debug = new Debug('mvpd'),
@@ -25,10 +24,9 @@ define([
     };
 
     var getInfo = function () {
-        var info = config.getInfo();
-        if (_.isObject(info)) {
-            mvpdInfo = {
-                shortname: info.shortname
+        if (typeof AdobePass !== 'undefined') {
+            mvpdInfo = mvpdInfo || {
+                selectedMvpd: AdobePass.getSelectedMvpd()
             };
         }
         return mvpdInfo;
