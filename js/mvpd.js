@@ -5,8 +5,9 @@ define([
     'lodash',
     'Debug',
     'Dispatcher',
-    'cookies'
-], function (jquery, _, Debug, Dispatcher, cookies) {
+    'cookies',
+    'config'
+], function (jquery, _, Debug, Dispatcher, cookies, config) {
     'use strict';
 
     var debug = new Debug('mvpd'),
@@ -24,6 +25,12 @@ define([
     };
 
     var getInfo = function () {
+        var info = config.getInfo();
+        if (_.isObject(info)) {
+            mvpdInfo = {
+                shortname: info.shortname
+            };
+        }
         return mvpdInfo;
     };
 
