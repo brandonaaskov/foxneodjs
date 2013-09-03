@@ -2,21 +2,23 @@
 <html>
 <head>
     <title>Simplest Integration</title>
-    <!-- jQuery, for IE8 support of custom events -->
-    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="../js/player_qa.js"></script>
     <script type="text/javascript">
-        jQuery(window).bind('foxneod:ready', function () {
-        // window.addEventListener('foxneod:ready', function() {
+        function initPlayer(evt) {
             var config = foxneod.player.create('#player', {
                 releaseURL: "http://link.theplatform.com/s/fox.com/qlYqu8y_bOKo?mbr=true"
             });
-
-            foxneod.player.on('videoStart', function (event) {
-                console.log('videoStart', event);
+        }
+        if (window.addEventListener) {
+            window.addEventListener('foxneod:ready', initPlayer);
+        } else {
+            window.attachEvent('onmessage', function(evt) {
+                if (evt.data === 'foxneod:ready') {
+                    initPlayer();
+                }
             });
-        });
+        }
     </script>
-    <script type="text/javascript" src="../js/player_qa.js"></script>
 
     <style type="text/css">
         body {

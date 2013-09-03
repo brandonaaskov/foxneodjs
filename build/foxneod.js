@@ -598,7 +598,7 @@ define('Dispatcher',[
                 evt = document.createEvent('Event');
                 evt.initEvent(name, true, true);
             } else {
-                evt = window.jQuery.Event(name);
+                evt = window.jQuery && window.jQuery.Event(name) || {};
             }
             evt.data = data || null;
 
@@ -617,7 +617,10 @@ define('Dispatcher',[
                     window.dispatchEvent(evt);
                 } else {
                     debug.log('Dispatching ' + name + ' over window with jQuery');
-                    window.jQuery(window).trigger(name, evt);
+                    if (window.jQuery) {
+                        window.jQuery(window).trigger(name, evt);
+                    }
+                    window.postMessage(name, '*');
                 }
             }
             return true;
@@ -5435,7 +5438,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-21 03:08:18)');
+        debug.log('ready (build date: 2013-08-30 10:08:02)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5446,7 +5449,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-21 03:08:18',
+        buildDate: '2013-08-30 10:08:02',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
