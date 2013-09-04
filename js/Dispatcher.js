@@ -64,7 +64,11 @@ define([
                 evt = document.createEvent('Event');
                 evt.initEvent(name, true, true);
             } else {
-                evt = window.jQuery && window.jQuery.Event(name) || {};
+                if (window.jQuery) {
+                    evt = window.jQuery.Event(name);
+                } else {
+                    evt = {};
+                }
             }
             evt.data = data || null;
 

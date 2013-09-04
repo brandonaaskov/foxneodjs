@@ -598,7 +598,11 @@ define('Dispatcher',[
                 evt = document.createEvent('Event');
                 evt.initEvent(name, true, true);
             } else {
-                evt = window.jQuery && window.jQuery.Event(name) || {};
+                if (window.jQuery) {
+                    evt = window.jQuery.Event(name);
+                } else {
+                    evt = {};
+                }
             }
             evt.data = data || null;
 
@@ -5438,7 +5442,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-30 10:08:02)');
+        debug.log('ready (build date: 2013-09-03 11:09:04)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5449,7 +5453,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-08-30 10:08:02',
+        buildDate: '2013-09-03 11:09:04',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,
