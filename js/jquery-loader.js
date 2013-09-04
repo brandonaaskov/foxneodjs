@@ -1,6 +1,6 @@
 /*global define, require */
 
-define(['jquery'], function(jquery) {
+define(['jquery', 'debug'], function(jquery, debug) {
     'use strict';
 
     var importedJQuery = jquery.noConflict();
@@ -14,7 +14,8 @@ define(['jquery'], function(jquery) {
 
         if (isIE && !isRightVersionForIE) {
             // IE8 requires jquery 1.8
-            throw new Error('Foxneod.js requires jQuery 1.8 to run properly in IE 8');
+            debug.warn('Foxneod.js requires jQuery 1.8 to run properly in IE 8');
+            return importedJQuery;
         }
 
         if (mainVersion === 1 && releaseVersion < 8) {
