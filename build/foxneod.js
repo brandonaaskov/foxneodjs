@@ -4910,7 +4910,8 @@ define('mvpd',[
     var getInfo = function () {
         if (typeof AdobePass !== 'undefined') {
             mvpdInfo = mvpdInfo || {
-                selectedMvpd: AdobePass.getSelectedMvpd()
+                selectedMvpd: AdobePass.getSelectedMvpd(),
+                lastMvpd: cookies.grab('last_mvpd')
             };
         }
         return mvpdInfo;
@@ -4918,18 +4919,18 @@ define('mvpd',[
 
     // This is called by the AccessEnablerHelper.js script that's loaded in an
     // IFrame by accessEnabler script.
-    var entitlementLoaded = function() {
-        // I think this is made globally available by the Adobe script.
-        accessEnablerAPI = window.accessEnabler;
-        accessEnablerAPI.getAuthentication(function() {
-            debug.log('accessEnablerAPI.getAuthentication', arguments);
-        });
-    };
+    // var entitlementLoaded = function() {
+    //     // I think this is made globally available by the Adobe script.
+    //     accessEnablerAPI = window.accessEnabler;
+    //     accessEnablerAPI.getAuthentication(function() {
+    //         debug.log('accessEnablerAPI.getAuthentication', arguments);
+    //     });
+    // };
 
-    (function init() {
-        jquery.getScript(adobeAccessScript);
-        window.entitlementLoaded = entitlementLoaded;
-    })();
+    // (function init() {
+    //     jquery.getScript(adobeAccessScript);
+    //     window.entitlementLoaded = entitlementLoaded;
+    // })();
 
     return {
         getFreewheelKeyValues: getFreewheelKeyValues,
@@ -5286,7 +5287,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-09-03 04:09:58)');
+        debug.log('ready (build date: 2013-09-05 09:09:31)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5297,7 +5298,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-09-03 04:09:58',
+        buildDate: '2013-09-05 09:09:31',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,

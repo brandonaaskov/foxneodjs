@@ -26,7 +26,8 @@ define([
     var getInfo = function () {
         if (typeof AdobePass !== 'undefined') {
             mvpdInfo = mvpdInfo || {
-                selectedMvpd: AdobePass.getSelectedMvpd()
+                selectedMvpd: AdobePass.getSelectedMvpd(),
+                lastMvpd: cookies.grab('last_mvpd')
             };
         }
         return mvpdInfo;
@@ -34,18 +35,18 @@ define([
 
     // This is called by the AccessEnablerHelper.js script that's loaded in an
     // IFrame by accessEnabler script.
-    var entitlementLoaded = function() {
-        // I think this is made globally available by the Adobe script.
-        accessEnablerAPI = window.accessEnabler;
-        accessEnablerAPI.getAuthentication(function() {
-            debug.log('accessEnablerAPI.getAuthentication', arguments);
-        });
-    };
+    // var entitlementLoaded = function() {
+    //     // I think this is made globally available by the Adobe script.
+    //     accessEnablerAPI = window.accessEnabler;
+    //     accessEnablerAPI.getAuthentication(function() {
+    //         debug.log('accessEnablerAPI.getAuthentication', arguments);
+    //     });
+    // };
 
-    (function init() {
-        jquery.getScript(adobeAccessScript);
-        window.entitlementLoaded = entitlementLoaded;
-    })();
+    // (function init() {
+    //     jquery.getScript(adobeAccessScript);
+    //     window.entitlementLoaded = entitlementLoaded;
+    // })();
 
     return {
         getFreewheelKeyValues: getFreewheelKeyValues,
