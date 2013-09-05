@@ -24,7 +24,11 @@
     <script type="text/javascript" src="./config.js" data-cover></script>
     <script type="text/javascript" src="./Dispatcher.js" data-cover></script>
     <script type="text/javascript">
-        mocha.run();
+        if (window.mochaPhantomJS) {
+            mochaPhantomJS.run();
+        } else {
+            mocha.run();
+        }
     </script>
 </body>
 </html>
