@@ -4917,6 +4917,9 @@ define('mvpd',[
         return mvpdInfo;
     };
 
+    // Didn't see much MVPD lookup value in this, but I'm leaving it in in case
+    // a need for it comes up. - Dave
+
     // This is called by the AccessEnablerHelper.js script that's loaded in an
     // IFrame by accessEnabler script.
     // var entitlementLoaded = function() {
@@ -5287,7 +5290,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-09-05 09:09:31)');
+        debug.log('ready (build date: 2013-09-05 02:09:48)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5298,7 +5301,7 @@ define('foxneod',[
     // Public API
     return {
         _init: init,
-        buildDate: '2013-09-05 09:09:31',
+        buildDate: '2013-09-05 02:09:48',
         packageName: 'foxneod',
         version: '0.9.0',
         dispatcher: dispatcher,

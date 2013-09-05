@@ -33,6 +33,9 @@ define([
         return mvpdInfo;
     };
 
+    // Didn't see much MVPD lookup value in this, but I'm leaving it in in case
+    // a need for it comes up. - Dave
+
     // This is called by the AccessEnablerHelper.js script that's loaded in an
     // IFrame by accessEnabler script.
     // var entitlementLoaded = function() {
