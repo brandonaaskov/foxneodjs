@@ -1,4 +1,4 @@
-/*global module, console */
+/*global module, console, process */
 
 (function(){
     'use strict';
@@ -72,7 +72,7 @@
                 options: {
                     jshintrc: '.jshintrc'
                 },
-                files: ['gruntfile.js', 'js/**/*.js']
+                files: ['Gruntfile.js', 'js/**/*.js']
             },
 
             requirejs: {
@@ -227,6 +227,17 @@
                     dir: reportDir,
                     print: 'detail'
                 }
+            },
+
+            push_svn: {
+                options: {
+                    remove: false,
+                    message: 'Committed by the Codeship.io build process'
+                },
+                main: {
+                    src: './',
+                    dest: 'https://svn.foxneod.com/trunk'
+                }
             }
         });
 
@@ -238,12 +249,20 @@
         grunt.loadNpmTasks('grunt-shell');
         grunt.loadNpmTasks('grunt-mocha-phantomjs');
         grunt.loadNpmTasks('grunt-istanbul');
-
+        // grunt.loadNpmTasks('grunt-push-svn');
 
         grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
         grunt.registerTask('dev', ['jshint', 'requirejs', 'replace', 'shell:phpbuild']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
-        grunt.registerTask('test', ['jshint', 'mocha_phantomjs']);
         grunt.registerTask('cover', ['mocha_phantomjs', 'storeCoverage', 'makeReport']);
+
+        var testTasks = ['jshint', 'mocha_phantomjs'];
+        // Codeship exposes the current branch with the environment variable CI_BRANCH
+        // Uncomment the following to have Codeship push to SVN on a successful test
+        // (the push_svn task still needs to be configured completely):
+        // if (process.env.CI_BRANCH === 'master') {
+        //     testTasks.push('push_svn');
+        // }
+        grunt.registerTask('test', testTasks);
     };
 })();

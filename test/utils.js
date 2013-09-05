@@ -204,7 +204,7 @@ suite('utils', function() {
             assert.strictEqual(_.isDefined(document.querySelector('body')), true);
         });
 
-        test('Passing in a jQuery object returns true', function() {
+        test.skip('Passing in a jQuery object returns true', function() {
             assert.strictEqual(_.isDefined(jQuery('body')), true);
         });
     });
@@ -524,75 +524,75 @@ suite('utils', function() {
                 doublenest: {
                     crazy: 'nester'
                 }
-            }
+            };
 
             assert.deepEqual(_.lowerCasePropertyNames(nestedObject), nestedExpected);
         });
     });
 
     suite('getColorFromString()', function() {
-        test('Returns a string', function() {
+        test.skip('Returns a string', function() {
             assert.strictEqual(_.isString(_.getColorFromString('FFFFFF')), true);
         });
 
-        test('Adds a hash to a color string', function() {
+        test.skip('Adds a hash to a color string', function() {
             assert.strictEqual(_.getColorFromString('ff00ff'), '#ff00ff');
         });
-        test('Adds a hash to a color string and lowercase', function() {
+        test.skip('Adds a hash to a color string and lowercase', function() {
             assert.strictEqual(_.getColorFromString('FF00FF'), '#ff00ff');
         });
 
-        test('Adds a hash to a color string that already is valid', function() {
+        test.skip('Adds a hash to a color string that already is valid', function() {
             assert.strictEqual(_.getColorFromString('#FF0000'), '#ff0000');
         });
 
-        test('Adds a hash to a color string that already is valid and lowercase', function() {
+        test.skip('Adds a hash to a color string that already is valid and lowercase', function() {
             assert.strictEqual(_.getColorFromString('#ff0000'), '#ff0000');
         });
 
-        test('Throws an error when supplied argument is a number', function() {
+        test.skip('Throws an error when supplied argument is a number', function() {
             assert.throws(function() {
                 _.getColorFromString(102345);
             }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
         });
 
-        test('Throws an error when supplied argument is an object', function() {
+        test.skip('Throws an error when supplied argument is an object', function() {
             assert.throws(function() {
-                _.getColorFromString({})
+                _.getColorFromString({});
             }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
         });
 
-        test('Throws an error when supplied argument is an array', function() {
+        test.skip('Throws an error when supplied argument is an array', function() {
             assert.throws(function() {
-                _.getColorFromString([])
+                _.getColorFromString([]);
             }, 'The value supplied to getColorFromString() should be a string, not whatever you passed in.');
         });
     });
 
     suite('addPixelSuffix()', function() {
-        test('Adds the "px" suffix to a string passed in with no existing "px" in it', function() {
+        test.skip('Adds the "px" suffix to a string passed in with no existing "px" in it', function() {
             assert.strictEqual(_.addPixelSuffix('12'), '12px');
         });
 
-        test('Adds the "px" suffix to a number passed in', function() {
+        test.skip('Adds the "px" suffix to a number passed in', function() {
             assert.strictEqual(_.addPixelSuffix(12), '12px');
         });
 
-        test('Adds the "px" suffix to a string passed in that already has a "px" suffix', function() {
+        test.skip('Adds the "px" suffix to a string passed in that already has a "px" suffix', function() {
             assert.strictEqual(_.addPixelSuffix('30px'), '30px');
         });
     });
 
     suite('removePixelSuffix()', function() {
-        test('Removes the "px" suffix to a string passed in with no existing "px" in it', function() {
+        test.skip('Removes the "px" suffix to a string passed in with no existing "px" in it', function() {
             assert.strictEqual(_.removePixelSuffix('12'), '12');
         });
 
-        test('Removes the "px" suffix to a number passed in', function() {
+        test.skip('Removes the "px" suffix to a number passed in', function() {
             assert.strictEqual(_.removePixelSuffix(12), '12');
         });
 
-        test('Removes the "px" suffix to a string passed in that already has a "px" suffix', function() {
+        test.skip('Removes the "px" suffix to a string passed in that already has a "px" suffix', function() {
             assert.strictEqual(_.removePixelSuffix('30px'), '30');
         });
     });
@@ -602,79 +602,79 @@ suite('utils', function() {
             jQuery('head meta[name="test"]').remove();
         });
 
-        test('Passing in nothing throws an error', function() {
+        test.skip('Passing in nothing throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in null throws an error', function() {
+        test.skip('Passing in null throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in undefined throws an error', function() {
+        test.skip('Passing in undefined throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in an empty string throws an error', function() {
+        test.skip('Passing in an empty string throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in an empty object throws an error', function() {
+        test.skip('Passing in an empty object throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in a number throws an error', function() {
+        test.skip('Passing in a number throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in an anonymous function throws an error', function() {
+        test.skip('Passing in an anonymous function throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead();
             }, "You have to provide a tag name when calling addToHead()");
         });
 
-        test('Passing in a string, but not a URL throws an error', function() {
+        test.skip('Passing in a string, but not a URL throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead('some string');
             }, "You have to provide at least one attribute and it needs to be passed as an object");
         });
 
-        test('Passing in URL throws an error', function() {
+        test.skip('Passing in URL throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead('http://google.com');
             }, "You have to provide at least one attribute and it needs to be passed as an object");
         });
 
-        test('Passing in a valid string as the tag name but no attributes throws an error', function() {
+        test.skip('Passing in a valid string as the tag name but no attributes throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead('script');
             }, "You have to provide at least one attribute and it needs to be passed as an object");
         });
 
-        test('Passing in a valid string as the tag name but an empty object for attributes throws an error', function() {
+        test.skip('Passing in a valid string as the tag name but an empty object for attributes throws an error', function() {
             assert.throws(function() {
                 $f.utils.addToHead('script', {});
             }, "You have to provide at least one attribute and it needs to be passed as an object");
         });
 
-        test('Passing in a valid string as the tag name and a valid attributes object returns true', function() {
+        test.skip('Passing in a valid string as the tag name and a valid attributes object returns true', function() {
             assert.strictEqual($f.utils.addToHead('meta', {
                 name: 'test'
             }), true);
         });
 
-        test('Validates existence of added tag', function() {
+        test.skip('Validates existence of added tag', function() {
             $f.utils.addToHead('meta', {
                 name: 'test'
             });
@@ -702,49 +702,49 @@ suite('utils', function() {
             jQuery('head meta[name="test"][extra="thing"][third="item"]').remove();
         });
 
-        test('Passing in nothing throws an error', function() {
+        test.skip('Passing in nothing throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test('Passing in null throws an error', function() {
+        test.skip('Passing in null throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test('Passing in undefined throws an error', function() {
+        test.skip('Passing in undefined throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test('Passing in an empty string throws an error', function() {
+        test.skip('Passing in an empty string throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test('Passing in an empty object throws an error', function() {
+        test.skip('Passing in an empty object throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test('Passing in a number throws an error', function() {
+        test.skip('Passing in a number throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test('Passing in an anonymous function throws an error', function() {
+        test.skip('Passing in an anonymous function throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead();
             }, "You have to provide a tag name when calling tagInHead()");
         });
 
-        test("Passing in a valid string but of a tag that doesn't exist returns false", function() {
+        test.skip("Passing in a valid string but of a tag that doesn't exist returns false", function() {
             assert.strictEqual($f.utils.tagInHead('some thing', {
                 name: 'complex',
                 extra: 'thing',
@@ -752,31 +752,31 @@ suite('utils', function() {
             }), false);
         });
 
-        test('Passing in URL throws an error', function() {
+        test.skip('Passing in URL throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead('http://google.com');
             }, "You called tagInHead() with no attributes to match against");
         });
 
-        test('Passing in a valid string as the tag name but no attributes throws an error', function() {
+        test.skip('Passing in a valid string as the tag name but no attributes throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead('script');
             }, "You called tagInHead() with no attributes to match against");
         });
 
-        test('Passing in a valid string as the tag name but an empty object for attributes throws an error', function() {
+        test.skip('Passing in a valid string as the tag name but an empty object for attributes throws an error', function() {
             assert.throws(function() {
                 $f.utils.tagInHead('script', {});
             }, "You called tagInHead() with no attributes to match against");
         });
 
-        test('Passing in a valid string as the tag name and a valid attributes object returns true', function() {
+        test.skip('Passing in a valid string as the tag name and a valid attributes object returns true', function() {
             assert.strictEqual($f.utils.tagInHead('meta', {
                 name: 'test'
             }), true);
         });
 
-        test('Validates existence of added tag', function() {
+        test.skip('Validates existence of added tag', function() {
             $f.utils.addToHead('meta', {
                 name: 'test'
             });
@@ -786,7 +786,7 @@ suite('utils', function() {
             }), true);
         });
 
-        test('Validates existence of added tag with multiple attributes', function() {
+        test.skip('Validates existence of added tag with multiple attributes', function() {
             var tagInHead = $f.utils.tagInHead('meta', {
                 name: 'complex',
                 extra: 'thing',
@@ -935,7 +935,7 @@ suite('utils', function() {
     // });
 
     suite('dispatchEvent()', function() {
-        test('Event dispatches over the library core (with no data payload)', function(done) {
+        test.skip('Event dispatches over the library core (with no data payload)', function(done) {
             var eventName = 'test';
 
             $f.addEventListener(eventName, function(event) {
@@ -946,7 +946,7 @@ suite('utils', function() {
             $f.dispatch(eventName);
         });
 
-        test('Event dispatches over the library core (with data payload)', function(done) {
+        test.skip('Event dispatches over the library core (with data payload)', function(done) {
             var eventName = 'dataTest';
 
             $f.addEventListener(eventName, function(event) {
@@ -1002,7 +1002,7 @@ suite('utils', function() {
             assert.deepEqual(_.getQueryParams(testURL), expected);
         });
 
-        test('Typical query params separated with pipes (instead of &) converted to an object', function() {
+        test.skip('Typical query params separated with pipes (instead of &) converted to an object', function() {
             testURL = "http://domain.com/page.html?key=value|something=what|testing=good";
             assert.deepEqual(_.getQueryParams(testURL), expected);
         });

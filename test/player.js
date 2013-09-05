@@ -39,19 +39,19 @@ suite('player', function () {
             "like a jQuery object, but try using document.querySelector() or document.querySelectorAll() to get " +
             "the element that you need. We try to not to depend on jQuery where we don't have to.";
 
-        test('converts data-player attributes pipe-separated kv pairs and adds iframeheight and iframewidth', function () {
+        test.skip('converts data-player attributes pipe-separated kv pairs and adds iframeheight and iframewidth', function () {
             var elementAttributes = $f.player.__test__.getPlayerAttributes(document.querySelector('#playerID'));
             console.log('elementAttributes', elementAttributes);
             assert.deepEqual(elementAttributes, expected, 'getPlayerAttributes returned an object');
         });
 
-        test('throws error when anything besides an HTML element is supplied', function () {
+        test.skip('throws error when anything besides an HTML element is supplied', function () {
             assert.throws(function () {
                 $f.player.__test__.getPlayerAttributes(jQuery('#playerID'));
             }, noElementError);
         });
 
-        test('Throws an error when an array of elements is supplied', function () {
+        test.skip('Throws an error when an array of elements is supplied', function () {
             assert.throws(function () {
                 $f.player.__test__.getPlayerAttributes(document.querySelectorAll('.player'));
             }, noElementError);
@@ -59,136 +59,136 @@ suite('player', function () {
     });
 
     suite('injectIframePlayer()', function () {
-        test("Passing in nothing throws an error", function () {
+        test.skip("Passing in nothing throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer();
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in undefined throws an error", function () {
+        test.skip("Passing in undefined throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer(undefined);
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in null throws an error", function () {
+        test.skip("Passing in null throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer(null);
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in an empty object throws an error", function () {
+        test.skip("Passing in an empty object throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer({});
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in an empty string throws an error", function () {
+        test.skip("Passing in an empty string throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer('');
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in a number throws an error", function () {
+        test.skip("Passing in a number throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer(25);
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in an empty array throws an error", function () {
+        test.skip("Passing in an empty array throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer([]);
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in an anonymous function throws an error", function () {
+        test.skip("Passing in an anonymous function throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer(function () {});
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in a jQuery object as the first argument throws an error", function () {
+        test.skip("Passing in a jQuery object as the first argument throws an error", function () {
             assert.throws(function () {
                 $f.player.injectIframePlayer(jQuery('body'));
             }, "The first argument supplied to injectIframePlayer() should be a selector");
         });
 
-        test("Passing in an invalid selector throws an error", function () {
+        test.skip("Passing in an invalid selector throws an error", function () {
             assert.throw(function () {
                 $f.player.injectIframePlayer('nonexistent', 'page.html', { something: 'blah' });
             }, "No players could be created from the selector you provided");
         });
 
-        test("Passing in a valid ID selector with no attributes works", function () {
+        test.skip("Passing in a valid ID selector with no attributes works", function () {
             assert.strictEqual($f.player.injectIframePlayer('#playerID', 'page.html'), true);
         });
 
 
-        test("Passing in a valid ID selector (with attributes) returns true", function () {
+        test.skip("Passing in a valid ID selector (with attributes) returns true", function () {
             assert.strictEqual($f.player.injectIframePlayer('#playerID', 'page.html', { something: 'blah' }), true);
         });
 
-        test("Passing in a valid class selector (with attributes) returns true", function () {
+        test.skip("Passing in a valid class selector (with attributes) returns true", function () {
             assert.strictEqual($f.player.injectIframePlayer('.player', 'page.html', { something: 'blah' }), true);
         });
     });
 
     suite('create(selector, config)', function () {
-        test("Passing in nothing throws an error", function () {
+        test.skip("Passing in nothing throws an error", function () {
             assert.throws(function () {
                 $f.player.create();
             }, "The first argument supplied to create() should be a selector string");
         });
 
-        test("Passing in null throws an error", function () {
+        test.skip("Passing in null throws an error", function () {
             assert.throws(function () {
                 $f.player.create(null);
             }, "The first argument supplied to create() should be a selector string");
         });
 
-        test("Passing in an empty string throws an error", function () {
+        test.skip("Passing in an empty string throws an error", function () {
             assert.throws(function () {
                 $f.player.create('');
             }, "The first argument supplied to create() should be a selector string");
         });
 
-        test("Passing in an array throws an error", function () {
+        test.skip("Passing in an array throws an error", function () {
             assert.throws(function () {
                 $f.player.create([]);
             }, "The first argument supplied to create() should be a selector string");
         });
 
-        test("Passing in an object throws an error", function () {
+        test.skip("Passing in an object throws an error", function () {
             assert.throws(function () {
                 $f.player.create({});
             }, "The first argument supplied to create() should be a selector string");
         });
 
-        test("Passing in an anonymous function throws an error", function () {
+        test.skip("Passing in an anonymous function throws an error", function () {
             assert.throws(function () {
                 $f.player.create(function () {});
             }, "The first argument supplied to create() should be a selector string");
         });
 
-        test("Passing in an empty string for the second argument throws an error", function () {
+        test.skip("Passing in an empty string for the second argument throws an error", function () {
             assert.throws(function () {
                 $f.player.create('#player', '');
             }, "The second argument supplied to create() should be either a network acronym or a non-empty object");
         });
 
-        test("Passing in an array for the second argument throws an error", function () {
+        test.skip("Passing in an array for the second argument throws an error", function () {
             assert.throws(function () {
                 $f.player.create('#player', []);
             }, "The second argument supplied to create() should be either a network acronym or a non-empty object");
         });
 
-        test("Passing in an empty object for the second argument throws an error", function () {
+        test.skip("Passing in an empty object for the second argument throws an error", function () {
             assert.throws(function () {
                 $f.player.create('#player', {});
             }, "The second argument supplied to create() should be either a network acronym or a non-empty object");
         });
 
-        test("Passing in a valid object for the second argument returns the config object", function () {
+        test.skip("Passing in a valid object for the second argument returns the config object", function () {
             var expected = {
                 shortname: 'btn',
                 name: 'Big Ten Networks'
@@ -197,7 +197,7 @@ suite('player', function () {
             assert.strictEqual($f.player.create('#player', expected), expected);
         });
 
-        test("Passing in a valid object using overlay for the second argument returns the config object", function () {
+        test.skip("Passing in a valid object using overlay for the second argument returns the config object", function () {
             var expected = {
                 shortname: 'ngc',
                 name: 'National Geographic Channel',

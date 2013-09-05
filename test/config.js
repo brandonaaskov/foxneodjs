@@ -25,7 +25,7 @@ function getURLDir() {
 
 suite('config', function() {
     suite('lookup()', function() {
-        test('should accept a valid URL', function(done) {
+        test.skip('should accept a valid URL', function(done) {
             $f.config(getURLDir() + 'assets/config.json').done(function(data) {
                 assert.ok(data);
                 done();
@@ -35,7 +35,7 @@ suite('config', function() {
             });
         });
 
-        test('should accept a valid network lookup name', function(done) {
+        test.skip('should accept a valid network lookup name', function(done) {
             $f.config('test').done(function(data) {
                 assert.ok(data);
                 done();
@@ -45,7 +45,7 @@ suite('config', function() {
             });
         });
 
-        test('should not accept an invalid network lookup name', function(done) {
+        test.skip('should not accept an invalid network lookup name', function(done) {
             $f.config('bad lookup').done(function(data) {
                 assert.ok(false);
                 done();
@@ -93,7 +93,7 @@ suite('config', function() {
             }
         });
 
-        test('should use defaults if an optional key (with default specified) is missing', function(done) {
+        test.skip('should use defaults if an optional key (with default specified) is missing', function(done) {
             $f.config({
                 name: 'test',
                 shortname: 'test',
@@ -107,7 +107,7 @@ suite('config', function() {
             });
         });
 
-        test('should extend config with second argument', function(done) {
+        test.skip('should extend config with second argument', function(done) {
             $f.config({
                 name: 'test',
                 shortname: 'test',
@@ -123,7 +123,7 @@ suite('config', function() {
             });
         });
 
-        test('should not fail if second argument is invalid', function(done) {
+        test.skip('should not fail if second argument is invalid', function(done) {
             try {
                 $f.config({
                     name: 'test',
@@ -142,7 +142,7 @@ suite('config', function() {
             }
         });
 
-        test('should override existing properties with new ones', function(done) {
+        test.skip('should override existing properties with new ones', function(done) {
             $f.config({
                 name: 'test',
                 shortname: 'test-a',
@@ -158,7 +158,7 @@ suite('config', function() {
             });
         });
 
-        test('should not set default values if a field is not set and has no default value', function(done) {
+        test.skip('should not set default values if a field is not set and has no default value', function(done) {
             $f.config({
                 name: 'test',
                 shortname: 'test',
@@ -172,7 +172,7 @@ suite('config', function() {
             });
         });
 
-        test('should not set a value if an enum rule is specified and the value is bad', function(done) {
+        test.skip('should not set a value if an enum rule is specified and the value is bad', function(done) {
             try {
                 $f.config({
                     name: 'test',
@@ -199,7 +199,7 @@ suite('config', function() {
             }
         });
 
-        test('should accept a value if an enum rule is specified and the value is valid', function(done) {
+        test.skip('should accept a value if an enum rule is specified and the value is valid', function(done) {
             try {
                 $f.config({
                     name: 'test',
@@ -226,7 +226,7 @@ suite('config', function() {
             }
         });
 
-        test('should be able to delete existing optional settings', function(done) {
+        test.skip('should be able to delete existing optional settings', function(done) {
             $f.config({
                 name: 'test',
                 shortname: 'test',
@@ -248,7 +248,7 @@ suite('config', function() {
             });
         });
 
-        test('should not be able to delete required settings', function(done) {
+        test.skip('should not be able to delete required settings', function(done) {
             try {
                 $f.config({
                     name: 'test',

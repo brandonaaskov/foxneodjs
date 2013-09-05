@@ -8,7 +8,7 @@ var assert = chai.assert,
 
 
 suite('base64', function () {
-    test('jsonToBase64()', function () {
+    test.skip('jsonToBase64()', function () {
         var testObject = {
             name: 'Point Break',
             rating: 'R',
@@ -23,7 +23,7 @@ suite('base64', function () {
         assert.strictEqual($f.__test__.base64.jsonToBase64(testObject), expected, 'Basic, shallow object converted to JSON and then base64 properly.');
     });
 
-    test('base64ToJSON()', function () {
+    test.skip('base64ToJSON()', function () {
         var expected = {
             name: 'Point Break',
             rating: 'R',
