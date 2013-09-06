@@ -1,12 +1,13 @@
-/*global module, console, process */
+/*global module, console, process, __dirname, require */
 
 (function(){
     'use strict';
 
     module.exports = function (grunt) {
+        var path = require('path');
         var packageJSON = grunt.file.readJSON('package.json');
 
-        var reportDir = 'reports/';
+        var reportDir = path.join(__dirname, 'reports');
 
 
         var timestamp = function () {
@@ -209,24 +210,10 @@
 
             mocha_phantomjs: {
                 options: {
-                    reporter: 'spec'
+                    reporter: 'spec',
+                    run: true
                 },
                 all: ['test/index.html']
-            },
-
-            storeCoverage: {
-                options: {
-                    dir: reportDir
-                }
-            },
-
-            makeReport: {
-                src: reportDir + '**/*.json',
-                options: {
-                    type: 'lcov',
-                    dir: reportDir,
-                    print: 'detail'
-                }
             },
 
             push_svn: {
@@ -238,6 +225,24 @@
                     src: './',
                     dest: 'https://svn.foxneod.com/trunk'
                 }
+            },
+
+            blanket_mocha: {
+                all: ['test/index.html'],
+                options: {
+                    mocha: {
+                        ui: 'tdd',
+                        reporter: 'Spec'
+                    },
+                    excludedFiles: [],
+
+                    // Minimum percent coverage thresholds before failing the
+                    // build
+                    threshold: 50,
+                    moduleThreshold: 5,
+                    modulePattern: "./(.*?)/",
+                    globalThreshold: 50
+                }
             }
         });
 
@@ -248,13 +253,13 @@
         grunt.loadNpmTasks('grunt-text-replace');
         grunt.loadNpmTasks('grunt-shell');
         grunt.loadNpmTasks('grunt-mocha-phantomjs');
-        grunt.loadNpmTasks('grunt-istanbul');
+        grunt.loadNpmTasks('grunt-blanket-mocha');
         // grunt.loadNpmTasks('grunt-push-svn');
 
         grunt.registerTask('default', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
         grunt.registerTask('dev', ['jshint', 'requirejs', 'replace', 'shell:phpbuild']);
         grunt.registerTask('prod', ['jshint', 'requirejs', 'replace', 'uglify', 'shell:phpbuild']);
-        grunt.registerTask('cover', ['mocha_phantomjs', 'storeCoverage', 'makeReport']);
+        grunt.registerTask('cover', ['jshint', 'blanket_mocha']);
 
         var testTasks = ['jshint', 'mocha_phantomjs'];
         // Codeship exposes the current branch with the environment variable CI_BRANCH

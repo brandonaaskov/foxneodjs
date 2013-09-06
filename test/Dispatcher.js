@@ -1,6 +1,9 @@
+/*global chai, suite, test, require */
 'use strict';
 
-mocha.setup('tdd');
+if (typeof chai === 'undefined') {
+    var chai = require('chai');
+}
 
 var assert = chai.assert;
 
