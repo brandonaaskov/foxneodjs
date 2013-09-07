@@ -143,13 +143,6 @@ FDM_Player.prototype.init=function(pst,pre){
 	FDM_Player_vars.isIOS=(($pdk.env.Detect.getInstance().getPlaybackRuntime()=="html5")?true:false) || ((location.search + location.hash).indexOf('isIOS') != -1);
 	FDM_Player_vars.isFlash=(flshV>FDM_Player_vars.flash) ? true : false;
 
-	var foxneodPlayerConfig = foxneod.storage.now.get('playerConfig');
-	if (_.has(foxneodPlayerConfig, 'forceHTML') && foxneodPlayerConfig.forceHTML)
-	{
-		FDM_Player_vars.isIOS = true;
-		FDM_Player_vars.isFlash = false;
-	}
-
 	if (FDM_Player_vars.isFlash) {
 		p.allowFullScreen='true';
 		p.allowScriptAccess='always';
@@ -184,6 +177,7 @@ FDM_Player.prototype.init=function(pst,pre){
 		//-------------------------- End Card
 		if(String(player.endcard) != 'false') {
 
+		var adPolicySuffix = ""; //gets hoisted - was previously in the global scope
 			adPolicySuffix = "&params=policy%3D19938"; 
 			if (foxneod.query.isFeedURL(player.endcard_playlist)) {
 				player.endcard_playlist = player.endcard_playlist + ((player.endcard_playlist.indexOf('form=json') != -1) ? '' : (player.endcard_playlist.indexOf('?') != -1) ? '&form=json' : '?form=json') +
@@ -1534,7 +1528,7 @@ define('Dispatcher',[
             on: addListener,
             dispatch: dispatch,
             dispatchOverWindow: function (eventName, data) {
-                dispatch(eventName, data);
+                dispatch(eventName, data, true);
             },
             getEventListeners: getEventListeners,
             hasEventListener: hasListener,
@@ -1610,7 +1604,7 @@ define('Debug',[
         //-------------------------------------- /validation
 
 
-        var prefix = 'foxneod-0.9.4';
+        var prefix = 'foxneod-0.9.5';
         var lastUsedOptions = {};
         var category = moduleName.toLowerCase();
 
@@ -4217,12 +4211,12 @@ define('player',[
     {
         var deferred = new jquery.Deferred();
 
-        ovp.ready().done(function () {
+        ovp.ready().done(function (pdk) {
             var attributes = player.attributes;
 
-            if(!storage.now.get('insideIframe'))
+            if(!storage.now.get('insideIframe') && _.has(pdk.controller, 'bind'))
             {
-                player.controller = window.pdk.bind(attributes.id);
+                player.controller = pdk.bind(attributes.id);
                 ovp.mapEvents(player.controller);
 
                 _players.push(player);
@@ -5454,18 +5448,23 @@ define('system',[
 
     return system;
 });
-/*global define */
+/*global define, AdobePass */
 
 define('mvpd',[
+    'jquery',
     'lodash',
     'Debug',
     'Dispatcher',
     'cookies'
-], function (_, Debug, Dispatcher, cookies) {
+], function (jquery, _, Debug, Dispatcher, cookies) {
     
 
     var debug = new Debug('mvpd'),
-        dispatcher = new Dispatcher();
+        dispatcher = new Dispatcher(),
+        mvpdInfo = false,
+        accessEnablerAPI;
+
+    var adobeAccessScript = 'http://entitlement.auth-staging.adobe.com/entitlement/AccessEnabler.js';
 
     var getFreewheelKeyValues = function () {
         var cookie = cookies.grab('aam_freewheel');
@@ -5474,8 +5473,37 @@ define('mvpd',[
         return keyValues;
     };
 
+    var getInfo = function () {
+        if (typeof AdobePass !== 'undefined') {
+            mvpdInfo = mvpdInfo || {
+                selectedMvpd: AdobePass.getSelectedMvpd(),
+                lastMvpd: cookies.grab('last_mvpd')
+            };
+        }
+        return mvpdInfo;
+    };
+
+    // Didn't see much MVPD lookup value in this, but I'm leaving it in in case
+    // a need for it comes up. - Dave
+
+    // This is called by the AccessEnablerHelper.js script that's loaded in an
+    // IFrame by accessEnabler script.
+    // var entitlementLoaded = function() {
+    //     // I think this is made globally available by the Adobe script.
+    //     accessEnablerAPI = window.accessEnabler;
+    //     accessEnablerAPI.getAuthentication(function() {
+    //         debug.log('accessEnablerAPI.getAuthentication', arguments);
+    //     });
+    // };
+
+    // (function init() {
+    //     jquery.getScript(adobeAccessScript);
+    //     window.entitlementLoaded = entitlementLoaded;
+    // })();
+
     return {
-        getFreewheelKeyValues: getFreewheelKeyValues
+        getFreewheelKeyValues: getFreewheelKeyValues,
+        getInfo: getInfo
     };
 });
 
@@ -5753,7 +5781,7 @@ define('analytics',[
 
 define('foxneod',[
     'lodash',
-    'jquery-loader',
+    'jquery',
     'Dispatcher',
     'Debug',
     'polyfills',
@@ -5785,6 +5813,12 @@ define('foxneod',[
 
 
     //////////////////////////////////////////////// private methods
+    function _loadPDK () {
+        var filepath = 'http://player.foxfdm.com/shared/1.4.527/' + 'pdk/tpPdk.js';
+        debug.log('loading pdk', filepath);
+        utils.addToHead('script', {src: filepath});
+    }
+
     function _patchIE8Problems () {
         if (!_.has(window, 'addEventListener') && _.has(window, 'attachEvent'))
         {
@@ -5827,8 +5861,9 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-08-27 10:08:11)');
+        debug.log('ready (build date: 2013-09-06 07:09:11)');
 
+        _loadPDK();
         _patchIE8Problems();
         _messageUnsupportedUsers();
     };
@@ -5843,9 +5878,9 @@ define('foxneod',[
         _init: init,
 
         //properties
-        buildDate: '2013-08-27 10:08:11',
+        buildDate: '2013-09-06 07:09:11',
         packageName: 'foxneod',
-        version: '0.9.4',
+        version: '0.9.5',
 
         //event listening
         on: dispatcher.on,

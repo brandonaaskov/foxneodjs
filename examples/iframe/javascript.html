@@ -10,8 +10,10 @@
 
     <script type="text/javascript">
         window.addEventListener('foxneod:ready', function () {
-            foxneod.player.createIframe('#myPlayerID', '_player.html', {
-                releaseURL: "http://link.theplatform.com/s/fox.com/pAKqKiP5a9s8?mbr=true"
+            foxneod.player.createIframe('#player', '_player.html', {
+                releaseURL: "http://link.theplatform.com/s/fox.com/pAKqKiP5a9s8?mbr=true",
+                width: 640,
+                height: 360
             });
         });
     </script>
@@ -19,10 +21,18 @@
 
     <!-- Styles -->
     <style type="text/css">
+        body {
+            font:normal 12px/15px Arial,Helvetica,sans-serif;
+        }
+
+        #player {
+            width: 640px;
+            height: 360px;
+        }
     </style>
     <!-- /Styles -->
 </head>
 <body>
-<div id="myPlayerID"></div>
+    <div id="player"></div>
 </body>
 </html>

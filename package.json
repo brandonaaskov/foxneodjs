@@ -1,7 +1,7 @@
 {
   "name": "foxneod",
   "debugMode": "none",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "ovpVersion": "5.2.7",
   "ovpAssetsFilePath": "http://player.foxfdm.com/shared/1.4.527/",
   "description": "A javascript library to leverage Fox's digital video players.",
@@ -21,7 +21,8 @@
     "grunt-simple-mocha": "~0.4.0"
   },
   "authors": [
-    "https://twitter.com/brandonaaskov"
+    "https://github.com/brandonaaskov",
+    "https://github.com/dmkelly"
   ],
   "readmeFilename": "README.md"
 }

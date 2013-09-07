@@ -247,7 +247,7 @@ define([
             on: addListener,
             dispatch: dispatch,
             dispatchOverWindow: function (eventName, data) {
-                dispatch(eventName, data);
+                dispatch(eventName, data, true);
             },
             getEventListeners: getEventListeners,
             hasEventListener: hasListener,

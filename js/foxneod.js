@@ -2,7 +2,7 @@
 
 define([
     'lodash',
-    'jquery-loader',
+    'jquery',
     'Dispatcher',
     'Debug',
     'polyfills',
@@ -34,6 +34,12 @@ define([
 
 
     //////////////////////////////////////////////// private methods
+    function _loadPDK () {
+        var filepath = '@@ovpAssetsFilePath' + 'pdk/tpPdk.js';
+        debug.log('loading pdk', filepath);
+        utils.addToHead('script', {src: filepath});
+    }
+
     function _patchIE8Problems () {
         if (!_.has(window, 'addEventListener') && _.has(window, 'attachEvent'))
         {
@@ -78,6 +84,7 @@ define([
     var init = function () {
         debug.log('ready (build date: @@buildDate)');
 
+        _loadPDK();
         _patchIE8Problems();
         _messageUnsupportedUsers();
     };

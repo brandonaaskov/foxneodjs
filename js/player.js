@@ -142,12 +142,12 @@ define([
     {
         var deferred = new jquery.Deferred();
 
-        ovp.ready().done(function () {
+        ovp.ready().done(function (pdk) {
             var attributes = player.attributes;
 
-            if(!storage.now.get('insideIframe'))
+            if(!storage.now.get('insideIframe') && _.has(pdk.controller, 'bind'))
             {
-                player.controller = window.pdk.bind(attributes.id);
+                player.controller = pdk.bind(attributes.id);
                 ovp.mapEvents(player.controller);
 
                 _players.push(player);
