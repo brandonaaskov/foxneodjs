@@ -33,7 +33,7 @@ define([
         DEFAULT_SHARE_TARGETS = [
           {
             name: "Facebook",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/facebook-100.png",
+            image: '@@ovpAssetsFilePath' + "images/facebook-100.png",
             share: {
               url: "http://www.facebook.com/sharer.php?u=_?_",
               items: [
@@ -52,7 +52,7 @@ define([
           },
           {
             name: "Twitter",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/twitter-71.png",
+            image: '@@ovpAssetsFilePath' + "images/twitter-71.png",
             share: {
               url: "http://twitter.com/home?status=_?_",
               items: [
@@ -62,7 +62,7 @@ define([
           },
           {
             name: "Google+",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/google-71.png",
+            image: '@@ovpAssetsFilePath' + "images/google-71.png",
             share: {
               url: "http://plus.google.com/share?url=_?_",
               items: [
@@ -72,7 +72,7 @@ define([
           },
           {
             name: "Tumblr",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/tumblr-71.png",
+            image: '@@ovpAssetsFilePath' + "images/tumblr-71.png",
             share: {
               url: "http://tumblr.com/share?s=&v=3&u=_?_&t=_?_",
               items: [
@@ -83,7 +83,7 @@ define([
           },
           {
             name: "StumbleUpon",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/stumbleupon-71.png",
+            image: '@@ovpAssetsFilePath' + "images/stumbleupon-71.png",
             share: {
               url: "http://www.stumbleupon.com/submit?url=_?_&title=_?_",
               items: [
@@ -94,7 +94,7 @@ define([
           },
           {
             name: "Delicious",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/delicious-71.png",
+            image: '@@ovpAssetsFilePath' + "images/delicious-71.png",
             share: {
               url: "http://del.icio.us/post?url=_?_&title=_?_",
               items: [
@@ -105,7 +105,7 @@ define([
           },
           {
             name: "Digg",
-            image: "http://player.foxfdm.com/shared/1.5.525/images/digg-71.png",
+            image: '@@ovpAssetsFilePath' + "images/digg-71.png",
             share: {
               url: "http://digg.com/submit?url=_?_",
               items: [
