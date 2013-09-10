@@ -5087,7 +5087,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-09-06 10:09:09)');
+        debug.log('ready (build date: 2013-09-10 02:09:50)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5103,7 +5103,7 @@ define('foxneod',[
         _init: init,
 
         //properties
-        buildDate: '2013-09-06 10:09:09',
+        buildDate: '2013-09-10 02:09:50',
         packageName: 'foxneod',
         version: '0.9.4',
 

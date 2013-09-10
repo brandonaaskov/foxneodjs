@@ -5,7 +5,9 @@ FDM_Player_vars = {
 	host:		((window.location.protocol == 'https:')?'https':'http') + '://player.foxfdm.com',
 	events:		[],
 	isFlash:	0,
-	isIOS:		0
+	isIOS:		0,
+	loadTime:	0,
+	loadTimer:	''
 };
 
 var aamtt = {
@@ -22,7 +24,7 @@ var FDMtpHead		= document.getElementsByTagName('head')[0],
 	FDMtpPreferredRuntime	= document.createElement('meta');
 
 FDMtpBaseUrl.name		= 'tp:baseUrl';
-FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.527/pdk';
+FDMtpBaseUrl.content	= FDM_Player_vars.host + '/shared/1.4.532/pdk';
 
 FDMtpPreferredFormat.name		= 'tp:preferredFormats';
 FDMtpPreferredFormat.content	= 'mpeg4,webm,ogg,flv';
@@ -67,27 +69,30 @@ function FDM_Player_kill() {
 
 
 function FDM_Player(i,w,h,pst,pre) {
-    this.id = i;
-    this.wd = w;
-    this.hd = h;
+	this.id = i;
+	this.wd = w;
+	this.hd = h;
  
-    var self = this;
-    var b = document.getElementsByTagName('body')[0],
-        j = document.createElement('script'),
-        lf = function() {
-            if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                self.init(pst,pre);
-            }
-        };
+	var self = this;
+
+	FDM_Player_vars.loadTimer = FDM_Player_LoadTimer();
+
+	var b = document.getElementsByTagName('body')[0],
+		j = document.createElement('script'),
+		lf = function() {
+			if (this.readyState == 'complete' || this.readyState == 'loaded') {
+				self.init(pst,pre);
+			}
+		};
  
-    j.type='text/javascript';
-    j.src=FDM_Player_vars.host+'/shared/1.4.527/pdk/tpPdk.js';
+	j.type='text/javascript';
+	j.src=FDM_Player_vars.host+'/shared/1.4.532/pdk/tpPdk.js';
  
-    j.onreadystatechange = lf;
-    j.onload = function() {
-        self.init(pst,pre);
-    };
-    b.appendChild(j);
+	j.onreadystatechange = lf;
+	j.onload = function() {
+		self.init(pst,pre);
+	};
+	b.appendChild(j);
 }
 
 
@@ -149,18 +154,18 @@ FDM_Player.prototype.init=function(pst,pre){
 		p.fp.wmode='opaque';
 		p.previewScrubbing='false';
 
-		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/LayoutPlugin.swf';
+		p.pluginLayout='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/LayoutPlugin.swf';
 		p.skinURL=FDM_Player_vars.host+'/fox/swf/skinFox.swf';
 		p.layoutUrl=FDM_Player_vars.host+'/fox/config/foxLayout.xml';
 
 		//-------------------------- Go Live
 		if(String(player.golive_show) == 'true') {
-			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/GoLivePlugIn.swf';
+			p.pluginGoLive='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/GoLivePlugIn.swf';
 		}
 
 		//-------------------------- Bumper
 		if(typeof player.introURL !== 'undefined' || typeof player.outroURL !== 'undefined') {
-			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper='type=control|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/BumperPlugin.swf|introURL='+(typeof player.introURL != 'undefined' ? player.introURL : '')+'|introLink='+(typeof player.introLink != 'undefined' ? player.introLink : '')+'|outroURL='+(typeof player.outroURL != 'undefined' ? player.outroURL : '')+'|outroLink='+(typeof player.outroLink != 'undefined' ? player.outroLink : '')+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Share
@@ -168,15 +173,16 @@ FDM_Player.prototype.init=function(pst,pre){
 			
 			var emailString = '';
 			
-			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink+'|shortener=www.fox.com/_app/urlhelper.php|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');	
+			p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/SharePlugin.swf'+ emailString +'|deepLink='+player.share_deeplink+'|shortener=www.fox.com/_app/urlhelper.php|embed='+player.share_embed+'|twitterField=title'+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '')+'|hidepostup='+player.hidePostup+((typeof player.share_iframeurl != 'undefined' && player.share_iframeurl != '') ? '|iframeurl='+player.share_iframeurl : '');
 		}
 
 		//-------------------------- Closed Captioning
-		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/ClosedCaptionPlugin.swf';
+		p.pluginClosedCaption='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/ClosedCaptionPlugin.swf';
 
 		//-------------------------- End Card
 		if(String(player.endcard) != 'false') {
 
+		var adPolicySuffix = ""; //gets hoisted - was previously in the global scope
 			adPolicySuffix = "&params=policy%3D19938"; 
 			if (foxneod.query.isFeedURL(player.endcard_playlist)) {
 				player.endcard_playlist = player.endcard_playlist + ((player.endcard_playlist.indexOf('form=json') != -1) ? '' : (player.endcard_playlist.indexOf('?') != -1) ? '&form=json' : '?form=json') +
@@ -193,7 +199,7 @@ FDM_Player.prototype.init=function(pst,pre){
 					((player.endcard_editorial.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 			
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/EndCardPlugIn.swf|wait='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 			if(player.endcard_playlist)		{ p.pluginEndcard+='|playlist='+player.endcard_playlist; }
 			if(player.endcard_related)		{ p.pluginEndcard+='|related='+player.endcard_related; }
 			if(player.endcard_editorial)	{ p.pluginEndcard+='|editorial='+player.endcard_editorial; }
@@ -204,14 +210,14 @@ FDM_Player.prototype.init=function(pst,pre){
 			i_len = player.plugins.length;
 			for(i=0; i<i_len; i++) {
 				if(player.plugins[i].name == 'BlueKai') {
-					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
+					p.pluginBlueKai = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/FoxBlueKaiPlugIn.swf|configFile='+player.plugins[i].vars.url;
 				}
 			}
 		}
 
 		//-------------------------- Watermark
 		if(String(player.watermark_show) == 'true') {
-			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/WatermarkPlugin.swf';
+			p.pluginWatermark='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/WatermarkPlugin.swf';
 			if(player.watermark_corner)		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(player.watermark_src)		{ p.pluginWatermark+='|src='+player.watermark_src; }
 			if(player.watermark_opacity)	{ p.pluginWatermark+='|opacity='+player.watermark_opacity; }
@@ -219,23 +225,23 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Play Overlay
 		if(String(player.play_overlay_show) == 'true') {
-			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/PlayOverlayPlugin.swf';
+			p.pluginPlayOverlay='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/PlayOverlayPlugin.swf';
 			p.pluginPlayOverlay+='|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset;
 			p.pluginPlayOverlay+='|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 		}
-		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxUrlSigningPlugIn.swf';
-		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/authentication.swf|priority=3|cookie=authToken';
+		p.pluginFoxUrlSigning='type=signature|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/foxUrlSigningPlugIn.swf';
+		p.pluginAuth='type=auth|URL='+FDM_Player_vars.host+'/shared/1.4.532/pdk/swf/authentication.swf|priority=3|cookie=authToken';
 
-		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.522/pdk/swf/akamaiHD.swf|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.527|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
+		p.pluginAkamai='type=format|URL='+FDM_Player_vars.host+'/shared/1.4.532/pdk/swf/akamaiHD.swf|priority=4|hosts=-f.akamaihd.net|playerId=foxcom-1.4.532|analyticsBeacon=http://ma1-r.analytics.edgesuite.net/config/beacon-4227.xml';
 
 		//-------------------------- Analytics
-			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
-//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
+			p.pluginFoxComscore='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/FoxComscorePlugIn.swf|priority=1|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+//p.pluginComscoreResolver='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/foxComscoreResolverPlugIn.swf|priority=1|path=http://www.fox.com/_ui/fox_player/videoXml.php';
 
-			//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
-			//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.527|additionalPropsMethodName=player.extraInfo';
+			//p.pluginOmniture='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/pdk/swf/omnitureMedia.swf|priority=2|frequency=60|host=a.fox.com|visitorNamespace=foxentertainment|account=foxcomprod';
+			//p.pluginOmnitureMonitor='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/FoxOmnitureMonitor.swf|priority=1|playerId=foxcom-1.4.532|additionalPropsMethodName=player.extraInfo';
 
-	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/swf/ggtp396.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
+	p.pluginNielsen='type=Tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/swf/ggtp396.swf|clientid=us-800251|vcid=c01|sfcode=us|category=0|prod=vc,iag|adurlfield=fw:adurl|sid=2500011627|tfid=1362|adcategory=fw:category|adsubcategory=fw:subcategory|displayprefix=Season|displayfieldname=season';
 
 
 		p.pluginChartbeat ='type=tracking|URL=http://static.chartbeat.com/swf/ChartbeatPDK.swf|acctId=8971|appId=video@fox.com|priority=1';
@@ -244,7 +250,7 @@ FDM_Player.prototype.init=function(pst,pre){
 
 	p.pluginNewFreewheel = 
 		'type=adcomponent|' + 
-		'url='+FDM_Player_vars.host+'/shared/1.4.527/pdk/swf/freewheel.swf|' + 
+		'url='+FDM_Player_vars.host+'/shared/1.4.532/pdk/swf/freewheel.swf|' + 
 		'pemURLsSeparator=~|' + 
 		'siteSectionId=' + player.siteSection + '|' + 
 		'isLive=false|' + 
@@ -291,7 +297,7 @@ FDM_Player.prototype.init=function(pst,pre){
 			mycss.rel='stylesheet';
 			mycss.type='text/css';
 
-		mycss.href=FDM_Player_vars.host+'/shared/1.4.527/css/html5_main.css';
+		mycss.href=FDM_Player_vars.host+'/shared/1.4.532/css/html5_main.css';
 		FDMtpHead.appendChild(mycss);
 
 		p.autoPlay=false; // Always set to false, because if true, it causes wildly different experiences and on certain devices, issues.
@@ -319,16 +325,16 @@ FDM_Player.prototype.init=function(pst,pre){
 					break;
 			}
 		}
-		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
+		p.pluginLayout = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxLayoutPlugIn.js|deliveryMode='+player.deliveryMode+'|offsetX='+FDM_Player_vars.layouts.play_overlay_x_offset+'|offsetY='+FDM_Player_vars.layouts.play_overlay_y_offset;
 
 		//-------------------------- Bumper
 		if(typeof player.introURL != 'undefined' || typeof player.outroURL != 'undefined') {
-			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
+			p.pluginBumper = 'type=ad|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxBumperPlugin.js|introLink='+player.introLink+'|outroLink='+player.outroLink+'|waitTime='+(typeof player.waitTime != 'undefined' ? player.waitTime : '10');
 		}
 
 		//-------------------------- Watermark
 		if(typeof player.watermark_src != 'undefined' && player.watermark_src != '') {
-			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxWatermarkPlugin.js';
+			p.pluginWatermark = 'type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxWatermarkPlugin.js';
 			if(typeof player.watermark_corner != 'undefined')		{ p.pluginWatermark+='|corner='+player.watermark_corner; }
 			if(typeof player.watermark_src != 'undefined')		{ p.pluginWatermark+='|watermarkSrc='+player.watermark_src; }
 			if(typeof player.watermark_opacity != 'undefined')	{ p.pluginWatermark+='|watermarkOpacity='+player.watermark_opacity; }
@@ -336,7 +342,7 @@ FDM_Player.prototype.init=function(pst,pre){
 
 		//-------------------------- Share
 		if((typeof player.share_deeplink != 'undefined' && player.share_deeplink != '') && String(player.share) != 'false') {
-				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
+				p.pluginShare='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxSharePlugIn.js|deepLink='+player.share_deeplink+'|embed='+player.share_embed+'|fbembed='+player.share_fb+((player.share_deeplinkfunc) ? '|deeplinkFunc='+player.share_deeplinkfunc : '');
 		}
 
 
@@ -357,20 +363,20 @@ FDM_Player.prototype.init=function(pst,pre){
 					((player.endcard_editorial.indexOf('policy') != -1) ? '' : adPolicySuffix);
 			}
 
-			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
+			p.pluginEndcard='type=overlay|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxEndCardPlugin.js|wait=' + (typeof player.waitTime != 'undefined' ? player.waitTime : '10') +
 				'|upNextDisplay=' + (( player.endcard_playlist && player.endcard_playlist != '' ) ? 'true' : 'false') +
 				((player.endcard_playlist && player.endcard_playlist != '') ? '|playlist=' + player.endcard_playlist : '') +
 				((player.endcard_related && player.endcard_related != '') ? '|related=' + player.endcard_related : '') +
 				((player.endcard_editorial && player.endcard_editorial != '') ? '|editorial=' + player.endcard_editorial : '');
 		}
 
-		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
+		p.pluginAkamaiHDJS='type=Format|URL='+FDM_Player_vars.host+'/shared/1.4.532/pdk/js/plugins/akamaiHD.js|priority=5|hosts=-f.akamaihd.net';
 
 		//-------------------------- Analytics
-				//p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
-		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.527/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
+				//p.pluginOmniture='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxOmnitureTracking.js|omnitureJsUrl=http://player.foxfdm.com/fox/js/omniture.sitecatalyst_short.js|additionalPropsMethodName=player.extraInfo';
+		//p.pluginComscore='type=tracking|URL='+FDM_Player_vars.host+'/shared/1.4.532/js/FoxComscorePlugIn.js|priority=1|path=http://www.fox.com/fod/videoXml.php|c2=3005183|c4=8000000|c6Field={comscoreShowId}%7CS{season}E{episode}|trackEachChapter=true';
 
-	p.pluginFreewheel='type=advertising|URL='+FDM_Player_vars.host+'/shared/1.4.527/pdk/js/plugins/freewheel.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
+	p.pluginFreewheel='type=advertising|URL='+FDM_Player_vars.host+'/shared/1.4.532/pdk/js/plugins/freewheel.js|networkId=116450|serverUrl=http://1c6e2.v.fwmrm.net|siteSectionId='+player.siteSection+'|playerProfile=116450:FDM_HTML5_Live|adManagerUrl=http://adm.fwmrm.net/p/fox_live/AdManager.js|autoPlayType=autoPlay';
 
 
 		if(typeof(player.releaseURL) != "undefined" && player.releaseURL != '') {
@@ -484,19 +490,19 @@ FDM_Player.prototype.init=function(pst,pre){
 	}
 	//foxneod communication stuff
 	if (window.$f && window.$f && window.$f.hasOwnProperty('dispatch'))
-    {
+	{
 		var debug = new $f.Debug('page');
 		debug.log('$f already existed, dispatching playerReady');
-        window.$f.dispatch('playerReady', {}, true);
-    }
-    else
-    {
-    	var adder = (window.addEventListener) ? window.addEventListener : window.attachEvent;
-        adder('foxneod:ready', function (event) {
-            var debug = new $f.Debug('page');
-            debug.log('Page now knows that the library is ready.');
-        });
-    }	
+		window.$f.dispatch('playerReady', {}, true);
+	}
+	else
+	{
+		var adder = (window.addEventListener) ? window.addEventListener : window.attachEvent;
+		adder('foxneod:ready', function (event) {
+			var debug = new $f.Debug('page');
+			debug.log('Page now knows that the library is ready.');
+		});
+	}	
 }
 
 FDM_Player.prototype.fdmOmnitureUniqueId = function() {
@@ -511,30 +517,30 @@ FDM_Player.prototype.fdmOmnitureUniqueId = function() {
  *  Handlers
  * ================================== */
 FDM_Player.prototype.onPlayerLoaded=function(e){
-    var b = document.getElementsByTagName('body')[0],
-        j = document.createElement('script');
-
-    j.type='text/javascript';
-    j.src=FDM_Player_vars.host+'/shared/1.4.527/js/OmniturePlugin.js';
-
-    b.appendChild(j);
-
-    
-    /**Omniture specific configuration for both Flash/JS**/
-    FDM_Player_vars.omniConfig  = {
-        playerId        :"foxcomcom-1.4.527",
-        visitorNamespace:"foxentertainment",
-        host            :'a.fox.com',
-        frequency       :"60",
-        entitled        :"public",  //values: public or entitled
-        auth            :"true",
-        mvpd            :null, //value of prop/eVar is the MVDP name of the user.
-        network         :"foxcom",
+		/**Omniture specific configuration for both Flash/JS**/
+	FDM_Player_vars.omniConfig  = {
+		playerId		:"foxcomcom-1.4.532",
+		visitorNamespace:"foxentertainment",
+		host			:'a.fox.com',
+		frequency	   :"60",
+		entitled		:"public",  //values: public or entitled
+		auth			:"true",
+		mvpd			:null, //value of prop/eVar is the MVDP name of the user.
+		network		 :"foxcom",
 		extraInfo		:(typeof player.extraInfo !=  "undefined")?player.extraInfo : null,
 		accountInfo		: {
 			account:  'foxcomprod',
 			trackingServer:'a.fox.com'		}
-    }
+	}
+
+	var b = document.getElementsByTagName('body')[0],
+		j = document.createElement('script');
+
+	j.type='text/javascript';
+	j.src=FDM_Player_vars.host+'/shared/1.4.532/js/OmniturePlugin.js';
+
+	b.appendChild(j);
+
 }
 
 FDM_Player.prototype.onMediaLoadStart = function(event) {
@@ -551,13 +557,13 @@ FDM_Player.prototype.onMediaLoadStart = function(event) {
 					$pdk.controller.resetPlayer();
 					$pdk.controller.setPlayerMessage("Your token/session has expired. Please refresh the page to continue watching.", 35000);
 				} else if(event.data.baseClip.contentCustomData.licensedMusic == "true"){
-	                if(navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-	                	$f.player.setPlayerMessage({
-	                		message:'Sorry, the video you selected is not available for viewing on this device.',
-	                		resetPlayer: true
-	                	});
-	            	}
-	            }  	
+					if(navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+						$f.player.setPlayerMessage({
+							message:'Sorry, the video you selected is not available for viewing on this device.',
+							resetPlayer: true
+						});
+					}
+				}  	
 			}
 		}
 	} catch(err) {
@@ -617,11 +623,12 @@ FDM_Player.prototype.setReleaseCall = function(releaseUrl) {
 
 		if(navigator.userAgent.toLowerCase().indexOf("android") > -1) 
 		{
-			if(player.releaseURL.toLowerCase().indexOf("switch") === -1) 
+			if(releaseUrl && releaseUrl.toLowerCase().indexOf("switch") === -1) 
 			{
-					p.releaseURL+='&switch=http';
+				releaseUrl+='&switch=http';
 			}
 		}
+
 	}
 			
 			releaseUrl += ((releaseUrl.indexOf('?') != -1) ? '&' : '?')+'policy=19938';	
@@ -634,8 +641,10 @@ FDM_Player.prototype.loadReleaseCall = function(releaseUrl) {
 	if(FDM_Player_vars.isIOS) {
 		releaseUrl += ((releaseUrl.indexOf('?') != -1) ? '&' : '?')+'manifest=m3u';
 
-		if(navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-			if(releaseUrl.toLowerCase().indexOf("embedded") === -1) {
+		if(navigator.userAgent.toLowerCase().indexOf("android") > -1) 
+		{
+			if(releaseUrl && releaseUrl.toLowerCase().indexOf("switch") === -1) 
+			{
 				releaseUrl+='&switch=http';
 			}
 		}
@@ -738,7 +747,20 @@ function readCookie(name) {
 	return null;
 }
 
-//---------------------------------------------------------------------------------------------------------- foxneod (https://github.com/foxneod/foxneod.js/)
+function FDM_Player_LoadTimer(kill) {
+	if(kill && FDM_Player_vars.loadTimer != '') {
+		FDM_Player_vars.loadTime = 0;
+		clearInterval(FDM_Player_vars.loadTimer);
+	}
+	else {
+		return setInterval(function() { FDM_Player_vars.loadTime += 1; }, 1000);
+	}
+}
+
+window.addEventListener('OmnitureEvent.contentStarted', function(event) {
+	FDM_Player_LoadTimer(kill);
+});
+
 (function () {
 /**
  * almond 0.2.6 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
@@ -5828,7 +5850,7 @@ define('foxneod',[
 
     //////////////////////////////////////////////// initialization
     var init = function () {
-        debug.log('ready (build date: 2013-09-06 10:09:09)');
+        debug.log('ready (build date: 2013-09-10 02:09:50)');
 
         _patchIE8Problems();
         _messageUnsupportedUsers();
@@ -5844,7 +5866,7 @@ define('foxneod',[
         _init: init,
 
         //properties
-        buildDate: '2013-09-06 10:09:09',
+        buildDate: '2013-09-10 02:09:50',
         packageName: 'foxneod',
         version: '0.9.4',
 
@@ -5914,4 +5936,3 @@ require([
 });
 define("main", function(){});
 }());
-//-------------------------------------------------------------------------------------------------------------- /foxneod
